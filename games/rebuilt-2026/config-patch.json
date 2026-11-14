@@ -1,0 +1,168 @@
+{
+  "generatedTs": "2026-11-14T21:03:49.229Z",
+  "note": "blueElements also holds depot.y and outpost.x which are NOT found: keep those placeholders and their TODO status. left/right follow the config ordering (left = larger y). laneLengthM is one number in config but bump depth is 1.128 m and trench depth 1.194 m: not patched.",
+  "patches": [
+    {
+      "path": "field.lengthM",
+      "new": {
+        "value": 16.541,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 3: \"WELDED PERIMETER (651.22)\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.widthM",
+      "new": {
+        "value": 8.069,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 3: \"(317.69)\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.allianceZoneDepthM",
+      "new": {
+        "value": 4.028,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 22: \"ALLIANCE ZONE : A 158.6in deep by 317.7in long (~4.03m by 8.07m)\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.blueElements.hub.x",
+      "new": {
+        "value": 4.626,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"18 Hub, Blue (182.11) (135.09) (44.25) 270; 21 Hub, Blue (182.11) (182.60) (44.25) 90\" [derived: Tags 18 and 21 sit on the two side faces of the blue HUB at the same x = 182.11 in, so that is the HUB centre x; also sheet 3 reference dimension (182.11); manual p.23 HUB front face 158.6 in + 47 in / 2 = 182.1 in; WPILib blue hub tags give 4.625 m. 182.11 in * 0.0254 = 4.626 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueElements.hub.y",
+      "new": {
+        "value": 4.035,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 4: \"(317.688) ... (158.84)\" [derived: HUB centred across the width: 317.688 / 2 = 158.844 in (tags 20 and 26 at y = 158.84 on sheet 11) = 4.035 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueElements.tower.x",
+      "new": {
+        "value": 0.572,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep ... integrated into each ALLIANCE WALL\" [derived: TOWER is 45.0 in deep and integrated into the alliance wall, so centre x = 45.0 / 2 = 22.5 in = 0.572 m (assumes the footprint starts at x = 0).]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueElements.tower.y",
+      "new": {
+        "value": 3.962,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"31 Tower, Blue (0.32) (147.47) (21.75) 0; 32 Tower, Blue (0.32) (164.47) (21.75) 0\" [derived: Midpoint of the two blue TOWER AprilTags (IDs 31, 32): (147.47 + 164.47) / 2 = 155.97 in = 3.962 m. WPILib tags 15/16 give y = 4.035 + (-0.289 + 0.143) / 2 = 3.962 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueElements.depot.x",
+      "new": {
+        "value": 0.343,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 27: \"A DEPOT is a 42.0in (1.07m) wide, 27.0in (68.6cm) deep structure located along the ALLIANCE WALL.\" [derived: Depth 27.0 in along x from the alliance wall: centre x = 13.5 in = 0.343 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueElements.outpost.y",
+      "new": {
+        "value": 0.882,
+        "status": "VERIFIED",
+        "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"28 Outpost, Blue (0.30) (26.22) (21.75) 0\" [derived: Midpoint of the blue OUTPOST AprilTags (IDs 28, 29): tag 28 y = 26.22 in (drawing sheet 11); tag 29 y = 43.22 in from WPILib tag 14 (y -2.937 m + 4.035 = 1.098 m) because the drawing text for tag 29 is garbled; (26.22 + 43.22) / 2 = 34.72 in = 0.882 m. Manual p.22 OUTPOST AREA is 71.0 in wide (centre 35.5 in = 0.902 m), consistent.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueLaneY.right_bump",
+      "new": {
+        "value": 2.511,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide, 44.4in (1.128m) deep ... on either side of the HUB\" [derived: Bump adjacent to the 47 in HUB: centre offset from field centre = 47/2 + 73/2 = 60.0 in = 1.524 m; y = 4.035 - 1.524 = 2.511 m. Uncertain by about 0.08 m: trench 65.65 in + bump 73 in + half hub 23.5 in exceeds half the width by 3.3 in, so the parts overlap or have a gap not visible in the text.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueLaneY.left_bump",
+      "new": {
+        "value": 5.559,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide ... on either side of the HUB\" [derived: Mirror of right_bump: 4.035 + 1.524 = 5.559 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueLaneY.right_trench",
+      "new": {
+        "value": 0.834,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide, 47.0in (1.194m) deep ... The TRENCH extends from the guardrail to the BUMP\" [derived: Trench footprint runs from the guardrail across 65.65 in, centre = 32.825 in = 0.834 m from the guardrail; the position of the 50.34 in opening inside it is not read.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.blueLaneY.left_trench",
+      "new": {
+        "value": 7.236,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide ... extends from the guardrail to the BUMP on both sides of the FIELD\" [derived: Mirror: 8.069 - 0.834 = 7.236 m.]"
+      },
+      "officialStatus": "derived"
+    },
+    {
+      "path": "field.elementSizes.hubSizeM",
+      "new": {
+        "value": 1.194,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 23: \"A HUB is one of two 47in by 47in (~1.19m by 1.19m) rectangular prism structures\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.elementSizes.towerWidthM",
+      "new": {
+        "value": 1.251,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep, and 78.25in (1.988m) tall structure\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.elementSizes.towerDepthM",
+      "new": {
+        "value": 1.143,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.elementSizes.trenchWidthM",
+      "new": {
+        "value": 1.668,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide, 47.0in (1.194m) deep\""
+      },
+      "officialStatus": "official"
+    },
+    {
+      "path": "field.elementSizes.bumpWidthM",
+      "new": {
+        "value": 1.854,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide, 44.4in (1.128m) deep\""
+      },
+      "officialStatus": "official"
+    }
+  ]
+}

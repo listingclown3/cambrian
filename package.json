@@ -48,7 +48,9 @@
     "ledger:merge": "node scripts/merge-ledgers.mjs",
     "deck": "node scripts/deck-numbers.mjs",
     "ci:status": "node scripts/ci-status.mjs",
-    "bench:engine": "tsx src/exec/benchEngine.ts"
+    "bench:engine": "tsx src/exec/benchEngine.ts",
+    "field:build": "tsx src/field/build.ts",
+    "field:extract": "tsx src/field/extract.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
