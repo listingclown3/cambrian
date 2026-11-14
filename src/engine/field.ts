@@ -39,12 +39,26 @@ function rawLayout(cfg: Config): FieldLayout {
 
   const alliances = { red: elements("red"), blue: elements("blue") };
 
-  const shotSpots = ALLIANCES.flatMap((alliance) =>
-    cfg.field.shotSpots.spots.map((spot) => {
+  // "Tower post-up" spots: bumpers against either side of the alliance's own tower (derived from
+  // the tower position and footprint; left/right as seen from behind the alliance wall).
+  const sizes = cfg.field.elementSizes?.value;
+  const r = cfg.physics.robotRadiusM;
+  const towerSide = (sizes ? sizes.towerWidthM / 2 : r) + r;
+  const towerPosts = [
+    { id: "tower_post_left", pos: { x: blue.tower.x, y: blue.tower.y + towerSide }, description: "against the left side of our tower" },
+    { id: "tower_post_right", pos: { x: blue.tower.x, y: blue.tower.y - towerSide }, description: "against the right side of our tower" },
+  ];
+
+  const shotSpots = ALLIANCES.flatMap((alliance) => [
+    ...cfg.field.shotSpots.spots.map((spot) => {
       const pos = forSide(alliance, { x: blue.hub.x + spot.forwardFromHubM, y: blue.hub.y + spot.leftFromHubM });
       return { id: spot.id, alliance, pos, distanceToHubM: dist(pos, alliances[alliance].hub), description: spot.description };
     }),
-  );
+    ...towerPosts.map((spot) => {
+      const pos = forSide(alliance, spot.pos);
+      return { id: spot.id, alliance, pos, distanceToHubM: dist(pos, alliances[alliance].hub), description: spot.description };
+    }),
+  ]);
 
   const lanes = ALLIANCES.flatMap((side) =>
     ROUTE_IDS.map((route) => ({
