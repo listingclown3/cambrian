@@ -1,6 +1,10 @@
 /**
  * pnpm match:agent [-- --blue drex --red deepinfra --timing paused|realtime --seed 1001 --captain]
+ *                   [--record <runId>]
  * (owner: P2)
+ *
+ * --record writes runs/<runId>/events.jsonl (RunEvent JSONL, replayable by the server's
+ * /ws/replay?source=runs&run=<runId>); see recorder.ts.
  *
  * Plays one match with AgentController: each alliance is driven by a provider spec (see
  * getProviderBySpec) or "scripted". Prints the final score and, per alliance, calls, fallbacks,
@@ -8,12 +12,14 @@
  * ledger with purpose "agent_match".
  */
 import "dotenv/config";
-import type { Alliance } from "../contracts";
+import { RunEventSchema, type Alliance } from "../contracts";
 import { ENGINE_IS_STUB, engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
 import { AgentController, type AllianceAgent } from "./controller";
 import { getProviderBySpec } from "./registry";
+import { MatchRecorder } from "./recorder";
+import { redact } from "./providers/http";
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(name);
@@ -27,8 +33,30 @@ const specs: Record<Alliance, string> = { blue: arg("--blue", "drex_mock"), red:
 const agents: Partial<Record<Alliance, AllianceAgent>> = {};
 for (const a of ["blue", "red"] as const) if (specs[a] !== "scripted") agents[a] = { provider: getProviderBySpec(specs[a], cfg, { purpose: "agent_match" }), captain };
 
+const recordId = process.argv.includes("--record") ? arg("--record", "") : null;
+if (recordId !== null && !/^[A-Za-z0-9_.-]+$/.test(recordId)) throw new Error("--record needs a run id of letters, digits, _ . -");
+const recorder = recordId ? new MatchRecorder(cfg, seed, `${recordId}-seed${seed}`) : null;
+// Manifest provider: the single decider spec, or "mixed" when both alliances have one.
+const deciders = (["blue", "red"] as const).filter((a) => agents[a]);
+const manifestProvider = deciders.length === 1 ? specs[deciders[0]!] : deciders.length === 0 ? "scripted" : "mixed";
+
 const started = performance.now();
-const summary = await new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing }).run();
+const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, ...(recorder?.hooks() ?? {}) });
+let summary: Awaited<ReturnType<AgentController["run"]>>;
+try {
+  summary = await controller.run();
+} catch (e) {
+  const msg = redact(String((e as Error)?.message ?? e));
+  if (recorder && recordId) recorder.write({ runId: recordId, provider: manifestProvider, status: "error", durationMs: performance.now() - started, error: msg });
+  throw e;
+}
+if (recorder && recordId) {
+  const model = deciders.length === 2 ? deciders.map((a) => `${a}=${[...new Set(summary.decisions.filter((d) => d.alliance === a).flatMap((d) => d.metas.map((m) => m.model)))].join(",")}`).join(";") : undefined;
+  const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, ...(model ? { model } : {}), status: "ok", durationMs: summary.wallMs, error: null });
+  const bad = lines.filter((l) => !RunEventSchema.safeParse(l).success).length;
+  console.log(`recorded ${lines.length} lines (${lines.filter((l) => l.type === "decision").length} decisions) to ${file}; ${bad} lines fail RunEventSchema`);
+  if (bad > 0) process.exitCode = 1;
+}
 const pct = (xs: number[], q: number) => [...xs].sort((a, b) => a - b)[Math.min(xs.length - 1, Math.floor(q * xs.length))] ?? NaN;
 
 console.log(`seed ${seed}, timing ${timing}, captain ${captain}${ENGINE_IS_STUB ? "  [STUB ENGINE: plumbing only, not a result]" : ""}`);

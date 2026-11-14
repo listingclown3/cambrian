@@ -34,6 +34,7 @@
  */
 import {
   getRobot,
+  intentLabel,
   type Alliance,
   type CaptainRole,
   type Config,
@@ -87,6 +88,10 @@ export interface ControllerOptions {
   requestMode?: DecisionRequest["mode"];
   /** Called once per decision record when it is final (applied, or dropped at match end). */
   onDecision?: (d: ControllerDecision) => void;
+  /** Called for every scripted-robot decision (applied on the same tick it is made). */
+  onScriptedDecision?: (d: { robotId: RobotId; timeS: number; policyId: string; view: ObservationView; intent: Intent }) => void;
+  /** Called after every engine step with that step's events and the state after it. */
+  onStep?: (events: EngineEvent[], state: MatchState) => void;
 }
 
 /** One robot's part of a decision. */
@@ -100,6 +105,8 @@ export interface RobotChoice {
   role?: CaptainRole;
   /** True when this robot's intent came from the fallback policy, not the provider. */
   usedFallbackPolicy: boolean;
+  /** The provider's probability per option label for this robot's question (null when it gives none or fell back). */
+  probabilities: Record<string, number> | null;
 }
 
 /** One provider call (or one sequential captain step) and when its answer took effect. */
@@ -246,10 +253,11 @@ export class AgentController {
       requests.push(req);
       metas.push(res.meta);
       latencyMs += res.meta.latencyMs;
-      const label = res.answers[captainQuestionId(robotId)]?.chosen ?? null;
+      const answer = res.answers[captainQuestionId(robotId)];
+      const label = answer?.chosen ?? null;
       const role = !res.meta.fallbackUsed && label ? roleByLabel.get(label) : undefined;
       if (role) assigned[robotId] = role;
-      choices.push({ robotId, chosenLabel: role ? label : null, intent: null, ...(role ? { role } : {}), usedFallbackPolicy: !role });
+      choices.push({ robotId, chosenLabel: role ? label : null, intent: null, ...(role ? { role } : {}), probabilities: role ? (answer?.probabilities ?? null) : null, usedFallbackPolicy: !role });
     }
     const [chargedS] = this.charge(requestedAtS, latencyMs);
     return { kind: "captain", alliance, requestedAtS, latencyMs, chargedS, appliedAtS: null, requests, metas, choices };
@@ -270,12 +278,15 @@ export class AgentController {
     );
     return results.map(({ group, req, res }) => {
       const choices: RobotChoice[] = group.map((v) => {
-        const label = res.answers[actionQuestionId(v.self.id)]?.chosen ?? null;
+        const answer = res.answers[actionQuestionId(v.self.id)];
+        const label = answer?.chosen ?? null;
         const option = label === null ? undefined : v.options.find((o) => o.label === label);
         if (res.meta.fallbackUsed || !option) {
-          return { robotId: v.self.id, chosenLabel: option ? label : null, intent: this.policyFor(v.self.id).decide(v), usedFallbackPolicy: true };
+          // The label logged is the fallback policy's intent, never the provider's default answer.
+          const intent = this.policyFor(v.self.id).decide(v);
+          return { robotId: v.self.id, chosenLabel: intentLabel(intent), intent, probabilities: null, usedFallbackPolicy: true };
         }
-        return { robotId: v.self.id, chosenLabel: label, intent: option.intent, usedFallbackPolicy: false };
+        return { robotId: v.self.id, chosenLabel: label, intent: option.intent, probabilities: answer?.probabilities ?? null, usedFallbackPolicy: false };
       });
       const [chargedS] = this.charge(requestedAtS, res.meta.latencyMs);
       return { kind: "intent" as const, alliance, requestedAtS, latencyMs: res.meta.latencyMs, chargedS, appliedAtS: null, requests: [req], metas: [res.meta], choices };
@@ -346,8 +357,12 @@ export class AgentController {
       const robot = getRobot(this.state, id);
       if (this.opts.agents[robot.alliance]) byAlliance[robot.alliance].push(id);
       else {
-        intents[id] = this.policyFor(id).decide(this.view(id));
+        const view = this.view(id);
+        const policy = this.policyFor(id);
+        const intent = policy.decide(view);
+        intents[id] = intent;
         this.sinceDecision.set(id, []);
+        this.opts.onScriptedDecision?.({ robotId: id, timeS: this.state.timeS, policyId: policy.id, view, intent });
       }
     }
     const waitStart = performance.now();
@@ -361,6 +376,7 @@ export class AgentController {
     const { events } = this.opts.engine.step(this.state, intents, this.state.rules.physics.dtS);
     this.ticks += 1;
     this.lastEvents = events;
+    this.opts.onStep?.(events, this.state);
     for (const robot of this.state.robots) {
       const seen = this.sinceDecision.get(robot.id) ?? [];
       seen.push(...events);
@@ -424,6 +440,13 @@ export class AgentController {
  * Run-log "decision" lines for one controller decision: one line per robot, carrying exactly the
  * request that robot's answer came from and that call's meta. isMock is true when the provider
  * was a mock. Captain decisions log chosenLabel = the role label and intent = null.
+ *
+ * matchTimeS is the match time the answer was APPLIED (after the charged latency in realtime
+ * timing), so a replay that applies each logged intent at its matchTimeS reproduces the match.
+ * Answers that arrived after the match ended keep matchTimeS = request time and intent = null.
+ *
+ * Extra keys beyond the contract (kept by JSON, stripped by a strict schema parse until the
+ * contract has them): decisionKind, requestedAtS, appliedAtS, chargedS, probabilities, role.
  */
 export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
   return d.choices.map((c, i) => {
@@ -433,11 +456,17 @@ export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
       type: "decision" as const,
       isMock: meta.isMock,
       robotId: c.robotId,
-      matchTimeS: d.requestedAtS,
+      matchTimeS: d.appliedAtS ?? d.requestedAtS,
       request: d.requests[k]!,
       meta,
       chosenLabel: c.chosenLabel,
       intent: d.appliedAtS === null ? null : c.intent,
-    };
+      decisionKind: d.kind,
+      requestedAtS: d.requestedAtS,
+      appliedAtS: d.appliedAtS,
+      chargedS: d.chargedS,
+      probabilities: c.probabilities,
+      ...(c.role ? { role: c.role } : {}),
+    } as RunEventBody;
   });
 }
