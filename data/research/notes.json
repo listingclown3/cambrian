@@ -1,0 +1,360 @@
+{
+  "generatedTs": "2026-11-14T19:49:25.828Z",
+  "notes": [
+    {
+      "claim": "The robot automatically fills the hopper to a minimum level before passing to ensure fuel is available for the next offensive shift.",
+      "sourceUrl": "https://2056.ca/wp-content/uploads/2026/10/OPR26-B-2056-Technical-Binder.pdf",
+      "quote": "This maintains a minimum hopper volume, so we always have fuel to start the next offensive shift."
+    },
+    {
+      "claim": "The robot automatically determines the optimal time to shoot to maximize the duration of the offensive shift.",
+      "sourceUrl": "https://2056.ca/wp-content/uploads/2026/10/OPR26-B-2056-Technical-Binder.pdf",
+      "quote": "the robot automatically decides when to shoot to maximize. the offensive shift time."
+    },
+    {
+      "claim": "The team decided to make a cycle robot, spending the majority of the time crossing the field and scoring points.",
+      "sourceUrl": "https://a-blanchard.com/portfolio/frc2020",
+      "quote": "We decided to make a cycle robot. As seen in the match footage, we spent the majority of the time crossing the field and scoring"
+    },
+    {
+      "claim": "The team aimed to build a fast, short, and aggressive scoring bot that could maneuver around defense and score reliably from a wide range of positions on the field.",
+      "sourceUrl": "https://a-blanchard.com/portfolio/frc2020",
+      "quote": "This meant making a fast, short, and aggressive scoring bot that could maneuver around defense and score reliably from a wide range of positions on"
+    },
+    {
+      "claim": "The team developed an autonomous routine for the left side of the field to increase compatibility with potential alliance partners.",
+      "sourceUrl": "https://loganfemling.org/home/2020-competition-season",
+      "quote": "We also developed an auto for the left side of the field in order to make ourselves more compatible with potential partners."
+    },
+    {
+      "claim": "The team prioritized climbing when partnered with robots that had strong climbing systems but weaker scoring capabilities.",
+      "sourceUrl": "https://loganfemling.org/home/2020-competition-season",
+      "quote": "We were partnered with two robots who didn't have great ball scoring, but did have solid climbing systems. Because of this, we were able to"
+    },
+    {
+      "claim": "The robot should shoot and store as much fuel as possible during a match.",
+      "sourceUrl": "https://teamneutrino.org/seasons/rebuilt",
+      "quote": "Halcyon was designed to shoot and store as much fuel as we can during a match"
+    },
+    {
+      "claim": "The robot should intake nearby fuel on the ground while moving as its hopper gets close to empty.",
+      "sourceUrl": "https://teamneutrino.org/seasons/rebuilt",
+      "quote": "allowing for Halcyon to intake near by fuel on the ground as it’s hopper gets close to empty"
+    },
+    {
+      "claim": "The robot should score around 60 fuel and fill its hopper entirely full at the beginning of the autonomous period.",
+      "sourceUrl": "https://teamneutrino.org/seasons/rebuilt",
+      "quote": "During the autonomous period, the robot can score around 60 fuel and also fill our hopper entirely full at the beginning of the autonomous period."
+    },
+    {
+      "claim": "Alliance hubs alternate between active and inactive based on autonomous results, requiring robots to shift gameplay between both sides of the field.",
+      "sourceUrl": "https://buttebuiltbots.org/games/rebuilt",
+      "quote": "Based on the result of autonomous play, alliance hubs will alternate between active and inactive, shifting gameplay between both sides of the field."
+    },
+    {
+      "claim": "Robots should score fuel into their hub while it is active and perform defensive strategies or collect more fuel while their hub is inactive.",
+      "sourceUrl": "https://buttebuiltbots.org/games/rebuilt",
+      "quote": "Drivers control their robots to score fuel into their hub while it is active and may perform defensive strategies or collect more fuel while their"
+    },
+    {
+      "claim": "As time runs out, all hubs become active, allowing all robots to score.",
+      "sourceUrl": "https://buttebuiltbots.org/games/rebuilt",
+      "quote": "As time runs out, all hubs become active, allowing all robots to score."
+    },
+    {
+      "claim": "Successfully navigating under the trench unlocks shorter cycle times across the field.",
+      "sourceUrl": "https://ragnarokrobotics.org/2026-game.html",
+      "quote": "Successfully navigating under the trench (22\" clearance) unlocks shorter cycle times across the field."
+    },
+    {
+      "claim": "The base opening of the Hub allows for rapid dumping of Fuel for volume scoring.",
+      "sourceUrl": "https://ragnarokrobotics.org/2026-game.html",
+      "quote": "The base opening of the Hub. Allows for rapid dumping of Fuel for volume scoring."
+    },
+    {
+      "claim": "Robots must elevate or park in the designated zone before the timer expires.",
+      "sourceUrl": "https://ragnarokrobotics.org/2026-game.html",
+      "quote": "Robots must elevate or park in the designated zone before the timer expires."
+    },
+    {
+      "claim": "The robot can drive under the trench with an empty hopper and then expand to carry extra fuel.",
+      "sourceUrl": "https://binder.team7558.com",
+      "quote": "so we can go under the trench with an empty hopper and still expand into a bump robot that carries extra fuel"
+    },
+    {
+      "claim": "The team decided to build a tall robot because they expected to see many short bots at events and felt that designing a climber and packaging five balls would be easier with a tall robot.",
+      "sourceUrl": "https://chiefdelphi.com/uploads/short-url/4D7iXq48DjCdxLLbwi6GNNvVDVG.pdf",
+      "quote": "we decided to build a tall robot because we expected to see many short bots at events and we also felt that designing a climber"
+    },
+    {
+      "claim": "The team considered long shots from behind the control panel as a potential way to achieve quick cycle times and allow partners to pick up missed shots.",
+      "sourceUrl": "https://chiefdelphi.com/uploads/short-url/4D7iXq48DjCdxLLbwi6GNNvVDVG.pdf",
+      "quote": "We saw that as a potential way for quick cycle times and a way for partners to pick up missed shots."
+    },
+    {
+      "claim": "The team intends to use the protected trench run area to protect themselves from defenders and to collect all five balls from the trench in autonomous mode.",
+      "sourceUrl": "https://4907.ca/docs/ig-8n-tech-info.pdf",
+      "quote": "We also want to use the protected trench run area to protect ourselves from defenders, and be able to get all 5 balls from the"
+    },
+    {
+      "claim": "The team should score 18 or more cargo in a match to guarantee the cargo ranking point without relying on alliance partners.",
+      "sourceUrl": "https://media.team254.com/2022/10/8f2407a5-Team_254_Tech_Binder_2022.pdf",
+      "quote": "Score 18/20+ cargo in a match ourselves, guaranteeing the Cargo RP without relying heavily on randomized alliance partners"
+    },
+    {
+      "claim": "The team should climb to the traversal bar to secure 15 hangar points, allowing alliance partners to easily achieve the remaining hangar point requirement.",
+      "sourceUrl": "https://media.team254.com/2022/10/8f2407a5-Team_254_Tech_Binder_2022.pdf",
+      "quote": "Climb to the traversal bar for 15 hangar points so our alliance partners only need to get 1 more hangar point for the Hangar RP"
+    },
+    {
+      "claim": "The team should maximize cargo score in autonomous because points are worth double and there is no defense.",
+      "sourceUrl": "https://media.team254.com/2022/10/8f2407a5-Team_254_Tech_Binder_2022.pdf",
+      "quote": "Maximizing cargo score in auton (points are worth 2x and there is no defense)"
+    },
+    {
+      "claim": "The low hub is considered a non-optional scoring target due to its reliability, competitive point value, and difficulty to defend.",
+      "sourceUrl": "https://littletonrobotics.org/kickoff-weekend-summary",
+      "quote": "We believe that the low goal is non-optional for us, due to its low risk nature in terms of reliability, shockingly competitive point value, ability"
+    },
+    {
+      "claim": "In close matches and eliminations, a reliable upper hub scorer is expected to outscore the lower hub.",
+      "sourceUrl": "https://littletonrobotics.org/kickoff-weekend-summary",
+      "quote": "In tight quals matches and eliminations however we believe a reliable Upper Hub scorer will be stronger."
+    },
+    {
+      "claim": "Scoring from the tarmac provides flexibility to score over defenders or other robots occupying the fender position.",
+      "sourceUrl": "https://littletonrobotics.org/kickoff-weekend-summary",
+      "quote": "Scoring in either Hub from the tarmac provides substantial flexibility in being able to score from behind defenders/scoring opponents/allied robots."
+    },
+    {
+      "claim": "Teams must time their scoring to align with the 25-second shifts where their alliance's HUB is active.",
+      "sourceUrl": "https://github.com/frc6908/2026-Robot",
+      "quote": "HUBs alternate between active and inactive in 25-second \"shifts,\" so teams must time their scoring."
+    },
+    {
+      "claim": "Alliances should prioritize scoring in the final 30 seconds when both HUBs are active.",
+      "sourceUrl": "https://github.com/frc6908/2026-Robot",
+      "quote": "In the final 30 seconds (END GAME), both HUBs activate for a last scoring push."
+    },
+    {
+      "claim": "The team prioritizes obtaining the Supercharged Ranking Point as a singular robot.",
+      "sourceUrl": "https://chiefdelphi.com/uploads/short-url/aiIYU0Pv6kleLK5yW5mDDAaE2n9.pdf",
+      "quote": "we determined that we want to be able to obtain the Supercharged Ranking Point as a singular robot."
+    },
+    {
+      "claim": "The team aims to score all pre-staged alliance fuel and climb in the autonomous period.",
+      "sourceUrl": "https://chiefdelphi.com/uploads/short-url/aiIYU0Pv6kleLK5yW5mDDAaE2n9.pdf",
+      "quote": "Score All Pre-Staged Alliance Fuel and Climb in Autonomous Period"
+    },
+    {
+      "claim": "The team prioritizes minimizing cycle times to achieve fast gameplay.",
+      "sourceUrl": "https://chiefdelphi.com/uploads/short-url/aiIYU0Pv6kleLK5yW5mDDAaE2n9.pdf",
+      "quote": "Minimize cycle times"
+    },
+    {
+      "claim": "Alliances should pair zippy, close-range clean-up scorers with long-range behind-the-control-panel shooters to overload the power port.",
+      "sourceUrl": "https://chiefdelphi.com/t/10-days-in-has-your-tall-vs-short-robot-decision-changed/372999?page=4",
+      "quote": "I think at the highest level of play you’ll see zippy, close-range clean-up scorers paired with long-range behind-the-control-panel shooters overloading the power port in a"
+    },
+    {
+      "claim": "Short, quick robots are critical for cleaning up and rescoring power cells on the opponent's side to exploit the positive feedback loop.",
+      "sourceUrl": "https://chiefdelphi.com/t/10-days-in-has-your-tall-vs-short-robot-decision-changed/372999?page=4",
+      "quote": "Nimble robots like this will be critical in taking advantage of the positive feedback loop because they can quickly clean up and rescore power cells"
+    },
+    {
+      "claim": "Running under the trench has strategic value because it opens driving opportunities and shortens cycle times, even if it does not directly award points.",
+      "sourceUrl": "https://chiefdelphi.com/t/10-days-in-has-your-tall-vs-short-robot-decision-changed/372999?page=4",
+      "quote": "In 2020, running under the trench run has no benefit from a point value perspective, but it opens driving opportunities and shortens cycle times."
+    },
+    {
+      "claim": "Scouts should use a post-match huddle to assign percentage-based fuel contributions to each robot based on official match totals.",
+      "sourceUrl": "https://github.com/wave-2826/ScoutingPASS/blob/main/2026",
+      "quote": "To reconcile live estimates with official match results, scouts from each alliance will huddle briefly following the match to determine a percentage-based contribution for each"
+    },
+    {
+      "claim": "Robots should cycle fuel during inactive hub periods to position it for when the hub becomes active.",
+      "sourceUrl": "https://github.com/wave-2826/ScoutingPASS/blob/main/2026",
+      "quote": "Robot cycles FUEL during inactive HUB periods to position FUEL for when HUB becomes active"
+    },
+    {
+      "claim": "Robots should relocate fuel to the alliance zone to support partners rather than scoring directly.",
+      "sourceUrl": "https://github.com/wave-2826/ScoutingPASS/blob/main/2026",
+      "quote": "Identify robots that contribute to alliance scoring by relocating FUEL rather than scoring directly"
+    },
+    {
+      "claim": "The team decided to omit the climber mechanism for the Orlando Regional event because the cost-benefit ratio was not worth it given the limited time available.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-8324-meco-robotics-2026-open-alliance-build-thread/510654",
+      "quote": "Decided to ditch climber for orlando because of cost-benefit just not being worth it, especially considering how little time we have"
+    },
+    {
+      "claim": "The team worked around brownout issues during matches by not running the flywheel while driving to conserve power.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-8324-meco-robotics-2026-open-alliance-build-thread/510654",
+      "quote": "Our work around at Orlando was to not run the flywheel when driving just to conserve all the power we can."
+    },
+    {
+      "claim": "Burst throughput is more valuable than continuous throughput, so the team prioritizes hopper capacity and fast intake speed over sustaining a non-stop firing loop.",
+      "sourceUrl": "https://whsrobotics.org/2026techbinder.pdf",
+      "quote": "The key lesson from studying prior-year metas is that burst throughput matters more than continuous throughput: being able to quickly deliver a large batch of"
+    },
+    {
+      "claim": "The team targets contributing to all three ranking points without being the sole contributor to any, aiming for a well-rounded robot rather than a narrow specialist.",
+      "sourceUrl": "https://whsrobotics.org/2026techbinder.pdf",
+      "quote": "Our target is to contribute to all three RPs without needing to be the sole contributor to any of them — a well-rounded robot that"
+    },
+    {
+      "claim": "Climbing is worth doing but not worth over-engineering, as the Traversal ranking point requires only 50 tower points which is a low threshold relative to a typical winning score.",
+      "sourceUrl": "https://whsrobotics.org/2026techbinder.pdf",
+      "quote": "Climbing is worth doing, but not worth over-engineering."
+    },
+    {
+      "claim": "The robot can be used as a high-volume supplier for the alliance.",
+      "sourceUrl": "https://docs.revrobotics.com/frc-kickoff-concepts",
+      "quote": "Whether your strategy involves scoring fuel in the hub or acting as a high-volume supplier for your alliance, this robot provides the essential tools to"
+    },
+    {
+      "claim": "The team prioritized building a high-performance cargo scoring robot with a fast mid-rung climb rather than compromising the shooter for climbing capabilities.",
+      "sourceUrl": "https://a-blanchard.com/portfolio/frc-2022-sidewinder",
+      "quote": "we decided to build the best cargo scoring bot possible with a super fast mid-rung climb"
+    },
+    {
+      "claim": "Maintaining a full-range turret and shooter without compromising it for the climber created a nearly un-defendable robot on the open field.",
+      "sourceUrl": "https://a-blanchard.com/portfolio/frc-2022-sidewinder",
+      "quote": "This Allowed us to create a nearly un-defendable robot which proved to be super valuable on the open field of this years game."
+    },
+    {
+      "claim": "Drivers should score fuel into their hub while it is active and may perform defensive strategies or collect more fuel while their hub is inactive.",
+      "sourceUrl": "https://frcmanual.com/2026/game-overview",
+      "quote": "Drivers control their robots to score fuel into their hub while it is active and may perform defensive strategies or collect more fuel while their"
+    },
+    {
+      "claim": "The robot is designed to drive under the trench to access fuel.",
+      "sourceUrl": "https://github.com/HotwireRobotics/Hotwire-2026-Season",
+      "quote": "trench runner"
+    },
+    {
+      "claim": "A 30-point tower climb, a 12-point dock-and-engage, or a 25-point hang usually beats one more cycle in the same window of time.",
+      "sourceUrl": "https://learnfrc.com/blog/frc-games-by-year",
+      "quote": "A 30-point tower climb, a 12-point dock-and-engage, or a 25-point hang usually beats one more cycle in the same window of time."
+    },
+    {
+      "claim": "Alliance-partitioned scoring limits how much a defender can physically block a cycle, while an open-field cycle game lets a well-placed defender shut a scoring lane down entirely.",
+      "sourceUrl": "https://learnfrc.com/blog/frc-games-by-year",
+      "quote": "Alliance-partitioned scoring, like REBUILT's separate hubs or REEFSCAPE's reef sections, limits how much a defender can physically block a cycle; an open-field cycle game like"
+    },
+    {
+      "claim": "Ranking points reward something narrower than total score, so teams should figure out at kickoff which ranking point their robot's archetype can realistically hit.",
+      "sourceUrl": "https://learnfrc.com/blog/frc-games-by-year",
+      "quote": "Ranking, not raw score, sets your seed, so figure out at kickoff which RP your robot's archetype can realistically hit."
+    },
+    {
+      "claim": "Alliances should score fuel into their hub while it is active and perform defensive strategies or collect more fuel while their hub is inactive.",
+      "sourceUrl": "https://firstinspires.org/hubfs/web/program/frc/first-age-frc-rebuilt-gamepostcard.pdf",
+      "quote": "Drivers control their robots to score fuel into their hub while it is active and may perform defensive strategies or collect more fuel while their"
+    },
+    {
+      "claim": "Robots should climb to the tower's highest heights as time runs out to score additional points and claim match bonuses.",
+      "sourceUrl": "https://firstinspires.org/hubfs/web/program/frc/first-age-frc-rebuilt-gamepostcard.pdf",
+      "quote": "Robots can climb to the tower’s highest heights to score additional points and claim match bonuses to increase their position in the rankings."
+    },
+    {
+      "claim": "The strongest teams used the full-width shooter.",
+      "sourceUrl": "https://jerryli.design/projects/frc-rebuilt",
+      "quote": "In hindsight the strongest teams used the full-width shooter"
+    },
+    {
+      "claim": "Scoring from the tarmac provides flexibility to score over robots occupying the fender position.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-6328-mechanical-advantage-2022-build-thread/398645/8",
+      "quote": "This is to allow us the ability to score over another robot who is shorter than us who is occupying the space in front of"
+    },
+    {
+      "claim": "The team should focus on balling out and achieving a high climb for 4 rank points.",
+      "sourceUrl": "https://spectrum3847.org/seasons/2022",
+      "quote": "We have 4063, focus on balling out and high climb for 4 rp"
+    },
+    {
+      "claim": "The team should expect defense from the opposing alliance member 3834.",
+      "sourceUrl": "https://spectrum3847.org/seasons/2022",
+      "quote": "Expect defense from 3834"
+    },
+    {
+      "claim": "Alliances with limited scoring throughput in the captain and first pick should prioritize raw third bot offense or strong defense to attempt 3v2 or 2v1 matchups against higher alliances with only two scoring robots.",
+      "sourceUrl": "https://frc4322.com/robots/2026",
+      "quote": "if your alliance had limited scoring throughput in the captain and first pick, picking for either raw 3rd bot offense or strong defense was likely"
+    },
+    {
+      "claim": "Teams should pick a high-ceiling partner willing to engage in unconventional tactics to maximize the chance of achieving an upset against top-tier alliances.",
+      "sourceUrl": "https://frc4322.com/robots/2026",
+      "quote": "We figured if we wanted even a 1% chance of doing something extremely funny, we needed to pick for a high ceiling with a partner"
+    },
+    {
+      "claim": "The drive team should communicate across all three alliance robots rather than playing solo.",
+      "sourceUrl": "https://learnfrc.com/guides/scouting-strategy/strategy-picklists-and-match-play/in-match-communication",
+      "quote": "Alliances that communicate across all three robots beat three robots playing solo."
+    },
+    {
+      "claim": "The coach should give a clear endgame cue with comfortable margin to avoid losing points.",
+      "sourceUrl": "https://learnfrc.com/guides/scouting-strategy/strategy-picklists-and-match-play/in-match-communication",
+      "quote": "The coach should give a clear endgame cue with comfortable margin."
+    },
+    {
+      "claim": "Top alliances at the championship are expected to use a dedicated defender because their top two robots reach diminishing returns on scoring, while lower seeds need a third robot cycling to keep up.",
+      "sourceUrl": "https://chiefdelphi.com/t/rapid-react-defense/407127",
+      "quote": "I tend to think top alliances (1-3 seeds) will opt for a dedicated defender since their top 2 robots will reach the point of diminishing"
+    },
+    {
+      "claim": "Robot-on-robot defense is more effective at lower levels of play, whereas denying cargo is more valuable at higher levels of play.",
+      "sourceUrl": "https://chiefdelphi.com/t/rapid-react-defense/407127",
+      "quote": "I think playing robot-on-robot defense makes way more sense at lower levels of play than defense on Cargo. I think that is completely the opposite"
+    },
+    {
+      "claim": "Adaptive defense where all robots score and defend when a target is near is the most viable option to shut down potent scorers that maneuver well.",
+      "sourceUrl": "https://chiefdelphi.com/t/rapid-react-defense/407127",
+      "quote": "In my opinion, adaptive defense where all robots are scoring and defending when the target is near them is the most viable option to shut"
+    },
+    {
+      "claim": "An alliance can use one robot to play defense on the far side of the field while another cycles to the lower hub to feed easy-to-score balls to a third robot, keeping traffic on one side.",
+      "sourceUrl": "https://chiefdelphi.com/t/share-your-best-rapid-react-matches/405036",
+      "quote": "The strategy was for 2239 to play defense primarily on the far side of the field, with 4607 cycling to the Lower Hub from the"
+    },
+    {
+      "claim": "A team should prioritize securing the guaranteed ranking point from cargo in the low goal during qualification matches before switching to a mixed high and low goal cycle in playoffs.",
+      "sourceUrl": "https://chiefdelphi.com/t/share-your-best-rapid-react-matches/405036",
+      "quote": "They understand that the only ranking point that they can guarantee in a match, is the cargo. With their 5 ball auto and incredible low"
+    },
+    {
+      "claim": "A team should avoid climbing to a higher level than necessary if it already has the ranking points for the climb and the match win, to avoid unnecessary risk.",
+      "sourceUrl": "https://chiefdelphi.com/t/share-your-best-rapid-react-matches/405036",
+      "quote": "They knew they had the RP for climb and the win on points, so don’t add the risk of going higher than needed."
+    },
+    {
+      "claim": "Reliable shooting is more important than a quick drive train this year.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-2020-infinite-recharge-reveal-reactions/369491?page=3",
+      "quote": "Reliable shooting is more important than a quick drive train this year"
+    },
+    {
+      "claim": "Staunch defense will be key because the field is open and lacks protected shooting zones.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-2020-infinite-recharge-reveal-reactions/369491?page=3",
+      "quote": "staunch defense will be **key** nothing like three defenders to stop a score 2016 had a protected batter shooting zone"
+    },
+    {
+      "claim": "A fast and efficient ground pickup is of very high importance because power cells are guaranteed on the ground.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-2020-infinite-recharge-reveal-reactions/369491?page=3",
+      "quote": "In Infinite recharge, there are guaranteed power cells on the ground so a fast efficient pickup is of very high importance."
+    },
+    {
+      "claim": "The team should utilize the trench to avoid defense during teleop and to access the neutral zone during autonomous.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-7407-wired-boars-2026-build-thread-open-alliance/507852/14",
+      "quote": "we ultimately decided that we want to be able to go under the trench, both for avoiding defense in teleop and going to the neutral"
+    },
+    {
+      "claim": "The team should prioritize high flow rate and indexer performance over installing a turret.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-7407-wired-boars-2026-build-thread-open-alliance/507852/14",
+      "quote": "flow rate is going to matter more than having a turret, so we should focus on the indexer instead"
+    },
+    {
+      "claim": "The team should aim to climb level 1 from the side to leave room for alliance partners.",
+      "sourceUrl": "https://chiefdelphi.com/t/frc-7407-wired-boars-2026-build-thread-open-alliance/507852/14",
+      "quote": "We’d like to be able to do the L1 from the side to leave room for partners"
+    }
+  ]
+}
