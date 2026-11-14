@@ -4,7 +4,7 @@ import { useApi } from "./lib";
 export interface TeamRecord {
   profile: { id?: string; teamLabel?: string; archetype?: string };
   provenance?: Record<string, { source?: string; quote?: string }>;
-  classifiedArchetype?: string;
+  classifiedArchetype?: { archetype: string; confidence: number };
 }
 export interface TeamsPayload {
   available: boolean;

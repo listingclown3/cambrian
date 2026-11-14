@@ -1,7 +1,7 @@
 /** RULES & SOURCES page (owner: P4): every game/field constant with status and source, conduct rules, research sources, NDI spend. */
 import { useEffect } from "react";
 import type { Flags } from "../App";
-import { NOT_RUN, usd, useApi, type UsageSummary } from "../lib";
+import { NOT_RUN, ms, usd, useApi, useResult, type UsageSummary } from "../lib";
 import { RobotBadge, useTeams } from "../RobotBadge";
 
 interface Entry {
@@ -27,6 +27,29 @@ const fmtVal = (v: unknown): string => {
 };
 /** Manual page number found in the source citation, when there is one ("p.15", "p. 44"). */
 const manualPage = (src: string): string | null => /\bp\.?\s*(\d+)/i.exec(src)?.[1] ?? null;
+
+/** Rule judge: Drex judging incidents against the conduct rules. The metric wording is shown verbatim from the results file. */
+function JudgeCard({ file, tier }: { file: string; tier: string }) {
+  const r = useResult(file);
+  const s = r?.summary as Record<string, unknown> | undefined;
+  const n = (k: string) => (typeof s?.[k] === "number" ? (s[k] as number) : null);
+  const name = typeof s?.metricName === "string" ? s.metricName : null;
+  const agree = n("agreementPct");
+  const med = n("medianLatencyMsPerCall");
+  return (
+    <div className="kpi drex">
+      <div className="lbl">{tier}{typeof s?.model === "string" ? ` · ${s.model}` : ""}</div>
+      <div className={`val ${agree === null ? "null" : ""}`}>{agree === null ? NOT_RUN : `${agree.toFixed(0)}%`}</div>
+      {name && <div className="note"><b>{name}</b></div>}
+      {typeof s?.caveat === "string" && <div className="note">{s.caveat}</div>}
+      {s && (
+        <div className="note mono">
+          {n("incidents") ?? "?"} incidents · {n("rules") ?? "?"} rules{med !== null ? ` · median ${ms(med)} per call` : ""}{n("drexCalls") !== null ? ` · ${n("drexCalls")} calls` : ""}{n("fallbacks") !== null ? ` · ${n("fallbacks")} fallbacks` : ""}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
   const cfg = useApi<ConfigLike>("/api/config").data;
@@ -61,6 +84,12 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
           <div className={`val ${ndi && ndi.calls > 0 ? "" : "null"}`}>{ndi && ndi.calls > 0 ? usd(ndi.costUsd) : NOT_RUN}</div>
           {ndi && ndi.calls > 0 && <div className="note mono">{ndi.counts.docs ?? 0} doc · {ndi.counts.pages ?? 0} pages</div>}
         </div>
+      </div>
+
+      <h2>Rule judge (Drex reading the conduct rules)</h2>
+      <div className="grid g2">
+        <JudgeCard file="rule_judge" tier="Tier 1" />
+        <JudgeCard file="rule_judge_drex-latest" tier="Tier 2" />
       </div>
 
       <h2>Game and field constants</h2>
@@ -111,7 +140,7 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
               {teams.teams.map((t) => (
                 <tr key={t.profile.id ?? t.profile.teamLabel}>
                   <td>{t.profile.teamLabel}</td>
-                  <td>{(t.classifiedArchetype ?? t.profile.archetype ?? "-").replaceAll("_", " ")}</td>
+                  <td>{(t.classifiedArchetype?.archetype ?? t.profile.archetype ?? "-").replaceAll("_", " ")}{t.classifiedArchetype ? ` (${Math.round(t.classifiedArchetype.confidence * 100)}%)` : ""}</td>
                   <td><RobotBadge team={t} /></td>
                 </tr>
               ))}

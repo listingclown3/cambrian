@@ -50,6 +50,21 @@ export interface ScenarioPayload {
 }
 export type { Headline, UsageSummary, Config, RunListing };
 
+export interface ResultView {
+  isMock?: boolean;
+  config?: Record<string, unknown>;
+  summary?: Record<string, unknown>;
+}
+/** One results file by name (results/<name>.json); data is null while loading or when the file does not exist. */
+export function useResult(name: string): ResultView | null {
+  return useApi<ResultView>(`/api/results/${name}`).data;
+}
+
+/** "Qwen/Qwen3.5-397B-A17B · reasoning off" style label for the giant; null while unknown. */
+export function giantLabel(model: string | null | undefined, reasoning = "off"): string {
+  return `${model ?? "giant model not resolved yet"} · reasoning ${reasoning}`;
+}
+
 export const ms = (v: number): string => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)} s` : `${Math.round(v)} ms`);
 export const usd = (v: number): string => (v >= 1 ? `$${v.toFixed(2)}` : v >= 0.01 ? `$${v.toFixed(3)}` : `$${v.toFixed(4)}`);
 export const signed = (v: number, d = 1): string => `${v > 0 ? "+" : v < 0 ? "-" : ""}${Math.abs(v).toFixed(d)}`;

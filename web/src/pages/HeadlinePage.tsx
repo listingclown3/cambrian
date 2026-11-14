@@ -1,7 +1,7 @@
 /** HEADLINE + BUILT WITH page (owner: P4). Numbers come from results/headline.json and the usage ledger; null = "not run yet". */
 import { useEffect } from "react";
 import type { Flags } from "../App";
-import { NOT_RUN, ms, pct, signed, usd, useApi, type UsageSummary } from "../lib";
+import { NOT_RUN, giantLabel, ms, pct, signed, usd, useApi, useResult, type UsageSummary } from "../lib";
 
 type Raw = { isMock?: boolean; summary: Record<string, number | boolean | null | undefined> };
 interface Spec {
@@ -108,6 +108,90 @@ const TOOLS: { id: "drex" | "intern" | "ndi" | "deepinfra" | "keenable"; name: s
   { id: "keenable", name: "Keenable", color: "#a8b4c4", what: "Web research: team binders, robot reveals, strategy write-ups.", unit: "requests", pick: (c) => c.counts.requests },
 ];
 
+const BATCH_SIZES: [number, string][] = [[1, "match size"], [3, "match size"], [8, "stress size"], [32, "stress size"]];
+
+/** Batched decisions: ms of call time per decision when N questions about one state go in one call. */
+function BatchedBlock({ raw }: { raw: Raw["summary"] }) {
+  const val = (n: number, who: "drex" | "giant") => {
+    const v = raw[`batch${n}_ms_per_decision_${who}`];
+    return typeof v === "number" ? v : null;
+  };
+  const max = Math.max(1, ...BATCH_SIZES.flatMap(([n]) => [val(n, "drex"), val(n, "giant")]).filter((v): v is number => v !== null));
+  return (
+    <section>
+      <h2>Batched decisions (all robots at one moment)</h2>
+      <p className="sub" style={{ marginTop: "-0.4rem" }}>Milliseconds of call time per decision when N questions about one state are answered in one call.</p>
+      <div className="card">
+        {BATCH_SIZES.map(([n, kind]) => (
+          <div key={n} style={{ display: "grid", gridTemplateColumns: "12rem 1fr", gap: "1rem", padding: "0.4rem 0" }}>
+            <div><b>{n} {n === 1 ? "question" : "questions"}</b><div className="hint">{kind}</div></div>
+            <div>
+              {(["drex", "giant"] as const).map((who) => {
+                const v = val(n, who);
+                return (
+                  <div key={who} className={`rbar ${who}`} style={{ gridTemplateColumns: "6rem 1fr 7rem" }}>
+                    <span className="lbl acc">{who === "drex" ? "Drex" : "The giant"}</span>
+                    <span className="track"><span className="fill" style={{ width: v === null ? "0%" : `${(v / max) * 100}%` }} /></span>
+                    <span className="mono">{v === null ? NOT_RUN : ms(v)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Fallback counts per decider, shown only where a results file actually reports them. */
+function FallbackBlock() {
+  const files = [useResult("bench_scenarios"), useResult("bench_live"), useResult("bench_batch")];
+  const names = ["bench_scenarios", "bench_live", "bench_batch"];
+  const rows = files.flatMap((r, i) =>
+    Object.entries(r?.summary ?? {})
+      .filter(([k, v]) => /fallback/i.test(k) && (typeof v === "number" || (typeof v === "object" && v !== null)))
+      .map(([k, v]) => ({ file: names[i]!, key: k, value: typeof v === "number" ? String(v) : JSON.stringify(v) })),
+  );
+  if (rows.length === 0) return null;
+  return (
+    <section>
+      <h2>Fallbacks per decider</h2>
+      <div className="card scroll">
+        <table>
+          <thead><tr><th>Results file</th><th>Counter</th><th>Value</th></tr></thead>
+          <tbody>{rows.map((r) => <tr key={r.file + r.key}><td className="mono">{r.file}</td><td>{r.key.replaceAll("_", " ")}</td><td className="mono">{r.value}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+/** Which giant: exact model id when a results file reports it, else the first-choice id; reasoning mode always shown. */
+function GiantIdentity() {
+  const giant = useApi<{ fixedModel: string | null; firstChoice: string | null; reasoning: string }>("/api/giant").data;
+  const bench = useResult("bench_scenarios");
+  const pick = (o: Record<string, unknown> | undefined) => [o?.giantModel, o?.deepinfraModel, (o?.models as Record<string, unknown> | undefined)?.deepinfra, o?.giant_model].find((v): v is string => typeof v === "string");
+  const used = pick(bench?.config) ?? pick(bench?.summary);
+  const s = (bench?.summary ?? {}) as Record<string, unknown>;
+  const on = [s.giantReasoningOn, s.giant_reasoning_on, s.reasoningOn].find((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
+  return (
+    <div className="card giant" style={{ marginBottom: "1rem", borderTop: "3px solid var(--acc)" }}>
+      <b className="acc">The giant: </b>
+      <span className="mono">{used ? giantLabel(used) : giantLabel(giant?.fixedModel ?? giant?.firstChoice, giant?.reasoning ?? "off")}</span>
+      <span className="hint">
+        {used ? " (model reported by the benchmark results)" : " (first-choice model; each run manifest records the exact id used)"}. The main comparison is reasoning off, the giant at its fastest.
+      </span>
+      {on && (
+        <div style={{ marginTop: "0.5rem" }}>
+          <b>Separate row, never blended: giant with reasoning ON (fixed 8-scenario subset)</b>
+          <div className="mono">{Object.entries(on).map(([k, v]) => `${k.replaceAll("_", " ")}: ${typeof v === "number" ? Number(v.toFixed(3)) : String(v)}`).join(" · ")}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
   const head = useApi<Raw>("/api/results/headline");
   const usage = useApi<UsageSummary>("/api/usage");
@@ -125,6 +209,7 @@ export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
         {raw.all_real === true ? " All numbers come from real provider calls." : " Real-call status: not fully determined yet."}
       </p>
       {head.error && <div className="empty">headline unavailable: {head.error}</div>}
+      <GiantIdentity />
       {SECTIONS.map((sec) => (
         <section key={sec.title}>
           <h2>{sec.title}</h2>
@@ -144,7 +229,8 @@ export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
             )}
           </div>
         </section>
-      ))}
+      )).flatMap((el, i) => (SECTIONS[i]!.title.startsWith("2.") ? [el, <BatchedBlock key="batched" raw={raw} />] : [el]))}
+      <FallbackBlock />
 
       <h2>Built with: live tool usage</h2>
       <p className="sub" style={{ marginTop: "-0.4rem" }}>Counted from the usage ledger: real external calls only, mock and cached calls excluded.</p>
