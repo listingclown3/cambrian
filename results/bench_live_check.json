@@ -1,8 +1,8 @@
 {
   "experiment": "bench_live_check",
-  "createdTs": "2026-11-14T22:07:15.728Z",
+  "createdTs": "2026-11-14T22:11:07.484Z",
   "isMock": false,
-  "gitCommit": "81e1660737cf",
+  "gitCommit": "b46fbfdcbb7a",
   "simHash": "73ee0c8a610a44cc",
   "config": {
     "mode": "decider proposes, simulator checks (pnpm match:agent --check rollouts): candidates are the decider's pick, the scripted role pick and, when the decider reports probabilities, its second pick; each scored with micro-rollouts; ties keep the decider's pick",
@@ -22,7 +22,7 @@
     "seedSet": "eval",
     "fairnessRules": "commitment, no-idle and anti-loop rules on, identical for every decider",
     "control": "random = uniform random proposer with the same check",
-    "complete": false
+    "complete": true
   },
   "rows": [
     {
@@ -530,6 +530,52 @@
       "meanMarginGain": 2.3,
       "checkP50Ms": 293,
       "wallS": 82.5
+    },
+    {
+      "decider": "deepinfra",
+      "seed": 9007,
+      "blue": 457,
+      "red": 403,
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "robotDecisions": 137,
+      "fallbacks": 0,
+      "chargedS": 95.85,
+      "latencyP50Ms": 611,
+      "costUsd": 0.07,
+      "fastFailed": 15,
+      "completedCycles": 1,
+      "idleRobotS": 63.8,
+      "roleContinuationRobotS": 27.1,
+      "checked": 137,
+      "acceptRatePct": 69,
+      "replacedByScripted": 42,
+      "replacedBySecondPick": 0,
+      "meanMarginGain": 0.94,
+      "checkP50Ms": 186,
+      "wallS": 96.2
+    },
+    {
+      "decider": "deepinfra",
+      "seed": 9008,
+      "blue": 447,
+      "red": 414,
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "robotDecisions": 124,
+      "fallbacks": 0,
+      "chargedS": 134.46,
+      "latencyP50Ms": 545,
+      "costUsd": 0.0621,
+      "fastFailed": 16,
+      "completedCycles": 3,
+      "idleRobotS": 79.1,
+      "roleContinuationRobotS": 69.2,
+      "checked": 124,
+      "acceptRatePct": 74,
+      "replacedByScripted": 32,
+      "replacedBySecondPick": 0,
+      "meanMarginGain": 0.94,
+      "checkP50Ms": 446,
+      "wallS": 135.3
     }
   ],
   "summary": {
@@ -582,40 +628,40 @@
       "deepinfra_check_realtime": {
         "model": "Qwen/Qwen3.5-397B-A17B",
         "margin": {
-          "n": 6,
-          "mean": 35.8,
-          "ci95": 55.3
+          "n": 8,
+          "mean": 37.8,
+          "ci95": 40.7
         },
         "marginMinusScriptedReference": {
-          "n": 6,
-          "mean": -17.8,
-          "ci95": 59.5
+          "n": 8,
+          "mean": -11.8,
+          "ci95": 44.3
         },
         "acceptRatePct": {
-          "n": 6,
-          "mean": 76.7,
-          "ci95": 1.1
+          "n": 8,
+          "mean": 75.4,
+          "ci95": 2.1
         },
         "checkP50Ms": {
-          "n": 6,
-          "mean": 205.8,
-          "ci95": 39.5
+          "n": 8,
+          "mean": 233.4,
+          "ci95": 66.4
         },
         "chargedS": {
-          "n": 6,
-          "mean": 107.6,
-          "ci95": 8.8
+          "n": 8,
+          "mean": 109.5,
+          "ci95": 9.9
         },
         "robotDecisions": {
-          "n": 6,
-          "mean": 134.8,
-          "ci95": 7.2
+          "n": 8,
+          "mean": 133.8,
+          "ci95": 5.9
         },
         "fallbacksTotal": 0,
         "wallS": {
-          "n": 6,
-          "mean": 108.1,
-          "ci95": 9
+          "n": 8,
+          "mean": 110,
+          "ci95": 10.1
         },
         "excluded": []
       },
@@ -662,9 +708,9 @@
     },
     "paired": {
       "drex_minus_giant": {
-        "n": 6,
-        "mean": 75.2,
-        "ci95": 71.6
+        "n": 8,
+        "mean": 85.1,
+        "ci95": 55.6
       },
       "drex_minus_random": {
         "n": 8,
@@ -672,9 +718,9 @@
         "ci95": 44.4
       },
       "giant_minus_random": {
-        "n": 6,
-        "mean": -37.8,
-        "ci95": 68.5
+        "n": 8,
+        "mean": -29.9,
+        "ci95": 52.7
       }
     }
   }

@@ -1,4 +1,4 @@
-deck numbers, generated 2026-11-14T22:07:19.353Z (git 81e1660737cf-dirty)
+deck numbers, generated 2026-11-14T22:11:24.444Z (git 81e1660737cf-dirty)
 format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
 giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 
@@ -24,14 +24,14 @@ real-time sim margin, Drex ALONE (thinking time on the sim clock) | -288.3 ± 15
 real-time sim margin, giant ALONE (thinking time on the sim clock) | -226.6 ± 151 (n 10 seeds); vs scripted reference -141.3 ± 129.5; fallbacks 0 | FINAL | results/bench_live.json conditions.deepinfra_realtime
 decider ALONE, paired Drex minus giant (real-time) | -61.7 ± 71.6 (n 10 seeds): not significant | FINAL | bench_live paired_drex_minus_giant.realtime
 robot decisions per match with the rules on, Drex vs giant (decider alone, real-time) | 177 vs 157 | FINAL | bench_live conditions.*.mean_robot_decisions_per_match
-scripted reference margin on the same eval seeds (scripted both sides) | +49.5 ± 25.5 (n 8 seeds) | PARTIAL RUN (still playing) | results/bench_live_check.json
-real-time sim margin, Drex + SIMULATOR CHECK | +122.9 ± 49.2 (n 8 seeds); vs scripted reference +73.4 ± 63.4 (n 8 seeds); decider's pick kept 59%; fallbacks 2 | PARTIAL RUN (still playing) | bench_live_check conditions.drex_check_realtime
-real-time sim margin, giant + SIMULATOR CHECK | +35.8 ± 55.3 (n 6 seeds); vs scripted reference -17.8 ± 59.5 (n 6 seeds); decider's pick kept 77%; fallbacks 0 | PARTIAL RUN (still playing) | bench_live_check conditions.deepinfra_check_realtime
-real-time sim margin, random proposer (control) + SIMULATOR CHECK | +67.6 ± 26.2 (n 8 seeds); vs scripted reference +18.1 ± 37.1 (n 8 seeds); decider's pick kept 51%; fallbacks 0 | PARTIAL RUN (still playing) | bench_live_check conditions.random_check_realtime
-check mode, paired Drex minus giant | +75.2 ± 71.6 (n 6 seeds) | PARTIAL RUN (still playing) | bench_live_check paired.drex_minus_giant
-check mode, paired Drex minus random-proposer control | +55.3 ± 44.4 (n 8 seeds) | PARTIAL RUN (still playing) | bench_live_check paired.drex_minus_random
+scripted reference margin on the same eval seeds (scripted both sides) | +49.5 ± 25.5 (n 8 seeds) | FINAL | results/bench_live_check.json
+real-time sim margin, Drex + SIMULATOR CHECK | +122.9 ± 49.2 (n 8 seeds); vs scripted reference +73.4 ± 63.4 (n 8 seeds); decider's pick kept 59%; fallbacks 2 | FINAL | bench_live_check conditions.drex_check_realtime
+real-time sim margin, giant + SIMULATOR CHECK | +37.8 ± 40.7 (n 8 seeds); vs scripted reference -11.8 ± 44.3 (n 8 seeds); decider's pick kept 75%; fallbacks 0 | FINAL | bench_live_check conditions.deepinfra_check_realtime
+real-time sim margin, random proposer (control) + SIMULATOR CHECK | +67.6 ± 26.2 (n 8 seeds); vs scripted reference +18.1 ± 37.1 (n 8 seeds); decider's pick kept 51%; fallbacks 0 | FINAL | bench_live_check conditions.random_check_realtime
+check mode, paired Drex minus giant | +85.1 ± 55.6 (n 8 seeds) | FINAL | bench_live_check paired.drex_minus_giant
+check mode, paired Drex minus random-proposer control | +55.3 ± 44.4 (n 8 seeds) | FINAL | bench_live_check paired.drex_minus_random
 Drex robot decisions per match, BEFORE the fairness rules (dev seeds, rules off) | one paused dev match reached 1,372 decisions, 1,001 of them the same instantly-ending option (realtime: 279 and 239) | FINAL | results/bench_live_drex_dev.json
-Drex robot decisions per match, AFTER (commitment + anti-loop rules; check mode, eval seeds) | 149 | PARTIAL RUN (still playing) | bench_live_check conditions.drex_check_realtime.robotDecisions
+Drex robot decisions per match, AFTER (commitment + anti-loop rules; check mode, eval seeds) | 149 | FINAL | bench_live_check conditions.drex_check_realtime.robotDecisions
 idle seconds per robot per match, scripted policy, before vs after the no-idle rule | 41.35 s vs 0.4 s | FINAL | results/idle_report.json
 sim matches per hour, Drex vs giant (decider alone, real-time; measured while other jobs were running) | 49 vs 39 | FINAL | bench_live conditions.*.sim_matches_per_hour
 single-call latency p50, Drex vs giant (sequential, clean) | 297 ms vs 701 ms (2.4x) | FINAL | drex_p50_ms, deepinfra_p50_ms

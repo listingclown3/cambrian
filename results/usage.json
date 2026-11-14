@@ -1,8 +1,8 @@
 {
   "experiment": "usage",
-  "createdTs": "2026-11-14T22:06:47.797Z",
+  "createdTs": "2026-11-14T22:11:22.085Z",
   "isMock": false,
-  "gitCommit": "81e1660737cf-dirty",
+  "gitCommit": "b46fbfdcbb7a-dirty",
   "simHash": "73ee0c8a610a44cc",
   "config": {
     "ledger": {
@@ -14,13 +14,13 @@
   "rows": [
     {
       "tool": "drex",
-      "calls": 19297,
-      "inputTokens": 19230748,
-      "outputTokens": 7510897,
-      "costUsd": 0.5769224400000005,
-      "latencyMs": 6064951.552100047,
+      "calls": 19345,
+      "inputTokens": 19279371,
+      "outputTokens": 7521105,
+      "costUsd": 0.5783811300000008,
+      "latencyMs": 6075913.156200046,
       "counts": {
-        "questions": 26179
+        "questions": 26239
       },
       "byPurpose": {
         "key_check": 1,
@@ -29,7 +29,7 @@
         "archetype_classification": 36,
         "rule_judge": 56,
         "smoke": 170,
-        "agent_match": 4257,
+        "agent_match": 4305,
         "agent_match_failed": 3047,
         "decision_failed": 330,
         "decision": 196,
@@ -87,16 +87,16 @@
     },
     {
       "tool": "deepinfra",
-      "calls": 10040,
-      "inputTokens": 13197459,
-      "outputTokens": 247919,
-      "costUsd": 6.4664503504699145,
-      "latencyMs": 9515098.242599994,
+      "calls": 10333,
+      "inputTokens": 13494415,
+      "outputTokens": 252649,
+      "costUsd": 6.614270550469914,
+      "latencyMs": 9709152.845599988,
       "counts": {},
       "byPurpose": {
         "key_check": 4,
         "smoke": 72,
-        "agent_match": 1588,
+        "agent_match": 1881,
         "bench_scenarios": 58,
         "bench_live": 8012,
         "bench_batch": 296,
@@ -132,18 +132,18 @@
     }
   ],
   "summary": {
-    "generatedTs": "2026-11-14T22:06:47.797Z",
-    "totalCalls": 29509,
-    "totalCostUsd": 15.058948740470093,
+    "generatedTs": "2026-11-14T22:11:22.085Z",
+    "totalCalls": 29850,
+    "totalCostUsd": 15.208227630470095,
     "byTool": {
       "drex": {
-        "calls": 19297,
-        "inputTokens": 19230748,
-        "outputTokens": 7510897,
-        "costUsd": 0.5769224400000005,
-        "latencyMs": 6064951.552100047,
+        "calls": 19345,
+        "inputTokens": 19279371,
+        "outputTokens": 7521105,
+        "costUsd": 0.5783811300000008,
+        "latencyMs": 6075913.156200046,
         "counts": {
-          "questions": 26179
+          "questions": 26239
         },
         "byPurpose": {
           "key_check": 1,
@@ -152,7 +152,7 @@
           "archetype_classification": 36,
           "rule_judge": 56,
           "smoke": 170,
-          "agent_match": 4257,
+          "agent_match": 4305,
           "agent_match_failed": 3047,
           "decision_failed": 330,
           "decision": 196,
@@ -207,16 +207,16 @@
         }
       },
       "deepinfra": {
-        "calls": 10040,
-        "inputTokens": 13197459,
-        "outputTokens": 247919,
-        "costUsd": 6.4664503504699145,
-        "latencyMs": 9515098.242599994,
+        "calls": 10333,
+        "inputTokens": 13494415,
+        "outputTokens": 252649,
+        "costUsd": 6.614270550469914,
+        "latencyMs": 9709152.845599988,
         "counts": {},
         "byPurpose": {
           "key_check": 4,
           "smoke": 72,
-          "agent_match": 1588,
+          "agent_match": 1881,
           "bench_scenarios": 58,
           "bench_live": 8012,
           "bench_batch": 296,
