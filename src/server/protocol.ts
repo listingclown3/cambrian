@@ -2,7 +2,24 @@
  * WebSocket protocol between the server and the web client (owner: P4, both ends).
  * Types only: this file is imported by the browser bundle.
  */
-import type { EngineEvent, Intent, MatchState, RobotId } from "../contracts";
+import type { Alliance, EngineEvent, FieldLayout, FuelPile, HubState, Intent, MatchRules, MatchState, Pose, RobotId, RobotProfile, TrackedBall } from "../contracts";
+
+/** Everything about a match that never changes; sent once in hello so frames stay small. */
+export interface SlimStatic {
+  field: FieldLayout;
+  rules: MatchRules;
+  robots: { id: RobotId; alliance: Alliance; profile: RobotProfile }[];
+}
+/** The per-frame dynamic part of a match: a few KB instead of the full MatchState. */
+export interface SlimFrame {
+  timeS: number;
+  phase: MatchState["phase"];
+  shiftIndex: number;
+  hubs: Record<Alliance, HubState>;
+  score: Record<Alliance, number>;
+  robots: { id: RobotId; pose: Pose; fuelHeld: number }[];
+  fuel: { byZone: MatchState["fuel"]["byZone"]; piles: FuelPile[]; balls: TrackedBall[] };
+}
 
 /** One decision as shown in the ticker. Optional fields are present only when the data has them. */
 export interface DecisionNote {
@@ -15,6 +32,8 @@ export interface DecisionNote {
   latencyMs?: number;
   /** Probability per option label, only when a provider reported them. Never invented. */
   probabilities?: Record<string, number>;
+  /** The chosen option's own description from the logged request (never invented). */
+  why?: string;
   /** Provider and model that answered, when a provider was asked. */
   provider?: string;
   model?: string;
@@ -52,6 +71,8 @@ export type ServerMessage =
       chargedLatencyMs?: number;
       /** Honest one-line description of where latency numbers come from. */
       latencySource?: string;
+      /** Static match data for slim frames. */
+      statics?: SlimStatic;
       /** Provider-driven streams: "paused" or "realtime" latency charging. */
       timing?: "paused" | "realtime";
       /** Provider-driven streams: id of the run being logged to runs/. */
@@ -71,6 +92,14 @@ export type ServerMessage =
       /** Robots whose decision is still "thinking" (their old intent keeps running). */
       thinking?: { robotId: RobotId; untilS: number }[];
       /** Running totals for the top bar. */
+      stats?: { decisions: number; avgLatencyMs: number; chargedS: number };
+    }
+  | {
+      /** Slim per-frame update (used by /ws/match, /ws/agents and /ws/replay). */
+      type: "frame";
+      frame: SlimFrame;
+      decisions: DecisionNote[];
+      thinking?: { robotId: RobotId; untilS: number }[];
       stats?: { decisions: number; avgLatencyMs: number; chargedS: number };
     }
   | {

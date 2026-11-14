@@ -1,9 +1,9 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:18:21.146Z",
+  "createdTs": "2026-11-14T21:21:52.635Z",
   "isMock": false,
-  "gitCommit": "037ad7519c33-dirty",
-  "simHash": "e7daa7a2a621cf3c",
+  "gitCommit": "82a16b2b54fe-dirty",
+  "simHash": "007a2b25fa5e3cf0",
   "config": {
     "contributing": [
       {
@@ -31,10 +31,16 @@
         "gitCommit": "7238aec37b2e-dirty"
       },
       {
+        "file": "results/bench_batch.json",
+        "isMock": false,
+        "simHash": "d37a761231b8ce93",
+        "gitCommit": "572c6bbf0cfd-dirty"
+      },
+      {
         "file": "results/lab.json",
         "isMock": false,
-        "simHash": "b9508e9c7510f637",
-        "gitCommit": "a509f34d5ada-dirty"
+        "simHash": "007a2b25fa5e3cf0",
+        "gitCommit": "4f00def1ca00-dirty"
       }
     ],
     "simHashesConsistent": false,
@@ -359,12 +365,12 @@
     "drex_cost_per_1k_usd": 0.02281,
     "deepinfra_cost_per_1k_usd": 0.43648,
     "openai_cost_per_1k_usd": null,
-    "batch1_ms_per_decision_drex": null,
-    "batch1_ms_per_decision_giant": null,
-    "batch3_ms_per_decision_drex": null,
-    "batch3_ms_per_decision_giant": null,
-    "batch8_ms_per_decision_drex": null,
-    "batch8_ms_per_decision_giant": null,
+    "batch1_ms_per_decision_drex": 332.21230000000014,
+    "batch1_ms_per_decision_giant": 929.2746999999999,
+    "batch3_ms_per_decision_drex": 67.88526666666682,
+    "batch3_ms_per_decision_giant": 573.4521999999997,
+    "batch8_ms_per_decision_drex": 40.83751250000023,
+    "batch8_ms_per_decision_giant": 1362.28845,
     "batch32_ms_per_decision_drex": null,
     "batch32_ms_per_decision_giant": null,
     "top1_drex": 0.1,
@@ -391,15 +397,15 @@
     "matches_per_sec": 1.155,
     "sim_matches_per_hour_drex": 17.84,
     "sim_matches_per_hour_deepinfra": 17.05,
-    "usage_drex_questions": 6030,
-    "usage_ndi_docs": null,
-    "usage_ndi_pages": null,
-    "usage_intern_sessions": null,
-    "usage_intern_system1_judgments": null,
-    "usage_deepinfra_calls": 2893,
-    "usage_keenable_requests": null,
+    "usage_drex_questions": 16762,
+    "usage_ndi_docs": 90,
+    "usage_ndi_pages": 773,
+    "usage_intern_sessions": 5,
+    "usage_intern_system1_judgments": 110,
+    "usage_deepinfra_calls": 3659,
+    "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
-    "lab_proposals_beating_baseline": 1,
+    "lab_proposals_beating_baseline": 2,
     "keenable_pages": 58,
     "ndi_rules_verified_pct": 68,
     "all_real": true

@@ -18,6 +18,8 @@ import { listUnverified, repoPath } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { streamAgentMatch } from "./agentMatch";
 import { ChargedMatch } from "./chargedMatch";
+import { ReplaySim } from "./replaySim";
+import { slimFrame, slimStatic } from "./slim";
 import type { DecisionNote, ServerMessage } from "./protocol";
 import { listRuns, readRunEvents, runFile } from "./runs";
 
@@ -174,6 +176,7 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
       deciderAlliance: alliance,
       chargedLatencyMs: latencyMs,
       latencySource: "SIMULATED: scripted policy with a fixed charged latency; no provider is being called",
+      statics: slimStatic(match.state),
     });
     pump(socket, match, speed, cfg.physics.dtS, send);
   });
@@ -199,70 +202,26 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     socket.on("close", stop);
   });
 
-  // Replays a recorded run by re-simulating its seed and applying the logged intents. Query: ?source=&run=&speed=
+  // Replays a recorded run offline (see replaySim.ts). Query: ?source=&run=&speed=
   app.get("/ws/replay", { websocket: true }, (socket, req) => {
     const q = req.query as { source?: string; run?: string; speed?: string };
     const source = q.source === "runs" ? "runs" : "fixture";
     const file = runFile(q.run ?? "", source);
     const send = (m: ServerMessage) => socket.readyState === socket.OPEN && socket.send(JSON.stringify(m));
     if (!file) return void socket.close(1008, "no such run");
-    const events = readRunEvents(file);
-    const start = events.find((e) => e.type === "run_start");
-    if (!start || start.type !== "run_start") return void socket.close(1008, "run has no run_start");
-    const seed = start.manifest.seeds.eval[0] ?? start.manifest.seeds.dev[0] ?? 1;
-    // Logged matchTimeS is the sim time the intent was APPLIED (latency already charged). Replay is fully offline:
-    // it re-simulates from the seed with the run's own config and applies the logged intents; no provider is called.
-    const rcfg = start.manifest.config;
     const speed = Math.min(40, Math.max(1, Number.parseInt(q.speed ?? "", 10) || 6));
-    const decisions = events.flatMap((e) =>
-      e.type === "decision" && e.intent
-        ? [{ robotId: e.robotId, timeS: e.matchTimeS, intent: e.intent, label: e.chosenLabel ?? stepLabel(e.intent), latencyMs: e.meta.latencyMs, fallback: e.meta.fallbackUsed, provider: e.meta.provider, model: e.meta.model, isMock: e.meta.isMock, batch: `${e.matchTimeS}|${e.meta.latencyMs}|${e.request.seed}` }]
-        : [],
-    );
-    decisions.sort((a, b) => a.timeS - b.timeS);
-    const state = engine.createMatch(rcfg, seed, demoRobots(rcfg));
-    let next = 0;
-    let latSum = 0;
-    let count = 0;
-    let calls = 0;
-    const seenBatches = new Set<string>();
-    send({
-      type: "hello",
-      engineIsStub: ENGINE_IS_STUB,
-      isMock: start.manifest.isMock || source === "fixture",
-      seed,
-      speed,
-      source: "recorded",
-      decider: start.manifest.provider,
-      deciderAlliance: rcfg.server.demoDrexAlliance,
-      ...(start.manifest.model ? { model: start.manifest.model } : {}),
-      timing: rcfg.realtimeLatencyCharging.enabled ? "realtime" : "paused",
-      runId: q.run,
-    });
+    let sim: ReplaySim;
+    try {
+      sim = new ReplaySim(readRunEvents(file), { runId: q.run ?? "", isFixture: source === "fixture", speed, engineIsStub: ENGINE_IS_STUB });
+    } catch (e) {
+      return void socket.close(1008, e instanceof Error ? e.message.slice(0, 100) : "bad run");
+    }
+    send(sim.hello);
+    const ticks = Math.max(1, Math.round((speed * 50) / 1000 / cfg.physics.dtS));
+    // one bounded slice per timer callback; the event loop is free in between
     const timer = setInterval(() => {
-      const ev: EngineEvent[] = [];
-      const dec: DecisionNote[] = [];
-      const ticks = Math.max(1, Math.round((speed * 50) / 1000 / rcfg.physics.dtS));
-      for (let i = 0; i < ticks && state.phase !== "finished"; i++) {
-        const intents: Record<string, DecisionNote["intent"]> = {};
-        while (next < decisions.length && decisions[next]!.timeS <= state.timeS + 1e-9) {
-          const { batch, ...d } = decisions[next++]!;
-          intents[d.robotId] = d.intent;
-          dec.push(d);
-          count += 1;
-          if (!seenBatches.has(batch)) {
-            seenBatches.add(batch);
-            latSum += d.latencyMs ?? 0; // robots answered by one batched request share one latency
-            calls += 1;
-          }
-        }
-        ev.push(...engine.step(state, intents, rcfg.physics.dtS).events);
-      }
-      send({ type: "tick", state, events: ev, decisions: dec, stats: { decisions: count, avgLatencyMs: calls ? latSum / calls : 0, chargedS: rcfg.realtimeLatencyCharging.enabled ? (latSum * rcfg.realtimeLatencyCharging.latencyScale) / 1000 : 0 } });
-      if (state.phase === "finished") {
-        clearInterval(timer);
-        send({ type: "end", score: { red: state.score.red.total, blue: state.score.blue.total } });
-      }
+      for (const m of sim.frame(ticks)) send(m);
+      if (sim.finished) clearInterval(timer);
     }, 50);
     socket.on("close", () => clearInterval(timer));
   });
@@ -286,9 +245,8 @@ function pump(socket: { on(ev: "close", cb: () => void): unknown }, match: Charg
       decisions.push(...t.decisions);
     }
     send({
-      type: "tick",
-      state: match.state,
-      events,
+      type: "frame",
+      frame: slimFrame(match.state),
       decisions,
       thinking: match.thinking(),
       stats: { decisions: match.decisionsMade, avgLatencyMs: match.decisionsMade ? match.latencySumMs / match.decisionsMade : 0, chargedS: match.chargedS },
