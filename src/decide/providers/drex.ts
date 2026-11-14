@@ -16,7 +16,7 @@
 import { costFromConfig } from "../../ledger";
 import type { Answer, Config, DecisionProvider, DecisionRequest, DecisionResponse, Question } from "../../contracts";
 import { defaultAnswer, fallbackResponse } from "./shared";
-import { authHeaders, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
+import { authHeaders, estimateCostUsd, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
 
 export interface DrexOptions extends ProviderDeps {
   /** Drex model id to request (default: cfg.providers.byId.drex.model). */
@@ -98,12 +98,13 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
     const started = performance.now();
     const key = env[p.apiKeyEnv ?? ""];
     if (!p.endpoint || !key) return fallbackResponse(req, "drex", model, started, `${p.apiKeyEnv ?? "drex api key"} is not set`);
-    const blocked = spendCapBlock(cfg, "drex");
+    const body = drexBody(model, req);
+    const blocked = spendCapBlock(cfg, "drex", estimateCostUsd(cfg, "drex", model, JSON.stringify(body).length, 0));
     if (blocked) return fallbackResponse(req, "drex", model, started, blocked);
 
     let json: any;
     try {
-      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body: drexBody(model, req) }, { timeoutMs: p.timeoutMs, retries: retriesFor(p, req.mode), deps: opts }));
+      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs: p.timeoutMs, retries: retriesFor(p, req.mode), deps: opts }));
     } catch (e) {
       // The request was sent, so it may have been billed: record it (tokens unknown = 0).
       recordRealCall(cfg, "drex", opts, { tool: "drex", model, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });

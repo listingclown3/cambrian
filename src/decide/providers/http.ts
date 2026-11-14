@@ -164,14 +164,26 @@ export function resetSpend(): void {
   spent.clear();
 }
 
-/** Null when a call may proceed; otherwise the reason it would exceed a spend cap. */
-export function spendCapBlock(cfg: Config, id: ProviderId): string | null {
+/**
+ * Null when a call may proceed; otherwise the reason it would exceed a spend cap.
+ * `estimateUsd` is the expected cost of the call about to be made, so a run stops BEFORE a call
+ * would take it over the cap rather than after.
+ */
+export function spendCapBlock(cfg: Config, id: ProviderId, estimateUsd = 0): string | null {
   const cap = cfg.spendCapsUsd.perProviderPerRun[id];
   const mine = spent.get(id) ?? 0;
-  if (cap !== undefined && mine >= cap) return `spend cap reached for ${id}: $${mine.toFixed(4)} of $${cap}`;
+  if (cap !== undefined && mine + estimateUsd > cap) return `spend cap for ${id}: $${mine.toFixed(4)} spent of $${cap}, the next call would exceed it`;
   const total = spendSoFar().total;
-  if (total >= cfg.spendCapsUsd.totalPerRun) return `total spend cap reached: $${total.toFixed(4)} of $${cfg.spendCapsUsd.totalPerRun}`;
+  if (total + estimateUsd > cfg.spendCapsUsd.totalPerRun) return `total spend cap: $${total.toFixed(4)} spent of $${cfg.spendCapsUsd.totalPerRun}, the next call would exceed it`;
   return null;
+}
+
+/** Rough cost of a call before it is made: about 3.5 characters per input token. */
+export function estimateCostUsd(cfg: Config, id: ProviderId, model: string | null, inputChars: number, outputTokens: number): number {
+  const prices = cfg.pricesPerMTokUsd;
+  const price = (model !== null ? prices.byModel[model] : undefined) ?? prices.byId[id];
+  if (!price || price.input === null || price.output === null) return 0;
+  return ((inputChars / 3.5) * price.input + outputTokens * price.output) / 1_000_000;
 }
 
 /** Record one real call in the ledger (through deps.record when given) and add its spend. */

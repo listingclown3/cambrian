@@ -101,6 +101,14 @@ describe("drex provider", () => {
     const r2 = await drexProvider(cfg, capped).decide(request);
     expect(r2.meta.error).toMatch(/spend cap/);
     expect(capped.requests).toHaveLength(0);
+
+    // stops BEFORE a call would cross the cap, not after
+    resetSpend();
+    addSpend("deepinfra", cfg.spendCapsUsd.perProviderPerRun.deepinfra! - 1e-9);
+    const almost = fakeDeps({});
+    const r3 = await deepinfraProvider(cfg, almost).decide(request);
+    expect(r3.meta.error).toMatch(/would exceed/);
+    expect(almost.requests.filter((r) => r.url.includes("chat"))).toHaveLength(0);
   });
 });
 
