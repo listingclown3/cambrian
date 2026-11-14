@@ -35,7 +35,10 @@
             "level": 3
           }
         }
-      }
+      },
+      "predicateSummary": "matchRemainingS <= 30 AND both hubs active AND fuelHeld >= 6 AND own alliance zone AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 11 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
     },
     {
       "id": "inactive_shift_depot_gather",
@@ -56,7 +59,10 @@
           "action": "hold_fire_until_active",
           "params": {}
         }
-      }
+      },
+      "predicateSummary": "our hub inactive AND timeToShiftS >= 5 AND fuelHeld <= 2 AND within 1.5 m of own depot (the depot is a point, so 'in the depot zone' is read as that radius) AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
     },
     {
       "id": "trench_shoot_on_move_refill",
@@ -79,7 +85,10 @@
             "source": "local"
           }
         }
-      }
+      },
+      "predicateSummary": "our hub active AND timeToShiftS >= 10 AND fuelHeld >= 4 AND in own alliance zone or neutral zone AND no contact",
+      "simulated": true,
+      "simulationNote": ""
     },
     {
       "id": "spin_out_then_shadow_defend",
@@ -105,7 +114,10 @@
       "role": {
         "role": "defender",
         "target": "R1"
-      }
+      },
+      "predicateSummary": "in contact with an opposing robot for >= 2 s (the id 'R1' in the text is a placeholder: read as whichever opponent is in contact, and the defend step targets that robot) AND our hub active AND timeToShiftS >= 15 AND fuelHeld >= 3",
+      "simulated": true,
+      "simulationNote": ""
     },
     {
       "id": "late_climb_level2_not_cycle",
@@ -122,7 +134,10 @@
         "params": {
           "level": 2
         }
-      }
+      },
+      "predicateSummary": "10 <= matchRemainingS <= 30 AND fuelHeld <= 2 AND own alliance zone AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
     }
   ]
 }
