@@ -34,6 +34,12 @@ describe("server", () => {
     expect(providers.find((p) => p.id === "drex")?.implemented).toBe(false);
   });
 
+  it("serves usage totals for every tool", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/usage" });
+    expect(res.statusCode).toBe(200);
+    expect(Object.keys(res.json().byTool).sort()).toEqual(["deepinfra", "drex", "intern", "keenable", "ndi", "openai"]);
+  });
+
   it("guards admin routes with ADMIN_TOKEN", async () => {
     const before = process.env.ADMIN_TOKEN;
     process.env.ADMIN_TOKEN = "";

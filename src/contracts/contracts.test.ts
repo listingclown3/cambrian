@@ -251,15 +251,20 @@ describe("config", () => {
 describe("results, events, providers", () => {
   it("has exactly the headline keys", () => {
     expect(HEADLINE_KEYS).toEqual([
-      "drex_p50_ms", "drex_p95_ms", "claude_p50_ms", "openai_p50_ms", "latency_ratio_claude_over_drex", "latency_ratio_openai_over_drex",
-      "drex_cost_per_1k_usd", "claude_cost_per_1k_usd", "openai_cost_per_1k_usd",
-      "top1_drex", "top1_claude", "top1_openai", "top1_scripted", "top1_random",
-      "regret_drex", "regret_claude", "regret_openai", "regret_scripted", "regret_random",
-      "context_sensitivity_drex", "context_sensitivity_claude", "context_sensitivity_openai", "top1_drex_anonymized",
-      "rollouts_to_best_drex", "rollouts_to_best_uniform", "rollouts_to_best_claude", "rollout_savings_pct_drex_vs_uniform",
-      "live_margin_drex_realtime", "live_margin_claude_realtime", "live_margin_drex_paused", "live_margin_claude_paused",
-      "n_scenarios", "n_families", "n_live_seeds", "matches_per_sec", "all_real",
+      "live_margin_drex_realtime", "live_margin_deepinfra_realtime", "live_margin_drex_paused", "live_margin_deepinfra_paused",
+      "drex_p50_ms", "drex_p95_ms", "deepinfra_p50_ms", "openai_p50_ms", "latency_ratio_deepinfra_over_drex", "latency_ratio_openai_over_drex",
+      "drex_cost_per_1k_usd", "deepinfra_cost_per_1k_usd", "openai_cost_per_1k_usd",
+      "top1_drex", "top1_deepinfra", "top1_openai", "top1_scripted", "top1_random",
+      "regret_drex", "regret_deepinfra", "regret_openai", "regret_scripted", "regret_random",
+      "context_sensitivity_drex", "context_sensitivity_deepinfra", "context_sensitivity_openai", "top1_drex_anonymized",
+      "rollouts_to_best_drex", "rollouts_to_best_uniform", "rollouts_to_best_deepinfra", "rollout_savings_pct_drex_vs_uniform",
+      "n_scenarios", "n_families", "n_live_seeds", "matches_per_sec",
+      "usage_drex_questions", "usage_ndi_docs", "usage_ndi_pages", "usage_intern_sessions", "usage_intern_system1_judgments",
+      "usage_deepinfra_calls", "usage_keenable_requests",
+      "lab_proposals_total", "lab_proposals_beating_baseline", "keenable_pages", "ndi_rules_verified_pct",
+      "all_real",
     ]);
+    expect(HEADLINE_KEYS.some((k) => k.includes("claude"))).toBe(false);
     const empty = emptyHeadline();
     expect(Object.values(empty).every((v) => v === null)).toBe(true);
     expect(HeadlineSchema.safeParse(empty).success).toBe(true);
@@ -267,7 +272,9 @@ describe("results, events, providers", () => {
   });
 
   it("has exactly the provider ids", () => {
-    expect([...PROVIDER_IDS]).toEqual(["drex", "drex_mock", "claude", "openai", "gemini", "scripted", "random"]);
+    expect([...PROVIDER_IDS]).toEqual(["drex", "drex_mock", "deepinfra", "openai", "gemini", "scripted", "random"]);
+    expect(cfg.providers.byId.deepinfra.modelPreference?.length).toBeGreaterThan(0);
+    expect(cfg.research.maxRequests).toBe(300);
   });
 
   it("has exactly the engine event kinds and run event types", () => {

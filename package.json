@@ -2,7 +2,7 @@
   "name": "cambrian-frc",
   "private": true,
   "version": "0.0.0",
-  "description": "FRC REBUILT 2026 strategy simulator: Drex (Nace AI) vs frontier LLMs. Nace AI Hackathon, Apex track.",
+  "description": "FRC REBUILT 2026 strategy simulator: System 1 (Drex) vs System 2 (a large LLM on DeepInfra). Nace AI Hackathon, Apex track.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -16,6 +16,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json",
     "smoke:drex": "tsx src/decide/smoke.ts",
+    "keys": "tsx src/util/keycheck.ts",
     "league": "tsx src/bench/league.ts",
     "matches": "tsx src/bench/matches.ts",
     "mine": "tsx src/bench/mine.ts",
@@ -24,9 +25,12 @@
     "bench:scenarios": "tsx src/bench/benchScenarios.ts",
     "bench:explore": "tsx src/bench/benchExplore.ts",
     "bench:live": "tsx src/bench/benchLive.ts",
-    "bench:scout": "tsx src/bench/benchScout.ts",
-    "bench:postmatch": "tsx src/bench/benchPostmatch.ts",
-    "headline": "tsx src/bench/headline.ts"
+    "lab": "tsx src/lab/lab.ts",
+    "headline": "tsx src/bench/headline.ts",
+    "research": "tsx src/research/research.ts",
+    "ingest": "tsx src/ingest/ingest.ts",
+    "usage": "tsx src/ledger/cli.ts",
+    "prepush": "node scripts/prepush.mjs"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
@@ -54,5 +58,6 @@
     "vite": "^8.3.8",
     "vitest": "^5.1.0"
   },
-  "packageManager": "pnpm@12.18.0"
+  "packageManager": "pnpm@12.18.0",
+  "license": "MIT"
 }

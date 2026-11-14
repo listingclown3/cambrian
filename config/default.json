@@ -594,7 +594,7 @@
   },
   "providers": {
     "_status": "TUNABLE",
-    "_note": "Connection settings per provider. API keys come from .env, never from here. Models starting with TODO_ must be set by a human. Drex endpoint and auth are from console.nace.ai/docs/drex (drex-latest currently points at drex-max-v1.1).",
+    "_note": "Connection settings per provider. API keys come from .env, never from here. Models starting with TODO_ must be set by a human. drex = System 1; endpoint and auth are from console.nace.ai/docs/drex (drex-latest currently points at drex-max-v1.1; verify the model id in the console). deepinfra = System 2, OpenAI-compatible chat completions; model null means: list modelsEndpoint at startup and take the first available id in modelPreference (ids below were present in the public model list on 2026-11-14). openai and gemini are optional secondary baselines.",
     "byId": {
       "drex": {
         "endpoint": "https://console.nace.ai/v1/systemone",
@@ -618,16 +618,26 @@
         "timeoutMs": 1000,
         "retries": 0
       },
-      "claude": {
-        "endpoint": "https://api.anthropic.com/v1/messages",
-        "model": "claude-fable-5-2",
-        "authHeader": "x-api-key",
-        "authScheme": null,
-        "apiKeyEnv": "ANTHROPIC_API_KEY",
-        "extraHeaders": { "anthropic-version": "2023-06-01" },
+      "deepinfra": {
+        "endpoint": "https://api.deepinfra.com/v1/openai/chat/completions",
+        "model": null,
+        "authHeader": "Authorization",
+        "authScheme": "Bearer",
+        "apiKeyEnv": "DEEPINFRA_API_KEY",
+        "extraHeaders": {},
         "concurrency": 4,
         "timeoutMs": 30000,
-        "retries": 2
+        "retries": 1,
+        "modelsEndpoint": "https://api.deepinfra.com/v1/openai/models",
+        "modelPreference": [
+          "Qwen/Qwen3.5-397B-A17B",
+          "Qwen/Qwen3-235B-A22B-Instruct-2507",
+          "deepseek-ai/DeepSeek-V4-Pro",
+          "moonshotai/Kimi-K3.1-Pro",
+          "zai-org/GLM-5.3",
+          "openai/gpt-oss-120b",
+          "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+        ]
       },
       "openai": {
         "endpoint": "https://api.openai.com/v1/chat/completions",
@@ -681,7 +691,7 @@
     "byId": {
       "drex": { "input": null, "output": null },
       "drex_mock": { "input": 0, "output": 0 },
-      "claude": { "input": null, "output": null },
+      "deepinfra": { "input": null, "output": null },
       "openai": { "input": null, "output": null },
       "gemini": { "input": null, "output": null },
       "scripted": { "input": 0, "output": 0 },
@@ -691,7 +701,7 @@
   "spendCapsUsd": {
     "_status": "TUNABLE",
     "_note": "Hard spend limits per run; a run aborts rather than exceed them.",
-    "perProviderPerRun": { "drex": 5, "drex_mock": 0, "claude": 5, "openai": 5, "gemini": 5, "scripted": 0, "random": 0 },
+    "perProviderPerRun": { "drex": 5, "drex_mock": 0, "deepinfra": 5, "openai": 5, "gemini": 5, "scripted": 0, "random": 0 },
     "totalPerRun": 15
   },
   "realtimeLatencyCharging": {
@@ -699,6 +709,55 @@
     "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
     "enabled": true,
     "latencyScale": 1
+  },
+  "research": {
+    "_status": "TUNABLE",
+    "_note": "Keenable web research, per docs.keenable.ai: POST {baseUrl}{searchPath} with { query, max_results } and GET {baseUrl}{fetchPath}?url=...; the key goes in the X-API-Key header. /v1/search is confirmed (pnpm keys); /v1/fetch is inferred from the documented keyless path /v1/fetch/public and must be verified. On 402 stop; on 429 wait Retry-After. Skip pages whose terms forbid automated access.",
+    "baseUrl": "https://api.keenable.ai",
+    "searchPath": "/v1/search",
+    "fetchPath": "/v1/fetch",
+    "mcpUrl": "https://api.keenable.ai/mcp",
+    "authHeader": "X-API-Key",
+    "apiKeyEnv": "KEENABLE_API_KEY",
+    "appTitle": "cambrian-frc",
+    "maxRequests": 300,
+    "maxResultsPerQuery": 8,
+    "queries": [
+      "FRC 2026 REBUILT robot reveal shooter turret shoot on the move",
+      "FRC 2026 REBUILT technical binder hopper capacity drivetrain",
+      "FRC 2026 REBUILT robot trench height climb level",
+      "FRC 2026 REBUILT strategy hub shift timing active inactive",
+      "FRC 2026 REBUILT strategy defense staging passing fuel",
+      "FRC 2020 Infinite Recharge strategy analysis cycles defense",
+      "FRC 2022 Rapid React strategy analysis cargo cycles defense"
+    ],
+    "rawDir": "data/research/raw",
+    "notesFile": "data/research/notes.json"
+  },
+  "ndi": {
+    "_status": "TUNABLE",
+    "_note": "NDI document intelligence, per console.nace.ai/docs/ndi: POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground} with Authorization: Bearer <key>; jobs are asynchronous (202 + job_id; ?wait_seconds=0..60). Same nace_sk_ key and balance as Drex. manualUrls must be filled in with the official manual and latest Team Update.",
+    "baseUrl": "https://console.nace.ai",
+    "apiKeyEnv": "NACE_API_KEY",
+    "waitSeconds": 60,
+    "manualUrls": [],
+    "rulesFile": "data/rules/rules.json",
+    "scoutingSheets": 24
+  },
+  "lab": {
+    "_status": "TUNABLE",
+    "_note": "Strategy Lab: Intern (github.com/nace-ai/intern) run headless as `intern -p --json --system2 <system2Provider>/<model> -- \"TASK\"` inside workspaceDir. Intern is not a sandbox: the workspace holds copies only, never the repo root or .env.",
+    "internCommand": "intern",
+    "system2Provider": "deepinfra",
+    "system2Model": null,
+    "workspaceDir": "lab/workspace",
+    "timeoutS": 600,
+    "matchesPerProposal": 10
+  },
+  "ledger": {
+    "_status": "TUNABLE",
+    "_note": "Usage ledger: one JSONL line per real external call (mock and cached calls excluded). Summarised into results/usage.json.",
+    "file": "runs/usage.jsonl"
   },
   "seeds": {
     "_status": "TUNABLE",

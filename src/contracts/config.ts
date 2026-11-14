@@ -172,6 +172,13 @@ export const ProviderConfigSchema = z.strictObject({
   timeoutMs: z.number().int().positive(),
   /** Retries after the first attempt (offline mode only). */
   retries: z.number().int().nonnegative(),
+  /** URL that lists the provider's available models, when the model is chosen at startup. */
+  modelsEndpoint: z.string().optional(),
+  /**
+   * Used when `model` is null: at startup, list the available models and take the first id in
+   * this list that exists. Log the exact id chosen.
+   */
+  modelPreference: z.array(z.string()).optional(),
 });
 export type ProviderConfig = z.infer<typeof ProviderConfigSchema>;
 
@@ -308,6 +315,72 @@ export const ConfigSchema = z.strictObject({
     enabled: z.boolean(),
     /** Multiplier applied to measured latency before charging it (1 = real time). */
     latencyScale: z.number().positive(),
+  }),
+  /** Keenable web research (src/research). */
+  research: z.strictObject({
+    ...sectionMeta,
+    /** Keenable API base URL. */
+    baseUrl: z.string(),
+    /** Search endpoint path (POST). */
+    searchPath: z.string(),
+    /** Page fetch endpoint path (GET ?url=). */
+    fetchPath: z.string(),
+    /** Keenable MCP endpoint, as an alternative to the REST API. */
+    mcpUrl: z.string(),
+    /** Name of the header that carries the API key; null until verified in the Keenable docs. */
+    authHeader: z.string().nullable(),
+    /** Name of the environment variable holding the API key. */
+    apiKeyEnv: z.string(),
+    /** Value of the X-Keenable-Title header (names our app). */
+    appTitle: z.string(),
+    /** Hard cap on Keenable requests per run. */
+    maxRequests: z.number().int().positive(),
+    /** Results requested per search. */
+    maxResultsPerQuery: z.number().int().positive(),
+    /** Search queries to run. */
+    queries: z.array(z.string()),
+    /** Folder for raw pages, relative to the repo root. */
+    rawDir: z.string(),
+    /** File for extracted strategy notes, relative to the repo root. */
+    notesFile: z.string(),
+  }),
+  /** NDI document intelligence (src/ingest). Uses the same Nace console key as Drex. */
+  ndi: z.strictObject({
+    ...sectionMeta,
+    /** NDI API base URL; tools are POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground}. */
+    baseUrl: z.string(),
+    /** Name of the environment variable holding the API key. */
+    apiKeyEnv: z.string(),
+    /** Seconds to hold a job request open (?wait_seconds, 0 to 60) before polling. */
+    waitSeconds: z.number().int().min(0).max(60),
+    /** Official documents to parse (https URLs): the game manual and the latest Team Update. */
+    manualUrls: z.array(z.string()),
+    /** File for extracted rules, relative to the repo root. */
+    rulesFile: z.string(),
+    /** Number of messy fabricated scouting sheets to generate and parse. */
+    scoutingSheets: z.number().int().nonnegative(),
+  }),
+  /** Strategy Lab (src/lab): Intern run as a subprocess. */
+  lab: z.strictObject({
+    ...sectionMeta,
+    /** The Intern CLI command. */
+    internCommand: z.string(),
+    /** Provider prefix for Intern's --system2 flag. */
+    system2Provider: z.string(),
+    /** Model for Intern's System 2; null = use the model chosen for the deepinfra provider. */
+    system2Model: z.string().nullable(),
+    /** Workspace folder handed to Intern, relative to the repo root. Never the repo root itself. */
+    workspaceDir: z.string(),
+    /** Wall-clock limit for one Intern session, seconds. */
+    timeoutS: z.number().int().positive(),
+    /** Eval-seed matches played per proposal against the scripted baseline. */
+    matchesPerProposal: z.number().int().positive(),
+  }),
+  /** Usage ledger (src/ledger). */
+  ledger: z.strictObject({
+    ...sectionMeta,
+    /** Append-only JSONL ledger file, relative to the repo root (gitignored). */
+    file: z.string(),
   }),
   /** Seed sets. Dev seeds are for tuning; eval seeds are only for reported numbers. Keep them apart. */
   seeds: z.strictObject({

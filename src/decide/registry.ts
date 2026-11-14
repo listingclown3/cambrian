@@ -19,7 +19,7 @@ export function getProvider(id: ProviderId, cfg: Config): DecisionProvider {
     case "scripted":
       return scriptedProvider;
     case "drex":
-    case "claude":
+    case "deepinfra":
     case "openai":
     case "gemini":
       return notImplementedProvider(id, cfg);

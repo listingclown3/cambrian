@@ -13,6 +13,7 @@ import { HeadlineSchema, PROVIDER_IDS, emptyHeadline, type Config, type EngineEv
 import { IMPLEMENTED_PROVIDERS } from "../decide";
 import { ENGINE_IS_STUB, engine } from "../engine";
 import { MatchRunner, basicCyclePolicy, demoRobots, type RunnerDecision } from "../exec";
+import { readUsage, summarizeUsage } from "../ledger";
 import { listUnverified, repoPath } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import type { ServerMessage } from "./protocol";
@@ -52,8 +53,13 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
   app.get("/api/headline", async () => {
     const file = repoPath("results", "headline.json");
     if (!existsSync(file)) return emptyHeadline();
-    return HeadlineSchema.parse(JSON.parse(readFileSync(file, "utf8")).summary);
+    // A file written before a contract change no longer matches; show "not run" rather than fail.
+    const parsed = HeadlineSchema.safeParse(JSON.parse(readFileSync(file, "utf8")).summary);
+    return parsed.success ? parsed.data : emptyHeadline();
   });
+
+  // Live per-tool usage counters for the "Built with" panel (real calls only).
+  app.get("/api/usage", async () => summarizeUsage(readUsage(cfg)));
 
   app.post("/api/admin/ping", async (req, reply) => {
     if (!isAdmin(req)) return reply.code(401).send({ error: "missing or wrong x-admin-token" });

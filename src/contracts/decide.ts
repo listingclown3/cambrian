@@ -22,8 +22,14 @@
  */
 import { z } from "zod";
 
-/** Every decision provider id. `drex_mock`, `scripted` and `random` never touch the network. */
-export const ProviderIdSchema = z.enum(["drex", "drex_mock", "claude", "openai", "gemini", "scripted", "random"]);
+/**
+ * Every decision provider id. `drex_mock`, `scripted` and `random` never touch the network.
+ *   drex      - System 1: Nace's closed-choice decision model
+ *   deepinfra - System 2: a large LLM on DeepInfra (OpenAI-compatible chat completions); the
+ *               "giant" Drex is compared against
+ *   openai, gemini - optional secondary baselines, used only when their API key is set
+ */
+export const ProviderIdSchema = z.enum(["drex", "drex_mock", "deepinfra", "openai", "gemini", "scripted", "random"]);
 export type ProviderId = z.infer<typeof ProviderIdSchema>;
 export const PROVIDER_IDS = ProviderIdSchema.options;
 
