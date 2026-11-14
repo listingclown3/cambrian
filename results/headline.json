@@ -1,22 +1,28 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:01:35.217Z",
+  "createdTs": "2026-11-14T21:18:21.146Z",
   "isMock": false,
-  "gitCommit": "fa80a60a7d53-dirty",
+  "gitCommit": "037ad7519c33-dirty",
   "simHash": "e7daa7a2a621cf3c",
   "config": {
     "contributing": [
       {
         "file": "results/bench_scenarios.json",
         "isMock": false,
+        "simHash": "e7daa7a2a621cf3c",
+        "gitCommit": "037ad7519c33-dirty"
+      },
+      {
+        "file": "results/bench_live.json",
+        "isMock": false,
         "simHash": "2cc2e7f621722c58",
-        "gitCommit": "d84009e7d110-dirty"
+        "gitCommit": "66d5652cdf6d-dirty"
       },
       {
         "file": "results/bench_explore.json",
         "isMock": false,
-        "simHash": "2cc2e7f621722c58",
-        "gitCommit": "d84009e7d110-dirty"
+        "simHash": "e7daa7a2a621cf3c",
+        "gitCommit": "037ad7519c33-dirty"
       },
       {
         "file": "results/matches.json",
@@ -43,49 +49,270 @@
         "Qwen/Qwen3.5-397B-A17B"
       ],
       "giant_reasoning": "off (main comparison; the giant's fastest setting)",
-      "live": {}
+      "live": {
+        "scripted_paused": [],
+        "drex_realtime": [
+          "drex-v2.0"
+        ],
+        "drex_paused": [
+          "drex-v2.0"
+        ],
+        "deepinfra_realtime": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "deepinfra_paused": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ]
+      }
+    },
+    "latency_sources": {
+      "drex": {
+        "p50": 692.7,
+        "p95": 7773.3,
+        "cost": 0.02281,
+        "source": "results/bench_scenarios.json (measured under load)",
+        "n": 39
+      },
+      "deepinfra": {
+        "p50": 1157.4,
+        "p95": 2367.3,
+        "cost": 0.43648,
+        "source": "results/bench_scenarios.json (measured under load)",
+        "n": 45
+      }
+    },
+    "regret_with_ci": {
+      "drex": {
+        "regret": 20.844,
+        "ci95": 12.653,
+        "n": 39
+      },
+      "drex-latest": {
+        "regret": 19.525,
+        "ci95": 10.642,
+        "n": 45
+      },
+      "drex_anon": {
+        "regret": 20.792,
+        "ci95": 11.176,
+        "n": 45
+      },
+      "deepinfra": {
+        "regret": 30.166,
+        "ci95": 13.522,
+        "n": 45
+      },
+      "deepinfra_think": {
+        "regret": 38.383,
+        "ci95": 54.356,
+        "n": 7
+      },
+      "scripted": {
+        "regret": 23.538,
+        "ci95": 11.157,
+        "n": 45
+      },
+      "random": {
+        "regret": 31.523,
+        "ci95": 9.181,
+        "n": 45
+      }
+    },
+    "paired_regret": {
+      "drex_minus_giant": {
+        "n": 39,
+        "mean_diff": -10.816,
+        "ci95": 9.816
+      },
+      "drex_minus_scripted": {
+        "n": 39,
+        "mean_diff": -2.889,
+        "ci95": 5.764
+      },
+      "drex_minus_random": {
+        "n": 39,
+        "mean_diff": -10.149,
+        "ci95": 5.693
+      },
+      "giant_minus_scripted": {
+        "n": 45,
+        "mean_diff": 6.627,
+        "ci95": 9.2
+      },
+      "giant_minus_random": {
+        "n": 45,
+        "mean_diff": -1.358,
+        "ci95": 7.957
+      },
+      "scripted_minus_random": {
+        "n": 45,
+        "mean_diff": -7.985,
+        "ci95": 5.949
+      },
+      "drex_latest_minus_giant": {
+        "n": 45,
+        "mean_diff": -10.641,
+        "ci95": 9.4
+      },
+      "drex_anon_minus_drex": {
+        "n": 39,
+        "mean_diff": 0,
+        "ci95": 0
+      }
+    },
+    "degeneracy_gate": {
+      "pass": true,
+      "checks": {
+        "max_best_label_share": {
+          "value": 0.2,
+          "label": "collect:neutral",
+          "limit": "<= 0.35",
+          "pass": true
+        },
+        "flips_changing_best": {
+          "value": 0.7,
+          "n_flips": 30,
+          "limit": ">= 0.30",
+          "pass": true
+        },
+        "scripted_vs_random_regret": {
+          "scripted": 23.538,
+          "n_scripted": 45,
+          "random_expected": 31.523,
+          "limit": "scripted < random",
+          "pass": true
+        }
+      },
+      "distinct_best_labels": 17,
+      "top_vs_second_gap": {
+        "mean": 14.408,
+        "median": 5.75
+      },
+      "n_unambiguous": 22
+    },
+    "answers_source": "answers recorded in the first run (12:33 PM, results/bench_scenarios.json at commit 2c3bdc7, old engine), before the climb-exclusion rule: in non-endgame scenarios the prompt also listed one climb option that is not in the scored set (a pick of it is counted in excluded_picks, not scored). No retry pass existed then, so first-pass fallbacks = final fallbacks. Token counts were not saved (mean_input_tokens null). The snapshots the deciders saw are the scenario snapshots; only the answer key is recomputed on the current engine.",
+    "live_paired_vs_scripted": {
+      "drex_realtime": {
+        "n": 5,
+        "mean_uplift_vs_scripted": -161.2,
+        "ci95": 116.97
+      },
+      "drex_paused": {
+        "n": 4,
+        "mean_uplift_vs_scripted": -142.25,
+        "ci95": 139.38
+      },
+      "deepinfra_realtime": {
+        "n": 10,
+        "mean_uplift_vs_scripted": -24.8,
+        "ci95": 60.91
+      },
+      "deepinfra_paused": {
+        "n": 5,
+        "mean_uplift_vs_scripted": 47.2,
+        "ci95": 299.43
+      }
+    },
+    "live_wall_ms_per_robot_decision": {
+      "scripted_paused": null,
+      "drex_realtime": 283.6,
+      "drex_paused": 284.8,
+      "deepinfra_realtime": 759.9,
+      "deepinfra_paused": 768.9
     },
     "latency": "round trip p50/p95 (request sent to answer parsed, retries included); Drex's own server-side evaluation time is not used",
     "n": {
       "top1_unambiguous_scored": {
-        "drex": 17,
-        "deepinfra": 20,
-        "scripted": 20,
-        "random": 20,
-        "drex_anon": 20
+        "drex": 20,
+        "deepinfra": 22,
+        "scripted": 22,
+        "random": 22,
+        "drex_anon": 22
       },
-      "live_conditions": {},
-      "live_paired_drex_minus_giant": null,
-      "rollouts_to_best_n_scenarios": 17
+      "live_conditions": {
+        "scripted_paused": {
+          "n": 10,
+          "mean_margin": -3.3,
+          "ci95": 107.57,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 0,
+          "wall_s_per_match": 2.33
+        },
+        "drex_realtime": {
+          "n": 5,
+          "mean_margin": -75.8,
+          "ci95": 201.98,
+          "fallbacks": 5,
+          "robot_decisions_per_match": 275.8,
+          "wall_s_per_match": 78.21
+        },
+        "drex_paused": {
+          "n": 4,
+          "mean_margin": -68,
+          "ci95": 251.85,
+          "fallbacks": 47,
+          "robot_decisions_per_match": 708.8,
+          "wall_s_per_match": 201.84
+        },
+        "deepinfra_realtime": {
+          "n": 10,
+          "mean_margin": -28.1,
+          "ci95": 113.18,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 145.2,
+          "wall_s_per_match": 110.34
+        },
+        "deepinfra_paused": {
+          "n": 5,
+          "mean_margin": 132.6,
+          "ci95": 301.57,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 274.6,
+          "wall_s_per_match": 211.13
+        }
+      },
+      "live_paired_drex_minus_giant": {
+        "realtime": {
+          "n": 5,
+          "mean_drex_minus_giant": -152,
+          "ci95": 200.44
+        },
+        "paused": {
+          "n": 4,
+          "mean_drex_minus_giant": -228.75,
+          "ci95": 393.49
+        }
+      },
+      "rollouts_to_best_n_scenarios": 20
     },
     "fallbacks": {
       "drex": {
         "final": 6,
-        "first_pass": null
+        "first_pass": 6
       },
       "drex-latest": {
         "final": 0,
-        "first_pass": null
+        "first_pass": 0
       },
       "drex_anon": {
         "final": 0,
-        "first_pass": null
+        "first_pass": 0
       },
       "deepinfra": {
         "final": 0,
-        "first_pass": null
+        "first_pass": 0
       },
       "deepinfra_think": {
         "final": 1,
-        "first_pass": null
+        "first_pass": 1
       },
       "scripted": {
         "final": 0,
-        "first_pass": null
+        "first_pass": 0
       },
       "random": {
         "final": 0,
-        "first_pass": null
+        "first_pass": 0
       }
     },
     "giant_reasoning_on_separate": {
@@ -93,18 +320,23 @@
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "top1": 0.286,
-      "n_unambiguous_scored": 7,
-      "regret": 9.443,
+      "top1": 0.25,
+      "n_unambiguous_scored": 4,
+      "regret": 38.383,
       "p50_ms": 90922.1,
       "p95_ms": 135218.2,
       "cost_per_1k_usd": 16.02596,
       "fallbacks": 1,
-      "match_estimate_calculation": null
+      "match_estimate_calculation": {
+        "note": "CALCULATION, not a measurement: mean requests per paused giant match x the measured reasoning-on p50 round-trip latency from bench_scenarios (each request's per-robot calls run concurrently, so one request costs about one call's latency)",
+        "requests_per_match": 237.2,
+        "think_p50_ms": 90922.1,
+        "estimated_wall_s_per_match": 21567
+      }
     },
     "drex_latest_separate": {
-      "top1": 0.1,
-      "regret": 6.8,
+      "top1": 0.227,
+      "regret": 19.525,
       "p50_ms": 480.5,
       "cost_per_1k_usd": 0.02488
     },
@@ -114,10 +346,10 @@
   },
   "rows": [],
   "summary": {
-    "live_margin_drex_realtime": null,
-    "live_margin_deepinfra_realtime": null,
-    "live_margin_drex_paused": null,
-    "live_margin_deepinfra_paused": null,
+    "live_margin_drex_realtime": -75.8,
+    "live_margin_deepinfra_realtime": -28.1,
+    "live_margin_drex_paused": -68,
+    "live_margin_deepinfra_paused": 132.6,
     "drex_p50_ms": 692.7,
     "drex_p95_ms": 7773.3,
     "deepinfra_p50_ms": 1157.4,
@@ -135,37 +367,37 @@
     "batch8_ms_per_decision_giant": null,
     "batch32_ms_per_decision_drex": null,
     "batch32_ms_per_decision_giant": null,
-    "top1_drex": 0,
-    "top1_deepinfra": 0.05,
+    "top1_drex": 0.1,
+    "top1_deepinfra": 0.045,
     "top1_openai": null,
-    "top1_scripted": 0.1,
-    "top1_random": 0,
-    "regret_drex": 7.539,
-    "regret_deepinfra": 7.789,
+    "top1_scripted": 0.136,
+    "top1_random": 0.147,
+    "regret_drex": 20.844,
+    "regret_deepinfra": 30.166,
     "regret_openai": null,
-    "regret_scripted": 8.692,
-    "regret_random": 7.502,
-    "context_sensitivity_drex": 1,
-    "context_sensitivity_deepinfra": 1,
+    "regret_scripted": 23.538,
+    "regret_random": 31.523,
+    "context_sensitivity_drex": 0.5,
+    "context_sensitivity_deepinfra": 0.14285714285714285,
     "context_sensitivity_openai": null,
-    "top1_drex_anonymized": 0.05,
-    "rollouts_to_best_drex": 285.3,
-    "rollouts_to_best_uniform": 213.2,
-    "rollouts_to_best_deepinfra": 238.2,
-    "rollout_savings_pct_drex_vs_uniform": -33.8,
+    "top1_drex_anonymized": 0.136,
+    "rollouts_to_best_drex": 172.5,
+    "rollouts_to_best_uniform": 196.3,
+    "rollouts_to_best_deepinfra": 221.3,
+    "rollout_savings_pct_drex_vs_uniform": 12.1,
     "n_scenarios": 45,
     "n_families": 15,
-    "n_live_seeds": null,
+    "n_live_seeds": 4,
     "matches_per_sec": 1.155,
-    "sim_matches_per_hour_drex": null,
-    "sim_matches_per_hour_deepinfra": null,
-    "usage_drex_questions": 15902,
-    "usage_ndi_docs": 90,
-    "usage_ndi_pages": 773,
-    "usage_intern_sessions": 5,
-    "usage_intern_system1_judgments": 110,
-    "usage_deepinfra_calls": 3463,
-    "usage_keenable_requests": 76,
+    "sim_matches_per_hour_drex": 17.84,
+    "sim_matches_per_hour_deepinfra": 17.05,
+    "usage_drex_questions": 6030,
+    "usage_ndi_docs": null,
+    "usage_ndi_pages": null,
+    "usage_intern_sessions": null,
+    "usage_intern_system1_judgments": null,
+    "usage_deepinfra_calls": 2893,
+    "usage_keenable_requests": null,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 1,
     "keenable_pages": 58,
