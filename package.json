@@ -20,6 +20,7 @@
     "smoke:drex": "tsx src/decide/smoke.ts",
     "match:agent": "tsx src/decide/agentMatch.ts",
     "bench:batch": "tsx src/decide/benchBatch.ts",
+    "drex:hosts": "tsx src/decide/hostCompare.ts",
     "keys": "tsx src/util/keycheck.ts",
     "drex:models": "tsx src/util/drexModels.ts",
     "league": "tsx src/bench/league.ts",

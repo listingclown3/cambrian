@@ -44,7 +44,7 @@ export function fakeDeps(answers: FakeAnswers, opts: FakeOptions = {}): FakeDeps
       return new Response("<!DOCTYPE html><html><head><title>Vercel Security Checkpoint</title></head></html>", { status: 403, headers: { "content-type": "text/html", "x-vercel-mitigated": "challenge", "retry-after": "30" } });
     }
     if (opts.status && opts.status !== 200) return json(opts.status, { error: { message: "fake failure" } });
-    if (url.includes("systemone")) {
+    if (url.includes("systemone") || url.includes("/v1/decisions")) {
       const out: Record<string, unknown> = {};
       for (const [id, q] of Object.entries<any>(body.questions)) {
         const a = answers[id];
