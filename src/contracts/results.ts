@@ -39,7 +39,8 @@ const metric = z.number().nullable();
  * savings, then sizes, then tool usage.
  */
 export const HeadlineSchema = z.strictObject({
-  // ── 1. live matches under a real match clock ──────────────────────────────
+  // ── 1. real-time sim margin: matches where thinking time runs on the sim clock ──
+  // On-screen label for the live_margin_* keys: "real-time sim margin (thinking time on the sim clock)".
   /** Mean match margin of the Drex alliance with real-time latency charging on. */
   live_margin_drex_realtime: metric,
   /** Mean match margin of the DeepInfra alliance with real-time latency charging on. */
@@ -116,8 +117,12 @@ export const HeadlineSchema = z.strictObject({
   n_families: metric,
   /** Number of eval seeds used for live matches. */
   n_live_seeds: metric,
-  /** Simulated full matches per wall-clock second on this machine. */
+  /** Simulated full matches per wall-clock second on this machine (scripted controllers, no model calls). */
   matches_per_sec: metric,
+  /** Full simulated matches per hour with Drex making every decision (measured wall time per match). */
+  sim_matches_per_hour_drex: metric,
+  /** Full simulated matches per hour with the DeepInfra giant making every decision. */
+  sim_matches_per_hour_deepinfra: metric,
 
   // ── tool usage (from the usage ledger; real calls only) ───────────────────
   /** Questions answered by Drex. */

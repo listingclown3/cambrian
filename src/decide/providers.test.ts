@@ -47,7 +47,7 @@ describe("drex provider", () => {
     expect(res.answers.yes_no!.probability).toBe(0.7);
     expect(res.answers.rate!.expectedScore).toBeCloseTo(2, 9);
     expect(res.meta).toMatchObject({ provider: "drex", model: "drex-v2.0", inputTokens: 100, outputTokens: 10, fallbackUsed: false, cached: false, error: null, isMock: false });
-    expect(res.meta.costUsd).toBeCloseTo((100 * 0.06) / 1e6, 12);
+    expect(res.meta.costUsd).toBeCloseTo((100 * cfg.pricesPerMTokUsd.byModel["drex-v2.0"]!.input!) / 1e6, 12);
     expect(deps.ledger).toHaveLength(1);
     expect(deps.ledger[0]).toMatchObject({ tool: "drex", model: "drex-v2.0", inputTokens: 100, counts: { questions: 3 } });
   });
@@ -57,7 +57,7 @@ describe("drex provider", () => {
     const res = await getProviderBySpec("drex:drex-latest", cfg, deps).decide(request);
     expect(deps.requests[0]!.body.model).toBe("drex-latest");
     expect(res.meta.model).toBe("drex-max-v1.1");
-    expect(res.meta.costUsd).toBeCloseTo((100 * 0.12) / 1e6, 12);
+    expect(res.meta.costUsd).toBeCloseTo((100 * cfg.pricesPerMTokUsd.byModel["drex-max-v1.1"]!.input!) / 1e6, 12);
     expect(parseProviderSpec("deepinfra:Qwen/Qwen3.8-27B@think")).toEqual({ id: "deepinfra", model: "Qwen/Qwen3.8-27B", thinking: "on" });
   });
 
@@ -173,7 +173,7 @@ describe("deepinfra provider", () => {
 
 describe("redaction", () => {
   it("removes key values and bearer tokens from error text", () => {
-    const env = { NACE_API_KEY: "sk-very-secret-value" };
+    const env = { NACE_API_KEY: "sk-very-secret-value" }; // secret-scan:allow (fake value used to test redaction)
     expect(redact("failed with sk-very-secret-value and Authorization: Bearer abcdefghijkl", env)).toBe("failed with <redacted> and Authorization: Bearer <redacted>");
   });
 });

@@ -5,13 +5,13 @@
  * below; no caller needs to change.
  */
 import type { Engine } from "../contracts";
-import { stubEngine } from "./stubEngine";
+import { rebuiltEngine } from "./engine";
 
-/** The engine in use. Currently the stub. */
-export const engine: Engine = stubEngine;
+/** The engine in use: the real REBUILT engine (src/engine/engine.ts). The stub stays in stubEngine.ts for reference. */
+export const engine: Engine = rebuiltEngine;
 
-/** True while `engine` is the stub; results produced with it must not be reported. */
-export const ENGINE_IS_STUB = true;
+/** True while `engine` is the stub; results produced with a stub must not be reported. The real engine is in use. */
+export const ENGINE_IS_STUB = false;
 
 export { buildFieldLayout } from "./field";
 export { buildObservationView, eventConcerns } from "./observe";
