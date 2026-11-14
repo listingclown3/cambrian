@@ -1,4 +1,4 @@
-deck numbers, generated 2026-11-14T22:11:24.444Z (git 81e1660737cf-dirty)
+deck numbers, generated 2026-11-14T22:14:21.516Z (git 12a377737496)
 format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
 giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 
@@ -41,8 +41,8 @@ batch 32 ms per decision, Drex vs giant (stress size) | Drex 27 ms; giant NOT RU
 regret, scripted and random baselines | scripted 23.5 ± 11.2 (n 45); random 31.5 ± 9.2 (n 45) | INTERIM (pre-final run; will change) | bench_scenarios deciders.scripted / random
 
 [builtwith: real calls only]
-drex questions | 26,197 | LIVE COUNT (grows until the last run) | usage_drex_questions
+drex questions | 26,239 | LIVE COUNT (grows until the last run) | usage_drex_questions
 intern sessions | 6 | LIVE COUNT | usage_intern_sessions
 ndi docs | 90 | LIVE COUNT | usage_ndi_docs
-deepinfra calls | 10,052 | LIVE COUNT | usage_deepinfra_calls
+deepinfra calls | 10,333 | LIVE COUNT | usage_deepinfra_calls
 keenable pages | 58 | FINAL | keenable_pages

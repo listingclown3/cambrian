@@ -1,8 +1,8 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T22:06:55.662Z",
+  "createdTs": "2026-11-14T22:14:19.564Z",
   "isMock": false,
-  "gitCommit": "81e1660737cf-dirty",
+  "gitCommit": "12a377737496",
   "simHash": "73ee0c8a610a44cc",
   "config": {
     "contributing": [
@@ -200,85 +200,85 @@
       "note": "DECIDER PROPOSES, SIMULATOR CHECKS mode (off by default; run by the integrator). Never merged with the decider-alone live_margin_* numbers.",
       "simHash": "73ee0c8a610a44cc",
       "sameSimHash": true,
-      "gitCommit": "81e1660737cf",
+      "gitCommit": "b46fbfdcbb7a",
       "conditions": {
         "drex_check_realtime": {
           "model": "drex-v2.0",
           "margin": {
-            "n": 7,
-            "mean": 114.1,
-            "ci95": 53.3
+            "n": 8,
+            "mean": 122.9,
+            "ci95": 49.2
           },
           "marginMinusScriptedReference": {
-            "n": 7,
-            "mean": 62.1,
-            "ci95": 68.6
+            "n": 8,
+            "mean": 73.4,
+            "ci95": 63.4
           },
           "acceptRatePct": {
-            "n": 7,
-            "mean": 59.6,
-            "ci95": 4.1
+            "n": 8,
+            "mean": 59,
+            "ci95": 3.7
           },
           "checkP50Ms": {
-            "n": 7,
-            "mean": 298.7,
-            "ci95": 47.3
+            "n": 8,
+            "mean": 298,
+            "ci95": 41
           },
           "chargedS": {
-            "n": 7,
-            "mean": 78.5,
-            "ci95": 11.7
+            "n": 8,
+            "mean": 78.9,
+            "ci95": 10.2
           },
           "robotDecisions": {
-            "n": 7,
-            "mean": 148.6,
-            "ci95": 10.3
+            "n": 8,
+            "mean": 148.5,
+            "ci95": 8.9
           },
           "fallbacksTotal": 2,
           "wallS": {
-            "n": 7,
-            "mean": 79.2,
-            "ci95": 12
+            "n": 8,
+            "mean": 79.6,
+            "ci95": 10.4
           },
           "excluded": []
         },
         "deepinfra_check_realtime": {
           "model": "Qwen/Qwen3.5-397B-A17B",
           "margin": {
-            "n": 5,
-            "mean": 36.4,
-            "ci95": 67.7
+            "n": 8,
+            "mean": 37.8,
+            "ci95": 40.7
           },
           "marginMinusScriptedReference": {
-            "n": 5,
-            "mean": -28.6,
-            "ci95": 68.2
+            "n": 8,
+            "mean": -11.8,
+            "ci95": 44.3
           },
           "acceptRatePct": {
-            "n": 5,
-            "mean": 76.4,
-            "ci95": 1.2
+            "n": 8,
+            "mean": 75.4,
+            "ci95": 2.1
           },
           "checkP50Ms": {
-            "n": 5,
-            "mean": 206.2,
-            "ci95": 48.4
+            "n": 8,
+            "mean": 233.4,
+            "ci95": 66.4
           },
           "chargedS": {
-            "n": 5,
-            "mean": 107.9,
-            "ci95": 10.8
+            "n": 8,
+            "mean": 109.5,
+            "ci95": 9.9
           },
           "robotDecisions": {
-            "n": 5,
-            "mean": 134.4,
-            "ci95": 8.7
+            "n": 8,
+            "mean": 133.8,
+            "ci95": 5.9
           },
           "fallbacksTotal": 0,
           "wallS": {
-            "n": 5,
-            "mean": 108.4,
-            "ci95": 11
+            "n": 8,
+            "mean": 110,
+            "ci95": 10.1
           },
           "excluded": []
         },
@@ -325,19 +325,19 @@
       },
       "paired": {
         "drex_minus_giant": {
-          "n": 5,
-          "mean": 75.8,
-          "ci95": 87.7
+          "n": 8,
+          "mean": 85.1,
+          "ci95": 55.6
         },
         "drex_minus_random": {
-          "n": 7,
-          "mean": 47.3,
-          "ci95": 48
+          "n": 8,
+          "mean": 55.3,
+          "ci95": 44.4
         },
         "giant_minus_random": {
-          "n": 5,
-          "mean": -33.8,
-          "ci95": 83.4
+          "n": 8,
+          "mean": -29.9,
+          "ci95": 52.7
         }
       }
     },
@@ -455,12 +455,12 @@
     "matches_per_sec": null,
     "sim_matches_per_hour_drex": null,
     "sim_matches_per_hour_deepinfra": null,
-    "usage_drex_questions": 26197,
+    "usage_drex_questions": 26239,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,
     "usage_intern_system1_judgments": 136,
-    "usage_deepinfra_calls": 10052,
+    "usage_deepinfra_calls": 10333,
     "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 2,
