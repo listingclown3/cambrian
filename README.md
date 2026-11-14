@@ -146,8 +146,10 @@ Rules for working in parallel:
   distance only, so robots also score from the neutral side of the hub when in range. Every decider
   and the scripted policy played under the same simplification, so the comparisons are like for
   like, but absolute scores are higher than a real match would allow and shot-spot choices are not
-  rule-accurate. Fixing it changes the engine, so every benchmark must be rerun; it is the first
-  item in `notes/backlog.md`.
+  rule-accurate. The fix is written (branch `g407`: launching requires bumpers at least partly in
+  the alliance zone; one scripted match goes from 488-415 to 222-291, so roughly half of all
+  scoring had come from the neutral side). It is not on `main` because every benchmark must be
+  rerun on the fixed engine first; the numbers on `main` are the ones measured before the fix.
 - **Mock is always labelled.** `drex_mock` answers carry `meta.isMock = true`; run logs and results
   files carry `isMock`. An unimplemented provider returns a flagged fallback
   (`meta.fallbackUsed = true`, `meta.error` set), never something that looks like an answer.
