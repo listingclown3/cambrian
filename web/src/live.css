@@ -91,3 +91,7 @@
 .rs-tv { font-size: 2rem; font-weight: 700; line-height: 1.1; }
 .rs-tu { color: var(--text2); font-size: 0.8rem; margin-bottom: 0.3rem; }
 @media (max-width: 1500px) { .rs-title { font-size: 2rem; } .rs-val { font-size: 2rem; } .rs-tools { grid-template-columns: repeat(3, 1fr); } .rs-two { grid-template-columns: 1fr; } }
+
+.src-foot { margin-top: 2rem; padding-top: 0.8rem; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--faint); }
+.src-foot .src-h { letter-spacing: 0.1em; font-weight: 700; margin-bottom: 0.3rem; }
+.src-foot th, .src-foot td { padding: 0.2rem 0.6rem; border-bottom: 1px solid var(--line2); }

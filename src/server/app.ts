@@ -155,6 +155,8 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
   app.get("/api/scenarios", async () => {
     const real = repoPath("results", "scenarios.json");
     if (existsSync(real)) return { source: "results", ...JSON.parse(readFileSync(real, "utf8")) };
+    const dataFile = repoPath("data", "scenarios", "scenarios.json");
+    if (existsSync(dataFile)) return { source: "results", picks: {}, ...JSON.parse(readFileSync(dataFile, "utf8")) };
     const fixture = repoPath("src", "server", "fixtures", "scenarios_fixture.json");
     if (existsSync(fixture)) return { source: "fixture", ...JSON.parse(readFileSync(fixture, "utf8")) };
     return { source: "none", families: [], scenarios: [], picks: {} };
