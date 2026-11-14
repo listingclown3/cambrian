@@ -1,8 +1,8 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T20:58:40.972Z",
+  "createdTs": "2026-11-14T21:01:35.217Z",
   "isMock": false,
-  "gitCommit": "c071d9770de5-dirty",
+  "gitCommit": "fa80a60a7d53-dirty",
   "simHash": "e7daa7a2a621cf3c",
   "config": {
     "contributing": [
@@ -159,13 +159,13 @@
     "matches_per_sec": 1.155,
     "sim_matches_per_hour_drex": null,
     "sim_matches_per_hour_deepinfra": null,
-    "usage_drex_questions": 14199,
+    "usage_drex_questions": 15902,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 5,
     "usage_intern_system1_judgments": 110,
-    "usage_deepinfra_calls": 3274,
-    "usage_keenable_requests": 73,
+    "usage_deepinfra_calls": 3463,
+    "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 1,
     "keenable_pages": 58,
