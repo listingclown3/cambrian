@@ -8,6 +8,8 @@ import { listUnverified, loadConfig } from "../util/config";
 import { buildApp } from "./app";
 
 const cfg = loadConfig();
+// Dev-only override so a second checkout can run beside the main one.
+if (process.env.CAMBRIAN_PORT) cfg.server.port = Number(process.env.CAMBRIAN_PORT);
 const app = await buildApp(cfg);
 await app.listen({ port: cfg.server.port, host: "127.0.0.1" });
 
