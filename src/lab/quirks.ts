@@ -9,6 +9,7 @@ import { pathToFileURL } from "node:url";
 import { describeIntent, type Config, type Proposal } from "../contracts";
 import { drexAsk as realAsk, type DrexQuestion } from "../ingest/drexClient";
 import { loadConfig, repoPath } from "../util/config";
+import { acquireShared } from "../decide/providers/sharedLimit";
 import { compareTowerPostUp } from "./towerPostUp";
 import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
@@ -42,6 +43,25 @@ const ruleText = (r: ConductRule) => {
   return `Rule ${r.id} (manual p.${r.page}): ${(r.fullText ?? r.text).slice(0, 1500)}${ex}`;
 };
 
+/**
+ * The real Drex call, paced through the machine-wide shared limiter (src/decide/providers/sharedLimit.ts)
+ * and stopped for good after the first 403 (checkpoint block): no retries, no bursts.
+ */
+let blocked: string | null = null;
+export const limitedAsk: Ask = async (cfg, args) => {
+  if (blocked) throw new Error(`Drex unreachable: ${blocked}`);
+  const lim = cfg.providers.byId.drex.sharedRateLimit;
+  const release = lim ? await acquireShared({ dir: repoPath("cache", "ratelimit", "drex"), ...lim }, 60_000, 70_000) : () => {};
+  try {
+    return await realAsk(cfg, args);
+  } catch (e) {
+    if (/http 403/.test((e as Error).message)) blocked = (e as Error).message;
+    throw e;
+  } finally {
+    release?.();
+  }
+};
+
 /** The Drex call, injectable so tests can use a fake judge. */
 export type Ask = typeof realAsk;
 
@@ -73,11 +93,12 @@ export async function judgeLegality(cfg: Config, entries: { id: string; descript
   return { out, errors };
 }
 
-export async function runQuirks(cfg: Config, ask: Ask = realAsk): Promise<void> {
+export async function runQuirks(cfg: Config, ask: Ask = limitedAsk): Promise<void> {
   const proposals = (JSON.parse(readFileSync(repoPath("data", "lab", "proposals.json"), "utf8")) as { proposals: Proposal[] }).proposals;
   const lab = JSON.parse(readFileSync(repoPath("results", "lab.json"), "utf8")) as { rows: Record<string, any>[] };
   const rules = (JSON.parse(readFileSync(repoPath("data", "rules", "conduct_rules.json"), "utf8")) as { rules: ConductRule[] }).rules;
-  const entries = proposals.map((p) => ({ id: p.id, description: `${p.title}. Play: ${describeIntent(p.intent)} Use when: ${p.situation}` }));
+  const entries: { id: string; description: string }[] = proposals.map((p) => ({ id: p.id, description: `${p.title}. Play: ${describeIntent(p.intent)} Use when: ${p.situation}` }));
+  entries.push({ id: "tower_post_up", description: "Endgame tower post-up: in the last 30 seconds, with fuel held, drive to a shot spot right next to our own tower (tower_post_left or tower_post_right) and shoot from there instead of a normal shot spot. An opponent that contacts us while it is touching its own tower is called for a major foul under G420." });
   const { out: verdicts, errors } = await judgeLegality(cfg, entries, rules, ask);
 
   const rows: Record<string, unknown>[] = proposals.map((p) => {
@@ -102,6 +123,8 @@ export async function runQuirks(cfg: Config, ask: Ask = realAsk): Promise<void> 
 
   // Tower post-up test case: runs only when the engine offers post-up shot spots.
   const tower = compareTowerPostUp(cfg);
+  const tv = verdicts["tower_post_up"]!;
+  const terr = errors["tower_post_up"];
   rows.push({
     id: "tower_post_up",
     title: "Endgame tower post-up shooting spot vs a normal shot spot",
@@ -109,10 +132,10 @@ export async function runQuirks(cfg: Config, ask: Ask = realAsk): Promise<void> 
     value: tower.run
       ? { marginDiff: tower.marginDiff, ci95: tower.ci95, n: tower.n, firesTotal: tower.fires, g420FoulsOnOpponents: tower.g420FoulsOnOpponents, g420FoulsOnUs: tower.g420FoulsOnUs, spotId: tower.spotId, controlSpotId: tower.controlSpotId }
       : { marginDiff: null, ci95: null, n: null, reason: tower.reason },
-    legality: null,
-    rules: [],
-    reliesOnOpponentFouls: null,
-    notes: "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. Legality: not judged (Drex unreachable).",
+    legality: terr ? null : tagLegality(tv.rules.map((r) => r.pViolation), tv.reliesOnOpponentFouls),
+    rules: tv.rules,
+    reliesOnOpponentFouls: tv.reliesOnOpponentFouls,
+    notes: `Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. ${terr ? `Legality NOT JUDGED: Drex unreachable (${terr}).` : ""}`,
   });
   rows.push({
     id: "intern_rule_scan",
@@ -134,7 +157,7 @@ export async function runQuirks(cfg: Config, ask: Ask = realAsk): Promise<void> 
     simHash: simHash(cfg),
     config: { drex: "drex-latest", rules: rules.map((r) => r.id) },
     rows,
-    summary: { LEGAL: count("LEGAL"), RISKY: count("RISKY"), ILLEGAL: count("ILLEGAL"), entriesJudged: proposals.length, simulated: rows.filter((r) => (r.value as any).marginDiff !== null).length },
+    summary: { LEGAL: count("LEGAL"), RISKY: count("RISKY"), ILLEGAL: count("ILLEGAL"), entriesJudged: entries.length, simulated: rows.filter((r) => (r.value as any).marginDiff !== null).length },
   });
   for (const r of rows) console.log(`[quirks] ${r.id}: ${r.legality ?? "-"}${Array.isArray(r.rules) && r.rules.length ? " " + (r.rules as RuleVerdict[]).map((x) => `${x.id}=${x.pViolation?.toFixed(2)}`).join(" ") : ""} opp-foul=${typeof r.reliesOnOpponentFouls === "number" ? (r.reliesOnOpponentFouls as number).toFixed(2) : "-"}`);
 }
@@ -145,5 +168,5 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const offline: Ask = (async () => {
     throw new Error("not called");
   }) as Ask;
-  await runQuirks(cfg, process.argv.includes("--no-drex") ? offline : realAsk);
+  await runQuirks(cfg, process.argv.includes("--no-drex") ? offline : limitedAsk);
 }

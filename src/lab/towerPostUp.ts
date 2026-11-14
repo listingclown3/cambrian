@@ -35,7 +35,8 @@ function toSpot(base: ScriptedPolicy, wantPostUp: boolean, counter: { fired: num
           .map((o) => ({ o, spot: spots.get((o.intent.params as { spotId: string }).spotId) }))
           .filter((c) => c.spot && isPostUp(c.spot.id) === wantPostUp)
           .sort((p, q) => dist(view.self.pose, p.spot!.pos) - dist(view.self.pose, q.spot!.pos));
-        if (cands[0]) {
+        // once we are at the spot (within 0.5 m) let the baseline shoot; otherwise a repeated goto would never fire
+        if (cands[0] && dist(view.self.pose, cands[0].spot!.pos) > 0.5) {
           counter.fired += 1;
           return cands[0].o.intent;
         }
