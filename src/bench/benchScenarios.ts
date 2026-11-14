@@ -46,7 +46,7 @@ import { ENGINE_IS_STUB, engine } from "../engine";
 import { loadConfig } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { RunLogger, buildManifest, newRunId, writeResults } from "../util/runLog";
-import { anonymize, ci95, readJson, writeJson, loadScenarioSet, mean, pct, round, scenarioRequest, scriptedLabelFor, SCENARIO_REQUEST_SEED } from "./common";
+import { PROMPT_VERSION, anonymize, ci95, readJson, writeJson, loadScenarioSet, mean, pct, round, scenarioRequest, scriptedLabelFor, SCENARIO_REQUEST_SEED } from "./common";
 
 const cfg = loadConfig();
 const set = loadScenarioSet();
@@ -140,7 +140,7 @@ const unreachable: Record<string, string> = {};
 const byIdAll = new Map(scenarios.map((s) => [s.id, s]));
 const t0 = performance.now();
 const SAVED = ["data", "scenarios", "answers.json"] as const;
-let answersSource = "fresh calls in this run; prompts carried exactly the options scored here";
+let answersSource = `fresh calls in this run (prompt version ${PROMPT_VERSION}); prompts carried exactly the options scored here`;
 const providerOf = (decider: string) => (decider.startsWith("drex") ? "drex" : decider.startsWith("deepinfra") ? "deepinfra" : decider) as DecisionMeta["provider"];
 const savedBefore = readJson(...SAVED);
 if (rescore) {
@@ -297,7 +297,7 @@ for (const [id, list] of Object.entries(answers)) {
   };
   for (const a of list) {
     const s = byId.get(a.scenarioId)!;
-    rows.push({ decider: id, scenarioId: s.id, familyId: s.familyId, ambiguous: s.answerKey!.ambiguous, chosen: a.label, best: s.answerKey!.best, top1: a.label === s.answerKey!.best, regret: scored(a) ? round(regretOf(s, a.label)!) : null, latencyMs: round(a.meta?.latencyMs ?? NaN, 1), costUsd: a.meta?.costUsd ?? null, fallbackUsed: a.meta?.fallbackUsed ?? null, model: a.meta?.model ?? null, error: a.meta?.error ?? null });
+    rows.push({ decider: id, promptVersion: rescore ? null : PROMPT_VERSION, scenarioId: s.id, familyId: s.familyId, ambiguous: s.answerKey!.ambiguous, chosen: a.label, best: s.answerKey!.best, top1: a.label === s.answerKey!.best, regret: scored(a) ? round(regretOf(s, a.label)!) : null, latencyMs: round(a.meta?.latencyMs ?? NaN, 1), costUsd: a.meta?.costUsd ?? null, fallbackUsed: a.meta?.fallbackUsed ?? null, model: a.meta?.model ?? null, error: a.meta?.error ?? null });
   }
 }
 // Random baseline: exact expectation of a uniform pick over the scored options (no sampling).
@@ -346,6 +346,7 @@ const file = writeResults({
   config: {
     scenarios: "data/scenarios/scenarios.json (bases mined from dev-seed scripted matches; one-flip variants)",
     requestSeed: SCENARIO_REQUEST_SEED,
+    promptVersion: rescore ? "as recorded with the saved answers (see answersSource)" : PROMPT_VERSION,
     requestMode: "offline",
     deciders: DECIDERS.map((d) => ({ id: d.id, spec: d.spec, anonymizedLabels: !!d.anon, subset: d.subset ?? "all" })),
     giant: { model: giantModel, reasoning_main: "off (the giant's fastest configuration; conservative for the speed claim)", reasoning_on_subset: thinkSubset },

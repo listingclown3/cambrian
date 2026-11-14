@@ -22,7 +22,11 @@ import {
 } from "../contracts";
 import { buildActionRequest } from "../decide/ask";
 import { buildObservationView, engine } from "../engine";
-import { basicCyclePolicy } from "../exec";
+import { DEFAULT_POLICY_ID, SCRIPTED_POLICIES } from "../exec/policies";
+import { curateOptions as p2CurateOptions, PROMPT_VERSION } from "../decide/options";
+export { PROMPT_VERSION };
+/** The default scripted policy (the scripted baseline and the rollout policy). */
+export const scriptedPolicy = SCRIPTED_POLICIES[DEFAULT_POLICY_ID]!;
 import { repoPath } from "../util/config";
 import { Rng, hashString } from "../util/rng";
 import { z } from "zod";
@@ -126,66 +130,12 @@ export type { Scenario, ScenarioFamily };
 // ── option curation (fixed rule; never looks at outcomes) ──────────────────
 
 /**
- * Curate 6 to 8 options from the full mask for `robotId` in `state`, by a fixed priority rule:
- *   1. the scripted policy's own choice (the "default play")
- *   2. one shot: shoot_now or align_then_shoot (if offered)
- *   3. hold_fire_until_active
- *   4. collect:neutral (else collect:local, collect:depot)
- *   5. the nearest own-alliance goto_shot_spot within this robot's shot range
- *   6. the highest climb offered
- *   7. contact exits: escape_spin:neutral, disengage (if offered)
- *   8. defend the nearest opponent
- *   9. stage_fuel at the nearest spot, dump_unaligned, load_outpost, goto_zone:neutral, hold_position
- * Duplicates are skipped; the list stops at 8. Output keeps master-list (mask) order so the
- * scripted pick is not always first.
+ * Scenario options: P2's shared curateOptions(view, rules, 10) from src/decide/options.ts, the
+ * same relevance filter by option type that live play uses (never by predicted value), applied to
+ * the full masked list. Deterministic.
  */
 export function curateOptions(state: MatchState, robotId: string): IntentOption[] {
-  const robot = getRobot(state, robotId);
-  const all = maskOptions(robot, state);
-  const by = (label: string) => all.find((o) => o.label === label);
-  const view = buildObservationView(state, robotId);
-  const scripted = basicCyclePolicy.decide(view);
-  const scriptedLabel = all.find((o) => JSON.stringify(o.intent) === JSON.stringify(scripted))?.label;
-  const spotsInRange = state.field.shotSpots
-    .filter((s) => s.alliance === robot.alliance)
-    .filter((s) => {
-      const d = dist(s.pos, state.field.alliances[robot.alliance].hub);
-      return d >= robot.profile.minShotDistanceM && d <= robot.profile.maxShotDistanceM;
-    })
-    .sort((a, b) => dist(robot.pose, a.pos) - dist(robot.pose, b.pos));
-  const spotsAll = state.field.shotSpots.filter((s) => s.alliance === robot.alliance).sort((a, b) => dist(robot.pose, a.pos) - dist(robot.pose, b.pos));
-  const opponents = state.robots.filter((r) => r.alliance !== robot.alliance).sort((a, b) => dist(robot.pose, a.pose) - dist(robot.pose, b.pose));
-  const climbs = all.filter((o) => o.intent.action === "climb");
-  const wanted: (string | undefined)[] = [
-    scriptedLabel,
-    by("shoot_now")?.label ?? by("align_then_shoot")?.label,
-    by("hold_fire_until_active")?.label,
-    by("collect:neutral")?.label ?? by("collect:local")?.label ?? by("collect:depot")?.label,
-    spotsInRange[0] ? by(`goto_shot_spot:${spotsInRange[0].id}`)?.label : undefined,
-    state.rules.matchS - state.timeS <= CLIMB_WINDOW_S ? climbs[climbs.length - 1]?.label : undefined,
-    by("escape_spin:neutral")?.label,
-    by("disengage")?.label,
-    opponents[0] ? by(`defend:${opponents[0].id}`)?.label : undefined,
-    spotsAll[0] ? by(`stage_fuel:${spotsAll[0].id}`)?.label : undefined,
-    by("dump_unaligned")?.label,
-    by("load_outpost")?.label,
-    by("goto_zone:neutral")?.label,
-    by("hold_position")?.label,
-    // fillers, only used when fewer than 6 of the above are offered
-    spotsAll[1] ? by(`goto_shot_spot:${spotsAll[1].id}`)?.label : undefined,
-    by("goto_zone:our_alliance")?.label,
-    all.find((o) => o.intent.action === "block_lane")?.label,
-    all.find((o) => o.intent.action === "screen")?.label,
-    by("goto_zone:their_alliance")?.label,
-  ];
-  const chosen = new Set<string>();
-  const primary = wanted.length - 5;
-  wanted.forEach((l, i) => {
-    if (!l || chosen.has(l) || chosen.size >= 8) return;
-    if (i >= primary && chosen.size >= 6) return;
-    chosen.add(l);
-  });
-  return all.filter((o) => chosen.has(o.label));
+  return p2CurateOptions(buildObservationView(state, robotId), state.rules, 10);
 }
 
 /**
@@ -212,7 +162,7 @@ export function keyFromValues(values: Record<string, { mean: number; ci95: numbe
 
 /** The scripted policy's pick for the focus robot, as a label of `options` (or null if not offered). */
 export function scriptedLabelFor(state: MatchState, robotId: string, options: readonly IntentOption[]): string | null {
-  const intent = basicCyclePolicy.decide(buildObservationView(state, robotId));
+  const intent = scriptedPolicy.decide(buildObservationView(state, robotId));
   return options.find((o) => JSON.stringify(o.intent) === JSON.stringify(intent))?.label ?? null;
 }
 
@@ -229,7 +179,7 @@ export const SCENARIO_REQUEST_SEED = 7;
 export function scenarioRequest(s: Scenario): DecisionRequest {
   const state = engine.restore(s.snapshot);
   const view = { ...buildObservationView(state, s.focusRobotId), options: s.options };
-  return buildActionRequest(view, SCENARIO_REQUEST_SEED, "offline");
+  return buildActionRequest(view, SCENARIO_REQUEST_SEED, "offline", { rules: state.rules, maxOptions: 10 });
 }
 
 /** Same request with option labels replaced by opt_01, opt_02, ... (descriptions unchanged). */

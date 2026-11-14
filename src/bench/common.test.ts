@@ -21,13 +21,13 @@ describe("bench common helpers", () => {
     expect(request.stateText).toBe(req.stateText);
   });
 
-  it("curates between 2 and 8 distinct options by a fixed rule", () => {
+  it("curates between 2 and 10 distinct options by a fixed rule", () => {
     const cfg = loadConfig();
     const state = engine.createMatch(cfg, 1, demoRobots(cfg));
     for (const r of state.robots) {
       const opts = curateOptions(state, r.id);
       expect(opts.length).toBeGreaterThanOrEqual(2);
-      expect(opts.length).toBeLessThanOrEqual(8);
+      expect(opts.length).toBeLessThanOrEqual(10);
       expect(new Set(opts.map((o) => o.label)).size).toBe(opts.length);
       expect(curateOptions(state, r.id).map((o) => o.label)).toEqual(opts.map((o) => o.label));
     }

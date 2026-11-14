@@ -22,10 +22,10 @@
  */
 import { dist, getRobot, maskOptions, type EngineEvent, type Intent, type MatchState, type RobotId, type Snapshot } from "../contracts";
 import { buildObservationView, engine } from "../engine";
-import { basicCyclePolicy, robotsNeedingDecision } from "../exec";
+import { robotsNeedingDecision } from "../exec";
 import { loadConfig } from "../util/config";
 import { simHash } from "../util/provenance";
-import { curateOptions, drawLineup, lineupKey, loadLeague, readJson, writeJson } from "./common";
+import { scriptedPolicy, curateOptions, drawLineup, lineupKey, loadLeague, readJson, writeJson } from "./common";
 import { readFileSync } from "node:fs";
 import { repoPath } from "../util/config";
 
@@ -70,15 +70,22 @@ function replay(seed: number, k: number, visit: (state: MatchState, robotId: Rob
   const state = engine.createMatch(cfg, seed, drawLineup(league, lineupKey(seed, k)));
   let lastEvents: EngineEvent[] = [];
   let decisions = 0;
+  const since = new Map<RobotId, EngineEvent[]>();
   while (state.phase !== "finished") {
     const intents: Record<RobotId, Intent | undefined> = {};
     const need = robotsNeedingDecision(state, lastEvents);
     for (const robotId of need) visit(state, robotId, lastEvents);
     for (const robotId of need) {
-      intents[robotId] = basicCyclePolicy.decide(buildObservationView(state, robotId));
+      intents[robotId] = scriptedPolicy.decide(buildObservationView(state, robotId, since.get(robotId) ?? []));
+      since.set(robotId, []);
       decisions += 1;
     }
     lastEvents = engine.step(state, intents, state.rules.physics.dtS).events;
+    for (const robot of state.robots) {
+      const seen = since.get(robot.id) ?? [];
+      seen.push(...lastEvents);
+      since.set(robot.id, seen.slice(-50));
+    }
   }
   return decisions;
 }
