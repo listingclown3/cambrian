@@ -103,7 +103,8 @@ interface Answer {
 let thinkSubset = scenarios.filter((s) => !s.answerKey!.ambiguous).map((s) => s.id).sort().slice(0, 8);
 
 type Decider = { id: string; spec: string | null; subset?: string[]; anon?: boolean; concurrency: number };
-const DECIDERS: Decider[] = [
+const onlyArg = process.argv.indexOf("--deciders") >= 0 ? process.argv[process.argv.indexOf("--deciders") + 1]!.split(",") : null;
+const ALL_DECIDERS: Decider[] = [
   { id: "drex", spec: "drex", concurrency: 1 },
   { id: "drex-latest", spec: "drex:drex-latest", concurrency: 1 },
   { id: "drex_anon", spec: "drex", anon: true, concurrency: 1 },
@@ -112,6 +113,7 @@ const DECIDERS: Decider[] = [
   { id: "scripted", spec: null, concurrency: 1 },
   { id: "random", spec: "random", concurrency: 1 },
 ];
+const DECIDERS = onlyArg ? ALL_DECIDERS.filter((d) => onlyArg.includes(d.id)) : ALL_DECIDERS;
 
 async function ask(d: Decider, s: Scenario): Promise<Answer> {
   if (d.spec === null) {
@@ -336,7 +338,7 @@ const paired = {
   drex_anon_minus_drex: pairedRegret("drex_anon", "drex"),
 };
 const isMock = Object.values(summary).some((v) => (v as { isMock: boolean }).isMock) || ENGINE_IS_STUB;
-const giantModel = (summary.deepinfra as { models: string[] }).models.join(",");
+const giantModel = (summary.deepinfra as { models?: string[] } | undefined)?.models?.join(",") ?? null;
 const file = writeResults({
   experiment: "bench_scenarios",
   createdTs: new Date().toISOString(),
