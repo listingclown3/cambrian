@@ -1,29 +1,48 @@
-deck numbers, generated 2026-11-14T21:07:52.348Z
-source: results/headline.json (git fa80a60a7d53-dirty, simHash e7daa7a2a621cf3c), all_real: true
+deck numbers, generated 2026-11-14T21:26:29.660Z
+source: results/headline.json (git 82a16b2b54fe-dirty, simHash 007a2b25fa5e3cf0), all_real: true
 format: deck blank | value | source key(s). NOT RUN means the experiment did not run: delete that line from the deck.
 
 [cover]
 none
 
 [results]
-latency ratio (x faster) | 1.7x | latency_ratio_deepinfra_over_drex
+MAIN SPEED STAT: per decision, one alliance batched (3 questions per call) | Drex 68 ms vs giant 573 ms (8.4x faster) | batch3_ms_per_decision_drex, batch3_ms_per_decision_giant (results/bench_batch.json)
+single-question latency ratio (x faster) | 1.7x | latency_ratio_deepinfra_over_drex
 drex p50 ms | 693 ms | drex_p50_ms
 giant p50 ms | 1157 ms | deepinfra_p50_ms
 cost ratio (x cheaper) | 19x | deepinfra_cost_per_1k_usd / drex_cost_per_1k_usd
 drex $ per 1k decisions | $0.023 | drex_cost_per_1k_usd
 giant $ per 1k decisions | $0.44 | deepinfra_cost_per_1k_usd
-top-1 drex vs giant | 0% vs 5% | top1_drex, top1_deepinfra
+top-1 drex vs giant | 10% vs 5% | top1_drex, top1_deepinfra
 n scenarios | 45 | n_scenarios
 n families | 15 | n_families
-sim matches per hour drex vs giant | NOT RUN | -
-real-time sim margin drex vs giant | NOT RUN | -
-rollout savings % | -34% | rollout_savings_pct_drex_vs_uniform
+sim matches per hour drex vs giant | 18 vs 17 | sim_matches_per_hour_drex, sim_matches_per_hour_deepinfra
+real-time sim margin drex vs giant | -75.8 vs -28.1 (n = 4 paired seeds) | live_margin_drex_realtime, live_margin_deepinfra_realtime, n_live_seeds
+rollout savings % | 12% | rollout_savings_pct_drex_vs_uniform
+
+[batch table: ms per decision when one call answers N questions about one state]
+sizes 1 and 3 are match sizes (one robot, one alliance); 8 and 32 are stress sizes; giant = reasoning off
+batch 1 | Drex 332 ms vs giant 929 ms (2.8x) | batch1_ms_per_decision_drex, batch1_ms_per_decision_giant
+batch 3 | Drex 68 ms vs giant 573 ms (8.4x) | batch3_ms_per_decision_drex, batch3_ms_per_decision_giant
+batch 8 | Drex 41 ms vs giant 1362 ms (33x) | batch8_ms_per_decision_drex, batch8_ms_per_decision_giant
+batch 32 | NOT RUN | -
+NOTE: the giant's batch 8 time varied a lot between runs (491 ms and 1362 ms were both observed); quote it as a range.
+
+[scenario quality: mean regret against the end-of-match answer key (lower is better)]
+regret: Drex vs giant vs scripted vs random | Drex 20.8 ± 12.7 (n 39); giant 30.2 ± 13.5 (n 45); scripted 23.5 ± 11.2 (n 45); random 31.5 ± 9.2 (n 45) | results/bench_scenarios.json summary.deciders[*].regret
+paired difference, Drex minus giant (negative = Drex better) | -10.8 ± 9.8 (n 39) | results/bench_scenarios.json summary.paired_regret.drex_minus_giant
+paired difference, Drex minus scripted | -2.9 ± 5.8 (n 39) | results/bench_scenarios.json summary.paired_regret.drex_minus_scripted
+prompt version: not recorded; sim hash e7daa7a2a621cf3c; answer key sim hash e7daa7a2a621cf3c
+
+[quirk check]
+tower post-up | tested the tower post-up; Drex flagged it RISKY under G210 (its value depends on inducing opponent fouls, p = 0.83); in 10 matches it drew 0 G420 fouls and added 0 points | results/quirks.json row tower_post_up
+all playbook entries: 5 LEGAL, 1 RISKY, 0 ILLEGAL; 3 simulated
 
 [builtwith]
-drex questions | 15,902 | usage_drex_questions
+drex questions | 16,762 | usage_drex_questions
 intern sessions | 5 | usage_intern_sessions
 ndi docs | 90 | usage_ndi_docs
-deepinfra calls | 3,463 | usage_deepinfra_calls
+deepinfra calls | 3,659 | usage_deepinfra_calls
 keenable pages | 58 | keenable_pages
 
 [plus]
