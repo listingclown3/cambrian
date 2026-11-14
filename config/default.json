@@ -1,0 +1,747 @@
+{
+  "_readme": "Every tunable and every assumed number lives here, never in code. game/field values carry {value,status,source}; status is VERIFIED or TODO_VERIFY_AGAINST_MANUAL. Other sections carry _status FABRICATED (invented plausible numbers) or TUNABLE (engineering knobs). NEVER take game numbers from Chief Delphi parody documents; only the official manual counts. Schema: src/contracts/config.ts.",
+  "game": {
+    "autoS": {
+      "value": 20,
+      "status": "VERIFIED",
+      "source": "official game overview (per planner brief)"
+    },
+    "teleopS": {
+      "value": 140,
+      "status": "VERIFIED",
+      "source": "official game overview (per planner brief)"
+    },
+    "fuelPointsActiveHub": {
+      "value": 1,
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "fuelPointsInactiveHub": {
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "towerTeleopPoints": {
+      "value": [10, 20, 30],
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "towerAutoL1Points": {
+      "value": 15,
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "minorFoulPoints": {
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "majorFoulPoints": {
+      "value": 15,
+      "status": "VERIFIED",
+      "source": "official cheat sheet (per planner brief)"
+    },
+    "maxPreloadFuel": {
+      "value": 8,
+      "status": "VERIFIED",
+      "source": "official source (per planner brief)"
+    },
+    "hubDeactivationWarningS": {
+      "value": 3,
+      "status": "VERIFIED",
+      "source": "official source (per planner brief)"
+    },
+    "allHubsActiveAtEnd": {
+      "value": true,
+      "status": "VERIFIED",
+      "source": "official source (per planner brief)"
+    },
+    "fuelMassKg": {
+      "value": 0.23,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "planner brief; confirm against the fuel specification in the manual"
+    },
+    "hubShiftSchedule": {
+      "value": { "transitionS": 10, "shiftS": 25, "numShifts": 4, "autoWinnerInactiveFirst": true },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder; matches the vendored Team 488 sim constants, which are not authoritative"
+    },
+    "endgameS": {
+      "value": 30,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder; matches the vendored Team 488 sim constants, which are not authoritative"
+    },
+    "pinning": {
+      "value": { "limitS": 3, "releaseDistanceM": 1.8, "severity": "minor", "clauseId": "TODO_PIN_CLAUSE" },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "fuelStart": {
+      "value": { "neutral": 360, "depotEach": 24, "outpostEach": 24 },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    }
+  },
+  "field": {
+    "lengthM": {
+      "value": 16.54,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "widthM": {
+      "value": 8.07,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "allianceZoneDepthM": {
+      "value": 4.6,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "blueElements": {
+      "value": {
+        "hub": { "x": 4, "y": 4.035 },
+        "tower": { "x": 1, "y": 5.2 },
+        "depot": { "x": 0.7, "y": 6.6 },
+        "outpost": { "x": 0.4, "y": 0.7 }
+      },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "blueLaneY": {
+      "value": { "left_trench": 7.4, "left_bump": 5.6, "right_bump": 2.47, "right_trench": 0.67 },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "laneLengthM": {
+      "value": 1.5,
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "placeholder guess, not from the manual"
+    },
+    "shotSpots": {
+      "_status": "FABRICATED",
+      "_note": "Named shot/staging spots relative to the hub of the acting alliance. Invented for the simulator; not field markings.",
+      "spots": [
+        {
+          "id": "hub_close",
+          "forwardFromHubM": -0.9,
+          "leftFromHubM": 0,
+          "description": "right next to the hub"
+        },
+        {
+          "id": "left_wing",
+          "forwardFromHubM": -1.6,
+          "leftFromHubM": 1.8,
+          "description": "left of the hub at medium range"
+        },
+        {
+          "id": "right_wing",
+          "forwardFromHubM": -1.6,
+          "leftFromHubM": -1.8,
+          "description": "right of the hub at medium range"
+        },
+        {
+          "id": "deep_center",
+          "forwardFromHubM": -2.8,
+          "leftFromHubM": 0,
+          "description": "straight back from the hub at long range"
+        },
+        {
+          "id": "tower_side",
+          "forwardFromHubM": -2.6,
+          "leftFromHubM": 1.4,
+          "description": "long range on the tower side"
+        }
+      ]
+    }
+  },
+  "archetypes": {
+    "_status": "FABRICATED",
+    "_note": "Archetype templates. Every range is an invented, plausible guess, not measured from real robots. Numeric fields are [min, max]; *Probability fields are the chance a sampled team has the trait.",
+    "templates": {
+      "drum_fixed": {
+        "description": "Drum shooter aimed by turning the drivetrain; high volume, often tall.",
+        "shooterType": "drum",
+        "aimMethod": "drivetrain",
+        "lanes": [1, 2],
+        "fireRatePerS": [6, 10],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0.6, 1],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.92 },
+          { "distanceM": 2.5, "accuracy": 0.85 },
+          { "distanceM": 4, "accuracy": 0.65 },
+          { "distanceM": 6, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [40, 60],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.5,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4, 4.8],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 1,
+        "pushForceN": [450, 650],
+        "tallProbability": 0.7,
+        "fitsUnderTrenchProbability": 0.3,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "turret_sotm": {
+        "description": "Single turret that scores while driving.",
+        "shooterType": "turret",
+        "aimMethod": "turret",
+        "lanes": [1, 1],
+        "fireRatePerS": [3, 6],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0, 0],
+        "turretSlewDegPerS": [180, 360],
+        "shootOnMove": true,
+        "sotmAccuracyBySpeed": [
+          { "speedMps": 0, "accuracy": 1 },
+          { "speedMps": 1.5, "accuracy": 0.92 },
+          { "speedMps": 3, "accuracy": 0.75 },
+          { "speedMps": 5, "accuracy": 0.5 }
+        ],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.92 },
+          { "distanceM": 2.5, "accuracy": 0.85 },
+          { "distanceM": 4, "accuracy": 0.65 },
+          { "distanceM": 6, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [50, 60],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.5,
+        "canCollectWhileShootingProbability": 0.7,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4.5, 5],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 1,
+        "pushForceN": [450, 650],
+        "tallProbability": 0.4,
+        "fitsUnderTrenchProbability": 0.6,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "multilane_fixed": {
+        "description": "Two or three fixed shooting lanes aimed by the drivetrain.",
+        "shooterType": "lanes",
+        "aimMethod": "drivetrain",
+        "lanes": [2, 3],
+        "fireRatePerS": [3, 8],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0.6, 1],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.92 },
+          { "distanceM": 2.5, "accuracy": 0.85 },
+          { "distanceM": 4, "accuracy": 0.65 },
+          { "distanceM": 6, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [40, 50],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.5,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4, 4.8],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.9,
+        "pushForceN": [450, 650],
+        "tallProbability": 0.5,
+        "fitsUnderTrenchProbability": 0.5,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "big_hopper_hauler": {
+        "description": "Very large hopper; tall, cannot use the trench, slow when full.",
+        "shooterType": "lanes",
+        "aimMethod": "drivetrain",
+        "lanes": [2, 3],
+        "fireRatePerS": [5, 9],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0.6, 1],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.92 },
+          { "distanceM": 2.5, "accuracy": 0.85 },
+          { "distanceM": 4, "accuracy": 0.65 },
+          { "distanceM": 6, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [80, 110],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.8,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [3.8, 4.4],
+        "speedFullFraction": [0.6, 0.75],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.5, 0.7],
+        "massEmptyKg": [56, 66],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.9,
+        "pushForceN": [450, 650],
+        "tallProbability": 1,
+        "fitsUnderTrenchProbability": 0,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "dumper": {
+        "description": "Wide close-range dumper that must be next to the hub; fits the trench.",
+        "shooterType": "dumper",
+        "aimMethod": "drivetrain",
+        "lanes": [3, 4],
+        "fireRatePerS": [8, 12],
+        "spinUpS": [0, 0.1],
+        "hoodAdjustS": [0, 0],
+        "alignTimeS": [0.2, 0.5],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 0.5, "accuracy": 0.97 },
+          { "distanceM": 1.2, "accuracy": 0.9 },
+          { "distanceM": 1.6, "accuracy": 0.3 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.3, 0.5],
+        "maxShotDistanceM": [1, 1.3],
+        "capacity": [30, 50],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.9,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4, 4.8],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.9,
+        "pushForceN": [450, 650],
+        "tallProbability": 0,
+        "fitsUnderTrenchProbability": 1,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "zero_hopper_turret": {
+        "description": "Almost no hopper; shoots fuel nearly as fast as it picks it up, so it needs loose or staged fuel nearby.",
+        "shooterType": "turret",
+        "aimMethod": "turret",
+        "lanes": [1, 1],
+        "fireRatePerS": [4, 7],
+        "spinUpS": [0.2, 0.4],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0, 0],
+        "turretSlewDegPerS": [240, 420],
+        "shootOnMove": true,
+        "sotmAccuracyBySpeed": [
+          { "speedMps": 0, "accuracy": 1 },
+          { "speedMps": 1.5, "accuracy": 0.92 },
+          { "speedMps": 3, "accuracy": 0.75 },
+          { "speedMps": 5, "accuracy": 0.5 }
+        ],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.92 },
+          { "distanceM": 2.5, "accuracy": 0.85 },
+          { "distanceM": 4, "accuracy": 0.65 },
+          { "distanceM": 6, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [4, 10],
+        "intakeRatePerS": [6, 10],
+        "wideIntakeProbability": 0.5,
+        "canCollectWhileShootingProbability": 1,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4.6, 5.2],
+        "speedFullFraction": [0.97, 1],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.95, 1],
+        "massEmptyKg": [42, 52],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.9,
+        "pushForceN": [450, 650],
+        "tallProbability": 0.1,
+        "fitsUnderTrenchProbability": 0.9,
+        "passRangeM": [0, 3],
+        "passRatePerS": [0, 3],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "feeder_passer": {
+        "description": "Scores little; moves fuel to partners quickly by passing.",
+        "shooterType": "lanes",
+        "aimMethod": "drivetrain",
+        "lanes": [1, 1],
+        "fireRatePerS": [1, 3],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0.6, 1],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.75 },
+          { "distanceM": 2.5, "accuracy": 0.6 },
+          { "distanceM": 4, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [4, 5.5],
+        "capacity": [30, 45],
+        "intakeRatePerS": [5, 9],
+        "wideIntakeProbability": 0.8,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [4, 4.8],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.9,
+        "pushForceN": [450, 650],
+        "tallProbability": 0.2,
+        "fitsUnderTrenchProbability": 0.8,
+        "passRangeM": [5, 9],
+        "passRatePerS": [6, 10],
+        "climbLevel": [1, 2],
+        "climbTimeS": [5, 9]
+      },
+      "defender": {
+        "description": "Heavy tank drive with high push force and little or no shooter.",
+        "shooterType": "none",
+        "aimMethod": "drivetrain",
+        "lanes": [1, 1],
+        "fireRatePerS": [0, 0],
+        "spinUpS": [0, 0],
+        "hoodAdjustS": [0, 0],
+        "alignTimeS": [0, 0],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [{ "distanceM": 0, "accuracy": 0 }],
+        "accuracyScale": [0.85, 1.05],
+        "minShotDistanceM": [0, 0],
+        "maxShotDistanceM": [0, 0],
+        "capacity": [0, 10],
+        "intakeRatePerS": [0, 3],
+        "wideIntakeProbability": 0.5,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [3.6, 4.4],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [60, 68],
+        "traction": [1.2, 1.4],
+        "swerveProbability": 0,
+        "pushForceN": [750, 950],
+        "tallProbability": 0.3,
+        "fitsUnderTrenchProbability": 0.7,
+        "passRangeM": [0, 0],
+        "passRatePerS": [0, 0],
+        "climbLevel": [0, 1],
+        "climbTimeS": [5, 9]
+      },
+      "starter_bot": {
+        "description": "Simple single-lane robot with a low fire rate and a small hopper.",
+        "shooterType": "lanes",
+        "aimMethod": "drivetrain",
+        "lanes": [1, 1],
+        "fireRatePerS": [1, 3],
+        "spinUpS": [0.4, 0.8],
+        "hoodAdjustS": [0.2, 0.5],
+        "alignTimeS": [0.6, 1],
+        "turretSlewDegPerS": [0, 0],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
+        "shotAccuracyByDistance": [
+          { "distanceM": 1, "accuracy": 0.75 },
+          { "distanceM": 2.5, "accuracy": 0.6 },
+          { "distanceM": 4, "accuracy": 0.35 }
+        ],
+        "accuracyScale": [0.7, 1],
+        "minShotDistanceM": [0.8, 1.2],
+        "maxShotDistanceM": [2.5, 4],
+        "capacity": [8, 20],
+        "intakeRatePerS": [2, 5],
+        "wideIntakeProbability": 0.2,
+        "canCollectWhileShootingProbability": 0.3,
+        "canIntakeOverBumpProbability": 0.3,
+        "speedEmptyMps": [3.2, 4.2],
+        "speedFullFraction": [0.85, 0.95],
+        "accelEmpty": [6, 9],
+        "accelFullFraction": [0.75, 0.9],
+        "massEmptyKg": [50, 62],
+        "traction": [1, 1.25],
+        "swerveProbability": 0.4,
+        "pushForceN": [350, 550],
+        "tallProbability": 0.5,
+        "fitsUnderTrenchProbability": 0.5,
+        "passRangeM": [0, 0],
+        "passRatePerS": [0, 0],
+        "climbLevel": [0, 1],
+        "climbTimeS": [5, 9]
+      }
+    }
+  },
+  "league": {
+    "_status": "FABRICATED",
+    "_note": "How the league in data/league/ is sampled from the archetype templates.",
+    "teams": 48,
+    "archetypeWeights": {
+      "drum_fixed": 6,
+      "turret_sotm": 5,
+      "multilane_fixed": 8,
+      "big_hopper_hauler": 4,
+      "dumper": 5,
+      "zero_hopper_turret": 2,
+      "feeder_passer": 4,
+      "defender": 4,
+      "starter_bot": 10
+    },
+    "seed": 2026
+  },
+  "physics": {
+    "_status": "TUNABLE",
+    "_note": "Physics knobs for the engine. Invented defaults; P1 tunes them.",
+    "dtS": 0.05,
+    "robotRadiusM": 0.45,
+    "arriveToleranceM": 0.3,
+    "bumpSpeedFactor": 0.6,
+    "trenchSpeedFactor": 0.9,
+    "restitution": 0.2,
+    "maxTurnRateDegPerS": 360
+  },
+  "shotModel": {
+    "_status": "FABRICATED",
+    "_note": "Shot model knobs. Invented defaults; P1 tunes them.",
+    "ballSpeedMps": 8,
+    "dumpUnalignedAccuracyFactor": 0.5,
+    "defendedAccuracyFactorShort": 0.75,
+    "defendedAccuracyFactorTall": 0.55,
+    "hubReturnToNeutralFraction": 1
+  },
+  "triggers": {
+    "_status": "TUNABLE",
+    "_note": "Thresholds that turn engine conditions into decision triggers.",
+    "contactLongS": 2,
+    "noProgressS": 1.5,
+    "noProgressMinMoveM": 0.2,
+    "watchdogS": 5,
+    "opponentInRangeM": 2,
+    "actionTimeoutS": 15,
+    "climbSafetyMarginS": 2
+  },
+  "microRollouts": {
+    "_status": "TUNABLE",
+    "_note": "Short look-ahead rollouts used inside a live decision.",
+    "count": 20,
+    "horizonS": 2
+  },
+  "answerKey": {
+    "_status": "TUNABLE",
+    "_note": "Long rollouts that define the answer key of each scenario.",
+    "rollouts": 50,
+    "horizonS": 20
+  },
+  "providers": {
+    "_status": "TUNABLE",
+    "_note": "Connection settings per provider. API keys come from .env, never from here. Models starting with TODO_ must be set by a human. Drex endpoint and auth are from console.nace.ai/docs/drex (drex-latest currently points at drex-max-v1.1).",
+    "byId": {
+      "drex": {
+        "endpoint": "https://console.nace.ai/v1/systemone",
+        "model": "drex-v2.0",
+        "authHeader": "Authorization",
+        "authScheme": "Bearer",
+        "apiKeyEnv": "NACE_API_KEY",
+        "extraHeaders": {},
+        "concurrency": 8,
+        "timeoutMs": 2000,
+        "retries": 2
+      },
+      "drex_mock": {
+        "endpoint": null,
+        "model": null,
+        "authHeader": null,
+        "authScheme": null,
+        "apiKeyEnv": null,
+        "extraHeaders": {},
+        "concurrency": 64,
+        "timeoutMs": 1000,
+        "retries": 0
+      },
+      "claude": {
+        "endpoint": "https://api.anthropic.com/v1/messages",
+        "model": "claude-fable-5-2",
+        "authHeader": "x-api-key",
+        "authScheme": null,
+        "apiKeyEnv": "ANTHROPIC_API_KEY",
+        "extraHeaders": { "anthropic-version": "2023-06-01" },
+        "concurrency": 4,
+        "timeoutMs": 30000,
+        "retries": 2
+      },
+      "openai": {
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "model": "TODO_SET_OPENAI_MODEL",
+        "authHeader": "Authorization",
+        "authScheme": "Bearer",
+        "apiKeyEnv": "OPENAI_API_KEY",
+        "extraHeaders": {},
+        "concurrency": 4,
+        "timeoutMs": 30000,
+        "retries": 2
+      },
+      "gemini": {
+        "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+        "model": "TODO_SET_GEMINI_MODEL",
+        "authHeader": "x-goog-api-key",
+        "authScheme": null,
+        "apiKeyEnv": "GEMINI_API_KEY",
+        "extraHeaders": {},
+        "concurrency": 4,
+        "timeoutMs": 30000,
+        "retries": 2
+      },
+      "scripted": {
+        "endpoint": null,
+        "model": null,
+        "authHeader": null,
+        "authScheme": null,
+        "apiKeyEnv": null,
+        "extraHeaders": {},
+        "concurrency": 64,
+        "timeoutMs": 1000,
+        "retries": 0
+      },
+      "random": {
+        "endpoint": null,
+        "model": null,
+        "authHeader": null,
+        "authScheme": null,
+        "apiKeyEnv": null,
+        "extraHeaders": {},
+        "concurrency": 64,
+        "timeoutMs": 1000,
+        "retries": 0
+      }
+    }
+  },
+  "pricesPerMTokUsd": {
+    "_status": "TUNABLE",
+    "_note": "US dollars per 1M tokens. null = not filled in; costUsd is reported as 0 until a human fills these in from the pricing page of each provider. Drex bills input tokens only.",
+    "byId": {
+      "drex": { "input": null, "output": null },
+      "drex_mock": { "input": 0, "output": 0 },
+      "claude": { "input": null, "output": null },
+      "openai": { "input": null, "output": null },
+      "gemini": { "input": null, "output": null },
+      "scripted": { "input": 0, "output": 0 },
+      "random": { "input": 0, "output": 0 }
+    }
+  },
+  "spendCapsUsd": {
+    "_status": "TUNABLE",
+    "_note": "Hard spend limits per run; a run aborts rather than exceed them.",
+    "perProviderPerRun": { "drex": 5, "drex_mock": 0, "claude": 5, "openai": 5, "gemini": 5, "scripted": 0, "random": 0 },
+    "totalPerRun": 15
+  },
+  "realtimeLatencyCharging": {
+    "_status": "TUNABLE",
+    "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+    "enabled": true,
+    "latencyScale": 1
+  },
+  "seeds": {
+    "_status": "TUNABLE",
+    "_note": "Dev seeds are for tuning; eval seeds are only for reported numbers. Never tune on eval seeds.",
+    "dev": [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010],
+    "eval": [
+      9001,
+      9002,
+      9003,
+      9004,
+      9005,
+      9006,
+      9007,
+      9008,
+      9009,
+      9010,
+      9011,
+      9012,
+      9013,
+      9014,
+      9015,
+      9016,
+      9017,
+      9018,
+      9019,
+      9020,
+      9021,
+      9022,
+      9023,
+      9024,
+      9025,
+      9026,
+      9027,
+      9028,
+      9029,
+      9030
+    ]
+  },
+  "server": {
+    "_status": "TUNABLE",
+    "_note": "Local server settings.",
+    "port": 8787,
+    "webDevPort": 5173,
+    "demoDrexAlliance": "blue"
+  }
+}

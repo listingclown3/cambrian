@@ -1,0 +1,310 @@
+import { useEffect, useState, useRef, useCallback } from "react";
+import "./index.css";
+import { Engine, type GameResult } from "./simulation/Engine";
+import { GAME_DURATION } from "./simulation/GameConst";
+import { FieldView } from "./components/FieldView";
+import { ControlPanel } from "./components/ControlPanel";
+import { GameLog } from "./components/GameLog";
+import { RobotSidePanel } from "./components/RobotSidePanel";
+import { StrategyManager } from "./components/StrategyManager";
+
+function App() {
+  const [engine] = useState(() => new Engine());
+  const engineRef = useRef<Engine>(engine);
+  const [, setTick] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [gameResults, setGameResults] = useState<GameResult[]>([]);
+  const [playAgain, setPlayAgain] = useState(false);
+  const playAgainRef = useRef(playAgain);
+
+  // Keep ref in sync
+  useEffect(() => {
+    playAgainRef.current = playAgain;
+  }, [playAgain]);
+
+  const [leftOpen, setLeftOpen] = useState(window.innerWidth > 1024);
+  const [rightOpen, setRightOpen] = useState(window.innerWidth > 1024);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem("dark_mode");
+    if (saved !== null) return saved === "true";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+    }
+    localStorage.setItem("dark_mode", isDarkMode.toString());
+  }, [isDarkMode]);
+
+  // Close sidebars on mobile when clicking outside
+  const closeSidebars = () => {
+    if (window.innerWidth <= 1024) {
+      setLeftOpen(false);
+      setRightOpen(false);
+    }
+  };
+
+  const forceUpdate = useCallback(() => {
+    setTick((t) => t + 1);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1024) {
+        setLeftOpen(true);
+        setRightOpen(true);
+      } else {
+        setLeftOpen(false);
+        setRightOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Hook into engine tick
+    engineRef.current.onTick = () => {
+      forceUpdate();
+    };
+
+    engineRef.current.onGameEnd = (result) => {
+      setGameResults((prev) => [...prev, result]);
+      setIsRunning(false);
+
+      if (playAgainRef.current) {
+        // Automatically restart after a short delay
+        setTimeout(() => {
+          handleReset();
+          handleStart();
+        }, 1000);
+      }
+    };
+
+    return () => {
+      engineRef.current.stop();
+    };
+  }, [forceUpdate]);
+
+  // Auto-pause when window loses focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState === "hidden" &&
+        engineRef.current.isRunning
+      ) {
+        handleStop();
+      }
+    };
+
+    const handleBlur = () => {
+      if (engineRef.current.isRunning) {
+        handleStop();
+      }
+    };
+
+    window.addEventListener("blur", handleBlur);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const handleStart = () => {
+    engineRef.current.start();
+    setIsRunning(true);
+  };
+
+  const handleStop = () => {
+    engineRef.current.stop();
+    setIsRunning(false);
+  };
+
+  const handleReset = () => {
+    engineRef.current.reset();
+    setIsRunning(false);
+    forceUpdate();
+  };
+
+  const clearLog = () => {
+    setGameResults([]);
+  };
+
+  return (
+    <div
+      className={`app-container ${leftOpen || rightOpen ? "sidebar-open" : ""}`}
+    >
+      {/* Mobile Overlay */}
+      {(leftOpen || rightOpen) && window.innerWidth <= 1024 && (
+        <div
+          className="mobile-overlay-actual"
+          onClick={closeSidebars}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 45,
+            background: "transparent",
+          }}
+        />
+      )}
+
+      {/* Left Sidebar: Game Log */}
+      <div
+        className={`sidebar left-sidebar ${!leftOpen ? "closed-mobile" : ""}`}
+        style={{
+          width: leftOpen ? "320px" : "0px",
+        }}
+      >
+        <div className="sidebar-content" style={{ opacity: leftOpen ? 1 : 0 }}>
+          <GameLog results={gameResults} onReset={clearLog} />
+        </div>
+        <button
+          onClick={() => setLeftOpen(!leftOpen)}
+          className={`side-panel-toggle ${!leftOpen ? "closed" : ""}`}
+          style={{
+            position: "absolute",
+            left: "100%",
+            top: "10px",
+            zIndex: 100,
+            borderLeft: "none",
+            borderRadius: "0 4px 4px 0",
+          }}
+          title={leftOpen ? "Collapse Log" : "Expand Log"}
+        >
+          {leftOpen ? "←" : "→"}
+        </button>
+      </div>
+
+      <div className="main-content">
+        <div className="game-header-section">
+          <div
+            className="field-container"
+            style={{
+              boxShadow: `0 10px 40px ${engineRef.current.getActiveTeams().length > 1
+                  ? "rgba(150, 150, 150, 0.2)"
+                  : engineRef.current.getActiveTeams()[0] === "RED"
+                    ? "rgba(255, 77, 79, 0.2)"
+                    : "rgba(24, 144, 255, 0.2)"
+                }`,
+              border: `4px solid ${engineRef.current.getActiveTeams().length > 1
+                  ? "#888"
+                  : engineRef.current.getActiveTeams()[0] === "RED"
+                    ? "#ff4d4f"
+                    : "#1890ff"
+                }`,
+              position: "relative",
+            }}
+          >
+            <FieldView engine={engineRef.current} />
+            <div className={`pause-overlay ${!isRunning ? "visible" : ""}`}>
+              <div className="pause-text">
+                {engineRef.current.time >= GAME_DURATION
+                  ? "GAME FINISHED"
+                  : engineRef.current.time === 0
+                    ? "GET STARTED"
+                    : "PAUSED"}
+              </div>
+              <div className="pause-subtext">
+                {engineRef.current.time >= GAME_DURATION
+                  ? "The match has ended"
+                  : engineRef.current.time === 0
+                    ? "Configure robots and start the match"
+                    : "Simulation is suspended"}
+              </div>
+            </div>
+          </div>
+
+          <ControlPanel
+            engine={engineRef.current}
+            isRunning={isRunning}
+            onStart={handleStart}
+            onStop={handleStop}
+            onReset={handleReset}
+            onUpdate={forceUpdate}
+            playAgain={playAgain}
+            setPlayAgain={setPlayAgain}
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+          />
+        </div>
+
+        <main className="main-scroll-area">
+          <div className="strategy-manager-container">
+            <StrategyManager
+              engine={engineRef.current}
+              onUpdate={forceUpdate}
+            />
+          </div>
+        </main>
+      </div>
+
+      {/* Right Sidebar: Robot Info */}
+      <div
+        className={`sidebar right-sidebar ${!rightOpen ? "closed-mobile" : ""}`}
+        style={{
+          width: rightOpen ? "320px" : "0px",
+        }}
+      >
+        <div className="sidebar-content" style={{ opacity: rightOpen ? 1 : 0 }}>
+          <RobotSidePanel engine={engineRef.current} />
+        </div>
+        <button
+          onClick={() => setRightOpen(!rightOpen)}
+          className={`side-panel-toggle ${!rightOpen ? "closed" : ""}`}
+          style={{
+            position: "absolute",
+            right: "100%",
+            top: "10px",
+            zIndex: 100,
+            borderRight: "none",
+            borderRadius: "4px 0 0 4px",
+          }}
+          title={rightOpen ? "Collapse Intelligence" : "Expand Intelligence"}
+        >
+          {rightOpen ? "→" : "←"}
+        </button>
+      </div>
+
+      {/* Mobile Menu Toggle Floating Buttons */}
+      <div className="mobile-menu-toggle">
+        <button
+          onClick={() => {
+            setLeftOpen(!leftOpen);
+            setRightOpen(false);
+          }}
+          style={{
+            backgroundColor: leftOpen ? "var(--text-main)" : "var(--bg-card)",
+            color: leftOpen ? "var(--bg-main)" : "var(--text-main)",
+            border: "1px solid var(--border-color)",
+          }}
+        >
+          Log {leftOpen ? "×" : "≡"}
+        </button>
+        <button
+          onClick={() => {
+            setRightOpen(!rightOpen);
+            setLeftOpen(false);
+          }}
+          style={{
+            backgroundColor: rightOpen ? "var(--text-main)" : "var(--bg-card)",
+            color: rightOpen ? "var(--bg-main)" : "var(--text-main)",
+            border: "1px solid var(--border-color)",
+          }}
+        >
+          Intell {rightOpen ? "×" : "≡"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default App;

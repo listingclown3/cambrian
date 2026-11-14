@@ -1,0 +1,25 @@
+cambrian-frc
+============
+
+This repository contains third-party code.
+
+vendor/rebuilt-robotsim
+-----------------------
+"2026-Rebuilt-RobotSim" by FRC Team 488.
+Source:  https://github.com/Team488/Rebuilt-RobotSim
+Commit:  f2a3f6ee404bd56aff6f33fa97878d42d3a3710c (2026-01-14)
+Vendored on 2026-11-14 as plain files (upstream git history not included).
+
+License / permission:
+  The upstream repository does not contain a LICENSE file. Team 488 granted this
+  project permission to use and adapt the simulator for this hackathon entry.
+  Permission was obtained by the project owner.
+  TODO(owner): record here who at Team 488 granted permission, when, and through
+  which channel, and keep a copy of the message.
+
+  All credit for the original simulator, its field model, pathfinding and
+  strategies goes to Team 488. Any files in this repository derived from
+  vendor/rebuilt-robotsim must keep a comment crediting Team 488.
+
+FIRST(R) and FIRST Robotics Competition(R) are trademarks of FIRST. REBUILT is the
+2026 FRC game. This project is not affiliated with or endorsed by FIRST or Nace AI.

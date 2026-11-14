@@ -1,0 +1,16 @@
+node_modules/
+dist/
+web/dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# Run logs and caches are local only. results/ IS committed.
+runs/*
+!runs/.gitkeep
+cache/*
+!cache/.gitkeep

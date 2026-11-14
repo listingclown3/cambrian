@@ -1,0 +1,259 @@
+import { useEffect, useRef, useState } from "react";
+import { Engine } from "../simulation/Engine";
+import { FieldTile } from "../simulation/GameConst";
+import { FIELD_WIDTH, FIELD_HEIGHT } from "../simulation/GameConst";
+
+interface FieldViewProps {
+  engine: Engine;
+}
+
+export const FieldView: React.FC<FieldViewProps> = ({ engine }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Scale factor: Tiles to Pixels
+  // Field is 100x60. Let's aim for ~1200px width. 1200/100 = 12.
+  const SCALE = 12;
+
+  // Intersection Observer to detect when canvas is visible
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(canvas);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const render = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Clear
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Field Grid
+      // Draw background
+      ctx.fillStyle = "#333";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Tiles (Balls, Obstacles)
+      const grid = engine.field.grid;
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[0].length; c++) {
+          const tile = grid[r][c];
+          const x = c * SCALE;
+          const y = r * SCALE;
+
+          if (tile === FieldTile.WALL) {
+            ctx.fillStyle = "#555";
+            ctx.fillRect(x, y, SCALE, SCALE);
+          } else {
+            // Color empty squares (and background of balls) based on zone
+            if (c < FIELD_WIDTH / 3) {
+              ctx.fillStyle = "rgba(255, 0, 0, 0.15)"; // Red Zone
+            } else if (c >= (2 * FIELD_WIDTH) / 3) {
+              ctx.fillStyle = "rgba(0, 0, 255, 0.15)"; // Blue Zone
+            } else {
+              ctx.fillStyle = "rgba(255, 255, 255, 0.05)"; // Neutral Zone
+            }
+            ctx.fillRect(x, y, SCALE, SCALE);
+
+            if (tile === FieldTile.BALL) {
+              ctx.fillStyle = "orange";
+              ctx.beginPath();
+              ctx.arc(
+                x + 0.5 * SCALE,
+                y + 0.5 * SCALE,
+                0.3 * SCALE,
+                0,
+                2 * Math.PI,
+              );
+              ctx.fill();
+            }
+          }
+
+          // Optional: Draw grid lines for debugging
+          ctx.strokeStyle = "#444";
+          ctx.strokeRect(x, y, SCALE, SCALE);
+        }
+      }
+
+      // Draw Scoring Zones
+      engine.field.scoringLocations.forEach((sl) => {
+        const x = sl.tileX * SCALE;
+        const y = sl.tileY * SCALE;
+        const centerX = x + SCALE / 2;
+        const centerY = y + SCALE / 2;
+        const pulse = Math.sin(engine.time * 5) * 0.2 + 1; // Pulse over time
+
+        if (sl.active) {
+          // Glow effect for active hubs
+          const gradient = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            2,
+            centerX,
+            centerY,
+            SCALE,
+          );
+          if (sl.team === "RED") {
+            gradient.addColorStop(0, "rgba(255, 50, 50, 0.8)");
+            gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.4)");
+            gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+          } else {
+            gradient.addColorStop(0, "rgba(50, 150, 255, 0.8)");
+            gradient.addColorStop(0.5, "rgba(0, 100, 255, 0.4)");
+            gradient.addColorStop(1, "rgba(0, 100, 255, 0)");
+          }
+
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, SCALE * 1.2 * pulse, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Core
+          ctx.fillStyle = sl.team === "RED" ? "#ff4d4f" : "#1890ff";
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, SCALE * 0.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Pulsing Ring
+          ctx.strokeStyle = sl.team === "RED" ? "#ff4d4f" : "#1890ff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, SCALE * 0.6 * pulse, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          // Inactive Hub - Dim and Desaturated
+          ctx.fillStyle = "rgba(150, 150, 150, 0.2)";
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, SCALE * 0.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = "rgba(100, 100, 100, 0.4)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, SCALE * 0.5, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Small "X" or lock icon feel?
+          ctx.beginPath();
+          const r = SCALE * 0.2;
+          ctx.moveTo(centerX - r, centerY - r);
+          ctx.lineTo(centerX + r, centerY + r);
+          ctx.moveTo(centerX + r, centerY - r);
+          ctx.lineTo(centerX - r, centerY + r);
+          ctx.stroke();
+        }
+      });
+
+      // Draw Flying Balls
+      engine.field.flyingBalls.forEach((ball) => {
+        const x = ball.x * SCALE;
+        const y = ball.y * SCALE;
+        const ox = ball.originX * SCALE;
+        const oy = ball.originY * SCALE;
+
+        // Draw flight trail
+        ctx.strokeStyle = "rgba(255, 204, 0, 0.4)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset
+
+        // Shadow (simulate height by offsetting shadow)
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.beginPath();
+        ctx.arc(x + 5, y + 5, 0.2 * SCALE, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Ball
+        ctx.fillStyle = "#ffcc00"; // Brighter orange for visibility
+        ctx.beginPath();
+        ctx.arc(x, y, 0.25 * SCALE, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Highlight/Sheen
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.beginPath();
+        ctx.arc(
+          x - 0.08 * SCALE,
+          y - 0.08 * SCALE,
+          0.08 * SCALE,
+          0,
+          2 * Math.PI,
+        );
+        ctx.fill();
+      });
+
+      // Draw Robots
+      engine.robots.forEach((robot) => {
+        // Robot x,y are tile coordinates (floats for smooth movement)
+        const x = robot.x * SCALE;
+        const y = robot.y * SCALE;
+
+        // Robot Body (centered on tile coord)
+        // If robot.x = 5.5, it's at middle of tile 5? No, previous logic was index based.
+        // Robot aims for x.5. So drawing at x*SCALE centers it if x is center.
+        // Let's assume robot x is the center of the robot.
+        // We want to draw a box centered at x,y.
+        ctx.fillStyle = robot.team === "RED" ? "#ff4444" : "#4444ff";
+        ctx.fillRect(
+          x - 0.4 * SCALE,
+          y - 0.4 * SCALE,
+          0.8 * SCALE,
+          0.8 * SCALE,
+        );
+
+        // ID
+        ctx.fillStyle = "white";
+        ctx.font = "10px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(robot.name, x, y - 0.5 * SCALE);
+
+        // Has Ball Indicator (Count)
+        if (robot.ballCount > 0) {
+          ctx.fillStyle = "orange";
+          ctx.beginPath();
+          ctx.arc(x, y, 0.2 * SCALE, 0, 2 * Math.PI);
+          ctx.fill();
+
+          // Count text
+          ctx.fillStyle = "black";
+          ctx.font = "8px Arial";
+          ctx.fillText(robot.ballCount.toString(), x, y + 3);
+        }
+      });
+    };
+
+    render();
+    // Hook into animation frame if needed or rely on parent updates
+  }, [engine, engine.time, isVisible]); // dependence on isVisible triggers re-render when scrolling back
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={FIELD_WIDTH * SCALE}
+      height={FIELD_HEIGHT * SCALE}
+      style={{ border: "2px solid #666", background: "#222" }}
+    />
+  );
+};

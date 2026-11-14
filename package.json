@@ -1,0 +1,58 @@
+{
+  "name": "cambrian-frc",
+  "private": true,
+  "version": "0.0.0",
+  "description": "FRC REBUILT 2026 strategy simulator: Drex (Nace AI) vs frontier LLMs. Nace AI Hackathon, Apex track.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c blue,green \"pnpm dev:server\" \"pnpm dev:web\"",
+    "dev:server": "tsx watch src/server/main.ts",
+    "dev:web": "vite --config web/vite.config.ts",
+    "build:web": "vite build --config web/vite.config.ts",
+    "start": "tsx src/server/main.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json",
+    "smoke:drex": "tsx src/decide/smoke.ts",
+    "league": "tsx src/bench/league.ts",
+    "matches": "tsx src/bench/matches.ts",
+    "mine": "tsx src/bench/mine.ts",
+    "families": "tsx src/bench/families.ts",
+    "answerkey": "tsx src/bench/answerkey.ts",
+    "bench:scenarios": "tsx src/bench/benchScenarios.ts",
+    "bench:explore": "tsx src/bench/benchExplore.ts",
+    "bench:live": "tsx src/bench/benchLive.ts",
+    "bench:scout": "tsx src/bench/benchScout.ts",
+    "bench:postmatch": "tsx src/bench/benchPostmatch.ts",
+    "headline": "tsx src/bench/headline.ts"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "2.0.0-r.1",
+    "@fastify/static": "^10.1.11",
+    "@fastify/websocket": "^11.3.7",
+    "dotenv": "^18.0.10",
+    "fastify": "^5.12.8",
+    "p-limit": "^7.3.3",
+    "pure-rand": "^8.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tinypool": "^2.2.0",
+    "undici": "^8.12.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/ws": "^8.18.2",
+    "@vitejs/plugin-react": "^6.3.0",
+    "concurrently": "^10.0.7",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "packageManager": "pnpm@12.18.0"
+}

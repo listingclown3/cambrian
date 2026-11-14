@@ -1,0 +1,116 @@
+:root {
+  color-scheme: dark;
+  --bg: #0e1116;
+  --panel: #171b22;
+  --line: #2a313c;
+  --text: #e6e9ee;
+  --muted: #8b95a5;
+  --red: #e5534b;
+  --blue: #4c8dff;
+  --warn: #d9a441;
+  font-family: system-ui, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.banner {
+  background: color-mix(in srgb, var(--warn) 18%, transparent);
+  border: 1px solid var(--warn);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+
+.scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: baseline;
+  margin: 10px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard .score {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.red {
+  color: var(--red);
+}
+
+.blue {
+  color: var(--blue);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: block;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+.panel h2 {
+  font-size: 13px;
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 2px 8px 2px 0;
+  white-space: nowrap;
+}
+
+.log {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 220px;
+  overflow-y: auto;
+}
