@@ -1,0 +1,193 @@
+{
+  "experiment": "bench_live_scripted",
+  "createdTs": "2026-11-14T20:33:27.213Z",
+  "isMock": false,
+  "gitCommit": "d84009e7d110-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "part": "scripted",
+    "spec": null,
+    "reasoning": null,
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 257,
+      "scoreRed": 268,
+      "margin": -11,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.27,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 200,
+      "scoreRed": 330,
+      "margin": -130,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.14,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 487,
+      "scoreRed": 195,
+      "margin": 292,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.08,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 391,
+      "scoreRed": 245,
+      "margin": 146,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.1,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 347,
+      "scoreRed": 217,
+      "margin": 130,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.11,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    }
+  ],
+  "summary": {}
+}

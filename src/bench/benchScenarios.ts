@@ -13,6 +13,8 @@
  *                     (fixed subset), reported separately and never mixed into the main numbers
  *   scripted          basic_cycle policy applied to the scenario view (free baseline)
  *   random            uniform random over the options (free baseline)
+ * Network deciders are asked one request at a time (concurrency 1) so round-trip latency is not
+ * inflated by bursts; reasoning-on uses 4 concurrent requests (its latency is per call anyway).
  *
  * Scores: top-1 on unambiguous scenarios, mean regret (best mean minus chosen mean) on all,
  * context sensitivity per family, round-trip latency p50/p95 from meta.latencyMs, cost per
@@ -51,10 +53,10 @@ const thinkSubset = scenarios.filter((s) => !s.answerKey!.ambiguous).map((s) => 
 
 type Decider = { id: string; spec: string | null; subset?: string[]; anon?: boolean; concurrency: number };
 const DECIDERS: Decider[] = [
-  { id: "drex", spec: "drex", concurrency: 4 },
-  { id: "drex-latest", spec: "drex:drex-latest", concurrency: 4 },
-  { id: "drex_anon", spec: "drex", anon: true, concurrency: 4 },
-  { id: "deepinfra", spec: "deepinfra", concurrency: 4 },
+  { id: "drex", spec: "drex", concurrency: 1 },
+  { id: "drex-latest", spec: "drex:drex-latest", concurrency: 1 },
+  { id: "drex_anon", spec: "drex", anon: true, concurrency: 1 },
+  { id: "deepinfra", spec: "deepinfra", concurrency: 1 },
   ...(skipThink ? [] : [{ id: "deepinfra_think", spec: "deepinfra@think", subset: thinkSubset, concurrency: 4 }]),
   { id: "scripted", spec: null, concurrency: 1 },
   { id: "random", spec: "random", concurrency: 1 },
@@ -82,14 +84,23 @@ async function ask(d: Decider, s: Scenario): Promise<Answer> {
 }
 
 const answers: Record<string, Answer[]> = {};
+const firstPassFallbacks: Record<string, { scenarioId: string; error: string | null }[]> = {};
+const byIdAll = new Map(scenarios.map((s) => [s.id, s]));
 const t0 = performance.now();
 for (const d of DECIDERS) {
   const limit = pLimit(d.concurrency);
   const list = d.subset ? scenarios.filter((s) => d.subset!.includes(s.id)) : scenarios;
   const started = performance.now();
   answers[d.id] = await Promise.all(list.map((s) => limit(() => ask(d, s))));
-  const fb = answers[d.id]!.filter((a) => a.meta?.fallbackUsed).length;
-  console.log(`[bench:scenarios] ${d.id}: ${list.length} answers in ${((performance.now() - started) / 1000).toFixed(1)} s, ${fb} fallbacks`);
+  const fb = answers[d.id]!.filter((a) => a.meta?.fallbackUsed);
+  firstPassFallbacks[d.id] = fb.map((a) => ({ scenarioId: a.scenarioId, error: a.meta?.error ?? null }));
+  // Offline benchmark: a fallback is re-asked once, one at a time; both counts are reported.
+  for (const a of fb) {
+    const again = await ask(d, byIdAll.get(a.scenarioId)!);
+    answers[d.id]![answers[d.id]!.indexOf(a)] = again;
+  }
+  const fb2 = answers[d.id]!.filter((a) => a.meta?.fallbackUsed).length;
+  console.log(`[bench:scenarios] ${d.id}: ${list.length} answers in ${((performance.now() - started) / 1000).toFixed(1)} s, ${fb.length} first-pass fallbacks, ${fb2} after one retry`);
 }
 
 const byId = new Map(scenarios.map((s) => [s.id, s]));
@@ -163,6 +174,8 @@ for (const [id, list] of Object.entries(answers)) {
     n_asked: list.length,
     n_scored: ok.length,
     fallbacks: list.filter((a) => a.meta?.fallbackUsed).length,
+    fallbacks_first_pass: firstPassFallbacks[id]?.length ?? 0,
+    fallback_errors_first_pass: firstPassFallbacks[id] ?? [],
     unusable_answers: list.filter((a) => a.label === null && !a.meta?.fallbackUsed).length,
     n_unambiguous_scored: unamb.length,
     top1: unamb.length ? round(unamb.filter((a) => a.label === byId.get(a.scenarioId)!.answerKey!.best).length / unamb.length) : null,
