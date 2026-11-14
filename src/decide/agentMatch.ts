@@ -48,4 +48,5 @@ for (const a of ["blue", "red"] as const) {
   const errors = [...new Set(metas.map((m) => m.error).filter((e): e is string => e !== null))];
   for (const e of errors.slice(0, 5)) console.log(`      error: ${e}`);
 }
+console.log(`wall ${(summary.wallMs / 1000).toFixed(1)} s (provider wait ${(summary.providerWaitMs / 1000).toFixed(1)} s, sim ${(summary.simWallMs / 1000).toFixed(1)} s) = ${summary.matchesPerHour.toFixed(1)} matches/hour`);
 if (summary.dropped > 0) console.log(`${summary.dropped} answer(s) arrived after the match ended and were never applied`);

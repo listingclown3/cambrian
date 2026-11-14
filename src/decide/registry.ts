@@ -91,22 +91,36 @@ export async function providerModel(provider: DecisionProvider, cfg: Config): Pr
   return cfg.providers.byId[provider.id].model ?? provider.id;
 }
 
+/** Flags a spec may carry after "@", in any order: "drex:drex-latest@anon@cache". */
+const SPEC_FLAGS = ["think", "anon", "cache"] as const;
+
 /**
- * Split "id[:model][@think]" (the model may contain ":" or "/"). "@think" turns reasoning on for
- * chat providers. Throws on an unknown id.
+ * Split "id[:model][@flag...]" (the model may contain ":" or "/"). Flags:
+ *   @think  reasoning on (chat providers)
+ *   @anon   anonymized-labels ablation (labels shown as opt_01.., descriptions kept)
+ *   @cache  offline response cache (offline requests only)
+ * Throws on an unknown id or flag.
  */
-export function parseProviderSpec(spec: string): { id: ProviderId; model?: string; thinking?: "on" } {
-  const think = spec.endsWith("@think");
-  const base = think ? spec.slice(0, -"@think".length) : spec;
-  const i = base.indexOf(":");
-  const id = ProviderIdSchema.parse(i < 0 ? base : base.slice(0, i));
-  const model = i < 0 ? undefined : base.slice(i + 1) || undefined;
-  return { id, ...(model ? { model } : {}), ...(think ? { thinking: "on" as const } : {}) };
+export function parseProviderSpec(spec: string): { id: ProviderId; model?: string; thinking?: "on"; anonymize?: true; cache?: true } {
+  const [base, ...flags] = spec.split("@");
+  for (const f of flags) if (!(SPEC_FLAGS as readonly string[]).includes(f)) throw new Error(`unknown provider spec flag "@${f}" in "${spec}"`);
+  const i = base!.indexOf(":");
+  const id = ProviderIdSchema.parse(i < 0 ? base : base!.slice(0, i));
+  const model = i < 0 ? undefined : base!.slice(i + 1) || undefined;
+  return {
+    id,
+    ...(model ? { model } : {}),
+    ...(flags.includes("think") ? { thinking: "on" as const } : {}),
+    ...(flags.includes("anon") ? { anonymize: true as const } : {}),
+    ...(flags.includes("cache") ? { cache: true as const } : {}),
+  };
 }
 
-/** Get a provider from a spec such as "drex", "drex:drex-latest", "deepinfra@think" or "deepinfra:Qwen/Qwen3.8-27B". */
+/**
+ * Get a provider from a spec such as "drex", "drex:drex-latest", "deepinfra@think",
+ * "deepinfra:Qwen/Qwen3.8-27B" or "drex@anon@cache".
+ */
 export function getProviderBySpec(spec: string, cfg: Config, opts: ProviderOptions = {}): DecisionProvider {
-  const { id, model, thinking } = parseProviderSpec(spec);
-  const merged: ProviderOptions = { ...opts, ...(model ? { model } : {}), ...(thinking ? { thinking } : {}) };
-  return getProvider(id, cfg, merged);
+  const { id, ...rest } = parseProviderSpec(spec);
+  return getProvider(id, cfg, { ...opts, ...rest });
 }

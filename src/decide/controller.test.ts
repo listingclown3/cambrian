@@ -39,6 +39,15 @@ describe("AgentController (paused)", () => {
 
     const intents = intentDecisions(summary.decisions);
     expect(intents.length).toBeGreaterThan(3);
+    const blue = summary.byAlliance.blue;
+    expect(blue.calls).toBe(calls.length);
+    expect(blue.latencyMs).toBeCloseTo(500 * calls.length, 6);
+    expect(blue.robotDecisions).toBe(summary.decisions.reduce((s, d) => s + d.choices.length, 0));
+    expect(blue).toMatchObject({ isMock: true, models: ["drex-mock"], chargedS: 0, fallbacks: 0, cachedCalls: 0 });
+    expect(summary.byAlliance.red.calls).toBe(0);
+    expect(summary.wallMs).toBeGreaterThan(0);
+    expect(summary.simWallMs + summary.providerWaitMs).toBeCloseTo(summary.wallMs, 6);
+    expect(summary.matchesPerHour).toBeCloseTo(3_600_000 / summary.wallMs, 6);
     // match start: all three idle blue robots in one request
     expect(intents[0]!.requests[0]!.questions).toHaveLength(3);
     for (const d of intents) {

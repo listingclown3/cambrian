@@ -59,6 +59,8 @@ describe("drex provider", () => {
     expect(res.meta.model).toBe("drex-max-v1.1");
     expect(res.meta.costUsd).toBeCloseTo((100 * cfg.pricesPerMTokUsd.byModel["drex-max-v1.1"]!.input!) / 1e6, 12);
     expect(parseProviderSpec("deepinfra:Qwen/Qwen3.8-27B@think")).toEqual({ id: "deepinfra", model: "Qwen/Qwen3.8-27B", thinking: "on" });
+    expect(parseProviderSpec("drex@anon@cache")).toEqual({ id: "drex", anonymize: true, cache: true });
+    expect(() => parseProviderSpec("drex@bogus")).toThrow(/unknown provider spec flag/);
   });
 
   it("flags an answer that is not an offered label instead of passing it on", async () => {
