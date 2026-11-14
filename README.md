@@ -141,6 +141,13 @@ Rules for working in parallel:
 
 ## Honesty rules
 
+- **Known rule gap: G407 is not enforced.** The manual says a robot may launch into its hub only
+  while its bumpers are at least partly inside its own alliance zone (G407). Our engine checks shot
+  distance only, so robots also score from the neutral side of the hub when in range. Every decider
+  and the scripted policy played under the same simplification, so the comparisons are like for
+  like, but absolute scores are higher than a real match would allow and shot-spot choices are not
+  rule-accurate. Fixing it changes the engine, so every benchmark must be rerun; it is the first
+  item in `notes/backlog.md`.
 - **Mock is always labelled.** `drex_mock` answers carry `meta.isMock = true`; run logs and results
   files carry `isMock`. An unimplemented provider returns a flagged fallback
   (`meta.fallbackUsed = true`, `meta.error` set), never something that looks like an answer.

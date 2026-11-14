@@ -1,5 +1,10 @@
 # Backlog: settle before we submit
 
+## FIRST AFTER SUBMISSION: enforce G407 in the engine
+
+Found 2:44 PM by the owner watching the replay. G407 (manual line "Only score while in your ALLIANCE ZONE"): a robot may launch into its hub only while its bumpers are partly or fully inside its alliance zone. `fire` and `inShotRange` in src/engine/engine.ts check hub distance only (max shot distance up to 5.5 m, hub at x 4.626 m, zone depth 4.028 m), so shots from the neutral side score. Fix: require the bumper footprint to overlap the alliance zone in both functions and in the shot-spot generator, then rerun the answer key, bench:scenarios, bench:live, the check-mode run, lab:sim and quirks, since the simulator hash changes. Not fixed before the deadline because it would have invalidated every published number.
+
+
 Things that are known to be open. Check each off, or cut the claim that depends on it.
 
 ## Cut order if behind (planner, 12:05 PM). First cut first.
