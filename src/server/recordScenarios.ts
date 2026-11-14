@@ -109,7 +109,7 @@ for (const f of families) {
 
 const out = {
   isMock: true,
-  note: "FIXTURE: snapshots come from the stub engine; the answer-key numbers and the Drex and giant picks are hand-authored for illustration. None of it is a measurement.",
+  note: "FIXTURE: snapshots come from the engine in use; the answer-key numbers and the Drex and giant picks are hand-authored for illustration. None of it is a measurement.",
   families: families.map((f) => f.family),
   scenarios,
   picks,

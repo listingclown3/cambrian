@@ -114,4 +114,11 @@ describe("server", () => {
     const r = await collect("/ws/replay?source=fixture&run=showcase_fixture&speed=40", (ms) => ms.some((x) => x.type === "tick"));
     expect(r[0]).toMatchObject({ type: "hello", source: "recorded", isMock: true });
   });
+  it('rejects an unknown provider on /ws/agents with an error message', async () => {
+    const messages: ServerMessage[] = [];
+    const socket = await app.injectWS('/ws/agents?provider=nope', {}, { onInit: (ws) => ws.on('message', (raw: Buffer) => messages.push(JSON.parse(raw.toString()) as ServerMessage)) });
+    await new Promise((r) => setTimeout(r, 200));
+    socket.terminate();
+    expect(messages[0]).toMatchObject({ type: 'error' });
+  });
 });
