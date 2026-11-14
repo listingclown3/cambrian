@@ -67,7 +67,7 @@ async function ask(d: Decider, s: Scenario): Promise<Answer> {
     const label = scriptedLabelFor(engine.restore(s.snapshot), s.focusRobotId, s.options);
     return { scenarioId: s.id, label, probabilities: null, meta: { provider: "scripted", model: "basic_cycle", latencyMs: 0, inputTokens: 0, outputTokens: 0, costUsd: 0, fallbackUsed: false, cached: false, error: label ? null : "scripted pick not among curated options", isMock: false } };
   }
-  const provider = getProviderBySpec(d.spec, cfg, { purpose: "bench_scenarios", ...(d.id === "deepinfra_think" ? { timeoutMs: 240_000 } : {}) });
+  const provider = getProviderBySpec(d.spec, cfg, { purpose: "bench_scenarios", ...(d.id === "deepinfra_think" ? { timeoutMs: 300_000, maxTokens: 16_384 } : {}) });
   const base = scenarioRequest(s);
   const { request, toReal } = d.anon ? anonymize(base) : { request: base, toReal: null };
   const res: DecisionResponse = await provider.decide(request);

@@ -1,0 +1,203 @@
+{
+  "experiment": "bench_live_giant_paused",
+  "createdTs": "2026-11-14T20:57:50.323Z",
+  "isMock": false,
+  "gitCommit": "2c3bdc75edac-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "part": "giant_paused",
+    "spec": "deepinfra",
+    "reasoning": "off",
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 726,
+      "scoreRed": 263,
+      "margin": 463,
+      "requests": 188,
+      "providerCalls": 188,
+      "robotDecisions": 239,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 169.23,
+      "latencyP50Ms": 745.3,
+      "latencyP95Ms": 1371.6,
+      "costUsd": 0.182023,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 141,
+      "scoreRed": 309,
+      "margin": -168,
+      "requests": 197,
+      "providerCalls": 197,
+      "robotDecisions": 232,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 154.65,
+      "latencyP50Ms": 702.1,
+      "latencyP95Ms": 1140.1,
+      "costUsd": 0.168631,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 460,
+      "scoreRed": 185,
+      "margin": 275,
+      "requests": 181,
+      "providerCalls": 181,
+      "robotDecisions": 211,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 169.41,
+      "latencyP50Ms": 725.6,
+      "latencyP95Ms": 1409.3,
+      "costUsd": 0.159415,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 425,
+      "scoreRed": 352,
+      "margin": 73,
+      "requests": 176,
+      "providerCalls": 176,
+      "robotDecisions": 207,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 149.4,
+      "latencyP50Ms": 754.6,
+      "latencyP95Ms": 1288.2,
+      "costUsd": 0.17942,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 266,
+      "scoreRed": 246,
+      "margin": 20,
+      "requests": 444,
+      "providerCalls": 444,
+      "robotDecisions": 484,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 412.98,
+      "latencyP50Ms": 816.4,
+      "latencyP95Ms": 1425.2,
+      "costUsd": 0.336179,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    }
+  ],
+  "summary": {}
+}
