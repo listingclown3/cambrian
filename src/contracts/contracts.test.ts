@@ -228,7 +228,10 @@ describe("config", () => {
     // Not found in the manual, or found without a citation: still open.
     // Taken from a public source outside the manual, and labelled as such.
     expect(cfg.game.fuelMassKg.status).toBe("EXTERNAL_SOURCE");
-    expect(cfg.field.allianceZoneDepthM.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
+    // Alliance zone depth is now verified from the manual (ARENA section); element positions are
+    // derived from the official drawings or still placeholders, so that group stays open.
+    expect(cfg.field.allianceZoneDepthM.status).toBe("VERIFIED");
+    expect(cfg.field.blueElements.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
   });
 
   it("has a consistent teleop timeline", () => {
