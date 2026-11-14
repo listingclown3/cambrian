@@ -118,6 +118,11 @@
       "status": "TODO_VERIFY_AGAINST_MANUAL",
       "source": "placeholder guess, not from the manual"
     },
+    "elementSizes": {
+      "value": { "hubSizeM": 1.19, "towerWidthM": 1.25, "towerDepthM": 1.14, "trenchWidthM": 1.34, "bumpWidthM": 1.85 },
+      "status": "TODO_VERIFY_AGAINST_MANUAL",
+      "source": "approximate footprints from memory of the 2026 manual drawings (hub 47 in square, bump about 73 in wide); trench width chosen so the trench fits between the wall and blueLaneY; not checked"
+    },
     "shotSpots": {
       "_status": "FABRICATED",
       "_note": "Named shot/staging spots relative to the hub of the acting alliance. Invented for the simulator; not field markings.",
@@ -558,7 +563,9 @@
     "bumpSpeedFactor": 0.6,
     "trenchSpeedFactor": 0.9,
     "restitution": 0.2,
-    "maxTurnRateDegPerS": 360
+    "maxTurnRateDegPerS": 360,
+    "navCellM": 0.15,
+    "contactMarginM": 0.05
   },
   "shotModel": {
     "_status": "FABRICATED",

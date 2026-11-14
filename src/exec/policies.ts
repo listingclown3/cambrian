@@ -53,6 +53,9 @@ export const holdPolicy: ScriptedPolicy = {
   },
 };
 
+/** Policy used by `pnpm match` and other tools when none is named. */
+export const DEFAULT_POLICY_ID = "basic_cycle";
+
 /** Registry of scripted policies by id. */
 export const SCRIPTED_POLICIES: Record<string, ScriptedPolicy> = {
   [basicCyclePolicy.id]: basicCyclePolicy,

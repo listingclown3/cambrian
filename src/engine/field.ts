@@ -41,5 +41,14 @@ export function buildFieldLayout(cfg: Config): FieldLayout {
     })),
   );
 
-  return { lengthM, widthM, alliances, neutral: { x0: depth, y0: 0, x1: lengthM - depth, y1: widthM }, shotSpots, lanes };
+  const elementSizes = cfg.field.elementSizes ? { ...cfg.field.elementSizes.value } : undefined;
+  return {
+    lengthM,
+    widthM,
+    alliances,
+    neutral: { x0: depth, y0: 0, x1: lengthM - depth, y1: widthM },
+    shotSpots,
+    lanes,
+    ...(elementSizes ? { elementSizes } : {}),
+  };
 }

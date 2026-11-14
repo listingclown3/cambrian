@@ -12,7 +12,7 @@
 import { z } from "zod";
 import { AllianceSchema, Vec2Schema } from "./common";
 import { ProviderIdSchema } from "./decide";
-import { RouteIdSchema } from "./field";
+import { FieldElementSizesSchema, RouteIdSchema } from "./field";
 import { ArchetypeSchema, ArchetypeTemplateSchema } from "./profiles";
 
 /** Provenance of a game or field constant. */
@@ -137,6 +137,8 @@ export const FieldConfigSchema = z.strictObject({
   blueLaneY: annotated(z.record(RouteIdSchema, z.number())),
   /** Length of a trench/bump crossing along x, metres. */
   laneLengthM: annotated(z.number().positive()),
+  /** Footprints of hub, tower, trench and bump (optional; additive, P1). */
+  elementSizes: annotated(FieldElementSizesSchema.strict()).optional(),
   /** Marker fields for the fabricated shot spots below. */
   shotSpots: z.strictObject({
     ...sectionMeta,
@@ -211,6 +213,10 @@ export const PhysicsParamsSchema = z.object({
   restitution: z.number().min(0).max(1),
   /** Peak drivetrain rotation rate, degrees per second. */
   maxTurnRateDegPerS: z.number().positive(),
+  /** Navigation grid cell size, metres (optional; additive, P1). */
+  navCellM: z.number().positive().optional(),
+  /** Extra gap between bumpers that still counts as contact, metres (optional; additive, P1). */
+  contactMarginM: z.number().nonnegative().optional(),
 });
 export type PhysicsParams = z.infer<typeof PhysicsParamsSchema>;
 
