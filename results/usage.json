@@ -1,8 +1,8 @@
 {
   "experiment": "usage",
-  "createdTs": "2026-11-14T21:30:10.069Z",
+  "createdTs": "2026-11-14T21:31:18.304Z",
   "isMock": false,
-  "gitCommit": "dd90927d158a",
+  "gitCommit": "c7df9d15a73f",
   "simHash": "e5f65deb13dab9a9",
   "config": {
     "ledger": {
@@ -14,13 +14,13 @@
   "rows": [
     {
       "tool": "drex",
-      "calls": 14352,
-      "inputTokens": 13735518,
-      "outputTokens": 6101884,
-      "costUsd": 0.4120655399999976,
-      "latencyMs": 3818370.153200021,
+      "calls": 14567,
+      "inputTokens": 13926152,
+      "outputTokens": 6136744,
+      "costUsd": 0.41778455999999653,
+      "latencyMs": 3883488.742400022,
       "counts": {
-        "questions": 18834
+        "questions": 19068
       },
       "byPurpose": {
         "key_check": 1,
@@ -35,7 +35,7 @@
         "decision": 196,
         "bench_scenarios": 129,
         "bench_scenarios_failed": 6,
-        "bench_live": 5659,
+        "bench_live": 5874,
         "bench_live_failed": 1329,
         "warmup": 9,
         "bench_batch": 140,
@@ -131,18 +131,18 @@
     }
   ],
   "summary": {
-    "generatedTs": "2026-11-14T21:30:10.069Z",
-    "totalCalls": 18530,
-    "totalCostUsd": 11.702080800326495,
+    "generatedTs": "2026-11-14T21:31:18.304Z",
+    "totalCalls": 18745,
+    "totalCostUsd": 11.70779982032653,
     "byTool": {
       "drex": {
-        "calls": 14352,
-        "inputTokens": 13735518,
-        "outputTokens": 6101884,
-        "costUsd": 0.4120655399999976,
-        "latencyMs": 3818370.153200021,
+        "calls": 14567,
+        "inputTokens": 13926152,
+        "outputTokens": 6136744,
+        "costUsd": 0.41778455999999653,
+        "latencyMs": 3883488.742400022,
         "counts": {
-          "questions": 18834
+          "questions": 19068
         },
         "byPurpose": {
           "key_check": 1,
@@ -157,7 +157,7 @@
           "decision": 196,
           "bench_scenarios": 129,
           "bench_scenarios_failed": 6,
-          "bench_live": 5659,
+          "bench_live": 5874,
           "bench_live_failed": 1329,
           "warmup": 9,
           "bench_batch": 140,

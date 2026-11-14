@@ -1,8 +1,8 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:30:13.356Z",
+  "createdTs": "2026-11-14T21:31:20.793Z",
   "isMock": false,
-  "gitCommit": "dd90927d158a-dirty",
+  "gitCommit": "c7df9d15a73f-dirty",
   "simHash": "e5f65deb13dab9a9",
   "config": {
     "contributing": [
@@ -408,7 +408,7 @@
     "matches_per_sec": 2.668,
     "sim_matches_per_hour_drex": 17.84,
     "sim_matches_per_hour_deepinfra": 17.05,
-    "usage_drex_questions": 18834,
+    "usage_drex_questions": 19068,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,
