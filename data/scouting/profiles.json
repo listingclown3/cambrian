@@ -1,0 +1,486 @@
+{
+  "note": "FABRICATED robots sampled from archetype templates for the scouting-sheet extraction test. Not real teams.",
+  "seed": 2103,
+  "robots": [
+    {
+      "sheetId": "s01",
+      "teamNumber": 20001,
+      "archetype": "drum_fixed",
+      "profile": {
+        "shooterType": "drum",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 53,
+        "fireRatePerS": 9.82,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.64,
+        "massEmptyKg": 54.9,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 1.26
+      }
+    },
+    {
+      "sheetId": "s02",
+      "teamNumber": 20002,
+      "archetype": "turret_sotm",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 52,
+        "fireRatePerS": 4.03,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 5,
+        "massEmptyKg": 60,
+        "heightClass": "tall",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 1.56
+      }
+    },
+    {
+      "sheetId": "s03",
+      "teamNumber": 20003,
+      "archetype": "multilane_fixed",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 3,
+        "shootOnMove": false,
+        "capacity": 48,
+        "fireRatePerS": 5.2,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.54,
+        "massEmptyKg": 60.6,
+        "heightClass": "tall",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 2.39
+      }
+    },
+    {
+      "sheetId": "s04",
+      "teamNumber": 20004,
+      "archetype": "big_hopper_hauler",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 87,
+        "fireRatePerS": 6.9,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.17,
+        "massEmptyKg": 63.4,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 2,
+        "passRangeM": 2.51
+      }
+    },
+    {
+      "sheetId": "s05",
+      "teamNumber": 20005,
+      "archetype": "dumper",
+      "profile": {
+        "shooterType": "dumper",
+        "lanes": 4,
+        "shootOnMove": false,
+        "capacity": 33,
+        "fireRatePerS": 10.22,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.76,
+        "massEmptyKg": 60.9,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 1.04
+      }
+    },
+    {
+      "sheetId": "s06",
+      "teamNumber": 20006,
+      "archetype": "zero_hopper_turret",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 8,
+        "fireRatePerS": 4.88,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.99,
+        "massEmptyKg": 50.9,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 0.29
+      }
+    },
+    {
+      "sheetId": "s07",
+      "teamNumber": 20007,
+      "archetype": "feeder_passer",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 34,
+        "fireRatePerS": 1.16,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.67,
+        "massEmptyKg": 53.8,
+        "heightClass": "short",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 8.99
+      }
+    },
+    {
+      "sheetId": "s08",
+      "teamNumber": 20008,
+      "archetype": "defender",
+      "profile": {
+        "shooterType": "none",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 9,
+        "fireRatePerS": 0,
+        "intakeWidth": "narrow",
+        "drivetrain": "tank",
+        "speedEmptyMps": 3.66,
+        "massEmptyKg": 65.8,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 0,
+        "passRangeM": 0
+      }
+    },
+    {
+      "sheetId": "s09",
+      "teamNumber": 20009,
+      "archetype": "starter_bot",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 20,
+        "fireRatePerS": 2.66,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 3.26,
+        "massEmptyKg": 57.1,
+        "heightClass": "short",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 0
+      }
+    },
+    {
+      "sheetId": "s10",
+      "teamNumber": 20010,
+      "archetype": "drum_fixed",
+      "profile": {
+        "shooterType": "drum",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 58,
+        "fireRatePerS": 6.14,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.52,
+        "massEmptyKg": 53.2,
+        "heightClass": "short",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 2.56
+      }
+    },
+    {
+      "sheetId": "s11",
+      "teamNumber": 20011,
+      "archetype": "turret_sotm",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 55,
+        "fireRatePerS": 5.28,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.87,
+        "massEmptyKg": 57.4,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 2.97
+      }
+    },
+    {
+      "sheetId": "s12",
+      "teamNumber": 20012,
+      "archetype": "multilane_fixed",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 47,
+        "fireRatePerS": 6.46,
+        "intakeWidth": "wide",
+        "drivetrain": "tank",
+        "speedEmptyMps": 4.18,
+        "massEmptyKg": 58.3,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 2,
+        "passRangeM": 1.95
+      }
+    },
+    {
+      "sheetId": "s13",
+      "teamNumber": 20013,
+      "archetype": "big_hopper_hauler",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 3,
+        "shootOnMove": false,
+        "capacity": 81,
+        "fireRatePerS": 5.15,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.38,
+        "massEmptyKg": 60.9,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 1
+      }
+    },
+    {
+      "sheetId": "s14",
+      "teamNumber": 20014,
+      "archetype": "dumper",
+      "profile": {
+        "shooterType": "dumper",
+        "lanes": 3,
+        "shootOnMove": false,
+        "capacity": 49,
+        "fireRatePerS": 8.95,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.51,
+        "massEmptyKg": 61.2,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0.09
+      }
+    },
+    {
+      "sheetId": "s15",
+      "teamNumber": 20015,
+      "archetype": "zero_hopper_turret",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 5,
+        "fireRatePerS": 6.36,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.7,
+        "massEmptyKg": 50.4,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0.5
+      }
+    },
+    {
+      "sheetId": "s16",
+      "teamNumber": 20016,
+      "archetype": "feeder_passer",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 42,
+        "fireRatePerS": 2.66,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.13,
+        "massEmptyKg": 54.3,
+        "heightClass": "tall",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 6.49
+      }
+    },
+    {
+      "sheetId": "s17",
+      "teamNumber": 20017,
+      "archetype": "defender",
+      "profile": {
+        "shooterType": "none",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 1,
+        "fireRatePerS": 0,
+        "intakeWidth": "narrow",
+        "drivetrain": "tank",
+        "speedEmptyMps": 4.31,
+        "massEmptyKg": 64.4,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 0
+      }
+    },
+    {
+      "sheetId": "s18",
+      "teamNumber": 20018,
+      "archetype": "starter_bot",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 8,
+        "fireRatePerS": 1.45,
+        "intakeWidth": "narrow",
+        "drivetrain": "tank",
+        "speedEmptyMps": 3.62,
+        "massEmptyKg": 52.8,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 0,
+        "passRangeM": 0
+      }
+    },
+    {
+      "sheetId": "s19",
+      "teamNumber": 20019,
+      "archetype": "drum_fixed",
+      "profile": {
+        "shooterType": "drum",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 51,
+        "fireRatePerS": 8.37,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.47,
+        "massEmptyKg": 59.9,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 2,
+        "passRangeM": 1.88
+      }
+    },
+    {
+      "sheetId": "s20",
+      "teamNumber": 20020,
+      "archetype": "turret_sotm",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 58,
+        "fireRatePerS": 4.6,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.83,
+        "massEmptyKg": 52.3,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0.04
+      }
+    },
+    {
+      "sheetId": "s21",
+      "teamNumber": 20021,
+      "archetype": "multilane_fixed",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 3,
+        "shootOnMove": false,
+        "capacity": 42,
+        "fireRatePerS": 6.31,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.36,
+        "massEmptyKg": 51.9,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 1.26
+      }
+    },
+    {
+      "sheetId": "s22",
+      "teamNumber": 20022,
+      "archetype": "big_hopper_hauler",
+      "profile": {
+        "shooterType": "lanes",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 103,
+        "fireRatePerS": 5.17,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.3,
+        "massEmptyKg": 65,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 2,
+        "passRangeM": 0.29
+      }
+    },
+    {
+      "sheetId": "s23",
+      "teamNumber": 20023,
+      "archetype": "dumper",
+      "profile": {
+        "shooterType": "dumper",
+        "lanes": 4,
+        "shootOnMove": false,
+        "capacity": 38,
+        "fireRatePerS": 9.59,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.02,
+        "massEmptyKg": 56.6,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0.3
+      }
+    },
+    {
+      "sheetId": "s24",
+      "teamNumber": 20024,
+      "archetype": "zero_hopper_turret",
+      "profile": {
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 9,
+        "fireRatePerS": 5.66,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.95,
+        "massEmptyKg": 46.2,
+        "heightClass": "tall",
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 2.07
+      }
+    }
+  ]
+}
