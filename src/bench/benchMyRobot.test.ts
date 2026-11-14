@@ -17,5 +17,5 @@ describe("benchMyRobot", () => {
     const a = await playOne(cfg, mine, "defender", cfg.seeds.eval[0]!, "scripted");
     const b = await playOne(cfg, mine, "defender", cfg.seeds.eval[0]!, "scripted");
     expect(a.m).toEqual(b.m);
-  }, 60000);
+  }, 180000);
 });

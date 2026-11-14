@@ -34,6 +34,8 @@ export interface MatchMetrics {
     foulsCommitted: number;
     foulPoints: number;
   };
+  /** Provider bookkeeping (zero for scripted). */
+  provider: { calls: number; robotDecisions: number; fallbacks: number; costUsd: number };
   sticky: {
     contactS: number;
     pinnedS: number;
@@ -135,6 +137,7 @@ export async function playOne(cfg: Config, mine: RobotProfile, archetype: Archet
       blue,
       red,
       me: { fuelPoints, fuelScored, fuelInInactiveHub: inactiveShots, climbLevel: me.climb.level, foulsCommitted: fouls.length, foulPoints: fouls.reduce((a, f) => a + f.pointsToOpponent, 0) },
+      provider: { calls: s.calls.blue + s.calls.red, robotDecisions: s.byAlliance.blue.robotDecisions + s.byAlliance.red.robotDecisions, fallbacks: s.fallbacks.blue + s.fallbacks.red, costUsd: Number((s.byAlliance.blue.costUsd + s.byAlliance.red.costUsd).toFixed(5)) },
       sticky,
     },
     wallMs,
@@ -167,6 +170,9 @@ export function summarizeRows(ms: MatchMetrics[], decider: Decider) {
         ties: margins.filter((x) => x === 0).length,
         seeds: xs.map((m) => m.seed),
         marginsBySeed: margins,
+        providerCalls: xs.reduce((a, m) => a + m.provider.calls, 0),
+        providerFallbackRobotDecisions: xs.reduce((a, m) => a + m.provider.fallbacks, 0),
+        costUsd: Number(xs.reduce((a, m) => a + m.provider.costUsd, 0).toFixed(4)),
         myFuelPointsMean: Number(mean(xs.map((m) => m.me.fuelPoints)).toFixed(2)),
         myClimbLevelMean: Number(mean(xs.map((m) => m.me.climbLevel)).toFixed(2)),
         myFoulsMean: Number(mean(xs.map((m) => m.me.foulsCommitted)).toFixed(2)),
@@ -224,21 +230,30 @@ async function main() {
   const mine = loadMyRobot();
   const seeds = cfg.seeds.eval.slice(0, decider === "drex" ? Number(arg("drex-seeds") ?? 2) : Number(arg("seeds") ?? 8));
   const budgetS = Number(arg("budget-s") ?? 600);
-  const jobs = seeds.flatMap((seed) => ARCHETYPES.map((a) => ({ a, seed })));
+  const only = arg("archetypes")?.split(",");
+  const jobs = seeds.flatMap((seed) => ARCHETYPES.filter((a) => !only || only.includes(a)).map((a) => ({ a, seed })));
   const results: PlayResult[] = [];
   const t0 = performance.now();
   if (decider === "scripted") {
     for (const j of jobs) results.push(await playOne(cfg, mine, j.a, j.seed, "scripted"));
   } else {
-    const first = await playOne(cfg, mine, jobs[0]!.a, jobs[0]!.seed, "drex");
-    results.push(first);
-    console.log(`first drex match: ${(first.wallMs / 1000).toFixed(1)} s, ${first.calls} calls, $${first.cost.toFixed(4)}, ${first.fallbacks} fallbacks`);
-    const rest = jobs.slice(1).map((j) => () => playOne(cfg, mine, j.a, j.seed, "drex"));
-    // Stop starting new matches once there is not time left for one more of the first match's length.
-    results.push(...(await pool(rest, 8, () => (performance.now() - t0) / 1000 + first.wallMs / 1000 < budgetS)));
+    // The first Drex match is timed alone (about 300 s measured); then the rest run in parallel.
+    // --parallel-all skips the solo timing and runs every job at once.
+    const parallelAll = process.argv.includes("--parallel-all");
+    const first = parallelAll ? null : await playOne(cfg, mine, jobs[0]!.a, jobs[0]!.seed, "drex");
+    if (first) {
+      results.push(first);
+      console.log(`first drex match: ${(first.wallMs / 1000).toFixed(1)} s, ${first.calls} calls, $${first.cost.toFixed(4)}, ${first.fallbacks} fallbacks`);
+    }
+    const rest = (first ? jobs.slice(1) : jobs).map((j) => () => playOne(cfg, mine, j.a, j.seed, "drex").then((r) => (console.log(`done ${j.a} seed ${j.seed} margin ${r.m.margin} (${(r.wallMs / 1000).toFixed(0)} s)`), r)));
+    // Stop starting new matches once there is not time left for one more match of the first one's length.
+    const est = first ? first.wallMs / 1000 : 300;
+    results.push(...(await pool(rest, parallelAll ? rest.length : 8, () => (performance.now() - t0) / 1000 + est < budgetS)));
   }
   const wallS = (performance.now() - t0) / 1000;
-  const ms = results.map((r) => r.m);
+  const allMs = results.map((r) => r.m);
+  // A Drex match where more than 10 percent of robot decisions fell back to the scripted policy (for example the endpoint refused calls) is not a Drex-driven number, so it is discarded and counted.
+  const ms = decider === "drex" ? allMs.filter((m) => m.provider.fallbacks <= 0.1 * m.provider.robotDecisions) : allMs;
   const rows = summarizeRows(ms, decider);
   const ranked = [...rows].sort((a, b) => a.meanMargin - b.meanMargin);
   const hardest = ranked.slice(0, 2).map((r) => r.archetype);
@@ -247,6 +262,9 @@ async function main() {
     decider,
     seeds: [...new Set(ms.map((m) => m.seed))],
     matches: ms.length,
+    attempted: allMs.length,
+    discardedForFallbacks: allMs.length - ms.length,
+    fallbackRule: decider === "drex" ? "matches with more than 10 percent of robot decisions answered by the scripted fallback are discarded" : null,
     wallS: Number(wallS.toFixed(1)),
     matchesPerSecond: Number((ms.length / wallS).toFixed(3)),
     ranking: ranked.map((r) => ({ archetype: r.archetype, meanMargin: r.meanMargin })),
@@ -291,6 +309,12 @@ async function main() {
       drexMatches: drex?.matches ?? null,
       scriptedMatches: scripted?.matches ?? null,
       byDecider: by,
+      drexNote:
+        drex === undefined
+          ? null
+          : drex.matches > 0
+            ? `Drex-driven rows cover ${drex.matches} match(es); see byDecider.drex.`
+            : "No valid Drex-driven match is in this file. Drex calls were refused with HTTP 403 (Vercel Security Checkpoint) during the later runs, so every robot decision fell back to the scripted policy and those matches were discarded, not reported. Earlier in the session one solo Drex-driven match (drum_fixed, seed 9001) ran for 297.7 s wall, 1202 provider calls, 29 fallbacks, $0.0499, margin -61; its row was not kept because the run that followed overwrote the Drex entry. Run `pnpm bench:myrobot -- --decider drex` when the endpoint is reachable.",
       simplifications: [
         "Opponents are archetype midpoint robots from the config templates (profileFromTemplate with uniform 0.5); they are identical for every seed, so seeds vary only the engine randomness and start state, not the opponents.",
         "Blue partners are two midpoint multilane_fixed robots in every match.",
