@@ -4,7 +4,7 @@ import type { Headline, UsageSummary, Config, Scenario, ScenarioFamily } from ".
 import type { RunListing } from "../../src/server/protocol";
 
 /** Fetch JSON once; error and loading are explicit so pages never fake data. */
-export function useApi<T>(url: string | null): { data: T | null; error: string | null } {
+export function useApi<T>(url: string | null, refreshMs?: number): { data: T | null; error: string | null } {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -12,14 +12,23 @@ export function useApi<T>(url: string | null): { data: T | null; error: string |
     let live = true;
     setData(null);
     setError(null);
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${r.statusText}`))))
-      .then((d: T) => live && setData(d))
-      .catch((e: unknown) => live && setError(e instanceof Error ? e.message : String(e)));
+    const load = () =>
+      fetch(url, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${r.statusText}`))))
+        .then((d: T) => {
+          if (live) {
+            setData(d);
+            setError(null);
+          }
+        })
+        .catch((e: unknown) => live && setError(e instanceof Error ? e.message : String(e)));
+    void load();
+    const id = refreshMs ? setInterval(load, refreshMs) : 0;
     return () => {
       live = false;
+      if (id) clearInterval(id);
     };
-  }, [url]);
+  }, [url, refreshMs]);
   return { data, error };
 }
 
@@ -56,8 +65,8 @@ export interface ResultView {
   summary?: Record<string, unknown>;
 }
 /** One results file by name (results/<name>.json); data is null while loading or when the file does not exist. */
-export function useResult(name: string): ResultView | null {
-  return useApi<ResultView>(`/api/results/${name}`).data;
+export function useResult(name: string, refreshMs?: number): ResultView | null {
+  return useApi<ResultView>(`/api/results/${name}`, refreshMs).data;
 }
 
 /** "Qwen/Qwen3.5-397B-A17B · reasoning off" style label for the giant; null while unknown. */
