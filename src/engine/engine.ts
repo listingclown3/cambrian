@@ -597,9 +597,19 @@ function hubDistance(state: MatchState, robot: RobotState): number {
   return dist(robot.pose, state.field.alliances[robot.alliance].hub);
 }
 
+/**
+ * Rule G407: a robot may launch into its hub only while its bumpers are partially or fully within
+ * its own alliance zone. Bumpers are modelled as the robot radius around the pose.
+ */
+function inOwnAllianceZone(state: MatchState, robot: RobotState): boolean {
+  const z = state.field.alliances[robot.alliance].zone;
+  const r = state.rules.physics.robotRadiusM;
+  return robot.pose.x >= z.x0 - r && robot.pose.x <= z.x1 + r && robot.pose.y >= z.y0 - r && robot.pose.y <= z.y1 + r;
+}
+
 function inShotRange(state: MatchState, robot: RobotState): boolean {
   const d = hubDistance(state, robot);
-  return d >= robot.profile.minShotDistanceM && d <= robot.profile.maxShotDistanceM;
+  return d >= robot.profile.minShotDistanceM && d <= robot.profile.maxShotDistanceM && inOwnAllianceZone(state, robot);
 }
 
 /** Piecewise-linear lookup in a sorted table without allocating. */
@@ -641,7 +651,7 @@ function sotmFactor(robot: RobotState): number {
 function fire(state: MatchState, robot: RobotState, accuracyFactor: number, dtS: number, rng: Rng, events: EngineEvent[]): boolean {
   const p = robot.profile;
   const hubDistM = hubDistance(state, robot);
-  const inRange = hubDistM >= p.minShotDistanceM && hubDistM <= p.maxShotDistanceM;
+  const inRange = hubDistM >= p.minShotDistanceM && hubDistM <= p.maxShotDistanceM && inOwnAllianceZone(state, robot); // G407
   const accuracy = inRange ? lookup(p.shotAccuracyByDistance, hubDistM, rowDistance, rowAccuracy) * accuracyFactor * defendedFactor(state, robot) : 0;
   const hub = state.hubs[robot.alliance];
   const ownZone: FieldZoneId = `${robot.alliance}_alliance`;
