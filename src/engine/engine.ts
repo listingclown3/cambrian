@@ -969,24 +969,25 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
 
 // ── contact, proximity, watchdog ─────────────────────────────────────────────
 
-/**
- * How hard a robot holds its ground along direction (tx, ty) toward the robot it touches, newtons.
- * Driving into the other robot it pushes with its drive force, capped by what its wheels can
- * transmit (traction * loaded mass * g). Otherwise its wheels resist with the same traction limit.
- */
-function holdingForce(state: MatchState, robot: RobotState, tx: number, ty: number, trying: boolean): number {
+/** Traction limit: the most force the robot's wheels can put on the carpet, newtons. */
+function gripForce(state: MatchState, robot: RobotState): number {
   const p = robot.profile;
-  const grip = p.traction * loadedMassKg(p, robot.fuelHeld) * (state.rules.physics.gravityMps2 ?? DEFAULT_GRAVITY);
-  const v = robot.velocity;
-  const toward = v.vx * tx + v.vy * ty;
-  if (trying && toward > EPS) return Math.min(p.pushForceN, grip);
-  return grip;
+  return p.traction * loadedMassKg(p, robot.fuelHeld) * (state.rules.physics.gravityMps2 ?? DEFAULT_GRAVITY);
+}
+
+/** Force with which the robot drives along (tx, ty) into the robot it touches; 0 when it is not driving into it. */
+function pushingForce(state: MatchState, robot: RobotState, tx: number, ty: number, trying: boolean): number {
+  if (!trying || robot.velocity.vx * tx + robot.velocity.vy * ty <= EPS) return 0;
+  return Math.min(robot.profile.pushForceN, gripForce(state, robot));
 }
 
 /**
- * Push model. Robots are solid discs; when two overlap, the overlap is shared out by force: the
- * robot holding with less force (see holdingForce) is the one that moves. Then both slide out of
- * any field element. Pairs are processed in fixed state order.
+ * Push model. Robots are solid discs. When two overlap, a robot driving into the other pushes
+ * with its drive force (capped by its traction); a robot that is not pushing back resists with
+ * its traction. The pushed robot gives way only by the pusher's excess force, as a fraction of
+ * the push, and the pusher is stopped by the rest: a weak robot cannot shove a strong one that
+ * holds its ground, and two robots pushing head-on move the way of the stronger. Both then slide
+ * out of any field element. Pairs are processed in fixed state order.
  */
 function separateRobots(state: MatchState, trying: Uint8Array): void {
   const robots = state.robots;
@@ -1005,9 +1006,14 @@ function separateRobots(state: MatchState, trying: Uint8Array): void {
       const ux = d > EPS ? dx / d : 1;
       const uy = d > EPS ? dy / d : 0;
       const overlap = touch - d;
-      const fa = holdingForce(state, a, ux, uy, trying[i] === 1);
-      const fb = holdingForce(state, b, -ux, -uy, trying[j] === 1);
-      const shareA = fa + fb > 0 ? fb / (fa + fb) : 0.5;
+      const pa = pushingForce(state, a, ux, uy, trying[i] === 1);
+      const pb = pushingForce(state, b, -ux, -uy, trying[j] === 1);
+      // Fraction of the overlap that robot a gives up (b gives up the rest).
+      let shareA: number;
+      if (pa > 0 && pb > 0) shareA = pa >= pb ? 1 - (pa - pb) / pa : (pb - pa) / pb;
+      else if (pa > 0) shareA = 1 - Math.max(0, Math.min(1, (pa - gripForce(state, b)) / pa));
+      else if (pb > 0) shareA = Math.max(0, Math.min(1, (pb - gripForce(state, a)) / pb));
+      else shareA = 0.5;
       a.pose.x -= ux * overlap * shareA;
       a.pose.y -= uy * overlap * shareA;
       b.pose.x += ux * overlap * (1 - shareA);
