@@ -32,6 +32,7 @@
     "bench:live": "tsx src/bench/benchLive.ts",
     "lab": "tsx src/lab/main.ts",
     "lab:sim": "tsx src/lab/labSim.ts",
+    "quirks": "tsx src/lab/quirks.ts",
     "headline": "tsx src/bench/headline.ts",
     "research": "tsx src/research/research.ts",
     "ingest": "tsx src/ingest/ingest.ts",
