@@ -1,0 +1,66 @@
+{
+  "source": {
+    "type": "url",
+    "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf",
+    "file_name": "2026GameManual.pdf"
+  },
+  "generatedTs": "2026-11-14T19:44:37.545Z",
+  "rules": [
+    {
+      "topic": "pinning an opponent robot",
+      "id": "G418",
+      "text": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an opponent ROBOT by contact, either direct or transitive (such as against a FIELD element).",
+      "violation": "MINOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.",
+      "page": 72,
+      "quote": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an"
+    },
+    {
+      "topic": "damaging or tipping an opponent robot",
+      "id": "G415",
+      "text": "A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or transitively via a SCORING ELEMENT CONTROLLED by the ROBOT: A. inside the vertical projection of an opponent’s ROBOT PERIMETER, or B. with the opponent’s BUMPER backing or mounting.",
+      "violation": "MAJOR FOUL and YELLOW CARD, or if opponent ROBOT is unable to drive, then MAJOR FOUL and RED CARD",
+      "page": 69,
+      "quote": "A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or"
+    },
+    {
+      "topic": "contacting an opponent climbing or on the TOWER",
+      "id": "G420",
+      "text": "A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30 seconds of the MATCH regardless of who initiates contact.",
+      "violation": "MAJOR FOUL and if the opponent ROBOT is off the ground the opponent ROBOT is awarded LEVEL 3 TOWER points.",
+      "page": 73,
+      "quote": "A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30"
+    },
+    {
+      "topic": "blocking or trapping multiple opponents / shutting down major gameplay",
+      "id": "G419",
+      "text": "2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play.",
+      "violation": "MAJOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.",
+      "page": 72,
+      "quote": "2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play."
+    },
+    {
+      "topic": "robots leaving the field or extending beyond a size limit",
+      "id": "G413",
+      "text": "A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107.",
+      "violation": "MAJOR FOUL",
+      "page": 67,
+      "quote": "A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107."
+    },
+    {
+      "topic": "human player / OUTPOST FUEL feeding rules",
+      "id": "G425",
+      "text": "FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways: A. through the CHUTE, B. through the bottom opening in the OUTPOST, or C. thrown over the top of the ALLIANCE WALL from the OUTPOST AREA.",
+      "violation": "MAJOR FOUL",
+      "page": 74,
+      "quote": "FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways: A. through the CHUTE, B. through the"
+    },
+    {
+      "topic": "intentionally forcing an opponent to break a rule",
+      "id": "G210",
+      "text": "A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of FIRST Robotics Competition and not allowed. Rule violations forced in this manner will not result in an assignment of a penalty to the targeted ALLIANCE.",
+      "violation": "MAJOR FOUL. YELLOW CARD if REPEATED.",
+      "page": 59,
+      "quote": "A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of"
+    }
+  ]
+}
