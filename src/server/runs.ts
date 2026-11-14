@@ -38,8 +38,13 @@ export function readRunEvents(file: string): RunEvent[] {
       /* skip a torn line */
     }
   }
-  cache.set(file, { mtimeMs, events: out });
-  return out;
+  // A run id that was recorded more than once holds several recordings back to back (the logger
+  // appends). Only the last complete one is the run: mixing them interleaves unrelated matches.
+  let from = 0;
+  for (let i = 0; i < out.length; i++) if (out[i]?.type === "run_start") from = i;
+  const last = from > 0 ? out.slice(from) : out;
+  cache.set(file, { mtimeMs, events: last });
+  return last;
 }
 
 function dirs(root: string): string[] {

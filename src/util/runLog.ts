@@ -45,6 +45,8 @@ export class RunLogger {
   constructor(readonly runId: string, dir: string = repoPath("runs", runId)) {
     mkdirSync(dir, { recursive: true });
     this.file = path.join(dir, "events.jsonl");
+    // A new logger is a new recording: start the file empty so a re-used run id never stacks runs.
+    writeFileSync(this.file, "");
   }
 
   /** Write one event and return the full line that was written. */

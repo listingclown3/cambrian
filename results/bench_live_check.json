@@ -1,8 +1,8 @@
 {
   "experiment": "bench_live_check",
-  "createdTs": "2026-11-14T22:04:27.072Z",
+  "createdTs": "2026-11-14T22:07:15.728Z",
   "isMock": false,
-  "gitCommit": "3ee3405a4ce0",
+  "gitCommit": "81e1660737cf",
   "simHash": "73ee0c8a610a44cc",
   "config": {
     "mode": "decider proposes, simulator checks (pnpm match:agent --check rollouts): candidates are the decider's pick, the scripted role pick and, when the decider reports probabilities, its second pick; each scored with micro-rollouts; ties keep the decider's pick",
@@ -438,6 +438,98 @@
       "meanMarginGain": 1.68,
       "checkP50Ms": 208,
       "wallS": 66.2
+    },
+    {
+      "decider": "deepinfra",
+      "seed": 9005,
+      "blue": 561,
+      "red": 439,
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "robotDecisions": 139,
+      "fallbacks": 0,
+      "chargedS": 96.7,
+      "latencyP50Ms": 603,
+      "costUsd": 0.0694,
+      "fastFailed": 15,
+      "completedCycles": 1,
+      "idleRobotS": 53.2,
+      "roleContinuationRobotS": 16.2,
+      "checked": 139,
+      "acceptRatePct": 78,
+      "replacedByScripted": 30,
+      "replacedBySecondPick": 0,
+      "meanMarginGain": 0.66,
+      "checkP50Ms": 165,
+      "wallS": 97.1
+    },
+    {
+      "decider": "drex",
+      "seed": 9007,
+      "blue": 559,
+      "red": 426,
+      "model": "drex-v2.0",
+      "robotDecisions": 156,
+      "fallbacks": 1,
+      "chargedS": 72.05,
+      "latencyP50Ms": 230,
+      "costUsd": 0.0036,
+      "fastFailed": 15,
+      "completedCycles": 4,
+      "idleRobotS": 51.9,
+      "roleContinuationRobotS": 6,
+      "checked": 155,
+      "acceptRatePct": 64,
+      "replacedByScripted": 41,
+      "replacedBySecondPick": 15,
+      "meanMarginGain": 1.82,
+      "checkP50Ms": 296,
+      "wallS": 72.7
+    },
+    {
+      "decider": "deepinfra",
+      "seed": 9006,
+      "blue": 457,
+      "red": 424,
+      "model": "Qwen/Qwen3.5-397B-A17B",
+      "robotDecisions": 137,
+      "fallbacks": 0,
+      "chargedS": 106.07,
+      "latencyP50Ms": 627,
+      "costUsd": 0.0688,
+      "fastFailed": 13,
+      "completedCycles": 2,
+      "idleRobotS": 57.6,
+      "roleContinuationRobotS": 26.6,
+      "checked": 137,
+      "acceptRatePct": 78,
+      "replacedByScripted": 30,
+      "replacedBySecondPick": 0,
+      "meanMarginGain": 0.61,
+      "checkP50Ms": 204,
+      "wallS": 106.6
+    },
+    {
+      "decider": "drex",
+      "seed": 9008,
+      "blue": 551,
+      "red": 367,
+      "model": "drex-v2.0",
+      "robotDecisions": 148,
+      "fallbacks": 0,
+      "chargedS": 81.79,
+      "latencyP50Ms": 215,
+      "costUsd": 0.0036,
+      "fastFailed": 7,
+      "completedCycles": 1,
+      "idleRobotS": 43.7,
+      "roleContinuationRobotS": 5,
+      "checked": 148,
+      "acceptRatePct": 55,
+      "replacedByScripted": 49,
+      "replacedBySecondPick": 18,
+      "meanMarginGain": 2.3,
+      "checkP50Ms": 293,
+      "wallS": 82.5
     }
   ],
   "summary": {
@@ -450,80 +542,80 @@
       "drex_check_realtime": {
         "model": "drex-v2.0",
         "margin": {
-          "n": 6,
-          "mean": 111,
-          "ci95": 62.7
+          "n": 8,
+          "mean": 122.9,
+          "ci95": 49.2
         },
         "marginMinusScriptedReference": {
-          "n": 6,
-          "mean": 57.3,
-          "ci95": 80.4
+          "n": 8,
+          "mean": 73.4,
+          "ci95": 63.4
         },
         "acceptRatePct": {
-          "n": 6,
-          "mean": 58.8,
-          "ci95": 4.6
+          "n": 8,
+          "mean": 59,
+          "ci95": 3.7
         },
         "checkP50Ms": {
-          "n": 6,
-          "mean": 299.2,
-          "ci95": 56
+          "n": 8,
+          "mean": 298,
+          "ci95": 41
         },
         "chargedS": {
-          "n": 6,
-          "mean": 79.6,
-          "ci95": 13.6
+          "n": 8,
+          "mean": 78.9,
+          "ci95": 10.2
         },
         "robotDecisions": {
-          "n": 6,
-          "mean": 147.3,
-          "ci95": 11.8
+          "n": 8,
+          "mean": 148.5,
+          "ci95": 8.9
         },
-        "fallbacksTotal": 1,
+        "fallbacksTotal": 2,
         "wallS": {
-          "n": 6,
-          "mean": 80.3,
-          "ci95": 14
+          "n": 8,
+          "mean": 79.6,
+          "ci95": 10.4
         },
         "excluded": []
       },
       "deepinfra_check_realtime": {
         "model": "Qwen/Qwen3.5-397B-A17B",
         "margin": {
-          "n": 4,
-          "mean": 15,
-          "ci95": 68.6
+          "n": 6,
+          "mean": 35.8,
+          "ci95": 55.3
         },
         "marginMinusScriptedReference": {
-          "n": 4,
-          "mean": -38.3,
-          "ci95": 84.5
+          "n": 6,
+          "mean": -17.8,
+          "ci95": 59.5
         },
         "acceptRatePct": {
-          "n": 4,
-          "mean": 76,
+          "n": 6,
+          "mean": 76.7,
           "ci95": 1.1
         },
         "checkP50Ms": {
-          "n": 4,
-          "mean": 216.5,
-          "ci95": 56.7
+          "n": 6,
+          "mean": 205.8,
+          "ci95": 39.5
         },
         "chargedS": {
-          "n": 4,
-          "mean": 110.7,
-          "ci95": 12
+          "n": 6,
+          "mean": 107.6,
+          "ci95": 8.8
         },
         "robotDecisions": {
-          "n": 4,
-          "mean": 133.3,
-          "ci95": 10.9
+          "n": 6,
+          "mean": 134.8,
+          "ci95": 7.2
         },
         "fallbacksTotal": 0,
         "wallS": {
-          "n": 4,
-          "mean": 111.3,
-          "ci95": 12.2
+          "n": 6,
+          "mean": 108.1,
+          "ci95": 9
         },
         "excluded": []
       },
@@ -570,19 +662,19 @@
     },
     "paired": {
       "drex_minus_giant": {
-        "n": 4,
-        "mean": 105.8,
-        "ci95": 84
+        "n": 6,
+        "mean": 75.2,
+        "ci95": 71.6
       },
       "drex_minus_random": {
-        "n": 6,
-        "mean": 37.3,
-        "ci95": 51.9
+        "n": 8,
+        "mean": 55.3,
+        "ci95": 44.4
       },
       "giant_minus_random": {
-        "n": 4,
-        "mean": -52.8,
-        "ci95": 96.3
+        "n": 6,
+        "mean": -37.8,
+        "ci95": 68.5
       }
     }
   }

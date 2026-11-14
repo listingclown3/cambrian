@@ -97,11 +97,18 @@ const verdict = pairedOk ? (paired.mean_diff + paired.ci95 < 0 ? "BETTER" : "ABO
 out("6. TITLE VERDICT", verdict ? `${verdict} (paired regret difference ${fix(paired.mean_diff, 1)} ± ${fix(paired.ci95, 1)}; its 95% CI ${paired.mean_diff + paired.ci95 < 0 ? "excludes" : "includes"} 0)` : null, tag(bs, true), "from line 3; use only when it reads FINAL");
 
 lines.push("", "[for Q&A, not on the slide]");
-// live margins, decider alone
-for (const [label, key] of [["Drex", "live_margin_drex_realtime"], ["giant", "live_margin_deepinfra_realtime"]]) {
-  const cond = headlineFile?.config?.n?.live_conditions?.[key === "live_margin_drex_realtime" ? "drex_realtime" : "deepinfra_realtime"];
-  out(`real-time sim margin, ${label} ALONE (thinking time on the sim clock)`, isNum(h[key]) ? `${signed(h[key])}${cond && isNum(cond.ci95) ? ` ± ${fix(cond.ci95, 1)}` : ""}${cond?.n ? ` (n ${cond.n} seeds)` : ""}` : null, tag(headlineFile, true), key);
+// live margins, decider alone (frozen engine, all three fairness rules, 10 paired eval seeds)
+const live = real("results/bench_live.json");
+const lc = live?.summary?.conditions ?? {};
+const lref = live?.summary?.paired_vs_scripted_control ?? {};
+for (const [label, key] of [["Drex", "drex_realtime"], ["giant", "deepinfra_realtime"]]) {
+  const c = lc[key];
+  const r = lref[key];
+  out(`real-time sim margin, ${label} ALONE (thinking time on the sim clock)`, c && isNum(c.mean_margin) ? `${signed(c.mean_margin)} ± ${fix(c.ci95, 1)} (n ${c.n} seeds)${r ? `; vs scripted reference ${signed(r.mean_uplift_vs_scripted)} ± ${fix(r.ci95, 1)}` : ""}; fallbacks ${c.fallbacks_total}` : null, tag(live, true), `results/bench_live.json conditions.${key}`);
 }
+const lp = live?.summary?.paired_drex_minus_giant?.realtime;
+out("decider ALONE, paired Drex minus giant (real-time)", lp ? `${signed(lp.mean_drex_minus_giant)} ± ${fix(lp.ci95, 1)} (n ${lp.n} seeds): ${Math.abs(lp.mean_drex_minus_giant) > lp.ci95 ? "CI excludes 0" : "not significant"}` : null, tag(live, true), "bench_live paired_drex_minus_giant.realtime");
+out("robot decisions per match with the rules on, Drex vs giant (decider alone, real-time)", lc.drex_realtime && lc.deepinfra_realtime ? `${Math.round(lc.drex_realtime.mean_robot_decisions_per_match)} vs ${Math.round(lc.deepinfra_realtime.mean_robot_decisions_per_match)}` : null, tag(live, true), "bench_live conditions.*.mean_robot_decisions_per_match");
 // live margins, check mode
 const cc = check?.summary?.conditions ?? {};
 const st = (s) => (s && isNum(s.mean) ? `${signed(s.mean)}${isNum(s.ci95) ? ` ± ${fix(s.ci95, 1)}` : ""} (n ${s.n} seeds)` : null);
@@ -126,7 +133,7 @@ const afterTxt = isNum(cc.drex_check_realtime?.robotDecisions?.mean) ? fix(cc.dr
 out("Drex robot decisions per match, BEFORE the fairness rules (dev seeds, rules off)", beforeTxt ? `${Math.round(Number(beforeTxt))}; one paused dev match reached 1,372 decisions, 1,001 of them the same instantly-ending option` : "one paused dev match reached 1,372 decisions, 1,001 of them the same instantly-ending option (realtime: 279 and 239)", "FINAL", "results/bench_live_drex_dev.json");
 out("Drex robot decisions per match, AFTER (commitment + anti-loop rules; check mode, eval seeds)", afterTxt, check?.config?.complete ? "FINAL" : "PARTIAL RUN (still playing)", "bench_live_check conditions.drex_check_realtime.robotDecisions");
 out("idle seconds per robot per match, scripted policy, before vs after the no-idle rule", (() => { const i = load("results/idle_report.json"); const s = i ? JSON.stringify(i) : ""; const m = s.match(/"before"[^}]*?"idle[^"]*":\s*([\d.]+)/i); const a = s.match(/"after"[^}]*?"idle[^"]*":\s*([\d.]+)/i); return m && a ? `${m[1]} s vs ${a[1]} s` : "39.3 s vs 0.55 s"; })(), "FINAL", "results/idle_report.json");
-out("sim matches per hour, Drex vs giant (decider alone)", isNum(h.sim_matches_per_hour_drex) && isNum(h.sim_matches_per_hour_deepinfra) ? `${int(h.sim_matches_per_hour_drex)} vs ${int(h.sim_matches_per_hour_deepinfra)}` : null, tag(headlineFile, true), "sim_matches_per_hour_drex, sim_matches_per_hour_deepinfra");
+out("sim matches per hour, Drex vs giant (decider alone, real-time; measured while other jobs were running)", isNum(lc.drex_realtime?.sim_matches_per_hour) && isNum(lc.deepinfra_realtime?.sim_matches_per_hour) ? `${fix(lc.drex_realtime.sim_matches_per_hour, 0)} vs ${fix(lc.deepinfra_realtime.sim_matches_per_hour, 0)}` : null, tag(live, true), "bench_live conditions.*.sim_matches_per_hour");
 out("single-call latency p50, Drex vs giant (sequential, clean)", isNum(h.drex_p50_ms) && isNum(h.deepinfra_p50_ms) ? `${ms(h.drex_p50_ms)} ms vs ${ms(h.deepinfra_p50_ms)} ms (${ratio(h.deepinfra_p50_ms / h.drex_p50_ms)}x)` : null, tag(smoke, false), "drex_p50_ms, deepinfra_p50_ms");
 for (const n of [1, 8, 32]) {
   const d = b[`batch${n}_ms_per_decision_drex`];

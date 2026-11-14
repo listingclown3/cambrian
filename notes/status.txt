@@ -45,3 +45,11 @@ In progress at 1:30: no-idle rule (p1) and commitment rule (p2), due 1:50; then 
 UI: replay freeze fix and Live Match restyle merged (two lanes, new palette, vendored fonts); Results restyle next.
 headline.json: single-call latency and cost keys are null until the final scenario run; the clean latency source is results/smoke_latency.json (summary.cells: drex-v2.0 p50 297 ms, the giant 701 ms).
 If behind at 2:10, cut in this order: bench:explore rerun, drex-latest and reasoning-on scenario tiers, paused-mode live matches; never the realtime live matches or the main scenario scoring.
+
+UPDATE 2:08 PM
+replay bug      | FIXED. Re-recording a showcase appended to the same file, so the replay played the 12:33 pre-rules config with three matches' decisions interleaved (robots sat still). The reader now uses only the last recording and a new recording starts an empty file. Replayed scores now equal the recorded scores (Drex + check 461-420, giant + check 390-480, seed 9001). Server restart needed to see it.
+bench:live      | FINAL on the frozen engine (547d0ca0), 10 paired eval seeds. Decider alone vs the scripted reference: Drex -203 +/- 85, giant -141 +/- 130; Drex minus giant -62 +/- 72 (not significant). Both lose to the scripted policy when left alone.
+check mode      | 8 eval seeds, Drex and random control complete, giant 6 of 8: Drex + check +123 +/- 49 (vs reference +73 +/- 63), random + check +68 +/- 26, giant + check +36 +/- 55. Paired Drex minus random control +55 +/- 44; Drex minus giant +75 +/- 72 (n 6).
+answer key      | final key still computing on P3 (57 scenarios / 18 families); scenario regret, rollout savings and the TITLE VERDICT in results/deck_numbers.txt are INTERIM until it lands.
+deck sheet      | results/deck_numbers.txt now follows the results-slide order, each line tagged FINAL / INTERIM / PARTIAL.
+push            | NOT pushed; the owner squashes and pushes himself.
