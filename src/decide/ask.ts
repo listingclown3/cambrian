@@ -58,12 +58,14 @@ export function buildBatchActionRequest(
   mode: DecisionRequest["mode"],
   roles: Readonly<Record<string, CaptainRole | undefined>> = {},
   present: OptionPresentation = {},
+  /** Extra plain-English lines for a robot's own part (e.g. the anti-loop note), by robot id. */
+  notes: Readonly<Record<string, readonly string[] | undefined>> = {},
 ): DecisionRequest {
   return {
     stateText: renderSharedStateText(views),
     questions: views.map((v) => {
       const role = roles[v.self.id];
-      const extra = role ? [`Captain's role for ${v.self.id} this shift: ${describeRole(role)}`] : [];
+      const extra = [...(role ? [`Captain's role for ${v.self.id} this shift: ${describeRole(role)}`] : []), ...(notes[v.self.id] ?? [])];
       return {
         id: actionQuestionId(v.self.id),
         kind: "choice" as const,

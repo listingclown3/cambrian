@@ -111,3 +111,41 @@ describe("no-idle rule", () => {
     expect(s.byAlliance.blue.interruptedActions).toBe(0); // replacing a continuation is not an interruption
   });
 });
+
+describe("anti-loop guard", () => {
+  /** Real engine (only its action-end events kept); B1's hold_position fails the tick it is applied. */
+  function failing(): Engine {
+    return {
+      ...engine,
+      step(state, intents, dtS) {
+        const res = engine.step(state, intents, dtS);
+        const b1 = state.robots.find((r) => r.id === "B1")!;
+        if (b1.intent?.action === "hold_position") {
+          b1.intent = null;
+          return { state: res.state, events: [{ kind: "action_failed", timeS: state.timeS, robotId: "B1", action: "hold_position", reason: "test_fail" } as EngineEvent] };
+        }
+        // keep the real engine's action ends, so options that finish at once are caught too
+        return { state: res.state, events: res.events.filter((e) => e.kind === "action_done" || e.kind === "action_failed" || e.kind === "action_timeout") };
+      },
+    };
+  }
+  const run = async (antiLoop: boolean) => {
+    const requests: DecisionRequest[] = [];
+    const c = new AgentController({ engine: failing(), cfg, seed: 1001, robots: demoRobots(cfg), agents: { blue: { provider: holder(0, requests) } }, scripted: { default: basicCyclePolicy }, fairness: { antiLoop } });
+    const s = await c.run(10);
+    return { s, requests, b1: robotTimes(c.decisions, "B1").length };
+  };
+
+  it("withholds an instantly failing option, says why, and keeps decisions bounded", async () => {
+    const off = await run(false);
+    const on = await run(true);
+    expect(off.b1).toBeGreaterThan(20); // re-asked after every instant failure
+    expect(on.b1).toBeLessThanOrEqual(6);
+    expect(on.s.byRobot.B1!.fastFails).toBeGreaterThanOrEqual(1);
+    expect(on.s.byAlliance.blue.cooledDown).toBe(on.s.byRobot.B1!.cooledDown + on.s.byRobot.B2!.cooledDown + on.s.byRobot.B3!.cooledDown);
+    const noted = on.requests.find((r) => r.questions.some((q) => q.instructions.includes("Last action hold_position failed immediately: test_fail.")));
+    expect(noted).toBeDefined();
+    const q = noted!.questions.find((x) => x.id === "next_action_B1")!;
+    expect(q.options!.some((o) => o.label === "hold_position")).toBe(false); // on cool-down
+  });
+});

@@ -108,7 +108,7 @@ export interface ControllerOptions {
    *                given roleContinuation(view) (logged as decisionKind "role_continuation")
    * Turn either off for the before/after comparison.
    */
-  fairness?: { commitment?: boolean; noIdle?: boolean };
+  fairness?: { commitment?: boolean; noIdle?: boolean; antiLoop?: boolean };
   /** Called for every role-continuation intent (never counted as the decider's decision). */
   onContinuation?: (d: { robotId: RobotId; timeS: number; view: ObservationView; intent: Intent }) => void;
   /** Checked before every tick; return a reason to stop the match early (e.g. provider blocked). */
@@ -211,6 +211,10 @@ export interface AllianceTotals {
   models: string[];
   /** True if any answer was synthetic (mock). */
   isMock: boolean;
+  /** Chosen options that ended within failFastS of being applied (anti-loop guard). */
+  fastFails: number;
+  /** Options put on cool-down. */
+  cooledDown: number;
   /** Intents replaced before their action finished (action_done / failed / timeout). */
   interruptedActions: number;
   /** Completed cycles: a finished collect followed by fuel scored by the same robot. */
@@ -226,6 +230,10 @@ export interface AllianceTotals {
 /** Per-robot behaviour counters (see AllianceTotals). */
 export interface RobotBehaviour {
   decisions: number;
+  /** Chosen options that ended (failed, done or timed out) within failFastS of being applied. */
+  fastFails: number;
+  /** Times an option was put on cool-down for this robot. */
+  cooledDown: number;
   interruptedActions: number;
   completedCycles: number;
   idleS: number;
@@ -241,6 +249,12 @@ export interface FairnessParams {
   maxIdleS: number;
   commitment: boolean;
   noIdle: boolean;
+  /** Anti-loop guard: an option that ends within failFastS of being applied ... */
+  failFastS: number;
+  /** ... is withheld from that robot for optionCooldownS ... */
+  optionCooldownS: number;
+  /** ... or optionCooldownLongS after the same label fast-ended 3 times in a row. */
+  optionCooldownLongS: number;
 }
 
 const COLLECT_ACTIONS = new Set(["collect", "load_outpost", "steal_fuel"]);
@@ -284,6 +298,11 @@ export class AgentController {
   private readonly collected = new Set<RobotId>();
   private readonly behaviour = new Map<RobotId, RobotBehaviour>();
   private continuation!: (v: ObservationView) => Intent;
+  // anti-loop guard: label -> cool-down end (match time), per robot; the note for the next request
+  private readonly cooldown = new Map<RobotId, Map<string, number>>();
+  private readonly loopNote = new Map<RobotId, string>();
+  private readonly appliedLabel = new Map<RobotId, string>();
+  private readonly fastStreak = new Map<RobotId, { label: string; count: number }>();
   readonly decisions: ControllerDecision[] = [];
 
   private readonly present: OptionPresentation;
@@ -291,7 +310,15 @@ export class AgentController {
   constructor(private readonly opts: ControllerOptions) {
     this.state = opts.engine.createMatch(opts.cfg, opts.seed, opts.robots);
     this.present = opts.options?.full ? {} : { rules: this.state.rules, maxOptions: opts.options?.maxOptions ?? 10 };
-    const t = this.state.rules.triggers as typeof this.state.rules.triggers & { minCommitS?: number; coalesceS?: number; criticalPinS?: number; maxIdleS?: number };
+    const t = this.state.rules.triggers as typeof this.state.rules.triggers & {
+      minCommitS?: number;
+      coalesceS?: number;
+      criticalPinS?: number;
+      maxIdleS?: number;
+      failFastS?: number;
+      optionCooldownS?: number;
+      optionCooldownLongS?: number;
+    };
     const commitment = opts.fairness?.commitment ?? true;
     const noIdle = opts.fairness?.noIdle ?? true;
     this.fairness = {
@@ -301,8 +328,11 @@ export class AgentController {
       coalesceS: commitment ? (t.coalesceS ?? 0) : 0,
       criticalPinS: t.criticalPinS ?? Infinity,
       maxIdleS: noIdle ? (t.maxIdleS ?? Infinity) : Infinity,
+      failFastS: opts.fairness?.antiLoop === false ? -1 : (t.failFastS ?? 0.5),
+      optionCooldownS: t.optionCooldownS ?? 5,
+      optionCooldownLongS: t.optionCooldownLongS ?? 15,
     };
-    for (const r of this.state.robots) this.behaviour.set(r.id, { decisions: 0, interruptedActions: 0, completedCycles: 0, idleS: 0, continuationS: 0, continuations: 0 });
+    for (const r of this.state.robots) this.behaviour.set(r.id, { decisions: 0, fastFails: 0, cooledDown: 0, interruptedActions: 0, completedCycles: 0, idleS: 0, continuationS: 0, continuations: 0 });
     this.continuation = continuationFn((v) => this.policyFor(v.self.id).decide(v));
     this.timing = opts.timing ?? "paused";
     this.latencyScale = opts.latencyScale ?? opts.cfg.realtimeLatencyCharging.latencyScale;
@@ -317,8 +347,15 @@ export class AgentController {
     return this.opts.scripted.byRobot?.[robotId] ?? this.opts.scripted.default;
   }
 
+  /** The robot's view, minus options on anti-loop cool-down (never all of them). */
   private view(robotId: RobotId): ObservationView {
-    return buildObservationView(this.state, robotId, this.sinceDecision.get(robotId) ?? []);
+    const v = buildObservationView(this.state, robotId, this.sinceDecision.get(robotId) ?? []);
+    const cool = this.cooldown.get(robotId);
+    if (!cool || cool.size === 0) return v;
+    const now = this.state.timeS;
+    for (const [label, until] of cool) if (until <= now + EPS) cool.delete(label);
+    const options = v.options.filter((o) => !cool.has(o.label));
+    return options.length > 0 && options.length < v.options.length ? { ...v, options } : v;
   }
 
   private nextSeed(): number {
@@ -347,6 +384,35 @@ export class AgentController {
     return e.kind === "pinned" && e.seconds > this.fairness.criticalPinS;
   }
 
+  /**
+   * Anti-loop guard, identical for every decider: a decided option that ends within failFastS of
+   * being applied is withheld from that robot for optionCooldownS (optionCooldownLongS after the
+   * same label did so 3 times in a row), and the reason goes into its next request.
+   */
+  private noteActionEnd(e: Extract<EngineEvent, { kind: "action_done" | "action_failed" | "action_timeout" }>): void {
+    const id = e.robotId;
+    const f = this.fairness;
+    const label = this.appliedLabel.get(id);
+    if (!label || !this.fromDecision.get(id) || f.failFastS < 0) return;
+    const since = this.state.timeS - (this.committedAtS.get(id) ?? -Infinity);
+    if (since > f.failFastS + EPS) {
+      this.fastStreak.delete(id);
+      return;
+    }
+    const b = this.behaviour.get(id)!;
+    b.fastFails += 1;
+    const prev = this.fastStreak.get(id);
+    const count = prev && prev.label === label ? prev.count + 1 : 1;
+    this.fastStreak.set(id, { label, count });
+    let cool = this.cooldown.get(id);
+    if (!cool) this.cooldown.set(id, (cool = new Map()));
+    cool.set(label, this.state.timeS + (count >= 3 ? f.optionCooldownLongS : f.optionCooldownS));
+    b.cooledDown += 1;
+    const how = e.kind === "action_failed" ? `failed immediately: ${e.reason}` : e.kind === "action_timeout" ? "timed out immediately" : "ended immediately";
+    this.loopNote.set(id, `Last action ${label} ${how}.`);
+    this.appliedLabel.delete(id); // one end per application
+  }
+
   /** Give a robot an intent chosen by a decider or scripted policy (counts interruptions). */
   private setDecided(id: RobotId, intent: Intent, intents: Record<RobotId, Intent | undefined>): void {
     const b = this.behaviour.get(id)!;
@@ -359,6 +425,7 @@ export class AgentController {
     this.fromDecision.set(id, true);
     this.onContinuation.delete(id);
     this.due.delete(id);
+    this.appliedLabel.set(id, intentLabel(intent));
     if (COLLECT_ACTIONS.has(intent.action)) this.collected.delete(id);
   }
 
@@ -397,7 +464,9 @@ export class AgentController {
     const roles = Object.fromEntries(robotIds.map((id) => [id, this.roles.get(id)]));
     const results = await Promise.all(
       groups.map(async (group) => {
-        const req = buildBatchActionRequest(group, this.nextSeed(), this.requestMode, roles, this.present);
+        const notes = Object.fromEntries(group.flatMap((v) => (this.loopNote.has(v.self.id) ? [[v.self.id, [this.loopNote.get(v.self.id)!]]] : [])));
+        for (const v of group) this.loopNote.delete(v.self.id);
+        const req = buildBatchActionRequest(group, this.nextSeed(), this.requestMode, roles, this.present, notes);
         const res = await agent.provider.decide(req);
         return { group, req, res };
       }),
@@ -545,6 +614,7 @@ export class AgentController {
     for (const e of events) {
       if (!("robotId" in e) || !e.robotId) continue;
       if ((e.kind === "action_done" && !e.continuesWithThen) || e.kind === "action_failed" || e.kind === "action_timeout") {
+        this.noteActionEnd(e);
         this.actionOpen.set(e.robotId, false);
         if (e.kind === "action_done" && COLLECT_ACTIONS.has(e.action)) this.collected.add(e.robotId);
       }
@@ -612,7 +682,7 @@ export class AgentController {
     const behaviourTotals = (a: Alliance) => {
       const rs = this.state.robots.filter((r) => r.alliance === a).map((r) => this.behaviour.get(r.id)!);
       const s = (k: keyof RobotBehaviour) => rs.reduce((t, b) => t + b[k], 0);
-      return { interruptedActions: s("interruptedActions"), completedCycles: s("completedCycles"), idleS: s("idleS"), continuationS: s("continuationS"), continuations: s("continuations") };
+      return { fastFails: s("fastFails"), cooledDown: s("cooledDown"), interruptedActions: s("interruptedActions"), completedCycles: s("completedCycles"), idleS: s("idleS"), continuationS: s("continuationS"), continuations: s("continuations") };
     };
     return {
       state: this.state,

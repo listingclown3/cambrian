@@ -29,7 +29,7 @@ const cfg = loadConfig();
 const seed = Number(arg("--seed", String(cfg.seeds.dev[0] ?? 1)));
 const timing = arg("--timing", "paused") as "paused" | "realtime";
 // --no-commit / --no-noidle turn the fairness rules off for the before/after comparison.
-const fairness = { commitment: !process.argv.includes("--no-commit"), noIdle: !process.argv.includes("--no-noidle") };
+const fairness = { commitment: !process.argv.includes("--no-commit"), noIdle: !process.argv.includes("--no-noidle"), antiLoop: !process.argv.includes("--no-antiloop") };
 const captain = process.argv.includes("--captain");
 const specs: Record<Alliance, string> = { blue: arg("--blue", "drex_mock"), red: arg("--red", "scripted") };
 const agents: Partial<Record<Alliance, AllianceAgent>> = {};
@@ -77,7 +77,7 @@ if (recorder && recordId) {
     return r === null ? served : `${served} (reasoning ${r})`;
   };
   const model = deciders.length === 2 ? deciders.map((a) => `${a}=${label(a)}`).join(";") : deciders.length === 1 ? label(deciders[0]!) : "scripted";
-  const behaviour = { fairness: summary.fairness, byAlliance: Object.fromEntries((["blue", "red"] as const).map((a) => [a, { decider: specs[a], robotDecisions: summary.byAlliance[a].robotDecisions, interruptedActions: summary.byAlliance[a].interruptedActions, completedCycles: summary.byAlliance[a].completedCycles, idleS: summary.byAlliance[a].idleS, continuationS: summary.byAlliance[a].continuationS, continuations: summary.byAlliance[a].continuations }])), byRobot: summary.byRobot };
+  const behaviour = { fairness: summary.fairness, byAlliance: Object.fromEntries((["blue", "red"] as const).map((a) => [a, { decider: specs[a], robotDecisions: summary.byAlliance[a].robotDecisions, interruptedActions: summary.byAlliance[a].interruptedActions, fastFails: summary.byAlliance[a].fastFails, cooledDown: summary.byAlliance[a].cooledDown, completedCycles: summary.byAlliance[a].completedCycles, idleS: summary.byAlliance[a].idleS, continuationS: summary.byAlliance[a].continuationS, continuations: summary.byAlliance[a].continuations }])), byRobot: summary.byRobot };
   const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, model, status: "ok", durationMs: summary.wallMs, error: null, behaviour });
   const bad = lines.filter((l) => !RunEventSchema.safeParse(l).success).length;
   console.log(`recorded ${lines.length} lines (${lines.filter((l) => l.type === "decision").length} decisions) to ${file}; ${bad} lines fail RunEventSchema`);
@@ -106,7 +106,7 @@ console.log(`fairness: commitment ${summary.fairness.commitment ? `on (hold ${su
 for (const a of ["blue", "red"] as const) {
   const t = summary.byAlliance[a];
   const robotDecisions = agents[a] ? t.robotDecisions : summary.state.robots.filter((r) => r.alliance === a).reduce((s, r) => s + summary.byRobot[r.id]!.decisions, 0);
-  console.log(`${a.padEnd(5)} ${specs[a].padEnd(16)} robot decisions ${robotDecisions}, interrupted actions ${t.interruptedActions}, completed cycles ${t.completedCycles}, idle ${t.idleS.toFixed(1)} robot-s, role continuation ${t.continuationS.toFixed(1)} robot-s (${t.continuations} handed out)`);
+  console.log(`${a.padEnd(5)} ${specs[a].padEnd(16)} robot decisions ${robotDecisions}, fast-failed ${t.fastFails}, cooled down ${t.cooledDown}, interrupted actions ${t.interruptedActions}, completed cycles ${t.completedCycles}, idle ${t.idleS.toFixed(1)} robot-s, role continuation ${t.continuationS.toFixed(1)} robot-s (${t.continuations} handed out)`);
 }
 console.log(`wall ${(summary.wallMs / 1000).toFixed(1)} s (provider wait ${(summary.providerWaitMs / 1000).toFixed(1)} s, sim ${(summary.simWallMs / 1000).toFixed(1)} s) = ${summary.matchesPerHour.toFixed(1)} matches/hour`);
 if (process.argv.includes("--diag")) {
