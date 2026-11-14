@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadConfig } from "../util/config";
 import { judgeLegality, tagLegality } from "./quirks";
-import { compareTowerPostUp } from "./towerPostUp";
+import { compareTowerPostUp, findPostUpSpots } from "./towerPostUp";
 
 describe("tagLegality", () => {
   it("tags by thresholds", () => {
@@ -34,6 +34,6 @@ describe("judgeLegality with a fake judge", () => {
 describe("tower post-up", () => {
   it("reports not run when the config has no post-up spot", () => {
     const cfg = loadConfig();
-    if (!cfg.field.shotSpots.spots.some((s) => /post.?up/i.test(s.id))) expect(compareTowerPostUp(cfg).run).toBe(false);
+    if (findPostUpSpots(cfg).length === 0) expect(compareTowerPostUp(cfg).run).toBe(false);
   });
 });
