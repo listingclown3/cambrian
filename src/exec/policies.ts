@@ -33,8 +33,11 @@ export const basicCyclePolicy: ScriptedPolicy = {
         .filter((s) => s.alliance === self.alliance)
         .filter((s) => s.distanceToHubM >= self.profile.minShotDistanceM && s.distanceToHubM <= self.profile.maxShotDistanceM)
         .sort((a, b) => dist(self.pose, a.pos) - dist(self.pose, b.pos));
-      const goto = spots[0] && byLabel(`goto_shot_spot:${spots[0].id}`);
+      // Already drove to a spot and still cannot shoot from here (spot taken): do not loop on it.
+      const justArrived = view.recentEvents.some((e) => e.kind === "action_done" && e.robotId === self.id && e.action === "goto_shot_spot");
+      const goto = !justArrived && spots[0] && byLabel(`goto_shot_spot:${spots[0].id}`);
       if (goto) return goto;
+      if (justArrived && byLabel("dump_unaligned") && self.profile.shooterType !== "dumper") return byLabel("dump_unaligned")!;
     }
 
     const fuel = view.fuel.byZone;

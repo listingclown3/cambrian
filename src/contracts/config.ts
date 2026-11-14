@@ -217,6 +217,8 @@ export const PhysicsParamsSchema = z.object({
   navCellM: z.number().positive().optional(),
   /** Extra gap between bumpers that still counts as contact, metres (optional; additive, P1). */
   contactMarginM: z.number().nonnegative().optional(),
+  /** Gravitational acceleration for the traction limit in the push model, m/s^2 (optional; additive, P1). */
+  gravityMps2: z.number().positive().optional(),
 });
 export type PhysicsParams = z.infer<typeof PhysicsParamsSchema>;
 

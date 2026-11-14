@@ -46,7 +46,8 @@
     "match": "tsx src/exec/playMatch.ts",
     "ledger:merge": "node scripts/merge-ledgers.mjs",
     "deck": "node scripts/deck-numbers.mjs",
-    "ci:status": "node scripts/ci-status.mjs"
+    "ci:status": "node scripts/ci-status.mjs",
+    "bench:engine": "tsx src/exec/benchEngine.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
