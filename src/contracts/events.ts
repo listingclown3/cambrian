@@ -47,6 +47,16 @@ export const RunEventSchema = z.discriminatedUnion("type", [
     chosenLabel: z.string().nullable(),
     /** The intent handed to the engine, or null when the robot was left as it was. */
     intent: IntentSchema.nullable(),
+    /** Probability per option label as the provider reported it; null or absent when it gave none. */
+    probabilities: z.record(z.string(), z.number()).nullable().optional(),
+    /** Sim time the decision was requested, seconds (provider-driven matches). */
+    requestedAtS: z.number().nonnegative().optional(),
+    /** Sim time the chosen intent was applied, seconds; later than requestedAtS when latency is charged. */
+    appliedAtS: z.number().nonnegative().optional(),
+    /** Seconds of sim time charged for this decision's thinking (0 in paused timing). */
+    chargedS: z.number().nonnegative().optional(),
+    /** What kind of decision this was (for example a robot play call or a captain role assignment). */
+    decisionKind: z.string().optional(),
   }),
   /** One engine event, passed through. */
   z.object({
