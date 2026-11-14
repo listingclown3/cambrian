@@ -92,7 +92,7 @@ export type ServerMessage =
       /** Robots whose decision is still "thinking" (their old intent keeps running). */
       thinking?: { robotId: RobotId; untilS: number }[];
       /** Running totals for the top bar. */
-      stats?: { decisions: number; avgLatencyMs: number; chargedS: number };
+      stats?: { decisions: number; avgLatencyMs: number; chargedS: number; medianLatencyMs?: number; fallbacks?: number };
     }
   | {
       /** Slim per-frame update (used by /ws/match, /ws/agents and /ws/replay). */
@@ -100,7 +100,7 @@ export type ServerMessage =
       frame: SlimFrame;
       decisions: DecisionNote[];
       thinking?: { robotId: RobotId; untilS: number }[];
-      stats?: { decisions: number; avgLatencyMs: number; chargedS: number };
+      stats?: { decisions: number; avgLatencyMs: number; chargedS: number; medianLatencyMs?: number; fallbacks?: number };
     }
   | {
       /** The stream could not start or failed; the message is safe to show (never contains secrets). */

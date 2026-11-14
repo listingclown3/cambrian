@@ -130,6 +130,12 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     return JSON.parse(readFileSync(repoPath("results", name + ".json"), "utf8"));
   });
 
+  // Initial (idle) field so the UI can always draw the field, even before a match starts.
+  app.get("/api/idle", async () => {
+    const st = engine.createMatch(cfg, cfg.seeds.dev[0] ?? 1, demoRobots(cfg));
+    return { statics: slimStatic(st), frame: slimFrame(st) };
+  });
+
   // Which model the giant is: the first-choice id (the exact id used is logged in each run's manifest) and its reasoning mode.
   app.get("/api/giant", async () => {
     const p = cfg.providers.byId.deepinfra;
