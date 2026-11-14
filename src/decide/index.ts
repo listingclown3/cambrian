@@ -23,3 +23,6 @@ export { defaultAnswer, fallbackResponse, localMeta } from "./providers/shared";
 export { drexProvider, drexBody, parseDrexAnswer, type DrexOptions } from "./providers/drex";
 export { chatProvider, deepinfraProvider, renderLlmPrompt, parseLlmAnswers, LLM_SYSTEM_PROMPT, type ChatDecisionProvider, type ChatProviderOptions } from "./providers/deepinfra";
 export { redact, resetSpend, spendSoFar, spendCapBlock, type ProviderDeps } from "./providers/http";
+export { cachedProvider, cacheKey, type CachedProvider, type CacheOptions } from "./cache";
+export { anonymizedProvider, anonymizeRequest, deanonymizeResponse, neutralLabel, type LabelMap } from "./anonymize";
+export { buildJudgeRequests, judgeIncidents, judgeQuestionId, type Incident, type Judgment, type JudgeResult, type RuleToJudge } from "./judge";

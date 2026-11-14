@@ -11,10 +11,12 @@
  */
 import { ProviderIdSchema, type Config, type DecisionProvider, type ProviderId } from "../contracts";
 import { randomProvider, scriptedProvider } from "./providers/baselines";
-import { chatProvider, deepinfraProvider, type ChatProviderOptions } from "./providers/deepinfra";
+import { chatProvider, deepinfraProvider, type ChatDecisionProvider, type ChatProviderOptions } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
 import { drexMockProvider } from "./providers/drexMock";
 import { notImplementedProvider } from "./providers/notImplemented";
+import { anonymizedProvider } from "./anonymize";
+import { cachedProvider } from "./cache";
 
 /** Provider ids that have a real implementation today. Add to this as providers land. */
 export const IMPLEMENTED_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["drex_mock", "scripted", "random", "drex", "deepinfra"]);
@@ -23,7 +25,12 @@ export const IMPLEMENTED_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId
 export const NETWORK_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["drex", "deepinfra", "openai", "gemini"]);
 
 /** Options for network providers: a model override plus the test/tool seams. */
-export type ProviderOptions = ChatProviderOptions;
+export interface ProviderOptions extends ChatProviderOptions {
+  /** Answer identical OFFLINE requests from cache/decide (see cache.ts). Default false. */
+  cache?: boolean | { dir?: string };
+  /** Anonymized-labels ablation: options are shown as opt_01.. with descriptions kept (see anonymize.ts). */
+  anonymize?: boolean;
+}
 
 const shared = new WeakMap<Config, Map<ProviderId, DecisionProvider>>();
 
@@ -54,7 +61,17 @@ function build(id: ProviderId, cfg: Config, opts: ProviderOptions): DecisionProv
 
 /** Get the provider for an id. Unimplemented network providers return flagged fallback answers. */
 export function getProvider(id: ProviderId, cfg: Config, opts?: ProviderOptions): DecisionProvider {
-  if (opts && Object.keys(opts).length > 0) return build(id, cfg, opts);
+  if (opts && Object.keys(opts).length > 0) {
+    const { cache, anonymize, ...rest } = opts;
+    let provider = build(id, cfg, rest);
+    if (cache && NETWORK_PROVIDERS.has(id)) {
+      const resolve = (provider as Partial<ChatDecisionProvider>).resolveModel;
+      const model = resolve ? () => resolve() : (rest.model ?? cfg.providers.byId[id].model ?? "default");
+      const variant = id === "drex" ? "" : `thinking=${rest.thinking ?? "off"};split=${rest.splitQuestions ?? true};max=${rest.maxTokens ?? 4096}`;
+      provider = cachedProvider(provider, { model, variant, ...(typeof cache === "object" && cache.dir ? { dir: cache.dir } : {}) });
+    }
+    return anonymize ? anonymizedProvider(provider) : provider;
+  }
   let byId = shared.get(cfg);
   if (!byId) shared.set(cfg, (byId = new Map()));
   let provider = byId.get(id);

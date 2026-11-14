@@ -45,5 +45,7 @@ for (const a of ["blue", "red"] as const) {
       `${summary.fallbacks[a]} fallbacks, charged ${summary.chargedS[a].toFixed(2)} match s, p50 ${pct(lat, 0.5).toFixed(0)} ms, p95 ${pct(lat, 0.95).toFixed(0)} ms, ` +
       `${sum((m) => m.inputTokens)} in / ${sum((m) => m.outputTokens)} out tokens, $${sum((m) => m.costUsd).toFixed(4)}`,
   );
+  const errors = [...new Set(metas.map((m) => m.error).filter((e): e is string => e !== null))];
+  for (const e of errors.slice(0, 5)) console.log(`      error: ${e}`);
 }
 if (summary.dropped > 0) console.log(`${summary.dropped} answer(s) arrived after the match ended and were never applied`);
