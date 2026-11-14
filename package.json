@@ -29,7 +29,7 @@
     "bench:scenarios": "tsx src/bench/benchScenarios.ts",
     "bench:explore": "tsx src/bench/benchExplore.ts",
     "bench:live": "tsx src/bench/benchLive.ts",
-    "lab": "tsx src/lab/lab.ts",
+    "lab": "tsx src/lab/main.ts",
     "headline": "tsx src/bench/headline.ts",
     "research": "tsx src/research/research.ts",
     "ingest": "tsx src/ingest/ingest.ts",

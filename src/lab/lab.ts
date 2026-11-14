@@ -29,7 +29,6 @@ import { pathToFileURL } from "node:url";
 import { MAX_LAB_PROPOSALS, ProposalSchema, type Config, type Proposal } from "../contracts";
 import { costFromConfig, recordUsage } from "../ledger";
 import { loadConfig, repoPath } from "../util/config";
-import { notImplementedYet } from "../util/stub";
 import { runIntern, type InternEvent, type InternRunSummary } from "./intern-client";
 
 /**
@@ -118,10 +117,5 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
     if (!run.ok) console.log(`[lab]   detail: ${run.detail ?? ""}\n${run.stderr.slice(-600)}`);
     process.exit(run.ok && wrote.includes('"ok"') ? 0 : 1);
   }
-  notImplementedYet(
-    "lab",
-    "Run Intern (System 2 on DeepInfra, supervised by Drex) over the research to propose up to 5 strategies, validate them, and test each in the simulator. `pnpm lab -- --trial` already runs a real Intern session end to end.",
-    ["data/research/notes.json", "data/rules/rules.json", "results/scenarios.json"],
-    ["<workspace>/proposals.json", "data/lab/proposals.json", "results/lab.json"],
-  );
+  console.log("usage: pnpm lab [-- --trial]   (the full run is src/lab/main.ts)");
 }
