@@ -109,9 +109,9 @@ describe("server", () => {
       socket.terminate();
       return messages;
     };
-    const m = await collect("/ws/match?speed=40&seed=3&latencyMs=3000", (ms) => ms.filter((x) => x.type === "tick").length >= 10);
+    const m = await collect("/ws/match?speed=40&seed=3&latencyMs=3000", (ms) => ms.filter((x) => x.type === "frame").length >= 10);
     expect(m[0]).toMatchObject({ type: "hello", source: "simulated_latency", isMock: true, chargedLatencyMs: 3000 });
-    const r = await collect("/ws/replay?source=fixture&run=showcase_fixture&speed=40", (ms) => ms.some((x) => x.type === "tick"));
+    const r = await collect("/ws/replay?source=fixture&run=showcase_fixture&speed=40", (ms) => ms.some((x) => x.type === "frame"));
     expect(r[0]).toMatchObject({ type: "hello", source: "recorded", isMock: true });
   });
   it('rejects an unknown provider on /ws/agents with an error message', async () => {

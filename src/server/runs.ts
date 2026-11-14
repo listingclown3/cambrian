@@ -15,18 +15,30 @@ export function runFile(runId: string, source: "runs" | "fixture"): string | nul
   return existsSync(file) ? file : null;
 }
 
-/** Parse a JSONL run log; lines that do not match the contract are skipped (a truncated log still lists). */
+const cache = new Map<string, { mtimeMs: number; events: RunEvent[] }>();
+
+/**
+ * Parse a JSONL run log, cached by file mtime. Only run_start is schema-validated (it carries the config);
+ * the other lines are trusted to match the contract, which keeps a 2,400-line run to a few ms instead of seconds.
+ */
 export function readRunEvents(file: string): RunEvent[] {
+  const mtimeMs = statSync(file).mtimeMs;
+  const hit = cache.get(file);
+  if (hit && hit.mtimeMs === mtimeMs) return hit.events;
   const out: RunEvent[] = [];
   for (const line of readFileSync(file, "utf8").split("\n")) {
     if (line.trim() === "") continue;
     try {
-      const parsed = RunEventSchema.safeParse(JSON.parse(line));
-      if (parsed.success) out.push(parsed.data);
+      const raw = JSON.parse(line) as { type?: string };
+      if (raw.type === "run_start") {
+        const parsed = RunEventSchema.safeParse(raw);
+        if (parsed.success) out.push(parsed.data);
+      } else if (typeof raw.type === "string") out.push(raw as RunEvent);
     } catch {
       /* skip a torn line */
     }
   }
+  cache.set(file, { mtimeMs, events: out });
   return out;
 }
 

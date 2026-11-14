@@ -10,6 +10,7 @@ import { engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { RunLogger, buildManifest, newRunId } from "../util/runLog";
 import type { DecisionNote, ServerMessage } from "./protocol";
+import { slimFrame, slimStatic } from "./slim";
 
 export interface AgentStreamOptions {
   provider: "drex" | "deepinfra";
@@ -120,7 +121,7 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
       isMock: false,
     }),
   });
-  send({ type: "hello", engineIsStub: false, isMock: false, seed: o.seed, speed: o.speed, source: "provider", decider, ...(cfg.providers.byId[o.provider].model ? { model: cfg.providers.byId[o.provider].model! } : {}), deciderAlliance: o.alliance, timing: o.timing, ...(logger ? { loggedRunId: runId } : {}) });
+  send({ type: "hello", engineIsStub: false, isMock: false, seed: o.seed, speed: o.speed, source: "provider", decider, ...(cfg.providers.byId[o.provider].model ? { model: cfg.providers.byId[o.provider].model! } : {}), deciderAlliance: o.alliance, timing: o.timing, statics: slimStatic(state), ...(logger ? { loggedRunId: runId } : {}) });
 
   active += 1;
   const started = performance.now();
@@ -147,7 +148,7 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
         if (now - lastSend >= 50 || ctl.finished) {
           lastSend = now;
           const fresh = notes.splice(0);
-          send({ type: "tick", state, events: [], decisions: fresh, stats: { decisions, avgLatencyMs: calls ? latSum / calls : 0, chargedS } });
+          send({ type: "frame", frame: slimFrame(state), decisions: fresh, stats: { decisions, avgLatencyMs: calls ? latSum / calls : 0, chargedS } });
         }
         if (sleepMs > 2) await new Promise((r) => setTimeout(r, sleepMs));
       }
