@@ -36,3 +36,12 @@ real-time margin vs scripted reference (pre-freeze engine): Drex -161 +/- 117 (n
 quirks          | 5 lab proposals judged LEGAL; tower post-up judged RISKY (relies on opponent fouls, p 0.83) and drew no G420 fouls in 10 matches (value 0).
 ui              | replay freeze bug and restyle to the owner palette in progress (p4).
 headline.json   | still shows the under-load latency (693 ms); P3 switches it to the clean reading. Do not quote headline latency until then.
+
+CHECKPOINT 1:30 PM: all three items met.
+  scenario families + answer key : DONE (45 scenarios, 15 families; end-of-match key passed the degeneracy gate). Final recompute waits for the two fairness rules.
+  NDI rules extracted            : DONE (19 of 28 constants cited; 7 conduct rules with exceptions; official field geometry applied).
+  first Strategy Lab run         : DONE (5 proposals accepted, legality-tagged; 1 beats the baseline in simulation).
+In progress at 1:30: no-idle rule (p1) and commitment rule (p2), due 1:50; then the final chain: key -> gate -> bench:scenarios -> bench:live (10 paired seeds) -> bench:explore -> headline -> deck. Cutoff 2:10 for bench:live.
+UI: replay freeze fix and Live Match restyle merged (two lanes, new palette, vendored fonts); Results restyle next.
+headline.json: single-call latency and cost keys are null until the final scenario run; the clean latency source is results/smoke_latency.json (summary.cells: drex-v2.0 p50 297 ms, the giant 701 ms).
+If behind at 2:10, cut in this order: bench:explore rerun, drex-latest and reasoning-on scenario tiers, paused-mode live matches; never the realtime live matches or the main scenario scoring.

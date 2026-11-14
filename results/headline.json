@@ -1,9 +1,9 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:21:52.635Z",
+  "createdTs": "2026-11-14T21:30:13.356Z",
   "isMock": false,
-  "gitCommit": "82a16b2b54fe-dirty",
-  "simHash": "007a2b25fa5e3cf0",
+  "gitCommit": "dd90927d158a-dirty",
+  "simHash": "e5f65deb13dab9a9",
   "config": {
     "contributing": [
       {
@@ -27,14 +27,20 @@
       {
         "file": "results/matches.json",
         "isMock": false,
-        "simHash": "2cc2e7f621722c58",
-        "gitCommit": "7238aec37b2e-dirty"
+        "simHash": "007a2b25fa5e3cf0",
+        "gitCommit": "334c5756d8cd-dirty"
       },
       {
         "file": "results/bench_batch.json",
         "isMock": false,
         "simHash": "d37a761231b8ce93",
         "gitCommit": "572c6bbf0cfd-dirty"
+      },
+      {
+        "file": "results/smoke_latency.json",
+        "isMock": false,
+        "simHash": "007a2b25fa5e3cf0",
+        "gitCommit": "4f00def1ca00-dirty"
       },
       {
         "file": "results/lab.json",
@@ -71,21 +77,26 @@
         ]
       }
     },
-    "latency_sources": {
-      "drex": {
-        "p50": 692.7,
-        "p95": 7773.3,
-        "cost": 0.02281,
-        "source": "results/bench_scenarios.json (measured under load)",
-        "n": 39
+    "speed_headline": {
+      "label": "per decision, one alliance batched (3 questions per call)",
+      "batch3_ms_per_decision": {
+        "drex": 67.88526666666682,
+        "giant": 573.4521999999997
       },
-      "deepinfra": {
-        "p50": 1157.4,
-        "p95": 2367.3,
-        "cost": 0.43648,
-        "source": "results/bench_scenarios.json (measured under load)",
-        "n": 45
-      }
+      "single_question_ms_per_decision": {
+        "drex": 332.21230000000014,
+        "giant": 929.2746999999999
+      },
+      "batch8_stress_ms_per_decision": {
+        "drex": 40.83751250000023,
+        "giant": 1362.28845,
+        "giant_note": "P2 saw the giant at batch 8 vary between 491 and 1362 ms per decision across runs; report the range"
+      },
+      "ratio_batch3": 8.4
+    },
+    "latency_sources": {
+      "drex": null,
+      "deepinfra": null
     },
     "regret_with_ci": {
       "drex": {
@@ -356,14 +367,14 @@
     "live_margin_deepinfra_realtime": -28.1,
     "live_margin_drex_paused": -68,
     "live_margin_deepinfra_paused": 132.6,
-    "drex_p50_ms": 692.7,
-    "drex_p95_ms": 7773.3,
-    "deepinfra_p50_ms": 1157.4,
+    "drex_p50_ms": null,
+    "drex_p95_ms": null,
+    "deepinfra_p50_ms": null,
     "openai_p50_ms": null,
-    "latency_ratio_deepinfra_over_drex": 1.67,
+    "latency_ratio_deepinfra_over_drex": null,
     "latency_ratio_openai_over_drex": null,
-    "drex_cost_per_1k_usd": 0.02281,
-    "deepinfra_cost_per_1k_usd": 0.43648,
+    "drex_cost_per_1k_usd": null,
+    "deepinfra_cost_per_1k_usd": null,
     "openai_cost_per_1k_usd": null,
     "batch1_ms_per_decision_drex": 332.21230000000014,
     "batch1_ms_per_decision_giant": 929.2746999999999,
@@ -394,15 +405,15 @@
     "n_scenarios": 45,
     "n_families": 15,
     "n_live_seeds": 4,
-    "matches_per_sec": 1.155,
+    "matches_per_sec": 2.668,
     "sim_matches_per_hour_drex": 17.84,
     "sim_matches_per_hour_deepinfra": 17.05,
-    "usage_drex_questions": 16762,
+    "usage_drex_questions": 18834,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
-    "usage_intern_sessions": 5,
-    "usage_intern_system1_judgments": 110,
-    "usage_deepinfra_calls": 3659,
+    "usage_intern_sessions": 6,
+    "usage_intern_system1_judgments": 136,
+    "usage_deepinfra_calls": 4006,
     "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 2,
