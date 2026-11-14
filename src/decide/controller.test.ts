@@ -43,6 +43,8 @@ describe("AgentController (paused)", () => {
     expect(intents.length).toBeGreaterThan(3);
     const blue = summary.byAlliance.blue;
     expect(blue.calls).toBe(calls.length);
+    expect(blue.questions).toBe(calls.reduce((s, r) => s + r.questions.length, 0));
+    expect(blue.httpCalls).toBe(calls.length); // not a splitting provider
     expect(blue.latencyMs).toBeCloseTo(500 * calls.length, 6);
     expect(blue.robotDecisions).toBe(summary.decisions.reduce((s, d) => s + d.choices.length, 0));
     expect(blue).toMatchObject({ isMock: true, models: ["drex-mock"], chargedS: 0, fallbacks: 0, cachedCalls: 0 });

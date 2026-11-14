@@ -1,0 +1,426 @@
+{
+  "experiment": "field_pack",
+  "createdTs": "2026-11-14T21:03:49.229Z",
+  "isMock": false,
+  "gitCommit": "3180da4ec5c7-dirty",
+  "simHash": "7160952d70dcba39",
+  "config": {
+    "field": {
+      "lengthM": {
+        "value": 16.54,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (651.2 in)"
+      },
+      "widthM": {
+        "value": 8.07,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (317.7 in)"
+      },
+      "allianceZoneDepthM": {
+        "value": 4.03,
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "NDI extract of the 2026 FRC Game Manual (version TU22) gave 158.6 in but returned no page citation; confirm against the field drawings"
+      },
+      "blueElements": {
+        "value": {
+          "hub": {
+            "x": 4,
+            "y": 4.035
+          },
+          "tower": {
+            "x": 1,
+            "y": 5.2
+          },
+          "depot": {
+            "x": 0.7,
+            "y": 6.6
+          },
+          "outpost": {
+            "x": 0.4,
+            "y": 0.7
+          }
+        },
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "placeholder guess, not from the manual"
+      },
+      "blueLaneY": {
+        "value": {
+          "left_trench": 7.4,
+          "right_trench": 0.67,
+          "left_bump": 5.6,
+          "right_bump": 2.47
+        },
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "placeholder guess, not from the manual"
+      },
+      "laneLengthM": {
+        "value": 1.5,
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "placeholder guess, not from the manual"
+      },
+      "elementSizes": {
+        "value": {
+          "hubSizeM": 1.19,
+          "towerWidthM": 1.25,
+          "towerDepthM": 1.14,
+          "trenchWidthM": 1.34,
+          "bumpWidthM": 1.85
+        },
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "approximate footprints from memory of the 2026 manual drawings (hub 47 in square, bump about 73 in wide); trench width chosen so the trench fits between the wall and blueLaneY; not checked"
+      },
+      "shotSpots": {
+        "_status": "FABRICATED",
+        "_note": "Named shot/staging spots relative to the hub of the acting alliance. Invented for the simulator; not field markings.",
+        "spots": [
+          {
+            "id": "hub_close",
+            "forwardFromHubM": -0.9,
+            "leftFromHubM": 0,
+            "description": "right next to the hub"
+          },
+          {
+            "id": "left_wing",
+            "forwardFromHubM": -1.6,
+            "leftFromHubM": 1.8,
+            "description": "left of the hub at medium range"
+          },
+          {
+            "id": "right_wing",
+            "forwardFromHubM": -1.6,
+            "leftFromHubM": -1.8,
+            "description": "right of the hub at medium range"
+          },
+          {
+            "id": "deep_center",
+            "forwardFromHubM": -2.8,
+            "leftFromHubM": 0,
+            "description": "straight back from the hub at long range"
+          },
+          {
+            "id": "tower_side",
+            "forwardFromHubM": -2.6,
+            "leftFromHubM": 1.4,
+            "description": "long range on the tower side"
+          }
+        ]
+      }
+    }
+  },
+  "rows": [
+    {
+      "key": "fieldLengthM",
+      "configPath": "field.lengthM",
+      "configValue": 16.54,
+      "officialValue": 16.541,
+      "differenceM": 0.001,
+      "status": "official",
+      "page": 3,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "fieldWidthM",
+      "configPath": "field.widthM",
+      "configValue": 8.07,
+      "officialValue": 8.069,
+      "differenceM": -0.001,
+      "status": "official",
+      "page": 3,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "allianceZoneDepthM",
+      "configPath": "field.allianceZoneDepthM",
+      "configValue": 4.03,
+      "officialValue": 4.028,
+      "differenceM": -0.002,
+      "status": "official",
+      "page": 22,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "hub.x",
+      "configPath": "field.blueElements.hub.x",
+      "configValue": 4,
+      "officialValue": 4.626,
+      "differenceM": 0.626,
+      "status": "derived",
+      "page": 11,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "hub.y",
+      "configPath": "field.blueElements.hub.y",
+      "configValue": 4.035,
+      "officialValue": 4.035,
+      "differenceM": 0,
+      "status": "derived",
+      "page": 4,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "tower.x",
+      "configPath": "field.blueElements.tower.x",
+      "configValue": 1,
+      "officialValue": 0.572,
+      "differenceM": -0.428,
+      "status": "derived",
+      "page": 28,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "tower.y",
+      "configPath": "field.blueElements.tower.y",
+      "configValue": 5.2,
+      "officialValue": 3.962,
+      "differenceM": -1.238,
+      "status": "derived",
+      "page": 11,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "depot.x",
+      "configPath": "field.blueElements.depot.x",
+      "configValue": 0.7,
+      "officialValue": 0.343,
+      "differenceM": -0.357,
+      "status": "derived",
+      "page": 27,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "depot.y",
+      "configPath": "field.blueElements.depot.y",
+      "configValue": 6.6,
+      "officialValue": null,
+      "differenceM": null,
+      "status": "not_found",
+      "page": null,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "outpost.x",
+      "configPath": "field.blueElements.outpost.x",
+      "configValue": 0.4,
+      "officialValue": null,
+      "differenceM": null,
+      "status": "not_found",
+      "page": null,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "outpost.y",
+      "configPath": "field.blueElements.outpost.y",
+      "configValue": 0.7,
+      "officialValue": 0.882,
+      "differenceM": 0.182,
+      "status": "derived",
+      "page": 11,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf"
+    },
+    {
+      "key": "lane.right_bump.y",
+      "configPath": "field.blueLaneY.right_bump",
+      "configValue": 2.47,
+      "officialValue": 2.511,
+      "differenceM": 0.041,
+      "status": "derived",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "lane.left_bump.y",
+      "configPath": "field.blueLaneY.left_bump",
+      "configValue": 5.6,
+      "officialValue": 5.559,
+      "differenceM": -0.041,
+      "status": "derived",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "lane.right_trench.y",
+      "configPath": "field.blueLaneY.right_trench",
+      "configValue": 0.67,
+      "officialValue": 0.834,
+      "differenceM": 0.164,
+      "status": "derived",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "lane.left_trench.y",
+      "configPath": "field.blueLaneY.left_trench",
+      "configValue": 7.4,
+      "officialValue": 7.236,
+      "differenceM": -0.164,
+      "status": "derived",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "laneLength.bumpM",
+      "configPath": "field.laneLengthM",
+      "configValue": 1.5,
+      "officialValue": 1.128,
+      "differenceM": -0.372,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "laneLength.trenchM",
+      "configPath": "field.laneLengthM",
+      "configValue": 1.5,
+      "officialValue": 1.194,
+      "differenceM": -0.306,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "trenchClearanceM",
+      "configPath": "(none)",
+      "configValue": null,
+      "officialValue": 0.565,
+      "differenceM": null,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "trenchOpeningWidthM",
+      "configPath": "(none)",
+      "configValue": null,
+      "officialValue": 1.279,
+      "differenceM": null,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "elementSizes.hubSizeM",
+      "configPath": "field.elementSizes.hubSizeM",
+      "configValue": 1.19,
+      "officialValue": 1.194,
+      "differenceM": 0.004,
+      "status": "official",
+      "page": 23,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "elementSizes.towerWidthM",
+      "configPath": "field.elementSizes.towerWidthM",
+      "configValue": 1.25,
+      "officialValue": 1.251,
+      "differenceM": 0.001,
+      "status": "official",
+      "page": 28,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "elementSizes.towerDepthM",
+      "configPath": "field.elementSizes.towerDepthM",
+      "configValue": 1.14,
+      "officialValue": 1.143,
+      "differenceM": 0.003,
+      "status": "official",
+      "page": 28,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "elementSizes.trenchWidthM",
+      "configPath": "field.elementSizes.trenchWidthM",
+      "configValue": 1.34,
+      "officialValue": 1.668,
+      "differenceM": 0.328,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "elementSizes.bumpWidthM",
+      "configPath": "field.elementSizes.bumpWidthM",
+      "configValue": 1.85,
+      "officialValue": 1.854,
+      "differenceM": 0.004,
+      "status": "official",
+      "page": 26,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "neutralZoneLengthM",
+      "configPath": "(none)",
+      "configValue": null,
+      "officialValue": 7.188,
+      "differenceM": null,
+      "status": "official",
+      "page": 22,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    },
+    {
+      "key": "depotWidthM",
+      "configPath": "(none)",
+      "configValue": null,
+      "officialValue": 1.067,
+      "differenceM": null,
+      "status": "official",
+      "page": 27,
+      "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    }
+  ],
+  "summary": {
+    "official": 14,
+    "derived": 10,
+    "notFound": 2,
+    "largestDifferences": [
+      {
+        "key": "tower.y",
+        "differenceM": -1.238
+      },
+      {
+        "key": "hub.x",
+        "differenceM": 0.626
+      },
+      {
+        "key": "tower.x",
+        "differenceM": -0.428
+      },
+      {
+        "key": "laneLength.bumpM",
+        "differenceM": -0.372
+      },
+      {
+        "key": "depot.x",
+        "differenceM": -0.357
+      },
+      {
+        "key": "elementSizes.trenchWidthM",
+        "differenceM": 0.328
+      }
+    ],
+    "ndiCostUsd": 0,
+    "ndiNote": "One NDI extract on field-manual.pdf was refused with HTTP 403 (Nace-side block); no NDI cost. Values were read from the PDF text layer (pdftotext) instead. pnpm field:extract (src/field/extract.ts) is ready for when the block clears.",
+    "sources": [
+      "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf (page text from data/research/raw/bf376745c62f498c.json, TU22; page numbers are the manual's own footers)",
+      "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf (sheets 3, 4, 11; fetched to a temp dir only, not committed)",
+      "https://www.firstinspires.org/resources/library/frc/playing-field",
+      "https://raw.githubusercontent.com/wpilibsuite/allwpilib/main/fields/src/main/native/resources/org/wpilib/fields/frc/2026-rebuilt-welded.json"
+    ],
+    "needsNdiOrImage": [
+      "depot.y",
+      "outpost.x",
+      "position of the trench opening",
+      "bump/trench 3.3 in overlap",
+      "Layout and Marking Diagram (not located)"
+    ],
+    "wpilib": "2026-rebuilt-welded.json and -andymark.json exist (fields/ directory, not apriltag/); field 16.541 x 8.069 m, origin at field centre; blue hub tags (x 4.625 m), tower tags 15/16, outpost tags 13/14 agree with drawing sheet 11 within 0.01 m. Saved under games/rebuilt-2026/sources/. The example FieldConstants.java is empty (TODO).",
+    "cad": {
+      "step": "https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/FE-2026-rev-rebuilt-playing-field.step",
+      "publiclyDownloadable": true,
+      "sizeBytes": 35707894,
+      "downloaded": false,
+      "note": "HTTP 200 on a HEAD request without sign-in; an Onshape link is also on the page."
+    }
+  }
+}

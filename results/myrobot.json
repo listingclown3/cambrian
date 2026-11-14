@@ -1,8 +1,8 @@
 {
   "experiment": "myrobot",
-  "createdTs": "2026-11-14T20:43:17.125Z",
+  "createdTs": "2026-11-14T20:59:51.677Z",
   "isMock": false,
-  "gitCommit": "8b2b287de7f3-dirty",
+  "gitCommit": "7df7ba1dce88-dirty",
   "simHash": "b9508e9c7510f637",
   "config": {
     "game": {
@@ -667,7 +667,8 @@
     "robotLabel": "My Robot (example)",
     "partners": "Blue partners are the same for every archetype: two midpoint multilane_fixed robots (partner_1, partner_2). Only the red opponents change.",
     "decider": [
-      "scripted"
+      "scripted",
+      "drex"
     ],
     "hardestArchetypes": [
       "multilane_fixed",
@@ -736,7 +737,7 @@
       }
     ],
     "stickyBasis": "matches vs multilane_fixed and big_hopper_hauler, decider scripted, n=16",
-    "drexMatches": null,
+    "drexMatches": 0,
     "scriptedMatches": 72,
     "byDecider": {
       "scripted": {
@@ -861,8 +862,27 @@
         "costUsd": 0,
         "fallbacks": 0,
         "providerCalls": 0
+      },
+      "drex": {
+        "decider": "drex",
+        "seeds": [],
+        "matches": 0,
+        "attempted": 1,
+        "discardedForFallbacks": 1,
+        "fallbackRule": "matches with more than 10 percent of robot decisions answered by the scripted fallback are discarded",
+        "wallS": 5.1,
+        "matchesPerSecond": 0,
+        "ranking": [],
+        "hardestArchetypes": [],
+        "easiestArchetypes": [],
+        "stickyMoments": [],
+        "stickyBasis": "matches vs , decider drex, n=0",
+        "costUsd": 0,
+        "fallbacks": 298,
+        "providerCalls": 215
       }
     },
+    "drexNote": "No valid Drex-driven match is in this file. Drex calls were refused with HTTP 403 (Vercel Security Checkpoint) during the later runs, so every robot decision fell back to the scripted policy and those matches were discarded, not reported. Earlier in the session one solo Drex-driven match (drum_fixed, seed 9001) ran for 297.7 s wall, 1202 provider calls, 29 fallbacks, $0.0499, margin -61; its row was not kept because the run that followed overwrote the Drex entry. Run `pnpm bench:myrobot -- --decider drex` when the endpoint is reachable.",
     "simplifications": [
       "Opponents are archetype midpoint robots from the config templates (profileFromTemplate with uniform 0.5); they are identical for every seed, so seeds vary only the engine randomness and start state, not the opponents.",
       "Blue partners are two midpoint multilane_fixed robots in every match.",

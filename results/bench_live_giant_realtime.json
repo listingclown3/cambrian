@@ -1,0 +1,378 @@
+{
+  "experiment": "bench_live_giant_realtime",
+  "createdTs": "2026-11-14T21:00:32.574Z",
+  "isMock": false,
+  "gitCommit": "f4465c3c62d3-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "part": "giant_realtime",
+    "spec": "deepinfra",
+    "reasoning": "off",
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008,
+        9009,
+        9010
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 470,
+      "scoreRed": 299,
+      "margin": 171,
+      "requests": 124,
+      "providerCalls": 124,
+      "robotDecisions": 153,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 91.481,
+      "wallS": 100.83,
+      "latencyP50Ms": 694.4,
+      "latencyP95Ms": 1106.6,
+      "costUsd": 0.124031,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 168,
+      "scoreRed": 293,
+      "margin": -125,
+      "requests": 110,
+      "providerCalls": 110,
+      "robotDecisions": 137,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 2,
+      "chargedS": 94.285,
+      "wallS": 105.35,
+      "latencyP50Ms": 730.2,
+      "latencyP95Ms": 1578.3,
+      "costUsd": 0.100018,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 418,
+      "scoreRed": 200,
+      "margin": 218,
+      "requests": 110,
+      "providerCalls": 110,
+      "robotDecisions": 136,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 86.675,
+      "wallS": 90.45,
+      "latencyP50Ms": 712.7,
+      "latencyP95Ms": 1123.7,
+      "costUsd": 0.104827,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 497,
+      "scoreRed": 367,
+      "margin": 130,
+      "requests": 108,
+      "providerCalls": 108,
+      "robotDecisions": 130,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 80.873,
+      "wallS": 84.58,
+      "latencyP50Ms": 700.5,
+      "latencyP95Ms": 1139.8,
+      "costUsd": 0.110227,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 246,
+      "scoreRed": 259,
+      "margin": -13,
+      "requests": 157,
+      "providerCalls": 157,
+      "robotDecisions": 180,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 136.333,
+      "wallS": 145.26,
+      "latencyP50Ms": 709.3,
+      "latencyP95Ms": 1505.1,
+      "costUsd": 0.136563,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9006,
+      "blue": [
+        "fab_37",
+        "fab_18",
+        "fab_48"
+      ],
+      "red": [
+        "frc_10219",
+        "fab_45",
+        "frc_6800"
+      ],
+      "scoreBlue": 279,
+      "scoreRed": 395,
+      "margin": -116,
+      "requests": 111,
+      "providerCalls": 111,
+      "robotDecisions": 136,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 111.805,
+      "wallS": 126.63,
+      "latencyP50Ms": 842.8,
+      "latencyP95Ms": 1769,
+      "costUsd": 0.107411,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9007,
+      "blue": [
+        "frc_1757",
+        "fab_46",
+        "fab_31"
+      ],
+      "red": [
+        "fab_27",
+        "fab_28",
+        "fab_20"
+      ],
+      "scoreBlue": 167,
+      "scoreRed": 385,
+      "margin": -218,
+      "requests": 136,
+      "providerCalls": 136,
+      "robotDecisions": 158,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 114.716,
+      "wallS": 117.56,
+      "latencyP50Ms": 777.3,
+      "latencyP95Ms": 1190.4,
+      "costUsd": 0.122043,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9008,
+      "blue": [
+        "fab_29",
+        "fab_34",
+        "fab_11"
+      ],
+      "red": [
+        "frc_1729",
+        "fab_38",
+        "fab_30"
+      ],
+      "scoreBlue": 354,
+      "scoreRed": 381,
+      "margin": -27,
+      "requests": 128,
+      "providerCalls": 128,
+      "robotDecisions": 149,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 112.319,
+      "wallS": 116.21,
+      "latencyP50Ms": 833.8,
+      "latencyP95Ms": 1276.1,
+      "costUsd": 0.110552,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9009,
+      "blue": [
+        "frc_2056",
+        "fab_03",
+        "fab_24"
+      ],
+      "red": [
+        "fab_28",
+        "frc_1729",
+        "fab_30"
+      ],
+      "scoreBlue": 58,
+      "scoreRed": 300,
+      "margin": -242,
+      "requests": 136,
+      "providerCalls": 136,
+      "robotDecisions": 154,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 127.556,
+      "wallS": 129.14,
+      "latencyP50Ms": 864.7,
+      "latencyP95Ms": 1361.4,
+      "costUsd": 0.112153,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 9010,
+      "blue": [
+        "fab_05",
+        "fab_45",
+        "fab_35"
+      ],
+      "red": [
+        "fab_17",
+        "frc_1690",
+        "frc_4322"
+      ],
+      "scoreBlue": 160,
+      "scoreRed": 219,
+      "margin": -59,
+      "requests": 93,
+      "providerCalls": 93,
+      "robotDecisions": 119,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 86.675,
+      "wallS": 87.39,
+      "latencyP50Ms": 803.1,
+      "latencyP95Ms": 1471.3,
+      "costUsd": 0.093769,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false
+    }
+  ],
+  "summary": {}
+}

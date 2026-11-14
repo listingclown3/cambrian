@@ -1,0 +1,313 @@
+{
+  "experiment": "quirks",
+  "createdTs": "2026-11-14T21:02:56.034Z",
+  "isMock": false,
+  "gitCommit": "ae85975341d5-dirty",
+  "simHash": "7160952d70dcba39",
+  "config": {
+    "drex": "drex-latest",
+    "rules": [
+      "G418",
+      "G415",
+      "G420",
+      "G419",
+      "G413",
+      "G425",
+      "G210"
+    ]
+  },
+  "rows": [
+    {
+      "id": "endgame_dump_full_hopper_climb3",
+      "title": "Endgame: dump the full hopper, then climb level 3",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 11 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": null,
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": null
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": null
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": null
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": null
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": null
+        }
+      ],
+      "reliesOnOpponentFouls": null,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+    },
+    {
+      "id": "inactive_shift_depot_gather",
+      "title": "Gather depot fuel during our inactive shift, then wait on trigger",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": null,
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": null
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": null
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": null
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": null
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": null
+        }
+      ],
+      "reliesOnOpponentFouls": null,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+    },
+    {
+      "id": "trench_shoot_on_move_refill",
+      "title": "Score on the move through the left trench, then pick up local fuel",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": 86.8,
+        "ci95": 57.430651092948615,
+        "n": 10,
+        "firesPerMatch": 14.1
+      },
+      "legality": null,
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": null
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": null
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": null
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": null
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": null
+        }
+      ],
+      "reliesOnOpponentFouls": null,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+    },
+    {
+      "id": "spin_out_then_shadow_defend",
+      "title": "Spin out of the pin, then shadow-defend the opposing scorer",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": 13.8,
+        "ci95": 28.892666089511366,
+        "n": 10,
+        "firesPerMatch": 8
+      },
+      "legality": null,
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": null
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": null
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": null
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": null
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": null
+        }
+      ],
+      "reliesOnOpponentFouls": null,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+    },
+    {
+      "id": "late_climb_level2_not_cycle",
+      "title": "In the final 30 seconds, climb level 2 instead of another cycle",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": null,
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": null
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": null
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": null
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": null
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": null
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": null
+        }
+      ],
+      "reliesOnOpponentFouls": null,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+    },
+    {
+      "id": "tower_post_up",
+      "title": "Endgame tower post-up shooting spot vs a normal shot spot",
+      "source": "tower_post_up",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not run: engine support pending (no tower_post* shot spot in the built field layout)"
+      },
+      "legality": null,
+      "rules": [],
+      "reliesOnOpponentFouls": null,
+      "notes": "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. Legality: not judged (Drex unreachable)."
+    },
+    {
+      "id": "intern_rule_scan",
+      "title": "Intern rule-scan quirk candidates",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not run: generalisation session not performed"
+      },
+      "legality": null,
+      "rules": [],
+      "reliesOnOpponentFouls": null,
+      "notes": ""
+    }
+  ],
+  "summary": {
+    "LEGAL": 0,
+    "RISKY": 0,
+    "ILLEGAL": 0,
+    "entriesJudged": 5,
+    "simulated": 2
+  }
+}
