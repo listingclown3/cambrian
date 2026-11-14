@@ -1,73 +1,56 @@
 /**
- * EXPLORATION RACE (owner: P4): animated rollout allocation, uniform search vs Drex-guided search.
- * The race here is an ILLUSTRATIVE SIMULATION on the scenario fixture's authored answer key and Drex priors;
- * the measured numbers (results/headline.json) are shown below it, or "not run yet".
+ * EXPLORATION RACE (owner: P4): rollouts needed to find the best option when Drex orders the search, when options
+ * are searched in uniform order, and when the giant orders it. Every number comes from results/bench_explore.json;
+ * the bar animation only replays those numbers and is labelled illustrative. No file = "not run yet".
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Flags } from "../App";
-import { NOT_RUN, useApi, type Health, type ScenarioPayload } from "../lib";
+import { NOT_RUN, useResult, type Health } from "../lib";
+import { Sources } from "../Sources";
 
-export const MAX = 500;
-
-export function rng(seed: number) {
-  let s = seed >>> 0;
-  const u = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 2 ** 32);
-  return () => Math.sqrt(-2 * Math.log(u() + 1e-12)) * Math.cos(2 * Math.PI * u());
+interface Row {
+  scenarioId: string;
+  ambiguous: boolean;
+  nOptions: number;
+  best: string;
+  drexPosition: number;
+  giantPosition: number;
+  uniformPosition: number;
+  rollouts_drex: number;
+  rollouts_deepinfra: number;
+  rollouts_uniform: number;
+}
+interface Agg {
+  n: number;
+  rollouts_to_best_drex: number;
+  rollouts_to_best_deepinfra: number;
+  rollouts_to_best_uniform: number;
+  rollout_savings_pct_drex_vs_uniform: number;
+  rollout_savings_pct_deepinfra_vs_uniform: number;
 }
 
-/**
- * Sequence of arms pulled until the leader is separated from EVERY other arm (1.5 standard errors, pooled spread
- * estimated from the pulls so far). Uniform = least-pulled arm next; guided = least pulled relative to its prior.
- */
-export function search(arms: { mean: number; sd: number }[], prior: number[] | null, noise: number[][]): { pulls: number[]; found: boolean } {
-  const k = arms.length;
-  const n = new Array<number>(k).fill(0);
-  const sum = new Array<number>(k).fill(0);
-  const sq = new Array<number>(k).fill(0);
-  const pulls: number[] = [];
-  for (let t = 0; t < MAX; t++) {
-    let pick = 0;
-    let bestScore = Infinity;
-    for (let i = 0; i < k; i++) {
-      const score = (n[i]! + 0.5) / (prior ? 0.1 + 0.9 * prior[i]! : 1);
-      if (score < bestScore) { bestScore = score; pick = i; }
-    }
-    const x = arms[pick]!.mean + arms[pick]!.sd * noise[pick]![n[pick]!]!;
-    n[pick]!++;
-    sum[pick]! += x;
-    sq[pick]! += x * x;
-    pulls.push(pick);
-    // pooled within-arm variance over arms with at least 2 pulls
-    let ss = 0;
-    let df = 0;
-    for (let i = 0; i < k; i++) if (n[i]! >= 2) { ss += sq[i]! - (sum[i]! * sum[i]!) / n[i]!; df += n[i]! - 1; }
-    if (df < 3 || n.some((c) => c < 1)) continue;
-    const sp = Math.sqrt(Math.max(ss / df, 0.25));
-    const m = arms.map((_, i) => sum[i]! / n[i]!);
-    const lead = m.indexOf(Math.max(...m));
-    if (n[lead]! < 2) continue;
-    const clear = m.every((mi, i) => i === lead || m[lead]! - mi > 1.5 * sp * Math.sqrt(1 / n[lead]! + 1 / n[i]!));
-    if (clear) return { pulls, found: true };
-  }
-  return { pulls, found: false };
-}
+const LANES = [
+  { key: "rollouts_uniform", name: "Uniform order", cls: "" },
+  { key: "rollouts_drex", name: "Drex-guided order", cls: "drex" },
+  { key: "rollouts_deepinfra", name: "Giant-guided order", cls: "giant" },
+] as const;
 
-function Lane({ title, acc, labels, pulls, t, found, bestIdx }: { title: string; acc: string; labels: string[]; pulls: number[]; t: number; found: boolean; bestIdx: number }) {
-  const counts = new Array<number>(labels.length).fill(0);
-  for (let i = 0; i < Math.min(t, pulls.length); i++) counts[pulls[i]!]!++;
-  const done = t >= pulls.length;
-  const max = Math.max(1, ...counts);
+function Summary({ title, a }: { title: string; a: Agg | undefined }) {
+  const f = (v: number | undefined) => (typeof v === "number" ? v.toFixed(1) : null);
+  const savings = (v: number | undefined) => (typeof v === "number" ? `${v > 0 ? "" : ""}${v.toFixed(1)}%` : null);
   return (
-    <div className={`card ${acc}`}>
-      <div className="decider"><i />{title}</div>
-      <div className="counter">{Math.min(t, pulls.length)}</div>
-      <div className="hint">{done ? (found ? "rollouts used: best option identified" : `no clear winner within ${MAX} rollouts`) : "rollouts used so far"}</div>
-      <div style={{ marginTop: "0.8rem" }}>
-        {labels.map((l, i) => (
-          <div key={l} className={`rbar ${i === bestIdx && done ? "best" : ""}`}>
-            <span className="lbl" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l}</span>
-            <span className="track"><span className="fill" style={{ width: `${(counts[i]! / max) * 100}%` }} /></span>
-            <span className="mono">{counts[i]}</span>
+    <div className="card">
+      <b>{title}</b> <span className="hint">{a ? `${a.n} scenarios` : ""}</span>
+      <div className="grid g3" style={{ marginTop: "0.5rem" }}>
+        {([
+          ["Uniform", f(a?.rollouts_to_best_uniform), "", null],
+          ["Drex-guided", f(a?.rollouts_to_best_drex), "drex", savings(a?.rollout_savings_pct_drex_vs_uniform)],
+          ["Giant-guided", f(a?.rollouts_to_best_deepinfra), "giant", savings(a?.rollout_savings_pct_deepinfra_vs_uniform)],
+        ] as const).map(([n, v, cls, s]) => (
+          <div key={n} className={`kpi ${cls}`}>
+            <div className="lbl">{n}</div>
+            <div className={`val ${v === null ? "null" : ""}`}>{v ?? NOT_RUN}</div>
+            <div className="note">{v !== null ? `rollouts to find the best option${s ? ` · ${s} vs uniform` : ""}` : ""}</div>
           </div>
         ))}
       </div>
@@ -76,76 +59,94 @@ function Lane({ title, acc, labels, pulls, t, found, bestIdx }: { title: string;
 }
 
 export function RacePage({ health, onFlags }: { health: Health | null; onFlags: (f: Flags) => void }) {
-  const sc = useApi<ScenarioPayload>("/api/scenarios").data;
-  const head = useApi<{ summary: Record<string, number | null | undefined> }>("/api/results/headline").data;
+  const res = useResult("bench_explore") as { isMock?: boolean; summary?: { unambiguous?: Agg; all?: Agg }; rows?: Row[]; config?: { rolloutsPerOption?: number; method?: string } } | null;
   const [selId, setSelId] = useState<string | null>(null);
-  const [t, setT] = useState(0);
   const [run, setRun] = useState(0);
+  const [t, setT] = useState(0); // animation progress 0..1
 
   useEffect(() => {
-    onFlags({ mock: ["race is an ILLUSTRATIVE SIMULATION on fixture data (authored answer key and Drex priors)", ...(health?.engineIsStub ? ["engine is the STUB"] : [])], recorded: false });
-  }, [health?.engineIsStub, onFlags]);
-
-  const scenario = sc?.scenarios.find((s) => s.id === (selId ?? sc.scenarios[0]?.id)) ?? null;
-  const setup = useMemo(() => {
-    if (!scenario?.answerKey) return null;
-    const entries = Object.entries(scenario.answerKey.values);
-    const arms = entries.map(([, v]) => ({ mean: v.mean, sd: (v.ci95 * Math.sqrt(v.n)) / 1.96 }));
-    const probs = sc?.picks[scenario.id]?.drex?.probabilities;
-    const prior = probs ? entries.map(([l]) => probs[l] ?? 0.02) : null;
-    const g = rng(run + 1);
-    const noise = arms.map(() => Array.from({ length: MAX + 1 }, g));
-    const labels = entries.map(([l]) => l);
-    return { labels, uniform: search(arms, null, noise), guided: prior ? search(arms, prior, noise) : null, bestIdx: labels.indexOf(scenario.answerKey.best) };
-  }, [scenario, sc, run]);
+    const mock: string[] = [];
+    if (res?.isMock) mock.push("bench_explore.json is flagged mock");
+    if (health?.engineIsStub) mock.push("engine is the STUB");
+    onFlags({ mock, recorded: false });
+  }, [res?.isMock, health?.engineIsStub, onFlags]);
 
   useEffect(() => {
     setT(0);
-    const id = setInterval(() => setT((x) => x + 1), 110);
-    return () => clearInterval(id);
-  }, [run, scenario?.id]);
+    const t0 = performance.now();
+    let raf = 0;
+    const loop = () => {
+      const p = Math.min(1, (performance.now() - t0) / 3500);
+      setT(p);
+      if (p < 1) raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [run, selId]);
 
-  if (!sc) return <div className="empty">loading…</div>;
-  const s = head?.summary ?? {};
-  const fmt = (v: number | null | undefined) => (typeof v === "number" ? v.toFixed(1) : NOT_RUN);
+  const rows = res?.rows ?? [];
+  const row = rows.find((r) => r.scenarioId === (selId ?? rows[0]?.scenarioId)) ?? null;
+  const max = row ? Math.max(row.rollouts_uniform, row.rollouts_drex, row.rollouts_deepinfra, 1) : 1;
+
   return (
     <div>
       <h1>Exploration Race</h1>
-      <p className="sub">Both searchers must find the best option with the same evidence rule. Drex's probabilities decide where the rollouts go first.</p>
-      <div className="controls">
-        <select className="btn" value={scenario?.id ?? ""} onChange={(e) => setSelId(e.target.value)}>
-          {sc.scenarios.map((x) => <option key={x.id} value={x.id}>{x.flip === "" ? `${x.familyId}: base` : `${x.familyId}: ${x.flip}`}</option>)}
-        </select>
-        <button className="btn primary" onClick={() => setRun((r) => r + 1)}>Run again</button>
-        <span className="pill mock">ILLUSTRATIVE SIMULATION</span>
-      </div>
-      {setup && setup.guided ? (
-        <div className="race">
-          <Lane title="Uniform search" acc="" labels={setup.labels} pulls={setup.uniform.pulls} t={t} found={setup.uniform.found} bestIdx={setup.bestIdx} />
-          <Lane title="Drex-guided search" acc="drex" labels={setup.labels} pulls={setup.guided.pulls} t={t} found={setup.guided.found} bestIdx={setup.bestIdx} />
-        </div>
-      ) : (
-        <div className="empty">race needs an answer key and Drex probabilities for this scenario: {NOT_RUN}</div>
+      <p className="sub">
+        How many rollouts does it take to find the best option when a decider's probabilities decide which option to test first?
+        {res?.config?.method ? ` ${res.config.method}` : ""}
+      </p>
+      {!res && <div className="card empty">exploration benchmark {NOT_RUN} (results/bench_explore.json)</div>}
+      {res && (
+        <>
+          <div className="grid g2">
+            <Summary title="Unambiguous scenarios" a={res.summary?.unambiguous} />
+            <Summary title="All scenarios" a={res.summary?.all} />
+          </div>
+
+          <h2>One scenario</h2>
+          <div className="controls">
+            <select className="btn" value={row?.scenarioId ?? ""} onChange={(e) => setSelId(e.target.value)}>
+              {rows.map((r) => <option key={r.scenarioId} value={r.scenarioId}>{r.scenarioId}{r.ambiguous ? " (ambiguous)" : ""}</option>)}
+            </select>
+            <button className="btn primary" onClick={() => setRun((r) => r + 1)}>Replay animation</button>
+            <span className="pill mock">ANIMATION IS ILLUSTRATIVE: the numbers are from the benchmark file</span>
+          </div>
+          {row && (
+            <div className="card">
+              <div className="hint">Best option: <b className="mono">{row.best}</b> · {row.nOptions} options · {row.ambiguous ? "ambiguous (runner-up not clearly worse)" : "unambiguous"}</div>
+              {LANES.map((l) => (
+                <div key={l.key} className={`rbar ${l.cls}`} style={{ gridTemplateColumns: "12rem 1fr 6rem", margin: "0.6rem 0" }}>
+                  <span className="lbl acc">{l.name}</span>
+                  <span className="track"><span className="fill" style={{ width: `${(row[l.key] / max) * 100 * t}%`, background: l.cls ? "var(--acc)" : "var(--text2)" }} /></span>
+                  <span className="mono">{row[l.key]}</span>
+                </div>
+              ))}
+              <div className="hint mono">
+                position of the best option in each search order (1 = tested first): uniform {row.uniformPosition} · Drex {row.drexPosition} · giant {row.giantPosition}
+              </div>
+            </div>
+          )}
+
+          <h2>Every scenario</h2>
+          <div className="card scroll" style={{ maxHeight: "24rem", overflowY: "auto" }}>
+            <table>
+              <thead><tr><th>Scenario</th><th className="num">Options</th><th className="num">Uniform</th><th className="num">Drex-guided</th><th className="num">Giant-guided</th></tr></thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.scenarioId} className={r.scenarioId === row?.scenarioId ? "sel" : ""} onClick={() => setSelId(r.scenarioId)} style={{ cursor: "pointer" }}>
+                    <td className="mono">{r.scenarioId}{r.ambiguous ? " (ambiguous)" : ""}</td>
+                    <td className="num mono">{r.nOptions}</td>
+                    <td className="num mono">{r.rollouts_uniform}</td>
+                    <td className="num mono">{r.rollouts_drex}</td>
+                    <td className="num mono">{r.rollouts_deepinfra}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-      <h2>Measured rollouts to find the best option</h2>
-      <div className="grid g4">
-        {([
-          ["Uniform", "rollouts_to_best_uniform", ""],
-          ["Drex-guided", "rollouts_to_best_drex", "drex"],
-          ["Giant-guided", "rollouts_to_best_deepinfra", "giant"],
-        ] as const).map(([name, key, acc]) => (
-          <div key={key} className={`kpi ${acc}`}>
-            <div className="lbl">{name}</div>
-            <div className={`val ${typeof s[key] === "number" ? "" : "null"}`}>{fmt(s[key])}</div>
-          </div>
-        ))}
-        <div className="kpi drex">
-          <div className="lbl">Saved by Drex-guided search</div>
-          <div className={`val ${typeof s.rollout_savings_pct_drex_vs_uniform === "number" ? "" : "null"}`}>
-            {typeof s.rollout_savings_pct_drex_vs_uniform === "number" ? `${s.rollout_savings_pct_drex_vs_uniform.toFixed(0)}%` : NOT_RUN}
-          </div>
-        </div>
-      </div>
+      <Sources files={["bench_explore", "scenarios"]} />
     </div>
   );
 }

@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import type { RunEvent } from "../../../src/contracts";
 import type { Flags } from "../App";
-import { NOT_RUN, ms, signed, useApi, usd, type RunListing } from "../lib";
+import { Sources } from "../Sources";
+import { NOT_RUN, ms, signed, useApi, useResult, usd, type RunListing } from "../lib";
 
 interface ResultRow {
   name: string;
@@ -63,7 +64,7 @@ function MyRobotPanel() {
           <span className="empty">your robot against each archetype: {NOT_RUN} (results/myrobot.json)</span>
         ) : (
           <table>
-            <thead><tr><th>Opponent archetype</th><th className="num">Margin</th><th className="num">95% CI</th></tr></thead>
+            <thead><tr><th>Opponent archetype</th><th>Decider</th><th className="num">Matches</th><th className="num">Margin</th><th className="num">95% CI</th></tr></thead>
             <tbody>
               {rows.map((r, i) => {
                 const m = num(r, "meanMargin", "margin", "mean");
@@ -71,6 +72,8 @@ function MyRobotPanel() {
                 return (
                   <tr key={i}>
                     <td>{String(r.archetype ?? r.opponent ?? r.label ?? i).replaceAll("_", " ")}</td>
+                    <td>{String(r.decider ?? "-")}</td>
+                    <td className="num mono">{String(r.n ?? "-")}</td>
                     <td className="num mono">{m === undefined ? NOT_RUN : signed(m)}</td>
                     <td className="num mono">{ci === undefined ? "-" : `± ${ci.toFixed(1)}`}</td>
                   </tr>
@@ -80,6 +83,86 @@ function MyRobotPanel() {
           </table>
         )}
       </div>
+    </>
+  );
+}
+
+interface QuirkRule { id: string; page: number; pViolation: number }
+interface Quirk {
+  id: string;
+  title: string;
+  source: string;
+  value: { marginDiff: number | null; ci95: number | null; n: number | null; reason?: string; firesTotal?: number; g420FoulsOnOpponents?: number; g420FoulsOnUs?: number };
+  legality: "LEGAL" | "RISKY" | "ILLEGAL";
+  rules: QuirkRule[];
+  reliesOnOpponentFouls: number | null;
+  notes?: string;
+}
+const SOURCE_LABEL: Record<string, string> = { lab_proposal: "Strategy Lab proposal", tower_post_up: "Tower post-up", intern_rule_scan: "Intern rule scan" };
+
+/** results/quirks.json: strategy quirks judged against the conduct rules and, where possible, simulated. */
+function QuirksPanel() {
+  const q = useResult("quirks") as { rows?: Quirk[]; summary?: Record<string, number> } | null;
+  const rows = q?.rows ?? [];
+  return (
+    <>
+      <h2>Quirks: legal, risky or illegal?</h2>
+      <div className="card scroll">
+        {rows.length === 0 ? (
+          <span className="empty">quirks {NOT_RUN} (results/quirks.json)</span>
+        ) : (
+          <table>
+            <thead><tr><th>Quirk</th><th>Source</th><th>Legality</th><th className="num">Opponent-foul reliance</th><th>Simulated value</th></tr></thead>
+            <tbody>
+              {rows.map((r) => {
+                const top = [...r.rules].sort((a, b) => b.pViolation - a.pViolation)[0];
+                const v = r.value;
+                return (
+                  <tr key={r.id}>
+                    <td><b>{r.title}</b>{r.notes && <div className="hint">{r.notes}</div>}</td>
+                    <td>{SOURCE_LABEL[r.source] ?? r.source}</td>
+                    <td>
+                      <span className={r.legality === "LEGAL" ? "ver" : r.legality === "RISKY" ? "todo" : "todo"} style={{ fontWeight: 800 }}>{r.legality}</span>
+                      {top && <div className="hint mono">highest: {top.id} (manual p.{top.page}) p {top.pViolation.toFixed(2)}</div>}
+                    </td>
+                    <td className="num mono">{r.reliesOnOpponentFouls === null ? NOT_RUN : r.reliesOnOpponentFouls.toFixed(2)}</td>
+                    <td>
+                      {v.marginDiff !== null && v.n !== null ? (
+                        <span className="mono">{signed(v.marginDiff)} ± {(v.ci95 ?? 0).toFixed(1)} pts over {v.n} matches</span>
+                      ) : (
+                        <span className="hint">not simulated: {v.reason ?? NOT_RUN}</span>
+                      )}
+                      {v.g420FoulsOnOpponents !== undefined && (
+                        <div className="hint mono">G420 fouls drawn {v.g420FoulsOnOpponents} · committed {v.g420FoulsOnUs ?? 0}{v.firesTotal !== undefined ? ` · shots fired ${v.firesTotal}` : ""}</div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
+interface IdleSide { policy: string; meanIdleSPerRobotPerMatch: number; maxIdleSPerRobotPerMatch: number; longestIdleStretchS: number }
+/** results/idle_report.json: how long robots stood idle before and after the role table. */
+function IdlePanel() {
+  const r = useResult("idle_report") as { definition?: string; seeds?: number[]; before?: IdleSide; after?: IdleSide } | null;
+  const side = (s: IdleSide | undefined, name: string) => (
+    <div className="kpi">
+      <div className="lbl">{name}</div>
+      <div className={`val ${s ? "" : "null"}`}>{s ? `${s.meanIdleSPerRobotPerMatch.toFixed(1)} s` : NOT_RUN}</div>
+      <div className="note">{s ? `mean idle per robot per match · worst robot ${s.maxIdleSPerRobotPerMatch.toFixed(1)} s · longest stretch ${s.longestIdleStretchS} s · ${s.policy}` : ""}</div>
+    </div>
+  );
+  return (
+    <>
+      <h2>No-idle check: before and after</h2>
+      <div className="grid g2">{side(r?.before, "Before")}{side(r?.after, "After")}</div>
+      {r?.definition && <p className="hint">{r.definition}. {r.seeds ? `${r.seeds.length} seeds.` : ""}</p>}
     </>
   );
 }
@@ -121,6 +204,8 @@ export function ComparePage({ runs, onFlags }: { runs: RunListing[]; onFlags: (f
       {chosen.length > 0 && <div className={`grid g2`} style={{ marginTop: "1rem" }}>{chosen.map((r) => <RunColumn key={`${r.source}/${r.runId}`} run={r} />)}</div>}
 
       <MyRobotPanel />
+      <QuirksPanel />
+      <IdlePanel />
 
       <h2>Results files</h2>
       <div className="card scroll">
@@ -140,6 +225,7 @@ export function ComparePage({ runs, onFlags }: { runs: RunListing[]; onFlags: (f
           </tbody>
         </table>
       </div>
+      <Sources files={["quirks", "idle_report", "myrobot", "headline"]} extra={["runs/*/events.jsonl (recorded runs)"]} />
     </div>
   );
 }
