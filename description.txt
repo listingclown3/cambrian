@@ -4,8 +4,9 @@ Teams use it three ways: at kickoff (find what wins), in build season (your robo
 
 FRC teams increasingly use frontier LLMs for strategy: reading the game manual, planning, scouting. But a match moves faster than an LLM thinks. We built a full REBUILT 2026 match simulator (forked, with permission, from Team 488's open-source strategy sim) with realistic robot archetypes from this season: fixed drum shooters, turret shoot-on-the-move robots, multi-lane shooters, big-hopper haulers, dumpers, zero-hopper turrets, feeders and defenders. Load, push battles and shooter type all change what a robot should do.
 
-We applied Nace's System 1 / System 2 idea. System 2 (a large model on DeepInfra, running inside Intern) thinks between matches: it reads research and the rulebook and invents new strategies. System 1 (Drex) decides during the match: every robot's next move, Plan A and Plan B in sticky situations (pinned, full, hub about to shut off), alliance roles each hub shift, and rule calls. The simulator is the referee: every claim is checked by rollouts.
+We app
 
+cahgne desciprtion
 Results (real logged runs):
 - Decision speed at match size (3 robots per call): Drex {{batch3_ms_per_decision_drex}} ms vs DeepInfra {{batch3_ms_per_decision_giant}} ms per decision (7.1x faster). Single question: Drex p50 {{drex_p50_ms}} ms vs {{deepinfra_p50_ms}} ms ({{latency_ratio_deepinfra_over_drex}}x). Giant = Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 - Cost per 1,000 decisions: Drex ${{drex_cost_per_1k_usd}} vs DeepInfra ${{deepinfra_cost_per_1k_usd}}
