@@ -33,7 +33,13 @@
     "usage": "tsx src/ledger/cli.ts",
     "prepush": "node scripts/prepush.mjs",
     "ingest:rules": "tsx src/ingest/manualRules.ts",
-    "describe": "node scripts/describe.mjs"
+    "describe": "node scripts/describe.mjs",
+    "ingest:pages": "tsx src/ingest/pages.ts",
+    "ingest:conduct": "tsx src/ingest/conductRules.ts",
+    "ingest:judge": "tsx src/ingest/ruleJudge.ts",
+    "ingest:scouting-gen": "tsx src/ingest/scoutingGen.ts",
+    "ingest:scouting": "tsx src/ingest/scoutingExtract.ts",
+    "intern:task": "tsx src/lab/internTask.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
