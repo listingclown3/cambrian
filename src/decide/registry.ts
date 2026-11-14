@@ -26,6 +26,8 @@ export const NETWORK_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["
 
 /** Options for network providers: a model override plus the test/tool seams. */
 export interface ProviderOptions extends ChatProviderOptions {
+  /** drex only: serving host ("console" default, or a key of providers.byId.drex.hosts). */
+  host?: string;
   /** Answer identical OFFLINE requests from cache/decide (see cache.ts). Default false. */
   cache?: boolean | { dir?: string };
   /** Anonymized-labels ablation: options are shown as opt_01.. with descriptions kept (see anonymize.ts). */
@@ -67,7 +69,7 @@ export function getProvider(id: ProviderId, cfg: Config, opts?: ProviderOptions)
     if (cache && NETWORK_PROVIDERS.has(id)) {
       const resolve = (provider as Partial<ChatDecisionProvider>).resolveModel;
       const model = resolve ? () => resolve() : (rest.model ?? cfg.providers.byId[id].model ?? "default");
-      const variant = id === "drex" ? "" : `thinking=${rest.thinking ?? "off"};split=${rest.splitQuestions ?? true};max=${rest.maxTokens ?? 4096}`;
+      const variant = id === "drex" ? `host=${rest.host ?? "console"}` : `thinking=${rest.thinking ?? "off"};split=${rest.splitQuestions ?? true};max=${rest.maxTokens ?? 4096}`;
       provider = cachedProvider(provider, { model, variant, ...(typeof cache === "object" && cache.dir ? { dir: cache.dir } : {}) });
     }
     return anonymize ? anonymizedProvider(provider) : provider;
@@ -120,16 +122,17 @@ export async function warmupProvider(provider: DecisionProvider): Promise<void> 
 }
 
 /** Flags a spec may carry after "@", in any order: "drex:drex-latest@anon@cache". */
-const SPEC_FLAGS = ["think", "anon", "cache"] as const;
+const SPEC_FLAGS = ["think", "anon", "cache", "di"] as const;
 
 /**
  * Split "id[:model][@flag...]" (the model may contain ":" or "/"). Flags:
  *   @think  reasoning on (chat providers)
  *   @anon   anonymized-labels ablation (labels shown as opt_01.., descriptions kept)
  *   @cache  offline response cache (offline requests only)
+ *   @di     drex only: served by DeepInfra's Decisions API (host "deepinfra") instead of console.nace.ai
  * Throws on an unknown id or flag.
  */
-export function parseProviderSpec(spec: string): { id: ProviderId; model?: string; thinking?: "on"; anonymize?: true; cache?: true } {
+export function parseProviderSpec(spec: string): { id: ProviderId; model?: string; thinking?: "on"; anonymize?: true; cache?: true; host?: string } {
   const [base, ...flags] = spec.split("@");
   for (const f of flags) if (!(SPEC_FLAGS as readonly string[]).includes(f)) throw new Error(`unknown provider spec flag "@${f}" in "${spec}"`);
   const i = base!.indexOf(":");
@@ -141,6 +144,7 @@ export function parseProviderSpec(spec: string): { id: ProviderId; model?: strin
     ...(flags.includes("think") ? { thinking: "on" as const } : {}),
     ...(flags.includes("anon") ? { anonymize: true as const } : {}),
     ...(flags.includes("cache") ? { cache: true as const } : {}),
+    ...(flags.includes("di") ? { host: "deepinfra" } : {}),
   };
 }
 

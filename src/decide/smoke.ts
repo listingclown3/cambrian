@@ -28,6 +28,7 @@ import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
 import { PROMPT_VERSION } from "./options";
 import { runEnvironment } from "./runEnv";
+import { drexServerTimings } from "./providers/drex";
 
 const argValues = (name: string) => process.argv.flatMap((a, i) => (a === name && process.argv[i + 1] ? process.argv[i + 1]!.split(",") : []));
 const specs = argValues("--provider").length > 0 ? argValues("--provider") : ["drex_mock"];
@@ -70,6 +71,7 @@ for (const spec of specs) {
   const { id } = parseProviderSpec(spec);
   const provider = getProviderBySpec(spec, cfg, { purpose: "smoke", ...(anon ? { anonymize: true } : {}), ...(thinking ? { thinking } : {}), ...(timeoutMs ? { timeoutMs } : {}) });
   await warmupProvider(provider);
+  drexServerTimings.splice(0); // the warm-up call is not a measurement
   const metas: DecisionResponse["meta"][] = [];
   const chosen = new Map<string, number>();
   for (let i = 0; i < views.length; i++) {
@@ -119,7 +121,9 @@ for (const spec of specs) {
   const lat = ok.map((m) => m.latencyMs);
   const mean = (f: (m: DecisionResponse["meta"]) => number) => (ok.length ? ok.reduce((s, m) => s + f(m), 0) / ok.length : NaN);
   const models = [...new Set(metas.map((m) => m.model))].join(",");
+  const evals = drexServerTimings.splice(0).map((t) => t.evaluationMs).filter((x): x is number => x !== null);
   fileCells.push({
+    serverEvaluationP50Ms: evals.length ? pct(evals, 0.5) : null,
     spec,
     optionMode,
     promptVersion: PROMPT_VERSION,
@@ -137,7 +141,7 @@ for (const spec of specs) {
   summary.push(
     `${spec.padEnd(26)} model ${models.padEnd(24)} ok ${ok.length}/${metas.length}  p50 ${pct(lat, 0.5).toFixed(0)} ms  p95 ${pct(lat, 0.95).toFixed(0)} ms  ` +
       `in ${mean((m) => m.inputTokens).toFixed(0)} tok  out ${mean((m) => m.outputTokens).toFixed(0)} tok  $${mean((m) => m.costUsd).toFixed(6)}/decision  ` +
-      `total $${ok.reduce((s, m) => s + m.costUsd, 0).toFixed(5)}${metas[0]?.isMock ? "  [MOCK]" : ""}  top choices ${[...chosen.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([l, c]) => `${l}x${c}`).join(" ")}`,
+      `total $${ok.reduce((s, m) => s + m.costUsd, 0).toFixed(5)}${evals.length ? `  server eval p50 ${pct(evals, 0.5).toFixed(0)} ms` : ""}${metas[0]?.isMock ? "  [MOCK]" : ""}  top choices ${[...chosen.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([l, c]) => `${l}x${c}`).join(" ")}`,
   );
 }
 

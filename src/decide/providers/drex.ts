@@ -25,6 +25,12 @@ export interface DrexOptions extends ProviderDeps {
   model?: string;
   /** Per-request timeout override, milliseconds (default: config timeoutMs). */
   timeoutMs?: number;
+  /**
+   * Which official host serves the model: "console" (default, console.nace.ai) or a key of
+   * cfg.providers.byId.drex.hosts, e.g. "deepinfra" (DeepInfra's Decisions API, model ids
+   * nace-ai/...). meta.model then carries the host: "nace-ai/drex-v2.0 @deepinfra".
+   */
+  host?: string;
 }
 
 /** The Drex wire body for a request. Exported so tests and tools can inspect it. */
@@ -92,51 +98,79 @@ export function parseDrexAnswer(q: Question, raw: any): Answer | string {
   }
 }
 
-export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider & { readonly model: string; warmup(): Promise<DecisionResponse> } {
+/** Server-side evaluation time per successful Drex call (evaluation_time_ms, or timings), for diagnostics. */
+export const drexServerTimings: { model: string; latencyMs: number; evaluationMs: number | null }[] = [];
+
+export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider & { readonly model: string; readonly host: string; warmup(): Promise<DecisionResponse> } {
   const p = cfg.providers.byId.drex;
   const model = opts.model ?? p.model ?? "drex-v2.0";
   const env = opts.env ?? process.env;
+  const hostName = opts.host && opts.host !== "console" ? opts.host : null;
+  const host = hostName ? p.hosts?.[hostName] : undefined;
+  if (hostName && !host) throw new Error(`unknown drex host "${hostName}" (config providers.byId.drex.hosts)`);
+  // Connection for the chosen host. Numbers from different hosts are never mixed: the host is in
+  // meta.model, the ledger model string, the limiter bucket and (via the registry) the cache key.
+  const conn = host
+    ? {
+        endpoint: host.endpoint as string | null,
+        apiKeyEnv: host.apiKeyEnv as string | null,
+        auth: { ...p, authHeader: host.authHeader, authScheme: host.authScheme, extraHeaders: {} },
+        wireModel: host.models[model] ?? model,
+        timeoutMs: host.timeoutMs ?? p.timeoutMs,
+        shared: host.sharedRateLimit,
+        bucket: `drex-${hostName}`,
+        suffix: ` @${hostName}`,
+      }
+    : { endpoint: p.endpoint, apiKeyEnv: p.apiKeyEnv, auth: p, wireModel: model, timeoutMs: p.timeoutMs, shared: p.sharedRateLimit, bucket: "drex", suffix: "" };
+  const label = `${model}${conn.suffix}`;
   const limit = limiterFor("drex", p);
 
   async function call(req: DecisionRequest, enqueuedMs: number): Promise<DecisionResponse> {
     const started = performance.now();
     const queuedMs = started - enqueuedMs;
-    const key = env[p.apiKeyEnv ?? ""];
-    if (!p.endpoint || !key) return fallbackResponse(req, "drex", model, started, `${p.apiKeyEnv ?? "drex api key"} is not set`);
-    const body = drexBody(model, req);
-    const blocked = spendCapBlock(cfg, "drex", estimateCostUsd(cfg, "drex", model, JSON.stringify(body).length, 0));
-    if (blocked) return fallbackResponse(req, "drex", model, started, blocked);
-    const breaker = breakerState(p.endpoint);
+    const key = env[conn.apiKeyEnv ?? ""];
+    const endpoint = conn.endpoint;
+    if (!endpoint || !key) return fallbackResponse(req, "drex", label, started, `${conn.apiKeyEnv ?? "drex api key"} is not set`);
+    const body = drexBody(conn.wireModel, req);
+    const blocked = spendCapBlock(cfg, "drex", estimateCostUsd(cfg, "drex", conn.wireModel, JSON.stringify(body).length, 0));
+    if (blocked) return fallbackResponse(req, "drex", label, started, blocked);
+    const breaker = breakerState(endpoint);
     if (breaker.open) {
-      return fallbackResponse(req, "drex", model, started, `drex ${model}: ${BLOCKED_BY_CHECKPOINT}: circuit open after ${breaker.consecutive} checkpoint responses; next probe at ${new Date(breaker.openUntilMs).toISOString()} (request not sent)`);
+      return fallbackResponse(req, "drex", label, started, `drex ${label}: ${BLOCKED_BY_CHECKPOINT}: circuit open after ${breaker.consecutive} checkpoint responses; next probe at ${new Date(breaker.openUntilMs).toISOString()} (request not sent)`);
     }
 
     // Machine-wide pacing shared with every other process calling Drex (config sharedRateLimit).
     // The wait counts in latencyMs: a robot waiting for a slot is waiting for its answer.
-    const timeoutMs = opts.timeoutMs ?? p.timeoutMs;
+    const timeoutMs = opts.timeoutMs ?? conn.timeoutMs;
     let release: (() => void) | null = null;
-    if (p.sharedRateLimit && opts.sharedLimitDir !== false) {
+    if (conn.shared && opts.sharedLimitDir !== false) {
       const maxWait = req.mode === "live" ? timeoutMs : 120_000;
-      release = await acquireShared({ dir: opts.sharedLimitDir ?? repoPath("cache", "ratelimit", "drex"), ...p.sharedRateLimit }, maxWait, timeoutMs * (1 + retriesFor(p, req.mode)) + 5_000);
-      if (!release) return fallbackResponse(req, "drex", model, started, `drex ${model}: rate_limited_locally: no shared Drex slot within ${maxWait} ms (request not sent)`);
+      release = await acquireShared({ dir: opts.sharedLimitDir ?? repoPath("cache", "ratelimit", conn.bucket), ...conn.shared }, maxWait, timeoutMs * (1 + retriesFor(p, req.mode)) + 5_000);
+      if (!release) return fallbackResponse(req, "drex", label, started, `drex ${label}: rate_limited_locally: no shared Drex slot within ${maxWait} ms (request not sent)`);
     }
 
     let json: any;
     try {
-      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs, retries: retriesFor(p, req.mode), deps: opts, queuedMs }));
+      ({ json } = await requestJson(endpoint, { headers: authHeaders(conn.auth, key), body }, { timeoutMs, retries: retriesFor(p, req.mode), deps: opts, queuedMs }));
     } catch (e) {
       release?.();
       // The request was sent, so it may have been billed: record it (tokens unknown = 0).
       // A call refused locally (open circuit breaker, limiter) never left: not recorded.
-      if (!(e instanceof HttpError && !e.sent)) recordRealCall(cfg, "drex", opts, { tool: "drex", model, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });
-      return fallbackResponse(req, "drex", model, started, `drex ${model}: ${(e as Error).message}`);
+      if (!(e instanceof HttpError && !e.sent)) recordRealCall(cfg, "drex", opts, { tool: "drex", model: label, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });
+      return fallbackResponse(req, "drex", label, started, `drex ${label}: ${(e as Error).message}`);
     }
     release?.();
     const latencyMs = performance.now() - started;
-    const served = typeof json?.model === "string" ? json.model : model;
+    const servedId = typeof json?.model === "string" ? json.model : conn.wireModel;
+    const served = `${servedId}${conn.suffix}`;
+    const evalMs = num(json?.evaluation_time_ms) ?? num(json?.timings?.evaluation_time_ms) ?? num(json?.timings?.server_ms) ?? null;
+    if (drexServerTimings.length > 10_000) drexServerTimings.shift();
+    drexServerTimings.push({ model: served, latencyMs, evaluationMs: evalMs });
     const inputTokens = Math.max(0, Math.round(num(json?.usage?.input_tokens) ?? 0));
     const outputTokens = Math.max(0, Math.round(num(json?.usage?.output_tokens) ?? 0));
-    const costUsd = costFromConfig(cfg, "drex", served, inputTokens, outputTokens) ?? 0;
+    // A host-reported charge wins; else config prices for the exact served id on that host.
+    const reported = num(json?.usage?.estimated_cost);
+    const costUsd = reported !== undefined && reported >= 0 ? reported : (costFromConfig(cfg, "drex", servedId, inputTokens, outputTokens) ?? 0);
     recordRealCall(cfg, "drex", opts, { tool: "drex", model: served, inputTokens, outputTokens, latencyMs, costUsd, counts: { questions: req.questions.length } });
 
     const answers: Record<string, Answer> = {};
@@ -167,8 +201,10 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
 
   return {
     id: "drex",
-    /** The model id requested (the served id, e.g. drex-max-v1.1 for drex-latest, is in meta.model). */
-    model,
+    /** The model id requested, with the host for non-console hosts (the served id is in meta.model). */
+    model: label,
+    /** "console" or the configured host name. */
+    host: hostName ?? "console",
     // Latency is measured inside call(), i.e. from when the request is actually sent, not from
     // when it entered the concurrency queue.
     decide: (req) => {

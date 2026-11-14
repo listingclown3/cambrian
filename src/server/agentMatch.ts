@@ -10,6 +10,7 @@ import { engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { RunLogger, buildManifest, newRunId } from "../util/runLog";
 import type { DecisionNote, ServerMessage } from "./protocol";
+import { slimFrame, slimStatic } from "./slim";
 
 export interface AgentStreamOptions {
   provider: "drex" | "deepinfra";
@@ -51,9 +52,14 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
   const base = getProvider(o.provider, cfg);
   // Capture each answer's probabilities so the ticker can show them (the controller keeps only labels).
   const probs = new Map<string, Record<string, number>>();
+  const thinking = new Set<string>();
+  const robotIds = demoRobots(cfg).map((_, i) => (i < 3 ? `B${i + 1}` : `R${i - 2}`));
+  const lats: number[] = [];
+  let fallbacks = 0;
   const provider = {
     id: base.id,
     async decide(req: DecisionRequest) {
+      for (const id of robotIds) if (req.questions.some((q) => q.id.includes(id))) thinking.add(id);
       const res = await base.decide(req);
       for (const [qid, a] of Object.entries(res.answers)) if (a.probabilities) probs.set(qid, a.probabilities);
       return res;
@@ -73,12 +79,17 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
     const meta: DecisionMeta | undefined = d.metas[0];
     if (d.kind !== "intent" || d.alliance !== o.alliance) return;
     calls += d.metas.length;
+    lats.push(d.latencyMs);
     latSum += d.latencyMs;
     chargedS += d.chargedS;
     if (d.metas.some((m) => m.isMock)) anyMock = true;
     for (const c of d.choices) {
       if (!c.intent) continue;
       decisions += 1;
+      thinking.delete(c.robotId);
+      if (c.usedFallbackPolicy) fallbacks += 1;
+      const mine = d.requests[0]?.questions.find((q) => q.id.includes(c.robotId)) ?? d.requests[0]?.questions[0];
+      const why = c.usedFallbackPolicy ? undefined : mine?.options?.find((x) => x.label === c.chosenLabel)?.description;
       const p = probs.get(actionQuestionId(c.robotId));
       notes.push({
         robotId: c.robotId,
@@ -87,6 +98,7 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
         latencyMs: d.latencyMs,
         fallback: c.usedFallbackPolicy,
         label: c.usedFallbackPolicy ? stepLabel(c.intent) : (c.chosenLabel ?? stepLabel(c.intent)),
+        ...(why ? { why } : {}),
         ...(meta ? { provider: meta.provider, model: meta.model, isMock: meta.isMock } : {}),
         ...(p ? { probabilities: p } : {}),
       });
@@ -120,7 +132,7 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
       isMock: false,
     }),
   });
-  send({ type: "hello", engineIsStub: false, isMock: false, seed: o.seed, speed: o.speed, source: "provider", decider, ...(cfg.providers.byId[o.provider].model ? { model: cfg.providers.byId[o.provider].model! } : {}), deciderAlliance: o.alliance, timing: o.timing, ...(logger ? { loggedRunId: runId } : {}) });
+  send({ type: "hello", engineIsStub: false, isMock: false, seed: o.seed, speed: o.speed, source: "provider", decider, ...(cfg.providers.byId[o.provider].model ? { model: cfg.providers.byId[o.provider].model! } : {}), deciderAlliance: o.alliance, timing: o.timing, statics: slimStatic(state), ...(logger ? { loggedRunId: runId } : {}) });
 
   active += 1;
   const started = performance.now();
@@ -147,7 +159,7 @@ export function streamAgentMatch(cfg: Config, o: AgentStreamOptions, send: (m: S
         if (now - lastSend >= 50 || ctl.finished) {
           lastSend = now;
           const fresh = notes.splice(0);
-          send({ type: "tick", state, events: [], decisions: fresh, stats: { decisions, avgLatencyMs: calls ? latSum / calls : 0, chargedS } });
+          send({ type: "frame", frame: slimFrame(state), decisions: fresh, thinking: [...thinking].map((robotId) => ({ robotId, untilS: 0 })), stats: { decisions, avgLatencyMs: calls ? latSum / calls : 0, chargedS, fallbacks, ...(lats.length ? { medianLatencyMs: [...lats].sort((a, b) => a - b)[lats.length >> 1]! } : {}) } });
         }
         if (sleepMs > 2) await new Promise((r) => setTimeout(r, sleepMs));
       }

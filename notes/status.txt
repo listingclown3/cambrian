@@ -24,3 +24,24 @@ FIRST BENCHMARK NUMBERS (real calls, but NOT usable as results; old engine, 20 s
 
 DEPTH PUSH (planner, 12:55): A1 tower post-up + G420 -> engine; A2-A4 legality and quirks -> lab agent; B1/B2/B4 field pack -> p7; B3 CAD, B5 overlay, C auto optimizer, item 13 game pack NOT started. Scope-down at 2:15.
 QUIET WINDOW: latency and batch numbers must be re-measured near 2:00 with heavy jobs paused.
+
+UPDATE 1:23 PM
+engine          | FROZEN at 6616170 (official field geometry, tower post-up spots, rule G420 in). No behaviour changes after this.
+drex            | console reachable again since 1:16; all processes share one limiter (2 in flight). DeepInfra-hosted Drex available as host "drex@di" (same answers on 10 of 10 checked prompts).
+latency (clean, sequential, new prompt): drex-v2.0 p50 297 ms / p95 363; drex-latest 311 / 465; giant reasoning off 701 / 1314. Cost per decision: 0.000026 vs 0.000485 USD.
+batch (ms per decision): 1 question Drex 332 vs giant 929; 3 questions 68 vs 573; 8 questions 41 vs 1362; 32 not measured for Drex yet.
+quality (end-of-match key, gate passed, OLD prompt and pre-freeze engine): mean regret Drex 20.8, giant 30.2, scripted 23.5, random 31.5; paired Drex minus giant -10.8 +/- 9.8 (n 39).
+rollout savings: Drex ordering 12 percent fewer rollouts than uniform; the giant ordering 13 percent more.
+real-time margin vs scripted reference (pre-freeze engine): Drex -161 +/- 117 (n 5), giant -25 +/- 61 (n 10). AGAINST the pitch; P3 is checking for decision thrash on dev seeds before the final run.
+quirks          | 5 lab proposals judged LEGAL; tower post-up judged RISKY (relies on opponent fouls, p 0.83) and drew no G420 fouls in 10 matches (value 0).
+ui              | replay freeze bug and restyle to the owner palette in progress (p4).
+headline.json   | still shows the under-load latency (693 ms); P3 switches it to the clean reading. Do not quote headline latency until then.
+
+CHECKPOINT 1:30 PM: all three items met.
+  scenario families + answer key : DONE (45 scenarios, 15 families; end-of-match key passed the degeneracy gate). Final recompute waits for the two fairness rules.
+  NDI rules extracted            : DONE (19 of 28 constants cited; 7 conduct rules with exceptions; official field geometry applied).
+  first Strategy Lab run         : DONE (5 proposals accepted, legality-tagged; 1 beats the baseline in simulation).
+In progress at 1:30: no-idle rule (p1) and commitment rule (p2), due 1:50; then the final chain: key -> gate -> bench:scenarios -> bench:live (10 paired seeds) -> bench:explore -> headline -> deck. Cutoff 2:10 for bench:live.
+UI: replay freeze fix and Live Match restyle merged (two lanes, new palette, vendored fonts); Results restyle next.
+headline.json: single-call latency and cost keys are null until the final scenario run; the clean latency source is results/smoke_latency.json (summary.cells: drex-v2.0 p50 297 ms, the giant 701 ms).
+If behind at 2:10, cut in this order: bench:explore rerun, drex-latest and reasoning-on scenario tiers, paused-mode live matches; never the realtime live matches or the main scenario scoring.

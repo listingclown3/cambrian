@@ -53,6 +53,7 @@ import {
   type ScriptedPolicy,
 } from "../contracts";
 import { buildObservationView } from "../engine";
+import * as execApi from "../exec";
 import { robotsNeedingDecision } from "../exec";
 import { PROMPT_VERSION } from "./options";
 import { actionQuestionId, buildBatchActionRequest, type OptionPresentation, buildCaptainRequest, captainQuestionId, captainRoleOptions } from "./ask";
@@ -98,6 +99,18 @@ export interface ControllerOptions {
   options?: { full?: boolean; maxOptions?: number };
   /** Called after every engine step with that step's events and the state after it. */
   onStep?: (events: EngineEvent[], state: MatchState) => void;
+  /**
+   * Fairness rules, applied identically to every robot whoever decides for it (defaults on;
+   * values from state.rules.triggers, each defaulting to the old behaviour when absent):
+   *   commitment - hold an intent for minCommitS unless a CRITICAL trigger fires; coalesce
+   *                triggers within coalesceS into one decision moment per alliance
+   *   noIdle     - a decider-controlled robot idle for maxIdleS while it waits for an answer is
+   *                given roleContinuation(view) (logged as decisionKind "role_continuation")
+   * Turn either off for the before/after comparison.
+   */
+  fairness?: { commitment?: boolean; noIdle?: boolean };
+  /** Called for every role-continuation intent (never counted as the decider's decision). */
+  onContinuation?: (d: { robotId: RobotId; timeS: number; view: ObservationView; intent: Intent }) => void;
   /** Checked before every tick; return a reason to stop the match early (e.g. provider blocked). */
   shouldStop?: () => string | null;
 }
@@ -159,6 +172,10 @@ export interface ControllerSummary {
   simWallMs: number;
   /** Matches per hour at this match's wall time (3,600,000 / wallMs). */
   matchesPerHour: number;
+  /** Behaviour counters per robot. */
+  byRobot: Record<RobotId, RobotBehaviour>;
+  /** The fairness parameters in force. */
+  fairness: FairnessParams;
   /** Why the match stopped early (shouldStop), or null when it ran to the end / untilS. */
   abortedReason: string | null;
 }
@@ -194,6 +211,46 @@ export interface AllianceTotals {
   models: string[];
   /** True if any answer was synthetic (mock). */
   isMock: boolean;
+  /** Intents replaced before their action finished (action_done / failed / timeout). */
+  interruptedActions: number;
+  /** Completed cycles: a finished collect followed by fuel scored by the same robot. */
+  completedCycles: number;
+  /** Robot-seconds standing with no intent. */
+  idleS: number;
+  /** Robot-seconds driven by roleContinuation while waiting for the decider. */
+  continuationS: number;
+  /** Role-continuation intents handed out. */
+  continuations: number;
+}
+
+/** Per-robot behaviour counters (see AllianceTotals). */
+export interface RobotBehaviour {
+  decisions: number;
+  interruptedActions: number;
+  completedCycles: number;
+  idleS: number;
+  continuationS: number;
+  continuations: number;
+}
+
+/** The commitment / no-idle parameters in force (from state.rules.triggers). */
+export interface FairnessParams {
+  minCommitS: number;
+  coalesceS: number;
+  criticalPinS: number;
+  maxIdleS: number;
+  commitment: boolean;
+  noIdle: boolean;
+}
+
+const COLLECT_ACTIONS = new Set(["collect", "load_outpost", "steal_fuel"]);
+const ROBOT_CRITICAL = new Set(["hopper_full", "hopper_empty", "action_done", "action_failed", "action_timeout"]);
+const GLOBAL_CRITICAL = new Set(["hub_shift", "hub_warning", "endgame_start"]);
+
+/** The roleContinuation from src/exec when P1's version is present, else the scripted fallback policy. */
+function continuationFn(fallback: (v: ObservationView) => Intent): (v: ObservationView) => Intent {
+  const fn = (execApi as unknown as { roleContinuation?: (v: ObservationView) => Intent }).roleContinuation;
+  return typeof fn === "function" ? fn : fallback;
 }
 
 interface Pending {
@@ -216,6 +273,17 @@ export class AgentController {
   private calls = 0;
   private ticks = 0;
   private providerWaitMs = 0;
+  readonly fairness: FairnessParams;
+  /** Robots with an unserved trigger: when it first arrived and whether any was critical. */
+  private readonly due = new Map<RobotId, { sinceS: number; critical: boolean }>();
+  private readonly committedAtS = new Map<RobotId, number>();
+  private readonly actionOpen = new Map<RobotId, boolean>();
+  private readonly fromDecision = new Map<RobotId, boolean>();
+  private readonly onContinuation = new Set<RobotId>();
+  private readonly idleSince = new Map<RobotId, number>();
+  private readonly collected = new Set<RobotId>();
+  private readonly behaviour = new Map<RobotId, RobotBehaviour>();
+  private continuation!: (v: ObservationView) => Intent;
   readonly decisions: ControllerDecision[] = [];
 
   private readonly present: OptionPresentation;
@@ -223,6 +291,19 @@ export class AgentController {
   constructor(private readonly opts: ControllerOptions) {
     this.state = opts.engine.createMatch(opts.cfg, opts.seed, opts.robots);
     this.present = opts.options?.full ? {} : { rules: this.state.rules, maxOptions: opts.options?.maxOptions ?? 10 };
+    const t = this.state.rules.triggers as typeof this.state.rules.triggers & { minCommitS?: number; coalesceS?: number; criticalPinS?: number; maxIdleS?: number };
+    const commitment = opts.fairness?.commitment ?? true;
+    const noIdle = opts.fairness?.noIdle ?? true;
+    this.fairness = {
+      commitment,
+      noIdle,
+      minCommitS: commitment ? (t.minCommitS ?? 0) : 0,
+      coalesceS: commitment ? (t.coalesceS ?? 0) : 0,
+      criticalPinS: t.criticalPinS ?? Infinity,
+      maxIdleS: noIdle ? (t.maxIdleS ?? Infinity) : Infinity,
+    };
+    for (const r of this.state.robots) this.behaviour.set(r.id, { decisions: 0, interruptedActions: 0, completedCycles: 0, idleS: 0, continuationS: 0, continuations: 0 });
+    this.continuation = continuationFn((v) => this.policyFor(v.self.id).decide(v));
     this.timing = opts.timing ?? "paused";
     this.latencyScale = opts.latencyScale ?? opts.cfg.realtimeLatencyCharging.latencyScale;
     this.requestMode = opts.requestMode ?? "live";
@@ -255,6 +336,30 @@ export class AgentController {
     if (this.timing === "paused") return [0, requestedAtS];
     const chargedS = (latencyMs * this.latencyScale) / 1000;
     return [chargedS, requestedAtS + chargedS];
+  }
+
+  /** True when `e` is a CRITICAL trigger for robot `id` (breaks the commitment hold). */
+  private isCritical(e: EngineEvent, id: RobotId): boolean {
+    if (GLOBAL_CRITICAL.has(e.kind)) return true;
+    if (!("robotId" in e) || e.robotId !== id) return false;
+    if (e.kind === "action_done") return !e.continuesWithThen;
+    if (ROBOT_CRITICAL.has(e.kind)) return true;
+    return e.kind === "pinned" && e.seconds > this.fairness.criticalPinS;
+  }
+
+  /** Give a robot an intent chosen by a decider or scripted policy (counts interruptions). */
+  private setDecided(id: RobotId, intent: Intent, intents: Record<RobotId, Intent | undefined>): void {
+    const b = this.behaviour.get(id)!;
+    b.decisions += 1;
+    if (this.actionOpen.get(id) && this.fromDecision.get(id) && getRobot(this.state, id).intent !== null) b.interruptedActions += 1;
+    intents[id] = intent;
+    this.sinceDecision.set(id, []);
+    this.committedAtS.set(id, this.state.timeS);
+    this.actionOpen.set(id, true);
+    this.fromDecision.set(id, true);
+    this.onContinuation.delete(id);
+    this.due.delete(id);
+    if (COLLECT_ACTIONS.has(intent.action)) this.collected.delete(id);
   }
 
   /** Sequential captain step for one alliance. Returns the decision (roles not yet applied). */
@@ -322,10 +427,7 @@ export class AgentController {
         if (c.role) this.roles.set(c.robotId, c.role);
         else this.roles.delete(c.robotId);
       } else {
-        if (c.intent) {
-          intents[c.robotId] = c.intent;
-          this.sinceDecision.set(c.robotId, []);
-        }
+        if (c.intent) this.setDecided(c.robotId, c.intent, intents);
         this.busy.delete(c.robotId);
       }
     }
@@ -371,19 +473,36 @@ export class AgentController {
       this.schedule(captainDecision, intents);
     }
 
-    // 3. Robots that need a decision (not already thinking, not just given an intent).
-    const needing = robotsNeedingDecision(this.state, this.lastEvents).filter((id) => !this.busy.has(id) && intents[id] === undefined);
-    const byAlliance: Record<Alliance, RobotId[]> = { red: [], blue: [] };
-    for (const id of needing) {
+    // 3. Triggers -> decision moments, under the commitment rule (identical for every robot):
+    //    a non-critical trigger inside the minCommitS hold is ignored; triggers are held for
+    //    coalesceS from the first one so all of an alliance's robots are asked in one moment.
+    const f = this.fairness;
+    for (const id of robotsNeedingDecision(this.state, this.lastEvents)) {
+      if (this.busy.has(id) || intents[id] !== undefined) continue;
       const robot = getRobot(this.state, id);
-      if (this.opts.agents[robot.alliance]) byAlliance[robot.alliance].push(id);
-      else {
-        const view = this.view(id);
-        const policy = this.policyFor(id);
-        const intent = policy.decide(view);
-        intents[id] = intent;
-        this.sinceDecision.set(id, []);
-        this.opts.onScriptedDecision?.({ robotId: id, timeS: this.state.timeS, policyId: policy.id, view, intent });
+      const critical = robot.intent === null || this.lastEvents.some((e) => this.isCritical(e, id));
+      const held = now - (this.committedAtS.get(id) ?? -Infinity) < f.minCommitS - EPS;
+      if (!critical && held && !this.onContinuation.has(id)) continue; // ignored during the hold
+      const prev = this.due.get(id);
+      this.due.set(id, { sinceS: prev?.sinceS ?? now, critical: (prev?.critical ?? false) || critical });
+    }
+    const byAlliance: Record<Alliance, RobotId[]> = { red: [], blue: [] };
+    for (const alliance of ["blue", "red"] as const) {
+      const ids = [...this.due.keys()].filter((id) => getRobot(this.state, id).alliance === alliance && !this.busy.has(id) && intents[id] === undefined);
+      if (ids.length === 0) continue;
+      const first = Math.min(...ids.map((id) => this.due.get(id)!.sinceS));
+      if (now < first + f.coalesceS - EPS) continue; // still inside the coalescing window
+      for (const id of ids) {
+        if (this.opts.agents[alliance]) {
+          byAlliance[alliance].push(id);
+          this.due.delete(id);
+        } else {
+          const view = this.view(id);
+          const policy = this.policyFor(id);
+          const intent = policy.decide(view);
+          this.setDecided(id, intent, intents);
+          this.opts.onScriptedDecision?.({ robotId: id, timeS: this.state.timeS, policyId: policy.id, view, intent });
+        }
       }
     }
     const waitStart = performance.now();
@@ -393,11 +512,48 @@ export class AgentController {
     if (asked.length > 0) this.providerWaitMs += performance.now() - waitStart;
     for (const d of asked.flat()) this.schedule(d, intents);
 
+    // 3b. No-idle rule: a decider-controlled robot standing still for maxIdleS while it waits
+    //     (answer pending, or a decision moment not yet due) gets roleContinuation(view); the
+    //     decider's answer replaces it when it arrives.
+    const dt = this.state.rules.physics.dtS;
+    for (const robot of this.state.robots) {
+      const id = robot.id;
+      const idleNow = robot.intent === null && intents[id] === undefined;
+      if (!idleNow) this.idleSince.delete(id);
+      else if (!this.idleSince.has(id)) this.idleSince.set(id, now);
+      if (idleNow && this.opts.agents[robot.alliance] && now - this.idleSince.get(id)! >= f.maxIdleS - EPS) {
+        const view = this.view(id);
+        const intent = this.continuation(view);
+        intents[id] = intent;
+        this.onContinuation.add(id);
+        this.fromDecision.set(id, false);
+        this.actionOpen.set(id, true);
+        this.idleSince.delete(id);
+        this.behaviour.get(id)!.continuations += 1;
+        this.opts.onContinuation?.({ robotId: id, timeS: now, view, intent });
+      }
+      const b = this.behaviour.get(id)!;
+      if (robot.intent === null && intents[id] === undefined) b.idleS += dt;
+      else if (this.onContinuation.has(id)) b.continuationS += dt;
+    }
+
     // 4. Step the engine.
     const { events } = this.opts.engine.step(this.state, intents, this.state.rules.physics.dtS);
     this.ticks += 1;
     this.lastEvents = events;
     this.opts.onStep?.(events, this.state);
+    for (const e of events) {
+      if (!("robotId" in e) || !e.robotId) continue;
+      if ((e.kind === "action_done" && !e.continuesWithThen) || e.kind === "action_failed" || e.kind === "action_timeout") {
+        this.actionOpen.set(e.robotId, false);
+        if (e.kind === "action_done" && COLLECT_ACTIONS.has(e.action)) this.collected.add(e.robotId);
+      }
+      if (e.kind === "score" && e.source === "fuel" && e.points > 0 && this.collected.has(e.robotId)) {
+        this.collected.delete(e.robotId);
+        const b = this.behaviour.get(e.robotId);
+        if (b) b.completedCycles += 1;
+      }
+    }
     for (const robot of this.state.robots) {
       const seen = this.sinceDecision.get(robot.id) ?? [];
       seen.push(...events);
@@ -450,7 +606,13 @@ export class AgentController {
         costUsd: sum((m) => m.costUsd),
         models: [...new Set(metas.map((m) => m.model))],
         isMock: metas.some((m) => m.isMock),
+        ...behaviourTotals(a),
       };
+    };
+    const behaviourTotals = (a: Alliance) => {
+      const rs = this.state.robots.filter((r) => r.alliance === a).map((r) => this.behaviour.get(r.id)!);
+      const s = (k: keyof RobotBehaviour) => rs.reduce((t, b) => t + b[k], 0);
+      return { interruptedActions: s("interruptedActions"), completedCycles: s("completedCycles"), idleS: s("idleS"), continuationS: s("continuationS"), continuations: s("continuations") };
     };
     return {
       state: this.state,
@@ -466,6 +628,8 @@ export class AgentController {
       simWallMs: Math.max(0, wallMs - this.providerWaitMs),
       matchesPerHour: wallMs > 0 ? 3_600_000 / wallMs : Infinity,
       abortedReason,
+      byRobot: Object.fromEntries(this.behaviour),
+      fairness: this.fairness,
     };
   }
 }

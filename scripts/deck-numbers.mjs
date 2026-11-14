@@ -35,7 +35,14 @@ section("cover");
 lines.push("none");
 
 section("results");
-blank("latency ratio (x faster)", when(["latency_ratio_deepinfra_over_drex"], () => `${ratio(h.latency_ratio_deepinfra_over_drex)}x`), "latency_ratio_deepinfra_over_drex");
+// Main speed stat: batched at match size (one alliance = 3 questions in one call).
+const b3 = when(["batch3_ms_per_decision_drex", "batch3_ms_per_decision_giant"], () => ({ d: h.batch3_ms_per_decision_drex, g: h.batch3_ms_per_decision_giant }));
+blank(
+  "MAIN SPEED STAT: per decision, one alliance batched (3 questions per call)",
+  b3 ? `Drex ${ms(b3.d)} ms vs giant ${ms(b3.g)} ms (${ratio(b3.g / b3.d)}x faster)` : null,
+  "batch3_ms_per_decision_drex, batch3_ms_per_decision_giant (results/bench_batch.json)",
+);
+blank("single-question latency ratio (x faster)", when(["latency_ratio_deepinfra_over_drex"], () => `${ratio(h.latency_ratio_deepinfra_over_drex)}x`), "latency_ratio_deepinfra_over_drex");
 blank("drex p50 ms", when(["drex_p50_ms"], () => `${ms(h.drex_p50_ms)} ms`), "drex_p50_ms");
 blank("giant p50 ms", when(["deepinfra_p50_ms"], () => `${ms(h.deepinfra_p50_ms)} ms`), "deepinfra_p50_ms");
 blank(
@@ -59,6 +66,58 @@ blank(
   "live_margin_drex_realtime, live_margin_deepinfra_realtime, n_live_seeds",
 );
 blank("rollout savings %", when(["rollout_savings_pct_drex_vs_uniform"], () => `${Math.round(h.rollout_savings_pct_drex_vs_uniform)}%`), "rollout_savings_pct_drex_vs_uniform");
+
+section("batch table: ms per decision when one call answers N questions about one state");
+lines.push("sizes 1 and 3 are match sizes (one robot, one alliance); 8 and 32 are stress sizes; giant = reasoning off");
+const batchFile = load("results/bench_batch.json");
+for (const n of [1, 3, 8, 32]) {
+  const d = h[`batch${n}_ms_per_decision_drex`];
+  const g = h[`batch${n}_ms_per_decision_giant`];
+  const range = batchFile?.summary?.[`batch${n}_ms_per_decision_giant_range`];
+  const both = typeof d === "number" && typeof g === "number";
+  blank(
+    `batch ${n}`,
+    both ? `Drex ${ms(d)} ms vs giant ${ms(g)} ms (${ratio(g / d)}x)${Array.isArray(range) ? `; giant range across runs ${ms(range[0])} to ${ms(range[1])} ms` : ""}` : typeof d === "number" ? `Drex ${ms(d)} ms; giant NOT RUN` : typeof g === "number" ? `Drex NOT RUN; giant ${ms(g)} ms` : null,
+    `batch${n}_ms_per_decision_drex, batch${n}_ms_per_decision_giant`,
+  );
+}
+if (batchFile && !Array.isArray(batchFile.summary?.batch8_ms_per_decision_giant_range)) lines.push("NOTE: the giant's batch 8 time varied a lot between runs (491 ms and 1362 ms were both observed); quote it as a range.");
+
+section("scenario quality: mean regret against the end-of-match answer key (lower is better)");
+const bsFile = load("results/bench_scenarios.json");
+const dec = bsFile && !bsFile.isMock ? (bsFile.summary?.deciders ?? {}) : {};
+const reg = (id) => {
+  const x = dec[id];
+  if (!x || typeof x.regret !== "number") return null;
+  const ci = x.regret_ci95 ?? x.regretCi95 ?? x.regret_ci;
+  const n = x.n_scored ?? x.n_regret ?? x.n;
+  return `${fix(x.regret, 1)}${typeof ci === "number" ? ` ± ${fix(ci, 1)}` : ""}${typeof n === "number" ? ` (n ${n})` : ""}`;
+};
+blank(
+  "regret: Drex vs giant vs scripted vs random",
+  reg("drex") && reg("deepinfra") ? `Drex ${reg("drex")}; giant ${reg("deepinfra")}; scripted ${reg("scripted") ?? NOT_RUN}; random ${reg("random") ?? NOT_RUN}` : null,
+  "results/bench_scenarios.json summary.deciders[*].regret",
+);
+const pairedAll = bsFile && !bsFile.isMock ? (bsFile.summary?.paired_regret ?? {}) : {};
+const pairedLine = (key) => {
+  const p = pairedAll[key];
+  return p && typeof p.mean_diff === "number" ? `${fix(p.mean_diff, 1)} ± ${fix(p.ci95 ?? 0, 1)} (n ${p.n ?? "?"})` : null;
+};
+blank("paired difference, Drex minus giant (negative = Drex better)", pairedLine("drex_minus_giant"), "results/bench_scenarios.json summary.paired_regret.drex_minus_giant");
+blank("paired difference, Drex minus scripted", pairedLine("drex_minus_scripted"), "results/bench_scenarios.json summary.paired_regret.drex_minus_scripted");
+if (bsFile) lines.push(`prompt version: ${bsFile.summary?.promptVersion ?? bsFile.config?.promptVersion ?? "not recorded"}; sim hash ${bsFile.simHash}; answer key sim hash ${load("results/answerkey.json")?.simHash ?? "?"}`);
+
+section("quirk check");
+const quirks = load("results/quirks.json");
+const post = quirks && !quirks.isMock ? quirks.rows?.find((r) => r.id === "tower_post_up" || r.source === "tower_post_up") : null;
+blank(
+  "tower post-up",
+  post && post.legality
+    ? `tested the tower post-up; Drex flagged it ${post.legality} under G210 (its value depends on inducing opponent fouls, p = ${fix(post.reliesOnOpponentFouls ?? NaN, 2)}); in ${post.value?.n ?? "?"} matches it drew ${post.value?.g420FoulsOnOpponents ?? "?"} G420 fouls and added ${fix(post.value?.marginDiff ?? NaN, 1)} points`
+    : null,
+  "results/quirks.json row tower_post_up",
+);
+if (quirks?.summary) lines.push(`all playbook entries: ${quirks.summary.LEGAL ?? 0} LEGAL, ${quirks.summary.RISKY ?? 0} RISKY, ${quirks.summary.ILLEGAL ?? 0} ILLEGAL; ${quirks.summary.simulated ?? 0} simulated`);
 
 section("builtwith");
 blank("drex questions", when(["usage_drex_questions"], () => int(h.usage_drex_questions)), "usage_drex_questions");

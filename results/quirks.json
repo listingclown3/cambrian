@@ -1,9 +1,9 @@
 {
   "experiment": "quirks",
-  "createdTs": "2026-11-14T21:02:56.034Z",
+  "createdTs": "2026-11-14T21:30:09.517Z",
   "isMock": false,
-  "gitCommit": "ae85975341d5-dirty",
-  "simHash": "7160952d70dcba39",
+  "gitCommit": "8649c29c9ccb-dirty",
+  "simHash": "007a2b25fa5e3cf0",
   "config": {
     "drex": "drex-latest",
     "rules": [
@@ -25,48 +25,48 @@
         "marginDiff": null,
         "ci95": null,
         "n": null,
-        "reason": "the intent never fired in 10 matches (predicate true 11 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+        "reason": "the intent never fired in 10 matches (predicate true 3 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
       },
-      "legality": null,
+      "legality": "LEGAL",
       "rules": [
         {
           "id": "G418",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.0036608324056018153
         },
         {
           "id": "G415",
           "page": 69,
-          "pViolation": null
+          "pViolation": 0.012029919370005748
         },
         {
           "id": "G420",
           "page": 73,
-          "pViolation": null
+          "pViolation": 0.020068955081162514
         },
         {
           "id": "G419",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.003345384911922913
         },
         {
           "id": "G413",
           "page": 67,
-          "pViolation": null
+          "pViolation": 0.02051839718623171
         },
         {
           "id": "G425",
           "page": 74,
-          "pViolation": null
+          "pViolation": 0.011249980648281466
         },
         {
           "id": "G210",
           "page": 59,
-          "pViolation": null
+          "pViolation": 0.0022295157865417827
         }
       ],
-      "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+      "reliesOnOpponentFouls": 0.0019917036119183468,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
     },
     {
       "id": "inactive_shift_depot_gather",
@@ -78,148 +78,148 @@
         "n": null,
         "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
       },
-      "legality": null,
+      "legality": "LEGAL",
       "rules": [
         {
           "id": "G418",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.0049053384219544865
         },
         {
           "id": "G415",
           "page": 69,
-          "pViolation": null
+          "pViolation": 0.010758009448664008
         },
         {
           "id": "G420",
           "page": 73,
-          "pViolation": null
+          "pViolation": 0.01315345572241739
         },
         {
           "id": "G419",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.009837051651985257
         },
         {
           "id": "G413",
           "page": 67,
-          "pViolation": null
+          "pViolation": 0.017182142861007846
         },
         {
           "id": "G425",
           "page": 74,
-          "pViolation": null
+          "pViolation": 0.01877774382134127
         },
         {
           "id": "G210",
           "page": 59,
-          "pViolation": null
+          "pViolation": 0.002922287934488769
         }
       ],
-      "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+      "reliesOnOpponentFouls": 0.005489131323284573,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
     },
     {
       "id": "trench_shoot_on_move_refill",
       "title": "Score on the move through the left trench, then pick up local fuel",
       "source": "lab_proposal",
       "value": {
-        "marginDiff": 86.8,
-        "ci95": 57.430651092948615,
+        "marginDiff": 84.8,
+        "ci95": 14.040605690638845,
         "n": 10,
-        "firesPerMatch": 14.1
+        "firesPerMatch": 15.6
       },
-      "legality": null,
+      "legality": "LEGAL",
       "rules": [
         {
           "id": "G418",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.005247753060828087
         },
         {
           "id": "G415",
           "page": 69,
-          "pViolation": null
+          "pViolation": 0.012579302719338499
         },
         {
           "id": "G420",
           "page": 73,
-          "pViolation": null
+          "pViolation": 0.01075801405518085
         },
         {
           "id": "G419",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.010758009448664008
         },
         {
           "id": "G413",
           "page": 67,
-          "pViolation": null
+          "pViolation": 0.022917532738432427
         },
         {
           "id": "G425",
           "page": 74,
-          "pViolation": null
+          "pViolation": 0.01315345572241739
         },
         {
           "id": "G210",
           "page": 59,
-          "pViolation": null
+          "pViolation": 0.0036608342614280654
         }
       ],
-      "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+      "reliesOnOpponentFouls": 0.003916713514909792,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
     },
     {
       "id": "spin_out_then_shadow_defend",
       "title": "Spin out of the pin, then shadow-defend the opposing scorer",
       "source": "lab_proposal",
       "value": {
-        "marginDiff": 13.8,
-        "ci95": 28.892666089511366,
+        "marginDiff": 58.7,
+        "ci95": 24.01948629675497,
         "n": 10,
-        "firesPerMatch": 8
+        "firesPerMatch": 8.8
       },
-      "legality": null,
+      "legality": "LEGAL",
       "rules": [
         {
           "id": "G418",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.1975624323980913
         },
         {
           "id": "G415",
           "page": 69,
-          "pViolation": null
+          "pViolation": 0.094435280229764
         },
         {
           "id": "G420",
           "page": 73,
-          "pViolation": null
+          "pViolation": 0.09063903582219619
         },
         {
           "id": "G419",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.05026676693062361
         },
         {
           "id": "G413",
           "page": 67,
-          "pViolation": null
+          "pViolation": 0.01796256764205223
         },
         {
           "id": "G425",
           "page": 74,
-          "pViolation": null
+          "pViolation": 0.0279439975974112
         },
         {
           "id": "G210",
           "page": 59,
-          "pViolation": null
+          "pViolation": 0.026741728366186587
         }
       ],
-      "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+      "reliesOnOpponentFouls": 0.019629173783127146,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
     },
     {
       "id": "late_climb_level2_not_cycle",
@@ -231,83 +231,363 @@
         "n": null,
         "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
       },
-      "legality": null,
+      "legality": "LEGAL",
       "rules": [
         {
           "id": "G418",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.0032708491701344132
         },
         {
           "id": "G415",
           "page": 69,
-          "pViolation": null
+          "pViolation": 0.00687191511991791
         },
         {
           "id": "G420",
           "page": 73,
-          "pViolation": null
+          "pViolation": 0.0112499861733526
         },
         {
           "id": "G419",
           "page": 72,
-          "pViolation": null
+          "pViolation": 0.0037442197559009105
         },
         {
           "id": "G413",
           "page": 67,
-          "pViolation": null
+          "pViolation": 0.026159625987701603
         },
         {
           "id": "G425",
           "page": 74,
-          "pViolation": null
+          "pViolation": 0.007027929147096714
         },
         {
           "id": "G210",
           "page": 59,
-          "pViolation": null
+          "pViolation": 0.003916713514909792
         }
       ],
-      "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
+      "reliesOnOpponentFouls": 0.002922289095240005,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
     },
     {
       "id": "tower_post_up",
       "title": "Endgame tower post-up shooting spot vs a normal shot spot",
       "source": "tower_post_up",
       "value": {
-        "marginDiff": null,
-        "ci95": null,
-        "n": null,
-        "reason": "not run: engine support pending (no tower_post* shot spot in the built field layout)"
+        "marginDiff": 0,
+        "ci95": 0,
+        "n": 10,
+        "firesTotal": 40,
+        "g420FoulsOnOpponents": 0,
+        "g420FoulsOnUs": 0,
+        "spotId": "tower_post_left,tower_post_right",
+        "controlSpotId": "nearest normal spot offered"
       },
-      "legality": null,
-      "rules": [],
-      "reliesOnOpponentFouls": null,
-      "notes": "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. Legality: not judged (Drex unreachable)."
+      "legality": "RISKY",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.05963720993018426
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.026159625987701603
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.1110765006794222
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.03713591341471801
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.014704353080195867
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.016435075734947725
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.6324065516116187
+        }
+      ],
+      "reliesOnOpponentFouls": 0.8295512693852943,
+      "notes": "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. "
     },
     {
-      "id": "intern_rule_scan",
-      "title": "Intern rule-scan quirk candidates",
+      "id": "endgame_dump_and_climb",
+      "title": "Dump the hopper in the endgame, then climb level 1",
       "source": "intern_rule_scan",
       "value": {
         "marginDiff": null,
         "ci95": null,
         "n": null,
-        "reason": "not run: generalisation session not performed"
+        "reason": "not simulated: no deterministic predicate written for this Intern-proposed situation"
       },
-      "legality": null,
-      "rules": [],
-      "reliesOnOpponentFouls": null,
-      "notes": ""
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.007517387236180957
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.01836571774014392
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.05715156293389739
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.007027925447987497
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.021926646414770545
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.01877774382134127
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.006719341163668388
+        }
+      ],
+      "reliesOnOpponentFouls": 0.005367092508303765,
+      "notes": "Situation: Seconds left in the match is 30 or less, our robot holds 3 or more fuel, and our robot is in the neutral zone or the our_alliance zone. Rationale: In the final 30 seconds every hub is active no matter what the shift schedule says, so fuel that would be worth 0 points against our inactive hub can be dumped for real points and the robot still has time for a level 1 climb."
+    },
+    {
+      "id": "warning_window_dump",
+      "title": "Fire during the 3-second hub deactivation warning",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not simulated: no deterministic predicate written for this Intern-proposed situation"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.005131048398592786
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.026159625987701603
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.025032153910211644
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.006424211667623707
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.01643508306307749
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.016073611172521488
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.003421609738079036
+        }
+      ],
+      "reliesOnOpponentFouls": 0.005489131323284573,
+      "notes": "Situation: Our hub is active, seconds until the hub shift change is 3 or less, our robot holds 4 or more fuel, and our robot is in the our_alliance zone or the neutral zone. Rationale: Fuel dumped into an inactive hub is worth 0 points and the deactivation warning only runs 3 seconds before the shift flip, so the warning window is the last guaranteed moment to convert held fuel into points."
+    },
+    {
+      "id": "protected_tower_climb",
+      "title": "Protected level 3 climb in the final 30 seconds",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not simulated: no deterministic predicate written for this Intern-proposed situation"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.0065701284694200685
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.008222979148818123
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.026159613544952467
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.00642421490631228
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.026159613544952467
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.004796220676426705
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.002922287934488769
+        }
+      ],
+      "reliesOnOpponentFouls": 0.0036608324056018153,
+      "notes": "Situation: Seconds left in the match is 30 or less, our robot holds 0 fuel, our robot is in the tower zone, and our robot is not in contact with another robot. Rationale: During the final 30 seconds a robot touching its tower is protected from contact by G420, so a dedicated climber at the tower can commit to level 3 with no defender able to touch it without a major foul."
+    },
+    {
+      "id": "pin_burst_defense",
+      "title": "Pin-burst defense: disengage before 3 seconds, then score",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not simulated: no deterministic predicate written for this Intern-proposed situation"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.014063474761499488
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.08345656904173321
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.03713591341471801
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.0112499861733526
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.009837051651985257
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.008794928280829707
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.007027929147096714
+        }
+      ],
+      "reliesOnOpponentFouls": 0.009406282435083542,
+      "notes": "Situation: Our robot is in contact with the opposing scorer (R1) in the neutral zone, our hub is active, and our robot holds 2 or more fuel. Rationale: G418 caps a pin at 3 seconds before a minor foul and ends the pin once the robots separate, so short contact bursts with a break in between let a defender harass a loaded scorer repeatedly without fouling."
+    },
+    {
+      "id": "outpost_inactive_store",
+      "title": "Bank held fuel at the outpost during inactive shifts",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not simulated: no deterministic predicate written for this Intern-proposed situation"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.006141970802506731
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.008794928280829707
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.013450149396620134
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.01836569945578092
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.014704353080195867
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.04050812960806779
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.0040971210119012435
+        }
+      ],
+      "reliesOnOpponentFouls": 0.004097124721928721,
+      "notes": "Situation: Our hub is inactive, seconds until the hub shift change is 12 or more, our robot holds 3 or more fuel, and our robot is in the neutral zone or the outpost zone. Rationale: Scoring into an inactive hub earns 0 points, but an outpost holds 24 fuel that a human player can feed back through the chute, so banking loaded fuel at the outpost keeps it scoring-ready through the inactive shift."
     }
   ],
   "summary": {
-    "LEGAL": 0,
-    "RISKY": 0,
+    "LEGAL": 10,
+    "RISKY": 1,
     "ILLEGAL": 0,
-    "entriesJudged": 5,
-    "simulated": 2
+    "entriesJudged": 11,
+    "simulated": 3
   }
 }

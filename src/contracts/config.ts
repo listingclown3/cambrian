@@ -191,6 +191,31 @@ export const ProviderConfigSchema = z.strictObject({
       maxInFlight: z.number().int().positive(),
     })
     .optional(),
+  /**
+   * Alternative official hosts serving the same models (drex: "deepinfra" = DeepInfra's
+   * Decisions API). Selected per provider instance; numbers from different hosts are never mixed.
+   */
+  hosts: z
+    .record(
+      z.string(),
+      z.strictObject({
+        /** Full URL requests are sent to. */
+        endpoint: z.string(),
+        /** Auth header name. */
+        authHeader: z.string(),
+        /** Prefix before the key (e.g. "Bearer"), or null. */
+        authScheme: z.string().nullable(),
+        /** Env var holding this host's API key. */
+        apiKeyEnv: z.string(),
+        /** Our model id -> this host's model id (e.g. "drex-v2.0" -> "nace-ai/drex-v2.0"). */
+        models: z.record(z.string(), z.string()),
+        /** Per-request timeout on this host, milliseconds (default: the provider's timeoutMs). */
+        timeoutMs: z.number().int().positive().optional(),
+        /** Machine-wide pacing for this host (its own bucket). */
+        sharedRateLimit: z.strictObject({ requestsPerSecond: z.number().positive(), maxInFlight: z.number().int().positive() }).optional(),
+      }),
+    )
+    .optional(),
   /** URL that lists the provider's available models, when the model is chosen at startup. */
   modelsEndpoint: z.string().optional(),
   /**
@@ -265,6 +290,23 @@ export const TriggerParamsSchema = z.object({
   actionTimeoutS: z.number().positive(),
   /** Spare seconds required on top of travel + climb time before a climb is offered. */
   climbSafetyMarginS: z.number().nonnegative(),
+  /**
+   * COMMITMENT RULE (applies identically to every decider): a robot keeps an intent for at least
+   * this many seconds of sim time before it may be re-asked, unless a critical trigger fires
+   * (pinned longer than criticalPinS, hub shift or hub warning, hopper full or empty, endgame
+   * start, or the action finished, failed or timed out).
+   */
+  minCommitS: z.number().nonnegative().optional(),
+  /** Triggers arriving within this many seconds of each other are one decision moment. */
+  coalesceS: z.number().nonnegative().optional(),
+  /** A pin lasting longer than this many seconds is a critical trigger. */
+  criticalPinS: z.number().nonnegative().optional(),
+  /**
+   * NO-IDLE RULE (applies identically to every decider): no robot may be stationary without an
+   * active intent for longer than this many seconds (pins excepted). A robot waiting for its
+   * decider, or whose action just finished, follows its role continuation in the meantime.
+   */
+  maxIdleS: z.number().positive().optional(),
 });
 export type TriggerParams = z.infer<typeof TriggerParamsSchema>;
 

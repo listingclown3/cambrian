@@ -29,8 +29,23 @@ export class MatchRecorder {
   ) {}
 
   /** Hooks to spread into ControllerOptions. */
-  hooks(): Pick<ControllerOptions, "onDecision" | "onScriptedDecision" | "onStep"> {
+  hooks(): Pick<ControllerOptions, "onDecision" | "onScriptedDecision" | "onStep" | "onContinuation"> {
     return {
+      // Role-continuation intents: logged so a replay reproduces the match, but marked
+      // decisionKind "role_continuation" and attributed to no decider.
+      onContinuation: ({ robotId, timeS, view, intent }) => {
+        this.bodies.push({
+          type: "decision",
+          isMock: false,
+          robotId,
+          matchTimeS: timeS,
+          request: buildActionRequest(view, this.seed, "offline"),
+          meta: { provider: "scripted", model: "role_continuation", latencyMs: 0, inputTokens: 0, outputTokens: 0, costUsd: 0, fallbackUsed: false, cached: false, error: null, isMock: false },
+          chosenLabel: intentLabel(intent),
+          intent,
+          decisionKind: "role_continuation",
+        } as RunEventBody);
+      },
       onDecision: (d: ControllerDecision) => {
         for (const m of d.metas) {
           this.models.add(m.model);
@@ -83,7 +98,7 @@ export class MatchRecorder {
    * Write the log. `provider` is the decider spec; `model` defaults to the served model ids.
    * Returns the file path and every line written.
    */
-  write(args: { runId: string; provider: string; model?: string; status: "ok" | "error"; durationMs: number; error: string | null; dir?: string }): { file: string; lines: RunEvent[] } {
+  write(args: { runId: string; provider: string; model?: string; status: "ok" | "error"; durationMs: number; error: string | null; dir?: string; behaviour?: unknown }): { file: string; lines: RunEvent[] } {
     const logger = new RunLogger(args.runId, ...(args.dir ? [args.dir] : []));
     const isDev = this.cfg.seeds.dev.includes(this.seed);
     const isEval = this.cfg.seeds.eval.includes(this.seed);
@@ -105,7 +120,8 @@ export class MatchRecorder {
       }),
     );
     for (const b of this.bodies) lines.push(logger.write(b));
-    lines.push(logger.write({ type: "run_end", isMock: this.mock, status: args.status, durationMs: args.durationMs, totalCostUsd: this.costUsd, error: args.error }));
+    // Extra key "behaviour" (per-decider and per-robot counters), kept as JSON beyond the contract.
+    lines.push(logger.write({ type: "run_end", isMock: this.mock, status: args.status, durationMs: args.durationMs, totalCostUsd: this.costUsd, error: args.error, ...(args.behaviour ? { behaviour: args.behaviour } : {}) } as RunEventBody));
     return { file: logger.file, lines };
   }
 }

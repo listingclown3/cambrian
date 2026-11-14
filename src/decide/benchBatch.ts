@@ -19,6 +19,7 @@
  * Writes results/bench_batch.json.
  */
 import "dotenv/config";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { maskThenOptions, type DecisionRequest, type DecisionResponse, type Question } from "../contracts";
 import { ENGINE_IS_STUB, buildObservationView, engine } from "../engine";
@@ -48,6 +49,11 @@ const atS = Number(arg("--at", "35"));
 const fullOptions = process.argv.includes("--full-options");
 const optionMode = fullOptions ? "full_masked" : "curated10_facts";
 const SIZES = [1, 3, 8, 32] as const;
+// --sizes 1,3,8 runs only those sizes (other sizes' cells are kept with --merge);
+// --n32 <k> sets the Drex call count at 32 questions (e.g. 1, run slowly after Drex comes back).
+const runSizes = new Set(arg("--sizes", SIZES.join(",")).split(",").map(Number));
+const nDrex32 = Number(arg("--n32", String(n)));
+const spacingMs = Number(arg("--spacing-ms", "0"));
 const SIZE_KIND: Record<number, string> = { 1: "realistic (one robot)", 3: "realistic (one alliance of three)", 8: "stress", 32: "stress" };
 
 // -- one real mid-match state --
@@ -142,18 +148,27 @@ const isCheckpoint = (res: DecisionResponse) => (res.meta.error ?? "").includes(
 const previous = merge && existsSync(repoPath("results", "bench_batch.json")) ? JSON.parse(readFileSync(repoPath("results", "bench_batch.json"), "utf8")) : null;
 // Only merge cells measured with the same option mode and prompt version (older files: full_masked, no version).
 const sameMode = (x: any) => (x.optionMode ?? "full_masked") === optionMode && (fullOptions || x.promptVersion === PROMPT_VERSION);
-const rows: Record<string, unknown>[] = previous ? previous.rows.filter((r: any) => !only.has(r.decider) && sameMode(r) && !/Security Checkpoint|blocked_by_checkpoint/.test(String(r.error ?? ""))) : [];
+const rows: Record<string, unknown>[] = previous ? previous.rows.filter((r: any) => !(only.has(r.decider) && runSizes.has(r.size)) && sameMode(r) && !/Security Checkpoint|blocked_by_checkpoint/.test(String(r.error ?? ""))) : [];
 const cells: Record<string, any> = {};
-if (previous) for (const [k, c] of Object.entries<any>(previous.summary.cells ?? {})) if (!only.has(c.decider) && sameMode(c)) cells[k] = { ...c, complete: c.complete ?? (c.okCalls === c.n && c.fallbacks === 0) };
+const rerun = (x: any) => only.has(x.decider) && runSizes.has(x.size);
+if (previous) for (const [k, c] of Object.entries<any>(previous.summary.cells ?? {})) if (!rerun(c) && sameMode(c)) cells[k] = { ...c, complete: c.complete ?? (c.okCalls === c.n && c.fallbacks === 0) };
 const agreement: Record<string, Record<number, number | null>> = {};
-if (previous) for (const [k, a] of Object.entries<any>(previous.summary.agreement_with_single ?? {})) if (!only.has(k)) agreement[k] = a;
+if (previous) for (const [k, a] of Object.entries<any>(previous.summary.agreement_with_single ?? {})) agreement[k] = a;
 const firstAnswers = new Map<string, DecisionResponse>(); // `${decider}:${size}` -> first good batched response
 const blockedDeciders = new Set<DeciderKey>(); // Drex behind the bot-protection checkpoint: stop, do not fill with fallbacks
 
-for (const size of SIZES) {
+/** sha256 of exactly what every decider is sent at a size (state text + questions, in order). */
+const requestHash = (size: number) => createHash("sha256").update(JSON.stringify([stateText, batchQuestions(size)])).digest("hex");
+const extra8 = Number(arg("--extra8", "0"));
+const plan: { d: (typeof deciders)[number]; size: number; key: string }[] = [];
+for (const size of SIZES.filter((s) => runSizes.has(s))) for (const d of deciders) plan.push({ d, size, key: `${d.key}:${size}` });
+const giantD = deciders.find((d) => d.key === "giant");
+if (giantD && runSizes.has(8)) for (let k = 1; k <= extra8; k++) plan.push({ d: giantD, size: 8, key: `giant:8:repeat${k}` });
+
+for (const { d, size, key } of plan) {
   const questions = batchQuestions(size);
-  for (const d of deciders) {
-    const calls = d.key === "giant" && size === 32 ? nGiant32 : n;
+  {
+    const calls = size === 32 ? (d.key === "giant" ? nGiant32 : nDrex32) : n;
     const lat: number[] = [];
     const cost: number[] = [];
     const inTok: number[] = [];
@@ -165,6 +180,8 @@ for (const size of SIZES) {
       const req: DecisionRequest = { stateText, questions, seed: seed + i, mode: "live" };
       const before = replies.length;
       const statsBefore = callStats.length;
+      if (spacingMs > 0 && size === 32 && i > 0) await new Promise((r) => setTimeout(r, spacingMs)); // slowly at 32
+
       const res = await d.provider.decide(req);
       if (isCheckpoint(res)) {
         console.error(`STOP ${d.key}: ${res.meta.error}`);
@@ -173,7 +190,7 @@ for (const size of SIZES) {
         break;
       }
       models.add(res.meta.model);
-      if (!firstAnswers.has(`${d.key}:${size}`) && !res.meta.fallbackUsed) firstAnswers.set(`${d.key}:${size}`, res);
+      if (key === `${d.key}:${size}` && !firstAnswers.has(key) && !res.meta.fallbackUsed) firstAnswers.set(key, res);
       const firstReply = replies.slice(before).find((r) => r.attempt === 0);
       const vf = d.key === "giant" ? (firstReply ? validFraction(req, firstReply.text) : 0) : res.meta.fallbackUsed ? 0 : 1;
       if (res.meta.fallbackUsed) fallbacks += 1;
@@ -187,6 +204,7 @@ for (const size of SIZES) {
       const attempts = callStats.slice(statsBefore);
       rows.push({
         decider: d.key,
+        cell: key,
         model: res.meta.model,
         size,
         sizeKind: SIZE_KIND[size],
@@ -219,6 +237,7 @@ for (const size of SIZES) {
       optionMode,
       promptVersion: PROMPT_VERSION,
       blockedByCheckpoint: blockedDeciders.has(d.key) && lat.length < calls,
+      requestHash: requestHash(size),
       p50Ms: p50,
       p95Ms: pct(lat, 0.95),
       msPerDecisionP50: p50 === null ? null : p50 / size,
@@ -228,9 +247,9 @@ for (const size of SIZES) {
       outputTokensMean: mean(outTok),
       validAnswerFraction: mean(valid),
     };
-    cells[`${d.key}:${size}`] = c;
+    cells[key] = c;
     console.log(
-      `size ${String(size).padStart(2)} ${d.key.padEnd(11)} ${[...models].join(",").padEnd(24)} n ${calls} ok ${lat.length} fb ${fallbacks}${c.complete ? "" : " INCOMPLETE"}  p50 ${p50?.toFixed(0)} ms p95 ${c.p95Ms?.toFixed(0)} ms  ${c.msPerDecisionP50?.toFixed(1)} ms/decision  $${c.costPerDecisionUsd?.toFixed(7)}/decision  in ${c.inputTokensMean?.toFixed(0)} out ${c.outputTokensMean?.toFixed(0)}  valid ${((c.validAnswerFraction ?? 0) * 100).toFixed(0)}%`,
+      `size ${String(size).padStart(2)} ${key.padEnd(18)} ${[...models].join(",").padEnd(24)} n ${calls} ok ${lat.length} fb ${fallbacks}${c.complete ? "" : " INCOMPLETE"}  p50 ${p50?.toFixed(0)} ms p95 ${c.p95Ms?.toFixed(0)} ms  ${c.msPerDecisionP50?.toFixed(1)} ms/decision  $${c.costPerDecisionUsd?.toFixed(7)}/decision  in ${c.inputTokensMean?.toFixed(0)} out ${c.outputTokensMean?.toFixed(0)}  valid ${((c.validAnswerFraction ?? 0) * 100).toFixed(0)}%`,
     );
   }
 }
@@ -238,9 +257,10 @@ for (const size of SIZES) {
 // -- agreement: batched answers vs the same decider's single-question answers --
 
 const pool32 = batchQuestions(32);
+const differences: Record<string, Record<number, { compared: number; differed: number } | null>> = {};
 for (const d of deciders) {
   if (blockedDeciders.has(d.key)) {
-    agreement[d.key] = Object.fromEntries(SIZES.map((s) => [s, null]));
+    agreement[d.key] = Object.fromEntries(SIZES.map((s) => [s, runSizes.has(s) ? null : (agreement[d.key]?.[s] ?? null)]));
     continue;
   }
   const single = new Map<string, string | undefined>();
@@ -258,7 +278,12 @@ for (const d of deciders) {
     const ids = batchQuestions(size)
       .map((q) => q.id)
       .filter((id) => single.get(id) !== undefined);
+    if (!runSizes.has(size)) {
+      byDecider[size] = agreement[d.key]?.[size] ?? null; // kept from the merged file
+      continue;
+    }
     byDecider[size] = !blockedDeciders.has(d.key) && batched && ids.length ? ids.filter((id) => batched.answers[id]?.chosen === single.get(id)).length / ids.length : null;
+    (differences[d.key] ??= {})[size] = !blockedDeciders.has(d.key) && batched && ids.length ? { compared: ids.length, differed: ids.filter((id) => batched.answers[id]?.chosen !== single.get(id)).length } : null;
   }
   agreement[d.key] = byDecider;
   console.log(`agreement with own single-question answers, ${d.key}: ${SIZES.map((s) => `size ${s} ${byDecider[s] == null ? "n/a" : `${(byDecider[s]! * 100).toFixed(0)}%`}`).join(", ")}`);
@@ -281,11 +306,22 @@ for (const size of SIZES) {
 summary.cells = cells;
 summary.incomplete_cells = Object.keys(cells).filter((k) => !cells[k].complete);
 summary.agreement_with_single = agreement;
+summary.batched_vs_single_differences = differences;
+const g8 = Object.values(cells).filter((c: any) => c.decider === "giant" && c.size === 8 && c.p50Ms !== null).map((c: any) => c.p50Ms as number);
+summary.giant_batch8_p50_ms_runs = g8;
+summary.giant_batch8_p50_ms_range = g8.length ? [Math.min(...g8), Math.max(...g8)] : null;
+summary.identical_batched_prompt = Object.fromEntries(
+  SIZES.map((s) => {
+    const hs = Object.values(cells).filter((c: any) => c.size === s);
+    return [s, { requestHash: requestHash(s), allDecidersSameHash: hs.length > 0 && hs.every((c: any) => c.requestHash === requestHash(s)), deciders: hs.map((c: any) => c.decider) }];
+  }),
+);
 summary.models = { drex: cells["drex:1"]?.models ?? null, drex_latest: cells["drex_latest:1"]?.models ?? null, giant: giantModel, giant_reasoning: giantReasoning, giant_label: `${giantModel} (reasoning ${giantReasoning})` };
 summary.engine_is_stub = ENGINE_IS_STUB;
 summary.notes = [
   "A number is null when its cell is incomplete (see incomplete_cells).",
-  "Drex size-32 cells and Drex agreement could not be measured on 2026-11-14 from about 20:58 UTC: console.nace.ai answered every request with HTTP 403 (Vercel security checkpoint, x-vercel-mitigated: challenge). Those calls are not results.",
+  ...(Object.values(cells).some((c: any) => c.blockedByCheckpoint) ? ["Cells marked blockedByCheckpoint stopped on an HTTP 403 bot-protection checkpoint (console.nace.ai, 2026-11-14 from about 20:58 UTC); those calls are not results."] : []),
+  "Each cell repeats the IDENTICAL request (same state text, same questions, same order) n times; requestHash proves every decider got the same batch at each size.",
 ];
 
 const file = writeResults({
