@@ -11,6 +11,7 @@ import { drexMockProvider } from "./providers/drexMock";
 import { MatchRecorder } from "./recorder";
 
 const cfg = loadConfig();
+const UNTIL_S = 60;
 const dir = mkdtempSync(path.join(tmpdir(), "recorder-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -22,15 +23,15 @@ const slowMock: DecisionProvider = {
   },
 };
 
-/** Re-simulate a log the way the server's /ws/replay does. */
-function replay(events: RunEvent[]) {
+/** Re-simulate a log the way the server's /ws/replay does (to match time untilS). */
+function replay(events: RunEvent[], untilS = Infinity) {
   const start = events.find((e) => e.type === "run_start")!;
   if (start.type !== "run_start") throw new Error("no run_start");
   const seed = start.manifest.seeds.eval[0] ?? start.manifest.seeds.dev[0] ?? 1;
   const decisions = events.flatMap((e) => (e.type === "decision" && e.intent ? [{ robotId: e.robotId, timeS: e.matchTimeS, intent: e.intent }] : []));
   const state = engine.createMatch(cfg, seed, demoRobots(cfg));
   let next = 0;
-  while (state.phase !== "finished") {
+  while (state.phase !== "finished" && state.timeS < untilS - 1e-9) {
     const intents: Record<string, Intent> = {};
     while (next < decisions.length && decisions[next]!.timeS <= state.timeS + 1e-9) {
       const d = decisions[next++]!;
@@ -54,7 +55,7 @@ describe("MatchRecorder", () => {
       scripted: { default: basicCyclePolicy },
       timing: "realtime",
       ...rec.hooks(),
-    }).run();
+    }).run(UNTIL_S);
     const { file, lines } = rec.write({ runId: "t-run", provider: "drex_mock", status: "ok", durationMs: summary.wallMs, error: null, dir });
 
     const parsed = readFileSync(file, "utf8").trim().split("\n").map((l) => RunEventSchema.parse(JSON.parse(l)));
@@ -77,7 +78,8 @@ describe("MatchRecorder", () => {
     }
     expect(raw.some((l) => l.type === "decision" && l.meta.provider === "scripted")).toBe(true);
 
-    const replayed = replay(parsed);
+    const replayed = replay(parsed, UNTIL_S);
+    expect(replayed.timeS).toBeCloseTo(summary.state.timeS, 9);
     expect(replayed.score.blue!.total).toBe(summary.state.score.blue!.total);
     expect(replayed.score.red!.total).toBe(summary.state.score.red!.total);
   });
