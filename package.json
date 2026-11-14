@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json",
     "smoke:drex": "tsx src/decide/smoke.ts",
     "keys": "tsx src/util/keycheck.ts",
+    "drex:models": "tsx src/util/drexModels.ts",
     "league": "tsx src/bench/league.ts",
     "matches": "tsx src/bench/matches.ts",
     "mine": "tsx src/bench/mine.ts",
@@ -30,7 +31,9 @@
     "research": "tsx src/research/research.ts",
     "ingest": "tsx src/ingest/ingest.ts",
     "usage": "tsx src/ledger/cli.ts",
-    "prepush": "node scripts/prepush.mjs"
+    "prepush": "node scripts/prepush.mjs",
+    "ingest:rules": "tsx src/ingest/manualRules.ts",
+    "describe": "node scripts/describe.mjs"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",

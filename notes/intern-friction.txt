@@ -1,0 +1,64 @@
+# Intern friction log
+# One entry per problem hit while installing or using Intern (github.com/nace-ai/intern).
+# Each entry: date, what we ran, what happened (exact output), what we did instead.
+
+[2026-11-14] Native Windows: installs cleanly, then crashes on start (imports fcntl).
+  Environment: Windows 11, Python 3.12.10, uv 0.13.8, intern-agent v0.30.1.
+  Command:  uv tool install "intern-agent @ git+https://github.com/nace-ai/intern"
+  Output:   Installed 1 executable: intern          (exit 0, no warning about the platform)
+  Command:  intern --help        (also: intern --version)
+  Output:
+    Traceback (most recent call last):
+      File "<frozen runpy>", line 198, in _run_module_as_main
+      File "<frozen runpy>", line 88, in _run_code
+      File "C:\Users\chris\.local\bin\intern.exe\__main__.py", line 4, in <module>
+      File "...\intern\cli.py", line 32, in <module>
+        from intern.config import SYSTEM1_HELP, Bootstrap, Options
+      File "...\intern\config.py", line 28, in <module>
+        from intern.decisions import (
+      File "...\intern\decisions.py", line 27, in <module>
+        from intern.context import INITIAL_CHARS_PER_TOKEN, bound_output
+      File "...\intern\context.py", line 27, in <module>
+        from intern.journal import CompactionEntry, Entry, Kept, MemoryRecallEntry, MessageEntry, StateEntry
+      File "...\intern\journal.py", line 10, in <module>
+        import fcntl
+    ModuleNotFoundError: No module named 'fcntl'
+  Why it is confusing: the README gives one install command and does not say Windows is
+    unsupported; the install succeeds, so the first sign of trouble is a traceback from
+    `intern --help`.
+  Suggestion: state the supported platforms in the README, and either guard the fcntl import
+    (msvcrt.locking or portalocker on Windows) or fail at start-up with one line such as
+    "Intern needs Linux or macOS; on Windows use WSL".
+  Workaround: installed and ran Intern inside WSL 2 (Ubuntu), called from Node through wsl.exe.
+
+[2026-11-14] README does not mention --cwd, --max-turns, --no-session or --no-memory.
+  The README shows `intern -p --json --system2 M -- "task"` and links a Docker workspace doc,
+  but the flags a headless caller needs first (--cwd to point at a folder, --max-turns,
+  --no-session, --no-memory) appear only in `intern --help`, and the JSON event types only in
+  `intern schema`. A short "running Intern from another program" section would have saved time.
+
+[2026-11-14] Headless runs report cost_usd 0 for a DeepInfra System 2 and for drex-latest System 1.
+  Command:  intern -p --json --no-session --no-memory --max-turns 8 --system2 deepinfra/Qwen/Qwen3.8-27B --system1 drex-latest --cwd ~/cambrian-lab/trial   (task on stdin)
+  Output (run_end):   "usage":{"input_tokens":5677,"output_tokens":146,"cache_read_tokens":3136,"cache_write_tokens":0,"reasoning_tokens":0,"cost_usd":0}
+  Output (decision):  "backend":"decisions-api:drex-latest","questions":1,"ok":true,"cost_usd":0,"input_tokens":481,"output_tokens":198
+  Effect: a caller cannot tell "free" from "price unknown". We compute cost ourselves from token
+    counts and our own price table.
+  Suggestion: emit cost_usd as null when the price is unknown, or carry the provider's own cost
+    field through (DeepInfra returns usage.estimated_cost).
+
+[2026-11-14] `intern models` lists no System 2 models even with DEEPINFRA_API_KEY set.
+  Command:  intern models
+  Output:
+    System 2:
+    System 1:
+      drex-latest
+  Effect: no way to discover from the CLI which provider/model ids are valid for --system2; we
+    took the id from DeepInfra's own model list.
+
+[2026-11-14] SYSTEM2.md is read only from ~/.intern/, so a per-project system prompt needs a
+  different mechanism (AGENTS.md in the workspace, or the task text). Fine once known, but easy
+  to miss: we first planned to put SYSTEM2.md in the workspace.
+
+[2026-11-14] What worked well: the trial task (write one file, reply "done") finished in 6.7 s
+  wall-clock, 3 turns, 4 System 1 judgments; --json events were easy to consume; passing the
+  task on stdin avoids all shell quoting through wsl.exe.

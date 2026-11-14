@@ -4,12 +4,12 @@
     "autoS": {
       "value": 20,
       "status": "VERIFIED",
-      "source": "official game overview (per planner brief)"
+      "source": "2026 FRC Game Manual (version TU22) p.15, extracted with NDI (data/rules/rules.json)"
     },
     "teleopS": {
       "value": 140,
       "status": "VERIFIED",
-      "source": "official game overview (per planner brief)"
+      "source": "2026 FRC Game Manual (version TU22) p.15, extracted with NDI (data/rules/rules.json)"
     },
     "fuelPointsActiveHub": {
       "value": 1,
@@ -19,12 +19,12 @@
     "fuelPointsInactiveHub": {
       "value": 0,
       "status": "VERIFIED",
-      "source": "official cheat sheet (per planner brief)"
+      "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
     },
     "towerTeleopPoints": {
       "value": [10, 20, 30],
       "status": "VERIFIED",
-      "source": "official cheat sheet (per planner brief)"
+      "source": "official cheat sheet (per planner brief); levels 2 and 3 confirmed by 2026 FRC Game Manual (version TU22) p.47, extracted with NDI (data/rules/rules.json)"
     },
     "towerAutoL1Points": {
       "value": 15,
@@ -44,12 +44,12 @@
     "maxPreloadFuel": {
       "value": 8,
       "status": "VERIFIED",
-      "source": "official source (per planner brief)"
+      "source": "2026 FRC Game Manual (version TU22) p.43, extracted with NDI (data/rules/rules.json)"
     },
     "hubDeactivationWarningS": {
       "value": 3,
       "status": "VERIFIED",
-      "source": "official source (per planner brief)"
+      "source": "2026 FRC Game Manual (version TU22) p.24, extracted with NDI (data/rules/rules.json)"
     },
     "allHubsActiveAtEnd": {
       "value": true,
@@ -63,40 +63,40 @@
     },
     "hubShiftSchedule": {
       "value": { "transitionS": 10, "shiftS": 25, "numShifts": 4, "autoWinnerInactiveFirst": true },
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder; matches the vendored Team 488 sim constants, which are not authoritative"
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json); transitionS is what remains of the 140 s teleop (p.15) after four 25 s shifts and the 30 s end game"
     },
     "endgameS": {
       "value": 30,
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder; matches the vendored Team 488 sim constants, which are not authoritative"
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
     },
     "pinning": {
-      "value": { "limitS": 3, "releaseDistanceM": 1.8, "severity": "minor", "clauseId": "TODO_PIN_CLAUSE" },
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "value": { "limitS": 3, "releaseDistanceM": 1.83, "severity": "minor", "clauseId": "G418" },
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (version TU22) p.72, extracted with NDI (data/rules/rules.json)"
     },
     "fuelStart": {
       "value": { "neutral": 360, "depotEach": 24, "outpostEach": 24 },
       "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "source": "depotEach and outpostEach: 2026 FRC Game Manual (version TU22) p.43, extracted with NDI (data/rules/rules.json). neutral is NOT stated directly: it is the manual's 504 total FUEL (p.43) minus both depots, both outposts and six 8-FUEL preloads; confirm how preloads are sourced"
     }
   },
   "field": {
     "lengthM": {
       "value": 16.54,
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (651.2 in)"
     },
     "widthM": {
       "value": 8.07,
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (317.7 in)"
     },
     "allianceZoneDepthM": {
-      "value": 4.6,
+      "value": 4.03,
       "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "source": "NDI extract of the 2026 FRC Game Manual (version TU22) gave 158.6 in but returned no page citation; confirm against the field drawings"
     },
     "blueElements": {
       "value": {
@@ -594,7 +594,7 @@
   },
   "providers": {
     "_status": "TUNABLE",
-    "_note": "Connection settings per provider. API keys come from .env, never from here. Models starting with TODO_ must be set by a human. drex = System 1; endpoint and auth are from console.nace.ai/docs/drex (drex-latest currently points at drex-max-v1.1; verify the model id in the console). deepinfra = System 2, OpenAI-compatible chat completions; model null means: list modelsEndpoint at startup and take the first available id in modelPreference (ids below were present in the public model list on 2026-11-14). openai and gemini are optional secondary baselines.",
+    "_note": "Connection settings per provider. API keys come from .env, never from here. Models starting with TODO_ must be set by a human. drex = System 1; endpoint and auth are from console.nace.ai/docs/drex (drex-latest currently points at drex-max-v1.1; verify the model id in the console). Measured 2026-11-14 on a real 68-option play call (pnpm drex:models): drex-v2.0 evaluates in about 48 ms; drex-latest is an alias for drex-max-v1.1 and evaluates in about 150-190 ms; both chose the same option. drex-v2.0 is the default for in-match calls because latency is the headline; set model to drex-latest to compare. deepinfra = System 2 giant baseline, OpenAI-compatible chat completions; model null means: list modelsEndpoint at startup, try modelPreference in order (largest first), fall back to the next id on an access error (Qwen/Qwen3.8-27B, organizer-tested, is last), and log the exact model used in the run manifest. Ids below were in the live model list on 2026-11-14; the event key was confirmed to reach Qwen/Qwen3.5-397B-A17B. openai and gemini are optional secondary baselines.",
     "byId": {
       "drex": {
         "endpoint": "https://console.nace.ai/v1/systemone",
@@ -636,7 +636,8 @@
           "moonshotai/Kimi-K3.1-Pro",
           "zai-org/GLM-5.3",
           "openai/gpt-oss-120b",
-          "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+          "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          "Qwen/Qwen3.8-27B"
         ]
       },
       "openai": {
@@ -687,15 +688,27 @@
   },
   "pricesPerMTokUsd": {
     "_status": "TUNABLE",
-    "_note": "US dollars per 1M tokens. null = not filled in; costUsd is reported as 0 until a human fills these in from the pricing page of each provider. Drex bills input tokens only.",
+    "_note": "US dollars per 1M tokens. byModel (exact model id) takes precedence over byId (provider fallback). null = unknown: cost is then recorded as 0, never guessed. Sources, 2026-11-14: DeepInfra models are from the pricing metadata in its live model list, and DeepInfra responses also report usage.estimated_cost, which is recorded in preference. drex-max-v1.1 is from the Nace pricing page (0.12 per 1M input tokens). drex-v2.0 at 0.06 is the price DeepInfra lists for the same model and is NOT yet confirmed against the Nace console billing page: confirm it before quoting a cost ratio. Drex bills input tokens only. openai and gemini are not filled in.",
     "byId": {
-      "drex": { "input": null, "output": null },
+      "drex": { "input": 0.06, "output": 0 },
       "drex_mock": { "input": 0, "output": 0 },
-      "deepinfra": { "input": null, "output": null },
+      "deepinfra": { "input": 0.45, "output": 3 },
       "openai": { "input": null, "output": null },
       "gemini": { "input": null, "output": null },
       "scripted": { "input": 0, "output": 0 },
       "random": { "input": 0, "output": 0 }
+    },
+    "byModel": {
+      "drex-v2.0": { "input": 0.06, "output": 0 },
+      "drex-max-v1.1": { "input": 0.12, "output": 0 },
+      "Qwen/Qwen3.5-397B-A17B": { "input": 0.45, "output": 3 },
+      "Qwen/Qwen3-235B-A22B-Instruct-2507": { "input": 0.09, "output": 0.55 },
+      "deepseek-ai/DeepSeek-V4-Pro": { "input": 1.3, "output": 2.6 },
+      "moonshotai/Kimi-K3.1-Pro": { "input": 2, "output": 10 },
+      "zai-org/GLM-5.3": { "input": 0.9, "output": 4 },
+      "openai/gpt-oss-120b": { "input": 0.037, "output": 0.17 },
+      "meta-llama/Llama-3.3-70B-Instruct-Turbo": { "input": 0.1, "output": 0.32 },
+      "Qwen/Qwen3.8-27B": { "input": 0.2, "output": 2.5 }
     }
   },
   "spendCapsUsd": {
@@ -712,7 +725,7 @@
   },
   "research": {
     "_status": "TUNABLE",
-    "_note": "Keenable web research, per docs.keenable.ai: POST {baseUrl}{searchPath} with { query, max_results } and GET {baseUrl}{fetchPath}?url=...; the key goes in the X-API-Key header. /v1/search is confirmed (pnpm keys); /v1/fetch is inferred from the documented keyless path /v1/fetch/public and must be verified. On 402 stop; on 429 wait Retry-After. Skip pages whose terms forbid automated access.",
+    "_note": "Keenable web research, per docs.keenable.ai: POST {baseUrl}{searchPath} with { query, max_results } and GET {baseUrl}{fetchPath}?url=...; the key goes in the X-API-Key header. Both paths are confirmed with our key (2026-11-14). On 402 stop; on 429 wait Retry-After. Skip pages whose terms forbid automated access. flrstfrc.blob.core.windows.net is a lookalike of the official firstfrc host (parody documents) and is blocked.",
     "baseUrl": "https://api.keenable.ai",
     "searchPath": "/v1/search",
     "fetchPath": "/v1/fetch",
@@ -728,29 +741,51 @@
       "FRC 2026 REBUILT robot trench height climb level",
       "FRC 2026 REBUILT strategy hub shift timing active inactive",
       "FRC 2026 REBUILT strategy defense staging passing fuel",
+      "REBUILT presented by Haas FRC 2026 game overview scoring fuel hub tower",
+      "FRC 2026 REBUILT match analysis winning alliance strategy event recap",
+      "FRC 2026 REBUILT pinning rule foul hub shift endgame tower climb points",
+      "FRC 2026 REBUILT open alliance build thread robot specifications",
       "FRC 2020 Infinite Recharge strategy analysis cycles defense",
       "FRC 2022 Rapid React strategy analysis cargo cycles defense"
+    ],
+    "skipDomains": [
+      "facebook.com",
+      "instagram.com",
+      "x.com",
+      "twitter.com",
+      "linkedin.com",
+      "reddit.com",
+      "tiktok.com",
+      "flrstfrc.blob.core.windows.net",
+      "youtube.com",
+      "youtu.be",
+      "discord.com",
+      "pinterest.com"
     ],
     "rawDir": "data/research/raw",
     "notesFile": "data/research/notes.json"
   },
   "ndi": {
     "_status": "TUNABLE",
-    "_note": "NDI document intelligence, per console.nace.ai/docs/ndi: POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground} with Authorization: Bearer <key>; jobs are asynchronous (202 + job_id; ?wait_seconds=0..60). Same nace_sk_ key and balance as Drex. manualUrls must be filled in with the official manual and latest Team Update.",
+    "_note": "NDI document intelligence, per console.nace.ai/docs/ndi: POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground} with Authorization: Bearer <key>; jobs are asynchronous (202 + job_id; ?wait_seconds=0..60). Same nace_sk_ key and balance as Drex. Jobs are read with GET {baseUrl}/v1/documents/jobs/{job_id}; a finished job carries cost.total_usd and cost.lines (quantity per page), which go in the usage ledger. manualUrls holds the official manual, which already includes the Team Updates (the copy fetched on 2026-11-14 is version TU22).",
     "baseUrl": "https://console.nace.ai",
     "apiKeyEnv": "NACE_API_KEY",
     "waitSeconds": 60,
-    "manualUrls": [],
+    "manualUrls": [
+      "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+    ],
     "rulesFile": "data/rules/rules.json",
     "scoutingSheets": 24
   },
   "lab": {
     "_status": "TUNABLE",
-    "_note": "Strategy Lab: Intern (github.com/nace-ai/intern) run headless as `intern -p --json --system2 <system2Provider>/<model> -- \"TASK\"` inside workspaceDir. Intern is not a sandbox: the workspace holds copies only, never the repo root or .env.",
-    "internCommand": "intern",
+    "_note": "Strategy Lab: Intern (github.com/nace-ai/intern) run headless as `intern -p --json --system2 <system2Provider>/<model> -- \"TASK\"` inside workspaceDir (the subprocess cwd). Intern 0.30.1 does not start on native Windows (it imports fcntl), so on this machine internCommand runs it inside WSL; on Linux or macOS set internCommand to the single entry intern. system2Model is the organizer-tested model; system1Model is the Drex id the organizers gave. Here the workspace lives inside WSL (workspaceDir is how Node reaches it, internCwd is the same folder as Intern sees it), where the Windows drives are not mounted, so Intern cannot reach the repo or .env. Intern is not a sandbox: the workspace holds copies only.",
+    "internCommand": ["wsl.exe", "-e", "bash", "-lc", "exec ~/.local/bin/intern \"$@\"", "intern"],
     "system2Provider": "deepinfra",
-    "system2Model": null,
-    "workspaceDir": "lab/workspace",
+    "system2Model": "Qwen/Qwen3.8-27B",
+    "system1Model": "drex-latest",
+    "workspaceDir": "//wsl.localhost/Ubuntu/home/chris/cambrian-lab/workspace",
+    "internCwd": "/home/chris/cambrian-lab/workspace",
     "timeoutS": 600,
     "matchesPerProposal": 10
   },

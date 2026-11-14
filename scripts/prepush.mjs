@@ -28,7 +28,9 @@ const KEY_RULES = [
 /** Looser rules. Checked in current files only. */
 const LOOSE_RULES = [
   ["assigned secret (API_KEY / TOKEN / SECRET / PASSWORD = value)", /[A-Za-z_]*(API_KEY|TOKEN|SECRET|PASSWORD)[A-Za-z_]*["']?\s*[=:]\s*["']?[A-Za-z0-9_\-+/]{12,}/],
-  ["long base64-like string", /(?<![A-Za-z0-9+/_-])(?=[A-Za-z0-9+/_-]*[a-z])(?=[A-Za-z0-9+/_-]*[A-Z])(?=[A-Za-z0-9+/_-]*[0-9])[A-Za-z0-9+/_-]{40,}={0,2}/],
+  // 40+ characters mixing lower case, upper case and digits. "/" is not part of the run, so URL
+  // and file paths (many short segments) do not match; a single 40+ character segment still does.
+  ["long base64-like string", /(?<![A-Za-z0-9+_-])(?=[A-Za-z0-9+_-]*[a-z])(?=[A-Za-z0-9+_-]*[A-Z])(?=[A-Za-z0-9+_-]*[0-9])[A-Za-z0-9+_-]{40,}={0,2}/],
 ];
 
 /** Files whose contents are hashes or binary by nature. */

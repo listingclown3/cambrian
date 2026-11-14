@@ -1,0 +1,33 @@
+Big LLMs can call FRC strategy, but they're too slow for a live match. Drex makes those calls in milliseconds, nearly as well, at a fraction of the cost.
+
+FRC teams increasingly use frontier LLMs for strategy: reading the game manual, planning, scouting. But a match moves faster than an LLM thinks. We built a full REBUILT 2026 match simulator (forked, with permission, from Team 488's open-source strategy sim) with realistic robot archetypes from this season: fixed drum shooters, turret shoot-on-the-move robots, multi-lane shooters, big-hopper haulers, dumpers, zero-hopper turrets, feeders and defenders. Load, push battles and shooter type all change what a robot should do.
+
+We applied Nace's System 1 / System 2 idea. System 2 (a large model on DeepInfra, running inside Intern) thinks between matches: it reads research and the rulebook and invents new strategies. System 1 (Drex) decides during the match: every robot's next move, Plan A and Plan B in sticky situations (pinned, full, hub about to shut off), alliance roles each hub shift, and rule calls. The simulator is the referee: every claim is checked by rollouts.
+
+Results (real logged runs):
+- Decision latency: Drex p50 {{drex_p50_ms}} ms vs DeepInfra {{deepinfra_p50_ms}} ms ({{latency_ratio_deepinfra_over_drex}}x faster)
+- Cost per 1,000 decisions: Drex ${{drex_cost_per_1k_usd}} vs DeepInfra ${{deepinfra_cost_per_1k_usd}}
+- Decision quality on {{n_scenarios}} sticky scenarios ({{n_families}} families): top-1 Drex {{top1_drex}} vs DeepInfra {{top1_deepinfra}}; context sensitivity {{context_sensitivity_drex}} vs {{context_sensitivity_deepinfra}}
+- Live matches with thinking time charged to the match clock: margin Drex {{live_margin_drex_realtime}} vs DeepInfra {{live_margin_deepinfra_realtime}} over {{n_live_seeds}} paired seeds
+- Simulation search: Drex-guided rollouts found the best option with {{rollout_savings_pct_drex_vs_uniform}}% fewer simulations than uniform search
+- Strategy Lab: Intern proposed {{lab_proposals_total}} new strategies; {{lab_proposals_beating_baseline}} beat the baseline in simulation
+
+HOW WE USED EACH TOOL
+- Drex (System 1): in-match play calls and two-step plans for each robot (batched per decision moment), alliance roles each hub shift, scenario decisions, priors that steer which rollouts to simulate first, judgment-call rule rulings (noul, with clause citations), and archetype classification of real robots. {{usage_drex_questions}} real Drex questions logged.
+- Intern (Nace harness): our Strategy Lab. Intern runs headless with DeepInfra as System 2 and Drex as System 1, reads our research and results, and proposes new strategy families as structured JSON that our simulator then tests. We also used Intern as a coding agent for part of the build. {{usage_intern_sessions}} sessions, {{usage_intern_system1_judgments}} System 1 judgments.
+- NDI: parsed the official REBUILT game manual and Team Update into rules with page citations (overriding our guessed constants; {{ndi_rules_verified_pct}}% verified), 24 deliberately messy scouting sheets (PDF scans, spreadsheets, free-text notes) into robot profiles with per-field sources, and web pages found by Keenable into real-team robot specs and strategy notes. {{usage_ndi_docs}} documents, {{usage_ndi_pages}} pages.
+- DeepInfra: the "giant" baseline making the same decisions as Drex with identical inputs, and the reasoning model inside Intern. {{usage_deepinfra_calls}} calls.
+- Keenable: web search and retrieval for real REBUILT robot reveals, technical binders and strategy analysis, plus strategy from similar past ball games. {{usage_keenable_requests}} requests, {{keenable_pages}} pages kept.
+- Adobe: presentation built in Adobe Express; title art generated with Adobe Firefly.
+
+HOW IT WORKS
+1. Keenable finds real robot and strategy pages; NDI extracts rules, robot specs and strategy notes with citations and past game performance to optimize builds and strategy.
+2. A league of robots (real-team profiles plus labeled fabricated ones) plays full simulated matches.
+3. We automatically mine "sticky" moments (pinned while full, shift ending, boxed in, contested climb) and build scenario families where one fact changes at a time.
+4. Rollouts give each scenario a true answer key; Drex and the giants answer without seeing it.
+5. In live matches, each decider's real thinking time is charged to the match clock.
+6. Intern (DeepInfra + Drex) proposes new strategies; the simulator tests them.
+7. A usage ledger records every real call to every tool; the dashboard shows it live.
+
+HONEST NOTES
+Results hold within our simulator. Scouting sheets and some robot profiles are fabricated and labeled as such; real-team profiles cite their sources. Unverified rule constants are flagged in the Data Health page. Next: hidden-tendency scouting, post-match analysis on real tracked matches, and real replay data.

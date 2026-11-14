@@ -38,7 +38,14 @@ pnpm test                 # vitest
 pnpm typecheck
 pnpm smoke:drex           # decision path end to end against the mock (no key needed)
 pnpm keys                 # one minimal real call per configured key; prints status, never values
+pnpm drex:models          # list Drex models and time each on a real play-call request
+pnpm lab -- --trial       # one real Intern session end to end (System 2 on DeepInfra + Drex)
 ```
+
+Intern (the Strategy Lab) needs Linux or macOS: version 0.30.1 does not start on native Windows.
+On Windows, install it inside WSL and keep `lab.internCommand` pointing at `wsl.exe` (the
+default here); elsewhere set it to `["intern"]`. Problems we hit are logged in
+`notes/intern-friction.txt`.
 
 ## Reproduce the headline numbers
 
@@ -46,8 +53,9 @@ Each step reads the previous step's output. Results land in `results/` (committe
 `runs/` (local).
 
 ```sh
-pnpm research             # Keenable -> data/research/raw/
-pnpm ingest               # NDI -> data/rules/rules.json, data/research/notes.json, profiles
+pnpm research             # Keenable -> data/research/raw/ (local) + data/research/sources.json
+pnpm ingest:rules         # NDI over the official manual -> data/rules/rules.json (page citations)
+pnpm ingest               # NDI -> data/research/notes.json, robot profiles (not built yet)
 pnpm league               # sample the league from archetype templates
 pnpm matches              # scripted matches on dev seeds
 pnpm mine                 # mine sticky decision points -> scenarios
@@ -59,6 +67,7 @@ pnpm bench:explore        # rollouts needed to find the best option, by search o
 pnpm lab                  # Strategy Lab: Intern proposes, the simulator tests
 pnpm headline             # assemble results/headline.json
 pnpm usage                # results/usage.json
+pnpm describe             # fill description.txt's {{placeholders}} from results/headline.json
 ```
 
 Two results are comparable only if their `simHash` matches (engine + exec + contracts source,
@@ -66,7 +75,20 @@ plus config). Tune on `config.seeds.dev`; report on `config.seeds.eval`.
 
 ## Results
 
-Not run yet. `results/headline.json` holds every headline number, in this order: live
+Real so far (2026-11-14):
+
+- **Rules from the manual.** NDI read all 166 pages of the official 2026 game manual (version
+  TU22) and returned 19 of the 28 game constants we asked for with a page citation
+  (`data/rules/rules.json`, `results/ingest_rules.json`). That verified the hub shift schedule
+  (10 s transition, four 25 s shifts, 30 s end game), the 3 s pin limit (rule G418) and the
+  field size, and corrected two of our guesses.
+- **Research.** Keenable found and fetched 58 pages of robot reveals, technical binders and
+  strategy write-ups (`data/research/sources.json`).
+- **Drex model choice.** On a real 68-option play call, `drex-v2.0` evaluated in about 48 ms and
+  `drex-latest` (`drex-max-v1.1`) in about 150 to 190 ms; both chose the same action.
+- **Tool usage** is in `results/usage.json`.
+
+The benchmarks have not run yet. `results/headline.json` holds every headline number, in this order: live
 latency-charged match margin, latency and cost ratios, decision-quality parity, rollout savings,
 then tool usage. A number is `null` until the experiment behind it has run with real provider
 calls, and `all_real` is true only when every number is real.

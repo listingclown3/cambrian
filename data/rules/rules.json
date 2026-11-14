@@ -1,0 +1,294 @@
+{
+  "source": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf",
+  "generatedTs": "2026-11-14T19:24:42.043Z",
+  "rules": [
+    {
+      "id": "auto_seconds",
+      "text": "Length of the autonomous period (AUTO) in seconds. Manual value: 20.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 15,
+        "quote": "During the first 20 seconds of the match, robots are autonomous."
+      },
+      "config": {
+        "path": "game.autoS",
+        "value": 20
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "teleop_seconds",
+      "text": "Total length of the teleoperated period (TELEOP) in seconds, including the transition shift, all alliance shifts and the end game. Manual value: 140.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 15,
+        "quote": "During the remaining 2 minutes and 20 seconds, drivers control their robots."
+      },
+      "config": {
+        "path": "game.teleopS",
+        "value": 140
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "alliance_shift_seconds",
+      "text": "Length in seconds of ONE alternating ALLIANCE SHIFT (SHIFT 1, SHIFT 2, ...) during TELEOP. Manual value: 25.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 44,
+        "quote": "<tr><td>SHIFT 1</td><td>25 Seconds</td><td>2:10 – 1:45</td></tr>"
+      },
+      "config": {
+        "path": "game.hubShiftSchedule.shiftS",
+        "value": 25
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "number_of_alliance_shifts",
+      "text": "How many alternating ALLIANCE SHIFTS there are in TELEOP, not counting the transition shift or the end game. Manual value: 4.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 44,
+        "quote": "There are four ALLIANCE SHIFTS named SHIFT 1, SHIFT 2, SHIFT 3, and SHIFT 4."
+      },
+      "config": {
+        "path": "game.hubShiftSchedule.numShifts",
+        "value": 4
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "end_game_seconds",
+      "text": "Length in seconds of the END GAME at the end of TELEOP, when both HUBS are active. Manual value: 30.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 44,
+        "quote": "<tr><td>END GAME</td><td>30 Seconds</td><td>0:30 – 0:00</td></tr>"
+      },
+      "config": {
+        "path": "game.endgameS",
+        "value": 30
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "auto_winner_hub_inactive_first",
+      "text": "True if the ALLIANCE that scores more FUEL in AUTO has its own HUB inactive during the first alliance shift (SHIFT 1). Manual value: true.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 44,
+        "quote": "The ALLIANCE that scores the most FUEL during AUTO will have their HUB set to inactive for SHIFT 1"
+      },
+      "config": {
+        "path": "game.hubShiftSchedule.autoWinnerInactiveFirst",
+        "value": true
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "hub_deactivation_warning_seconds",
+      "text": "How many seconds before a HUB deactivates its lights or the field warn that it is about to become inactive. Manual value: 3.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 24,
+        "quote": "HUB deactivation warning. Starts 3 seconds before and continues until deactivation or end of MATCH."
+      },
+      "config": {
+        "path": "game.hubDeactivationWarningS",
+        "value": 3
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "fuel_points_inactive_hub",
+      "text": "MATCH points for one FUEL scored in an inactive HUB. Manual value: 0.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 44,
+        "quote": "FUEL scored in an inactive HUB will not earn any points"
+      },
+      "config": {
+        "path": "game.fuelPointsInactiveHub",
+        "value": 0
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "tower_level_2_teleop_points",
+      "text": "MATCH points for one ROBOT at TOWER LEVEL 2 at the end of TELEOP. Manual value: 20.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 47,
+        "quote": "<tr><td>Each ROBOT at LEVEL 2</td><td rowspan=\"2\">-</td><td>20</td></tr>"
+      },
+      "config": {
+        "path": "game.towerTeleopPoints[1]",
+        "value": 20
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "tower_level_3_teleop_points",
+      "text": "MATCH points for one ROBOT at TOWER LEVEL 3 at the end of TELEOP. Manual value: 30.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 47,
+        "quote": "<tr><td>Each ROBOT at LEVEL 3</td><td>30</td></tr>"
+      },
+      "config": {
+        "path": "game.towerTeleopPoints[2]",
+        "value": 30
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "max_preloaded_fuel_per_robot",
+      "text": "Maximum number of FUEL a ROBOT may be preloaded with before the MATCH. Manual value: 8.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 43,
+        "quote": "8 FUEL may be preloaded in each ROBOT"
+      },
+      "config": {
+        "path": "game.maxPreloadFuel",
+        "value": 8
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "pin_limit_seconds",
+      "text": "Maximum number of seconds a ROBOT may PIN an opponent ROBOT before a violation. Manual value: 3.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 72,
+        "quote": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds."
+      },
+      "config": {
+        "path": "game.pinning.limitS",
+        "value": 3
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "pin_rule_id",
+      "text": "The rule number of the PINNING rule (for example G###). Manual value: G418.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 72,
+        "quote": "G418 *There's a 3-count on PINS. A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds."
+      },
+      "config": {
+        "path": "game.pinning.clauseId",
+        "value": "G418"
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "pin_violation",
+      "text": "The violation for PINNING too long: MINOR FOUL or MAJOR FOUL (answer 'minor' or 'major'). Manual value: minor.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 72,
+        "quote": "Violation: MINOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed."
+      },
+      "config": {
+        "path": "game.pinning.severity",
+        "value": "minor"
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "pin_release_distance_inches",
+      "text": "Distance in inches a ROBOT must back away to end a PIN. Manual value: 72.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 72,
+        "quote": "A. the ROBOTS have separated by at least 72.0in (1.83m) from each other for more than 3 seconds"
+      },
+      "config": {
+        "path": "game.pinning.releaseDistanceM",
+        "value": 1.829
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "field_length_inches",
+      "text": "Length of the FIELD in inches (the long dimension, ALLIANCE WALL to ALLIANCE WALL). Manual value: 651.2.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 18,
+        "quote": "Each FIELD for REBUILT is an approximately 317.7in (~8.07m) by 651.2in (~16.54m) carpeted area"
+      },
+      "config": {
+        "path": "field.lengthM",
+        "value": 16.54
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "field_width_inches",
+      "text": "Width of the FIELD in inches (the short dimension). Manual value: 317.7.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 18,
+        "quote": "Each FIELD for REBUILT is an approximately 317.7in (~8.07m) by 651.2in (~16.54m) carpeted area"
+      },
+      "config": {
+        "path": "field.widthM",
+        "value": 8.07
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "fuel_staged_in_each_depot",
+      "text": "Number of FUEL staged in each DEPOT at the start of a MATCH. Manual value: 24.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 43,
+        "quote": "24 FUEL are staged in each DEPOT"
+      },
+      "config": {
+        "path": "game.fuelStart.depotEach",
+        "value": 24
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "fuel_staged_in_each_outpost",
+      "text": "Number of FUEL staged in each OUTPOST at the start of a MATCH. Manual value: 24.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 43,
+        "quote": "24 FUEL are staged in each OUTPOST CHUTE"
+      },
+      "config": {
+        "path": "game.fuelStart.outpostEach",
+        "value": 24
+      },
+      "parser": "ndi"
+    },
+    {
+      "id": "total_fuel_in_match",
+      "text": "Total number of FUEL in a MATCH. Manual value: 504.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 43,
+        "quote": "504 FUEL are staged for each MATCH as follows"
+      },
+      "config": null,
+      "parser": "ndi"
+    },
+    {
+      "id": "trench_clearance_height_inches",
+      "text": "Height in inches of the opening a ROBOT must fit under to drive through the TRENCH. Manual value: 22.25.",
+      "citation": {
+        "document": "2026 FRC Game Manual (REBUILT)",
+        "page": 25,
+        "quote": "The space underneath each TRENCH arm is 50.34in (1.279m) wide, 22.25in (56.52cm) tall."
+      },
+      "config": null,
+      "parser": "ndi"
+    }
+  ]
+}

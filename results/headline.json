@@ -1,11 +1,11 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T19:13:01.764Z",
+  "createdTs": "2026-11-14T19:30:17.965Z",
   "isMock": false,
-  "gitCommit": "a269d05a00c3-dirty",
-  "simHash": "280eeed0d01a591c",
+  "gitCommit": "c599804f6d6e-dirty",
+  "simHash": "d7fc51a99caf3c93",
   "config": {
-    "note": "no benchmark has contributed yet"
+    "note": "usage, research and rules numbers are real; no benchmark has contributed yet"
   },
   "rows": [],
   "summary": {
@@ -44,17 +44,17 @@
     "n_families": null,
     "n_live_seeds": null,
     "matches_per_sec": null,
-    "usage_drex_questions": 2,
-    "usage_ndi_docs": null,
-    "usage_ndi_pages": null,
-    "usage_intern_sessions": null,
-    "usage_intern_system1_judgments": null,
+    "usage_drex_questions": 26,
+    "usage_ndi_docs": 1,
+    "usage_ndi_pages": 166,
+    "usage_intern_sessions": 2,
+    "usage_intern_system1_judgments": 6,
     "usage_deepinfra_calls": 1,
-    "usage_keenable_requests": 1,
+    "usage_keenable_requests": 73,
     "lab_proposals_total": null,
     "lab_proposals_beating_baseline": null,
-    "keenable_pages": null,
-    "ndi_rules_verified_pct": null,
+    "keenable_pages": 58,
+    "ndi_rules_verified_pct": 68,
     "all_real": null
   }
 }

@@ -59,7 +59,7 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
   });
 
   // Live per-tool usage counters for the "Built with" panel (real calls only).
-  app.get("/api/usage", async () => summarizeUsage(readUsage(cfg)));
+  app.get("/api/usage", async () => summarizeUsage(readUsage(cfg), cfg));
 
   app.post("/api/admin/ping", async (req, reply) => {
     if (!isAdmin(req)) return reply.code(401).send({ error: "missing or wrong x-admin-token" });

@@ -1,0 +1,187 @@
+{
+  "experiment": "usage",
+  "createdTs": "2026-11-14T19:30:16.181Z",
+  "isMock": false,
+  "gitCommit": "c599804f6d6e-dirty",
+  "simHash": "d7fc51a99caf3c93",
+  "config": {
+    "ledger": {
+      "_status": "TUNABLE",
+      "_note": "Usage ledger: one JSONL line per real external call (mock and cached calls excluded). Summarised into results/usage.json.",
+      "file": "runs/usage.jsonl"
+    }
+  },
+  "rows": [
+    {
+      "tool": "drex",
+      "calls": 25,
+      "inputTokens": 48514,
+      "outputTokens": 41973,
+      "costUsd": 0.004887480000000003,
+      "latencyMs": 6732.7408,
+      "counts": {
+        "questions": 26
+      },
+      "byPurpose": {
+        "key_check": 1,
+        "model_check": 24
+      }
+    },
+    {
+      "tool": "ndi",
+      "calls": 1,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costUsd": 1.992,
+      "latencyMs": 30933.8366,
+      "counts": {
+        "docs": 1,
+        "pages": 166
+      },
+      "byPurpose": {
+        "rules_extract": 1
+      }
+    },
+    {
+      "tool": "intern",
+      "calls": 2,
+      "inputTokens": 12351,
+      "outputTokens": 1274,
+      "costUsd": 0.0028780000000000003,
+      "latencyMs": 18349,
+      "counts": {
+        "sessions": 2,
+        "system1Judgments": 6,
+        "turns": 5
+      },
+      "byPurpose": {
+        "trial": 2
+      }
+    },
+    {
+      "tool": "deepinfra",
+      "calls": 1,
+      "inputTokens": 19,
+      "outputTokens": 8,
+      "costUsd": 0.00003255,
+      "latencyMs": 314.56769999999983,
+      "counts": {},
+      "byPurpose": {
+        "key_check": 1
+      }
+    },
+    {
+      "tool": "keenable",
+      "calls": 73,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costUsd": 0,
+      "latencyMs": 28757.278199999986,
+      "counts": {
+        "requests": 73
+      },
+      "byPurpose": {
+        "key_check": 1,
+        "search": 11,
+        "fetch": 59,
+        "path_check": 2
+      }
+    },
+    {
+      "tool": "openai",
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costUsd": 0,
+      "latencyMs": 0,
+      "counts": {},
+      "byPurpose": {}
+    }
+  ],
+  "summary": {
+    "generatedTs": "2026-11-14T19:30:16.181Z",
+    "totalCalls": 102,
+    "totalCostUsd": 1.9997980300000002,
+    "byTool": {
+      "drex": {
+        "calls": 25,
+        "inputTokens": 48514,
+        "outputTokens": 41973,
+        "costUsd": 0.004887480000000003,
+        "latencyMs": 6732.7408,
+        "counts": {
+          "questions": 26
+        },
+        "byPurpose": {
+          "key_check": 1,
+          "model_check": 24
+        }
+      },
+      "ndi": {
+        "calls": 1,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costUsd": 1.992,
+        "latencyMs": 30933.8366,
+        "counts": {
+          "docs": 1,
+          "pages": 166
+        },
+        "byPurpose": {
+          "rules_extract": 1
+        }
+      },
+      "intern": {
+        "calls": 2,
+        "inputTokens": 12351,
+        "outputTokens": 1274,
+        "costUsd": 0.0028780000000000003,
+        "latencyMs": 18349,
+        "counts": {
+          "sessions": 2,
+          "system1Judgments": 6,
+          "turns": 5
+        },
+        "byPurpose": {
+          "trial": 2
+        }
+      },
+      "deepinfra": {
+        "calls": 1,
+        "inputTokens": 19,
+        "outputTokens": 8,
+        "costUsd": 0.00003255,
+        "latencyMs": 314.56769999999983,
+        "counts": {},
+        "byPurpose": {
+          "key_check": 1
+        }
+      },
+      "keenable": {
+        "calls": 73,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "latencyMs": 28757.278199999986,
+        "counts": {
+          "requests": 73
+        },
+        "byPurpose": {
+          "key_check": 1,
+          "search": 11,
+          "fetch": 59,
+          "path_check": 2
+        }
+      },
+      "openai": {
+        "calls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "latencyMs": 0,
+        "counts": {},
+        "byPurpose": {}
+      }
+    }
+  }
+}

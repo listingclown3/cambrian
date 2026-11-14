@@ -6,7 +6,7 @@ import { loadConfig } from "../util/config";
 import { readUsage, summarizeUsage, writeUsageResults } from "./index";
 
 const cfg = loadConfig();
-const summary = summarizeUsage(readUsage(cfg));
+const summary = summarizeUsage(readUsage(cfg), cfg);
 for (const tool of USAGE_TOOLS) {
   const t = summary.byTool[tool];
   const counts = Object.entries(t.counts).map(([k, n]) => `${k} ${n}`).join(", ");

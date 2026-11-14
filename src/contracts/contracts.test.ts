@@ -218,10 +218,16 @@ describe("config", () => {
     }
   });
 
-  it("marks the unverified constants TODO_VERIFY_AGAINST_MANUAL", () => {
+  it("records which constants the manual verified and which are still open", () => {
+    // Verified against the official manual with page citations (NDI extract, data/rules/rules.json).
     for (const key of ["hubShiftSchedule", "endgameS", "pinning"] as const) {
-      expect(cfg.game[key].status, key).toBe("TODO_VERIFY_AGAINST_MANUAL");
+      expect(cfg.game[key].status, key).toBe("VERIFIED");
+      expect(cfg.game[key].source, key).toMatch(/Game Manual .* p\.\d+/);
     }
+    expect(cfg.game.pinning.value.clauseId).toBe("G418");
+    // Not found in the manual, or found without a citation: still open.
+    expect(cfg.game.fuelMassKg.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
+    expect(cfg.field.allianceZoneDepthM.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
   });
 
   it("has a consistent teleop timeline", () => {

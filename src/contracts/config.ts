@@ -297,8 +297,10 @@ export const ConfigSchema = z.strictObject({
   /** Prices per 1M tokens; humans fill these in from each provider's pricing page. */
   pricesPerMTokUsd: z.strictObject({
     ...sectionMeta,
-    /** Prices keyed by provider id. */
+    /** Prices keyed by provider id; the fallback when the model has no entry in byModel. */
     byId: z.record(ProviderIdSchema, PriceSchema),
+    /** Prices keyed by the exact model id a provider reports. Takes precedence over byId. */
+    byModel: z.record(z.string(), PriceSchema),
   }),
   /** Hard spend limits; a run aborts rather than exceed them. */
   spendCapsUsd: z.strictObject({
@@ -339,6 +341,8 @@ export const ConfigSchema = z.strictObject({
     maxResultsPerQuery: z.number().int().positive(),
     /** Search queries to run. */
     queries: z.array(z.string()),
+    /** Domains never fetched (sites whose terms forbid automated access, or with no usable text). */
+    skipDomains: z.array(z.string()),
     /** Folder for raw pages, relative to the repo root. */
     rawDir: z.string(),
     /** File for extracted strategy notes, relative to the repo root. */
@@ -363,14 +367,24 @@ export const ConfigSchema = z.strictObject({
   /** Strategy Lab (src/lab): Intern run as a subprocess. */
   lab: z.strictObject({
     ...sectionMeta,
-    /** The Intern CLI command. */
-    internCommand: z.string(),
+    /**
+     * The Intern CLI command and any leading arguments; Intern's own arguments are appended.
+     * Intern does not run on native Windows, so there this goes through wsl.exe.
+     */
+    internCommand: z.array(z.string()).min(1),
     /** Provider prefix for Intern's --system2 flag. */
     system2Provider: z.string(),
-    /** Model for Intern's System 2; null = use the model chosen for the deepinfra provider. */
-    system2Model: z.string().nullable(),
-    /** Workspace folder handed to Intern, relative to the repo root. Never the repo root itself. */
+    /** Model for Intern's System 2 (the --system2 value is `<system2Provider>/<system2Model>`). */
+    system2Model: z.string(),
+    /** Value for Intern's --system1 flag (the Drex model that supervises); null = Intern's default. */
+    system1Model: z.string().nullable(),
+    /**
+     * Workspace folder handed to Intern, as the host (Node) sees it: absolute, or relative to the
+     * repo root. Never the repo root itself. With Intern in WSL this is a \\wsl.localhost path.
+     */
     workspaceDir: z.string(),
+    /** The same folder as Intern sees it (its --cwd); null when it is the same path as workspaceDir. */
+    internCwd: z.string().nullable(),
     /** Wall-clock limit for one Intern session, seconds. */
     timeoutS: z.number().int().positive(),
     /** Eval-seed matches played per proposal against the scripted baseline. */
