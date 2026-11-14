@@ -11,13 +11,13 @@ This is an FRC REBUILT 2026 strategy simulator built on Nace's System 1 / System
 is a large LLM on DeepInfra: slow, careful reasoning. System 1 is Drex: fast, closed-choice
 decisions. The claim we test is the Apex track's claim: take the in-match strategy decisions a
 big model would make, hand them to Drex, and measure whether it is faster, cheaper, about as good
-on decision quality, and better on real-time sim margin (thinking time on the sim clock).
+on decision quality, and better in real-time sim matches (thinking time on the sim clock).
 
 Entry for the Nace AI Hackathon, Apex track. TypeScript end to end, one Node process, runs on a
 laptop.
 
-> **Status: in progress.** The numbers in "Results" below are filled in only by real runs. Until
-> then they read "not run". Nothing from the stub engine or the mock provider is a result.
+> **Status: submitted.** Every number in "Results" below comes from a real logged run in
+> `results/`. Nothing from the stub engine or the mock provider is a result.
 
 ## What each tool does
 
@@ -81,23 +81,37 @@ plus config). Tune on `config.seeds.dev`; report on `config.seeds.eval`.
 
 ## Results
 
-Real so far (2026-11-14):
+All from real runs on 2026-11-14 (`results/headline.json`, `results/deck_numbers.txt`). The giant is
+Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off. Results hold within our simulator.
 
-- **Rules from the manual.** NDI read all 166 pages of the official 2026 game manual (version
-  TU22) and returned 19 of the 28 game constants we asked for with a page citation
-  (`data/rules/rules.json`, `results/ingest_rules.json`). That verified the hub shift schedule
-  (10 s transition, four 25 s shifts, 30 s end game), the 3 s pin limit (rule G418) and the
-  field size, and corrected two of our guesses.
+| Measure | Drex (drex-v2.0) | Giant |
+|---|---|---|
+| Time per decision at match size (3 robots per call) | 94 ms | 671 ms (7.1x slower) |
+| Single-question latency, p50 | 297 ms | 701 ms |
+| Cost per 1,000 decisions | $0.026 | $0.48 (19x) |
+| Mean regret on 57 sticky scenarios, 18 families (lower is better) | 15.3 | 16.1 |
+| Real-time sim margin, decider proposes and the simulator checks (8 paired seeds) | +123 | +38 |
+
+- **Decision quality: about as good.** Paired regret difference, Drex minus giant: -0.8 +/- 4.8
+  (95% CI includes 0). A random chooser scores 33.9. The answer key is 30 end-of-match rollouts
+  per option.
+- **Real-time matches: better with the simulator check.** Drex proposes each call and quick
+  rollouts check it against the scripted pick; thinking and checking time run on the sim clock.
+  Paired Drex minus giant: +85 +/- 56. A random proposer with the same check scores +68, and Drex
+  beats it by +55 +/- 44.
+- **Alone, neither model beats our scripted policy** in whole matches (Drex -203 +/- 85 and the
+  giant -141 +/- 130 against the scripted reference over 10 paired seeds).
+- **Strategy Lab.** Intern (DeepInfra as System 2, Drex as System 1) proposed 5 strategies; 2
+  beat the baseline in simulation ("shoot on the move through the left trench, then refill":
+  +141 +/- 49 over 10 seeds).
+- **Rule calls.** Drex agreed with human-reviewed labels on 59 of 60 fabricated incidents, citing
+  the manual clause and page.
+- **Rules and scouting from documents.** NDI read all 166 pages of the official 2026 game manual
+  (version TU22) and returned 19 of the 28 constants we asked for with a page citation, and
+  recovered 245 of 248 fields (0 wrong) from 24 deliberately messy fabricated scouting sheets.
 - **Research.** Keenable found and fetched 58 pages of robot reveals, technical binders and
   strategy write-ups (`data/research/sources.json`).
-- **Drex model choice.** On a real 68-option play call, `drex-v2.0` evaluated in about 48 ms and
-  `drex-latest` (`drex-max-v1.1`) in about 150 to 190 ms; both chose the same action.
 - **Tool usage** is in `results/usage.json`.
-
-The benchmarks have not run yet. `results/headline.json` holds every headline number, in this order: live
-real-time sim margin, latency and cost ratios, decision-quality parity, rollout savings,
-then tool usage. A number is `null` until the experiment behind it has run with real provider
-calls, and `all_real` is true only when every number is real.
 
 ## Layout and owners
 
@@ -148,6 +162,11 @@ fixtures or commits. Run the secret scan before every push; it fails on any hit:
 ```sh
 pnpm prepush
 ```
+
+## Team
+
+- Christopher Luk
+- Sri Vatsa Vuddanti
 
 ## Credits and license
 
