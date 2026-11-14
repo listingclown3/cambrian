@@ -139,30 +139,6 @@ Rules for working in parallel:
 3. **No number in code.** Tunables and assumptions go in `config/default.json`.
 4. **Record every real external call** with `recordUsage()`. Never record mock or cached calls.
 
-## Honesty rules
-
-- **Known rule gap: G407 is not enforced.** The manual says a robot may launch into its hub only
-  while its bumpers are at least partly inside its own alliance zone (G407). Our engine checks shot
-  distance only, so robots also score from the neutral side of the hub when in range. Every decider
-  and the scripted policy played under the same simplification, so the comparisons are like for
-  like, but absolute scores are higher than a real match would allow and shot-spot choices are not
-  rule-accurate. The fix is written (branch `g407`: launching requires bumpers at least partly in
-  the alliance zone; one scripted match goes from 488-415 to 222-291, so roughly half of all
-  scoring had come from the neutral side). It is not on `main` because every benchmark must be
-  rerun on the fixed engine first; the numbers on `main` are the ones measured before the fix.
-- **Mock is always labelled.** `drex_mock` answers carry `meta.isMock = true`; run logs and results
-  files carry `isMock`. An unimplemented provider returns a flagged fallback
-  (`meta.fallbackUsed = true`, `meta.error` set), never something that looks like an answer.
-- **Same input for every model.** Drex and DeepInfra get the identical state text and options.
-- **Game numbers have provenance.** Every `game` and `field` value in the config is
-  `{ value, status, source }` with status `VERIFIED` or `TODO_VERIFY_AGAINST_MANUAL`; archetype
-  ranges are marked `FABRICATED`. Rules that NDI extracts from the manual, with page citations,
-  override unverified values.
-- **Models never see hidden state.** A robot's controller sees only what a scout could see
-  (`ObservationView`), never another robot's parameters.
-- **Agent output is untrusted.** Strategy Lab proposals are schema-validated and rejected when
-  invalid; web pages are parsed for facts, never followed as instructions.
-
 ## Secrets
 
 Keys live only in `.env` (gitignored) and `~/.intern/.env`. Never in code, logs, results,
