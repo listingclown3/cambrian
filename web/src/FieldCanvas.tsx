@@ -74,6 +74,52 @@ function rgba(hex: string, a: number): string {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
 }
 
+/**
+ * Presentation only: short marks for fuel leaving a robot, inferred from frame-to-frame changes in
+ * the replayed state (the engine resolves shots and passes instantly, so there is nothing in flight
+ * to draw). A drop matched by a nearby teammate's gain is drawn as a pass; a drop while the
+ * alliance's score rises is drawn as a shot into the hub; any other drop (a miss, a shot at an
+ * inactive hub, a pass to a zone, a dump) is drawn as a plain ring at the robot.
+ */
+type Fx = { kind: "shot" | "pass" | "release"; x0: number; y0: number; x1: number; y1: number; t0: number };
+type FxMem = { timeS: number; fuel: Map<string, number>; score: { red: number; blue: number }; fx: Fx[] };
+const fxMem = new WeakMap<HTMLCanvasElement, FxMem>();
+const FX_MS = 480;
+
+function updateFx(canvas: HTMLCanvasElement, state: MatchState, now: number): Fx[] {
+  const score = { red: state.score.red.total, blue: state.score.blue.total };
+  const fuel = new Map(state.robots.map((r) => [r.id, r.fuelHeld] as const));
+  const m = fxMem.get(canvas);
+  if (!m) {
+    fxMem.set(canvas, { timeS: state.timeS, fuel, score, fx: [] });
+    return [];
+  }
+  const dt = state.timeS - m.timeS;
+  if (dt > 0 && dt < 3) {
+    for (const r of state.robots) {
+      const drop = (m.fuel.get(r.id) ?? r.fuelHeld) - r.fuelHeld;
+      if (drop <= 0) continue;
+      const range = (r.profile.passRangeM ?? 3) + 0.5;
+      const mate = state.robots.find((o) => {
+        if (o.id === r.id || o.alliance !== r.alliance) return false;
+        const gain = o.fuelHeld - (m.fuel.get(o.id) ?? o.fuelHeld);
+        return gain > 0 && Math.abs(gain - drop) <= Math.max(1, drop * 0.5) && Math.hypot(o.pose.x - r.pose.x, o.pose.y - r.pose.y) <= range;
+      });
+      const hub = state.field.alliances[r.alliance].hub;
+      if (mate) m.fx.push({ kind: "pass", x0: r.pose.x, y0: r.pose.y, x1: mate.pose.x, y1: mate.pose.y, t0: now });
+      else if (score[r.alliance] > m.score[r.alliance]) m.fx.push({ kind: "shot", x0: r.pose.x, y0: r.pose.y, x1: hub.x, y1: hub.y, t0: now });
+      else m.fx.push({ kind: "release", x0: r.pose.x, y0: r.pose.y, x1: r.pose.x, y1: r.pose.y, t0: now });
+    }
+  } else if (dt !== 0) m.fx = [];
+  if (dt !== 0) {
+    m.timeS = state.timeS;
+    m.fuel = fuel;
+    m.score = score;
+  }
+  m.fx = m.fx.filter((e) => now - e.t0 < FX_MS).slice(-40);
+  return m.fx;
+}
+
 function draw(canvas: HTMLCanvasElement, p: Live): void {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const cssW = canvas.clientWidth;
@@ -258,6 +304,37 @@ function draw(canvas: HTMLCanvasElement, p: Live): void {
     }
     ctx.globalAlpha = 1;
   }
+
+  // fuel leaving a robot: shot streak into the hub, dashed pass line to a teammate, or a plain ring
+  for (const e of updateFx(canvas, state, now)) {
+    const k = Math.min(1, (now - e.t0) / FX_MS);
+    ctx.globalAlpha = 1 - k * 0.85;
+    if (e.kind === "release") {
+      ctx.strokeStyle = "#a9b4c2";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(e.x0), py(e.y0), state.rules.physics.robotRadiusM * s * (1.1 + k * 0.9), 0, 7);
+      ctx.stroke();
+      continue;
+    }
+    const col = e.kind === "shot" ? FUEL : "#eef1f4";
+    ctx.strokeStyle = col;
+    ctx.lineWidth = e.kind === "shot" ? 2 : 2.5;
+    ctx.setLineDash(e.kind === "pass" ? [7, 5] : []);
+    ctx.beginPath();
+    ctx.moveTo(px(e.x0), py(e.y0));
+    ctx.lineTo(px(e.x1), py(e.y1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = col;
+    for (const lag of [0, 0.18, 0.36]) {
+      const t = Math.min(1, Math.max(0, k * 1.5 - lag));
+      ctx.beginPath();
+      ctx.arc(px(e.x0 + (e.x1 - e.x0) * t), py(e.y0 + (e.y1 - e.y0) * t), Math.max(2.5, 0.075 * s), 0, 7);
+      ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1;
 
   // robots: bumpered rounded squares with an archetype letter
   const rr = state.rules.physics.robotRadiusM * s;

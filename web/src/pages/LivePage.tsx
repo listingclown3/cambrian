@@ -130,6 +130,9 @@ function Legend() {
       <span><i className="fuel" />fuel</span>
       <span><i className="glow" />active hub</span>
       <span><i className="dots" />path since last decision</span>
+      <span><b className="mono" style={{ color: "var(--fuel)" }}>━</b> shot scored</span>
+      <span><b className="mono">╌</b> pass to a teammate</span>
+      <span><b className="mono">○</b> fuel released (miss, inactive hub, zone pass or dump)</span>
     </div>
   );
 }
