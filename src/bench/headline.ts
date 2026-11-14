@@ -35,8 +35,11 @@ const ingestRules = readJson("results", "ingest_rules.json");
 
 const contributing: { file: string; isMock: boolean; simHash: string | null; gitCommit: string | null }[] = [];
 /** Read results/<name>.json; returns null (and records it) when it is mock. */
+const seen = new Map<string, any>();
 function results(name: string): any | null {
+  if (seen.has(name)) return seen.get(name);
   const f = readJson("results", `${name}.json`);
+  seen.set(name, f && !f.isMock ? f : null);
   if (!f) return null;
   contributing.push({ file: `results/${name}.json`, isMock: !!f.isMock, simHash: f.simHash ?? null, gitCommit: f.gitCommit ?? null });
   return f.isMock ? null : f;
@@ -47,23 +50,26 @@ const live = results("bench_live")?.summary;
 const explore = results("bench_explore")?.summary?.unambiguous;
 const matches = results("matches")?.summary;
 const batch = results("bench_batch")?.summary;
+const lat = results("bench_latency")?.summary;
+// Latency and cost: the quiet-window sequential run (bench_latency) when it has >= 10 good calls, else bench_scenarios (measured under load).
+const latOf = (id: string) => (lat?.[id] && lat[id].n_ok >= 10 && !lat[id].isMock ? { p50: lat[id].p50_ms, p95: lat[id].p95_ms, cost: lat[id].cost_per_1k_usd, source: "results/bench_latency.json (sequential, quiet window)", n: lat[id].n_ok } : d(id) ? { p50: d(id).latency_p50_ms, p95: d(id).latency_p95_ms, cost: d(id).cost_per_1k_usd, source: "results/bench_scenarios.json (measured under load)", n: d(id).n_scored } : null);
 const lab = results("lab")?.summary;
 const d = (id: string) => bs?.deciders?.[id] ?? null;
 const cond = (id: string) => live?.conditions?.[id] ?? null;
 
-const drexP50 = numberOrNull(d("drex")?.latency_p50_ms);
-const giantP50 = numberOrNull(d("deepinfra")?.latency_p50_ms);
+const drexP50 = numberOrNull(latOf("drex")?.p50);
+const giantP50 = numberOrNull(latOf("deepinfra")?.p50);
 const values: Record<string, number | null> = {
   live_margin_drex_realtime: numberOrNull(cond("drex_realtime")?.mean_margin),
   live_margin_deepinfra_realtime: numberOrNull(cond("deepinfra_realtime")?.mean_margin),
   live_margin_drex_paused: numberOrNull(cond("drex_paused")?.mean_margin),
   live_margin_deepinfra_paused: numberOrNull(cond("deepinfra_paused")?.mean_margin),
   drex_p50_ms: drexP50,
-  drex_p95_ms: numberOrNull(d("drex")?.latency_p95_ms),
+  drex_p95_ms: numberOrNull(latOf("drex")?.p95),
   deepinfra_p50_ms: giantP50,
   latency_ratio_deepinfra_over_drex: ratio(giantP50, drexP50),
-  drex_cost_per_1k_usd: numberOrNull(d("drex")?.cost_per_1k_usd),
-  deepinfra_cost_per_1k_usd: numberOrNull(d("deepinfra")?.cost_per_1k_usd),
+  drex_cost_per_1k_usd: numberOrNull(latOf("drex")?.cost),
+  deepinfra_cost_per_1k_usd: numberOrNull(latOf("deepinfra")?.cost),
   top1_drex: numberOrNull(d("drex")?.top1),
   top1_deepinfra: numberOrNull(d("deepinfra")?.top1),
   top1_scripted: numberOrNull(d("scripted")?.top1),
@@ -124,6 +130,13 @@ const file = writeResults({
       giant_reasoning: "off (main comparison; the giant's fastest setting)",
       live: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, v.models])),
     },
+    latency_sources: { drex: latOf("drex"), deepinfra: latOf("deepinfra") },
+    regret_with_ci: Object.fromEntries(Object.entries(bs?.deciders ?? {}).map(([k, v]: [string, any]) => [k, { regret: v.regret, ci95: v.regret_ci95 ?? null, n: v.n_regret ?? v.n_scored }])),
+    paired_regret: bs?.paired_regret ?? null,
+    degeneracy_gate: bs?.degeneracy_gate ?? null,
+    answers_source: results("bench_scenarios")?.config?.answersSource ?? null,
+    live_paired_vs_scripted: live?.paired_vs_scripted_control ?? null,
+    live_wall_ms_per_robot_decision: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, v.wall_ms_per_robot_decision ?? null])),
     latency: "round trip p50/p95 (request sent to answer parsed, retries included); Drex's own server-side evaluation time is not used",
     n: {
       top1_unambiguous_scored: { drex: nOf("drex"), deepinfra: nOf("deepinfra"), scripted: nOf("scripted"), random: nOf("random"), drex_anon: nOf("drex_anon") },
