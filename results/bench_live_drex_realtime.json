@@ -1,0 +1,1311 @@
+{
+  "experiment": "bench_live_drex_realtime",
+  "createdTs": "2026-11-14T21:56:38.627Z",
+  "isMock": false,
+  "gitCommit": "bc6c6e602af8-dirty",
+  "simHash": "547d0ca0d9b67f1b",
+  "config": {
+    "part": "drex_realtime",
+    "spec": "drex",
+    "reasoning": null,
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008,
+        9009,
+        9010
+      ]
+    },
+    "parallel": 1,
+    "timings": [
+      "realtime"
+    ],
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, live:<seed>): blue = decider, red = scripted archetype",
+    "promptVersion": "p2-v2-curated10-facts",
+    "aborted": null,
+    "note": "written after every match; a match not in rows did not finish"
+  },
+  "rows": [
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 385,
+      "scoreRed": 439,
+      "margin": -54,
+      "requests": 127,
+      "providerCalls": 127,
+      "robotDecisions": 177,
+      "fallbacks": 9,
+      "fallbackMetas": 6,
+      "dropped": 0,
+      "chargedS": 75.692,
+      "wallS": 77.84,
+      "latencyP50Ms": 382.8,
+      "latencyP95Ms": 2001.3,
+      "costUsd": 0.003769,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 127,
+        "calls": 127,
+        "questions": 177,
+        "httpCalls": 127,
+        "robotDecisions": 177,
+        "fallbacks": 9,
+        "cachedCalls": 0,
+        "latencyMs": 75692.22040000003,
+        "chargedS": 75.69222040000001,
+        "inputTokens": 125642,
+        "outputTokens": 25051,
+        "costUsd": 0.00376926,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 21,
+        "cooledDown": 21,
+        "interruptedActions": 66,
+        "completedCycles": 1,
+        "idleS": 71.90000000000062,
+        "continuationS": 16.499999999999964,
+        "continuations": 23
+      },
+      "behaviourBlue": {
+        "decisions": 177,
+        "fastFails": 21,
+        "cooledDown": 21,
+        "interruptedActions": 66,
+        "completedCycles": 1,
+        "idleS": 71.90000000000062,
+        "continuationS": 16.499999999999964,
+        "continuations": 23
+      },
+      "behaviourRed": {
+        "decisions": 190,
+        "fastFails": 3,
+        "cooledDown": 3,
+        "interruptedActions": 115,
+        "completedCycles": 5,
+        "idleS": 16.349999999999966,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 77728.64570000001,
+      "providerWaitMs": 76557.87400000004,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 200,
+      "blueRunningActionsReplaced": 48,
+      "redRunningActionsReplaced": 77,
+      "fallbackErrors": [
+        "drex drex-v2.0: network error: timeout after 2000 ms",
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          37
+        ],
+        [
+          "shoot_now",
+          26
+        ],
+        [
+          "collect:local",
+          21
+        ],
+        [
+          "escape_spin:our_alliance",
+          19
+        ],
+        [
+          "disengage",
+          14
+        ],
+        [
+          "collect:neutral",
+          13
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 165,
+      "scoreRed": 523,
+      "margin": -358,
+      "requests": 120,
+      "providerCalls": 120,
+      "robotDecisions": 165,
+      "fallbacks": 7,
+      "fallbackMetas": 4,
+      "dropped": 1,
+      "chargedS": 75.897,
+      "wallS": 82.44,
+      "latencyP50Ms": 512,
+      "latencyP95Ms": 2009.7,
+      "costUsd": 0.003747,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 120,
+        "calls": 120,
+        "questions": 165,
+        "httpCalls": 120,
+        "robotDecisions": 165,
+        "fallbacks": 7,
+        "cachedCalls": 0,
+        "latencyMs": 75897.28529999996,
+        "chargedS": 75.89728529999995,
+        "inputTokens": 124894,
+        "outputTokens": 26113,
+        "costUsd": 0.003746820000000001,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 10,
+        "cooledDown": 10,
+        "interruptedActions": 84,
+        "completedCycles": 5,
+        "idleS": 55.95000000000039,
+        "continuationS": 10.999999999999986,
+        "continuations": 16
+      },
+      "behaviourBlue": {
+        "decisions": 162,
+        "fastFails": 10,
+        "cooledDown": 10,
+        "interruptedActions": 84,
+        "completedCycles": 5,
+        "idleS": 55.95000000000039,
+        "continuationS": 10.999999999999986,
+        "continuations": 16
+      },
+      "behaviourRed": {
+        "decisions": 362,
+        "fastFails": 4,
+        "cooledDown": 4,
+        "interruptedActions": 320,
+        "completedCycles": 2,
+        "idleS": 8.799999999999994,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 82417.4082,
+      "providerWaitMs": 78113.9397999999,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 178,
+      "blueRunningActionsReplaced": 55,
+      "redRunningActionsReplaced": 85,
+      "fallbackErrors": [
+        "drex drex-v2.0: network error: timeout after 2000 ms",
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          43
+        ],
+        [
+          "shoot_now",
+          27
+        ],
+        [
+          "escape_spin:our_alliance",
+          21
+        ],
+        [
+          "disengage",
+          16
+        ],
+        [
+          "align_then_shoot",
+          14
+        ],
+        [
+          "collect:local",
+          14
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 333,
+      "scoreRed": 360,
+      "margin": -27,
+      "requests": 152,
+      "providerCalls": 152,
+      "robotDecisions": 195,
+      "fallbacks": 5,
+      "fallbackMetas": 4,
+      "dropped": 1,
+      "chargedS": 90.665,
+      "wallS": 92.91,
+      "latencyP50Ms": 356.1,
+      "latencyP95Ms": 1893.3,
+      "costUsd": 0.004482,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 152,
+        "calls": 152,
+        "questions": 195,
+        "httpCalls": 152,
+        "robotDecisions": 195,
+        "fallbacks": 5,
+        "cachedCalls": 0,
+        "latencyMs": 90664.9635999997,
+        "chargedS": 90.66496359999971,
+        "inputTokens": 149392,
+        "outputTokens": 29430,
+        "costUsd": 0.0044817599999999996,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 32,
+        "cooledDown": 32,
+        "interruptedActions": 64,
+        "completedCycles": 1,
+        "idleS": 89.35000000000042,
+        "continuationS": 22.14999999999997,
+        "continuations": 33
+      },
+      "behaviourBlue": {
+        "decisions": 194,
+        "fastFails": 32,
+        "cooledDown": 32,
+        "interruptedActions": 64,
+        "completedCycles": 1,
+        "idleS": 89.35000000000042,
+        "continuationS": 22.14999999999997,
+        "continuations": 33
+      },
+      "behaviourRed": {
+        "decisions": 174,
+        "fastFails": 0,
+        "cooledDown": 0,
+        "interruptedActions": 130,
+        "completedCycles": 4,
+        "idleS": 9.949999999999989,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 92904.36180000001,
+      "providerWaitMs": 91355.28469999979,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 227,
+      "blueRunningActionsReplaced": 55,
+      "redRunningActionsReplaced": 85,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          42
+        ],
+        [
+          "escape_spin:our_alliance",
+          41
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          32
+        ],
+        [
+          "shoot_now",
+          20
+        ],
+        [
+          "collect:local",
+          14
+        ],
+        [
+          "disengage",
+          10
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 311,
+      "scoreRed": 360,
+      "margin": -49,
+      "requests": 137,
+      "providerCalls": 137,
+      "robotDecisions": 188,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 76.873,
+      "wallS": 78.71,
+      "latencyP50Ms": 464.1,
+      "latencyP95Ms": 1442.6,
+      "costUsd": 0.004316,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 137,
+        "calls": 137,
+        "questions": 188,
+        "httpCalls": 137,
+        "robotDecisions": 188,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 76872.92160000029,
+        "chargedS": 76.87292160000027,
+        "inputTokens": 143862,
+        "outputTokens": 30215,
+        "costUsd": 0.004315860000000001,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 28,
+        "cooledDown": 28,
+        "interruptedActions": 72,
+        "completedCycles": 0,
+        "idleS": 77.8500000000007,
+        "continuationS": 8.599999999999987,
+        "continuations": 21
+      },
+      "behaviourBlue": {
+        "decisions": 188,
+        "fastFails": 28,
+        "cooledDown": 28,
+        "interruptedActions": 72,
+        "completedCycles": 0,
+        "idleS": 77.8500000000007,
+        "continuationS": 8.599999999999987,
+        "continuations": 21
+      },
+      "behaviourRed": {
+        "decisions": 189,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 131,
+        "completedCycles": 5,
+        "idleS": 13.349999999999977,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 78682.5949,
+      "providerWaitMs": 78087.38840000029,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 209,
+      "blueRunningActionsReplaced": 59,
+      "redRunningActionsReplaced": 92,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          41
+        ],
+        [
+          "shoot_now",
+          40
+        ],
+        [
+          "collect:local",
+          24
+        ],
+        [
+          "escape_spin:our_alliance",
+          21
+        ],
+        [
+          "disengage",
+          17
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          13
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 288,
+      "scoreRed": 541,
+      "margin": -253,
+      "requests": 157,
+      "providerCalls": 157,
+      "robotDecisions": 209,
+      "fallbacks": 3,
+      "fallbackMetas": 3,
+      "dropped": 1,
+      "chargedS": 89.751,
+      "wallS": 94.76,
+      "latencyP50Ms": 502.2,
+      "latencyP95Ms": 1231.4,
+      "costUsd": 0.004751,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 157,
+        "calls": 157,
+        "questions": 209,
+        "httpCalls": 157,
+        "robotDecisions": 209,
+        "fallbacks": 3,
+        "cachedCalls": 0,
+        "latencyMs": 89751.44380000012,
+        "chargedS": 89.75144380000009,
+        "inputTokens": 158360,
+        "outputTokens": 32955,
+        "costUsd": 0.0047508,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 29,
+        "cooledDown": 29,
+        "interruptedActions": 81,
+        "completedCycles": 3,
+        "idleS": 90.50000000000044,
+        "continuationS": 6.899999999999995,
+        "continuations": 22
+      },
+      "behaviourBlue": {
+        "decisions": 208,
+        "fastFails": 29,
+        "cooledDown": 29,
+        "interruptedActions": 81,
+        "completedCycles": 3,
+        "idleS": 90.50000000000044,
+        "continuationS": 6.899999999999995,
+        "continuations": 22
+      },
+      "behaviourRed": {
+        "decisions": 186,
+        "fastFails": 6,
+        "cooledDown": 6,
+        "interruptedActions": 141,
+        "completedCycles": 6,
+        "idleS": 9.849999999999989,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 94682.77779999998,
+      "providerWaitMs": 92146.32639999955,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 230,
+      "blueRunningActionsReplaced": 64,
+      "redRunningActionsReplaced": 96,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)",
+        "drex drex-v2.0: network error: timeout after 2000 ms"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          44
+        ],
+        [
+          "collect:local",
+          40
+        ],
+        [
+          "shoot_now",
+          27
+        ],
+        [
+          "escape_spin:our_alliance",
+          25
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          19
+        ],
+        [
+          "collect:neutral",
+          15
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9006,
+      "blue": [
+        "fab_37",
+        "fab_18",
+        "fab_48"
+      ],
+      "red": [
+        "frc_10219",
+        "fab_45",
+        "frc_6800"
+      ],
+      "scoreBlue": 244,
+      "scoreRed": 594,
+      "margin": -350,
+      "requests": 117,
+      "providerCalls": 117,
+      "robotDecisions": 168,
+      "fallbacks": 1,
+      "fallbackMetas": 1,
+      "dropped": 0,
+      "chargedS": 69.949,
+      "wallS": 70.55,
+      "latencyP50Ms": 355.8,
+      "latencyP95Ms": 1776.9,
+      "costUsd": 0.003717,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 117,
+        "calls": 117,
+        "questions": 168,
+        "httpCalls": 117,
+        "robotDecisions": 168,
+        "fallbacks": 1,
+        "cachedCalls": 0,
+        "latencyMs": 69948.65099999995,
+        "chargedS": 69.94865099999996,
+        "inputTokens": 123886,
+        "outputTokens": 23309,
+        "costUsd": 0.0037165799999999997,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 11,
+        "cooledDown": 11,
+        "interruptedActions": 85,
+        "completedCycles": 0,
+        "idleS": 57.350000000000406,
+        "continuationS": 14.249999999999975,
+        "continuations": 26
+      },
+      "behaviourBlue": {
+        "decisions": 168,
+        "fastFails": 11,
+        "cooledDown": 11,
+        "interruptedActions": 85,
+        "completedCycles": 0,
+        "idleS": 57.350000000000406,
+        "continuationS": 14.249999999999975,
+        "continuations": 26
+      },
+      "behaviourRed": {
+        "decisions": 290,
+        "fastFails": 17,
+        "cooledDown": 17,
+        "interruptedActions": 206,
+        "completedCycles": 8,
+        "idleS": 16.749999999999975,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 70549.4609,
+      "providerWaitMs": 70117.30179999972,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 194,
+      "blueRunningActionsReplaced": 61,
+      "redRunningActionsReplaced": 65,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "shoot_now",
+          30
+        ],
+        [
+          "hold_position",
+          25
+        ],
+        [
+          "hold_fire_until_active",
+          23
+        ],
+        [
+          "collect:local",
+          19
+        ],
+        [
+          "escape_spin:our_alliance",
+          17
+        ],
+        [
+          "disengage",
+          14
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9007,
+      "blue": [
+        "frc_1757",
+        "fab_46",
+        "fab_31"
+      ],
+      "red": [
+        "fab_27",
+        "fab_28",
+        "fab_20"
+      ],
+      "scoreBlue": 102,
+      "scoreRed": 717,
+      "margin": -615,
+      "requests": 111,
+      "providerCalls": 111,
+      "robotDecisions": 168,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 54.139,
+      "wallS": 56.78,
+      "latencyP50Ms": 382.7,
+      "latencyP95Ms": 1270.1,
+      "costUsd": 0.003507,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 111,
+        "calls": 111,
+        "questions": 168,
+        "httpCalls": 111,
+        "robotDecisions": 168,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 54138.755299999786,
+        "chargedS": 54.13875529999981,
+        "inputTokens": 116897,
+        "outputTokens": 23414,
+        "costUsd": 0.00350691,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 84,
+        "completedCycles": 1,
+        "idleS": 53.15000000000035,
+        "continuationS": 3.3500000000000014,
+        "continuations": 10
+      },
+      "behaviourBlue": {
+        "decisions": 166,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 84,
+        "completedCycles": 1,
+        "idleS": 53.15000000000035,
+        "continuationS": 3.3500000000000014,
+        "continuations": 10
+      },
+      "behaviourRed": {
+        "decisions": 206,
+        "fastFails": 10,
+        "cooledDown": 10,
+        "interruptedActions": 120,
+        "completedCycles": 18,
+        "idleS": 18.09999999999996,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 56782.83500000002,
+      "providerWaitMs": 54911.483099999954,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 176,
+      "blueRunningActionsReplaced": 44,
+      "redRunningActionsReplaced": 62,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          41
+        ],
+        [
+          "escape_spin:our_alliance",
+          28
+        ],
+        [
+          "hold_position",
+          22
+        ],
+        [
+          "shoot_now",
+          15
+        ],
+        [
+          "disengage",
+          15
+        ],
+        [
+          "collect:local",
+          13
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9008,
+      "blue": [
+        "fab_29",
+        "fab_34",
+        "fab_11"
+      ],
+      "red": [
+        "frc_1729",
+        "fab_38",
+        "fab_30"
+      ],
+      "scoreBlue": 256,
+      "scoreRed": 554,
+      "margin": -298,
+      "requests": 124,
+      "providerCalls": 124,
+      "robotDecisions": 183,
+      "fallbacks": 1,
+      "fallbackMetas": 1,
+      "dropped": 0,
+      "chargedS": 64.32,
+      "wallS": 67.67,
+      "latencyP50Ms": 452.4,
+      "latencyP95Ms": 1204,
+      "costUsd": 0.003982,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 124,
+        "calls": 124,
+        "questions": 183,
+        "httpCalls": 124,
+        "robotDecisions": 183,
+        "fallbacks": 1,
+        "cachedCalls": 0,
+        "latencyMs": 64319.96120000002,
+        "chargedS": 64.31996120000002,
+        "inputTokens": 132748,
+        "outputTokens": 29216,
+        "costUsd": 0.00398244,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 25,
+        "cooledDown": 25,
+        "interruptedActions": 82,
+        "completedCycles": 0,
+        "idleS": 71.00000000000047,
+        "continuationS": 3.5000000000000004,
+        "continuations": 14
+      },
+      "behaviourBlue": {
+        "decisions": 183,
+        "fastFails": 25,
+        "cooledDown": 25,
+        "interruptedActions": 82,
+        "completedCycles": 0,
+        "idleS": 71.00000000000047,
+        "continuationS": 3.5000000000000004,
+        "continuations": 14
+      },
+      "behaviourRed": {
+        "decisions": 180,
+        "fastFails": 5,
+        "cooledDown": 5,
+        "interruptedActions": 129,
+        "completedCycles": 8,
+        "idleS": 11.249999999999984,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 67660.86730000004,
+      "providerWaitMs": 66044.94070000038,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 197,
+      "blueRunningActionsReplaced": 46,
+      "redRunningActionsReplaced": 89,
+      "fallbackErrors": [
+        "drex drex-v2.0: network error: timeout after 2000 ms"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          56
+        ],
+        [
+          "shoot_now",
+          34
+        ],
+        [
+          "collect:local",
+          23
+        ],
+        [
+          "escape_spin:our_alliance",
+          16
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          15
+        ],
+        [
+          "align_then_shoot",
+          14
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9009,
+      "blue": [
+        "frc_2056",
+        "fab_03",
+        "fab_24"
+      ],
+      "red": [
+        "fab_28",
+        "frc_1729",
+        "fab_30"
+      ],
+      "scoreBlue": 102,
+      "scoreRed": 710,
+      "margin": -608,
+      "requests": 115,
+      "providerCalls": 115,
+      "robotDecisions": 171,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 53.222,
+      "wallS": 54.28,
+      "latencyP50Ms": 350.9,
+      "latencyP95Ms": 1077.1,
+      "costUsd": 0.003781,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 115,
+        "calls": 115,
+        "questions": 171,
+        "httpCalls": 115,
+        "robotDecisions": 171,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 53221.530100000324,
+        "chargedS": 53.22153010000037,
+        "inputTokens": 126032,
+        "outputTokens": 28014,
+        "costUsd": 0.0037809600000000025,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 7,
+        "cooledDown": 7,
+        "interruptedActions": 89,
+        "completedCycles": 2,
+        "idleS": 51.00000000000031,
+        "continuationS": 5.000000000000002,
+        "continuations": 12
+      },
+      "behaviourBlue": {
+        "decisions": 171,
+        "fastFails": 7,
+        "cooledDown": 7,
+        "interruptedActions": 89,
+        "completedCycles": 2,
+        "idleS": 51.00000000000031,
+        "continuationS": 5.000000000000002,
+        "continuations": 12
+      },
+      "behaviourRed": {
+        "decisions": 176,
+        "fastFails": 7,
+        "cooledDown": 7,
+        "interruptedActions": 127,
+        "completedCycles": 8,
+        "idleS": 10.599999999999987,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 54278.574799999944,
+      "providerWaitMs": 53878.01719999954,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 183,
+      "blueRunningActionsReplaced": 42,
+      "redRunningActionsReplaced": 66,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          59
+        ],
+        [
+          "disengage",
+          28
+        ],
+        [
+          "shoot_now",
+          25
+        ],
+        [
+          "collect:local",
+          18
+        ],
+        [
+          "escape_spin:our_alliance",
+          11
+        ],
+        [
+          "collect:depot",
+          8
+        ]
+      ]
+    },
+    {
+      "part": "drex_realtime",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9010,
+      "blue": [
+        "fab_05",
+        "fab_45",
+        "fab_35"
+      ],
+      "red": [
+        "fab_17",
+        "frc_1690",
+        "frc_4322"
+      ],
+      "scoreBlue": 104,
+      "scoreRed": 375,
+      "margin": -271,
+      "requests": 95,
+      "providerCalls": 95,
+      "robotDecisions": 150,
+      "fallbacks": 1,
+      "fallbackMetas": 1,
+      "dropped": 0,
+      "chargedS": 51.176,
+      "wallS": 52.32,
+      "latencyP50Ms": 403.7,
+      "latencyP95Ms": 1373.6,
+      "costUsd": 0.003095,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 95,
+        "calls": 95,
+        "questions": 150,
+        "httpCalls": 95,
+        "robotDecisions": 150,
+        "fallbacks": 1,
+        "cachedCalls": 0,
+        "latencyMs": 51175.69460000051,
+        "chargedS": 51.175694600000504,
+        "inputTokens": 103166,
+        "outputTokens": 23807,
+        "costUsd": 0.0030949799999999998,
+        "models": [
+          "drex-v2.0"
+        ],
+        "isMock": false,
+        "fastFails": 9,
+        "cooledDown": 9,
+        "interruptedActions": 95,
+        "completedCycles": 5,
+        "idleS": 36.60000000000014,
+        "continuationS": 4.899999999999998,
+        "continuations": 8
+      },
+      "behaviourBlue": {
+        "decisions": 150,
+        "fastFails": 9,
+        "cooledDown": 9,
+        "interruptedActions": 95,
+        "completedCycles": 5,
+        "idleS": 36.60000000000014,
+        "continuationS": 4.899999999999998,
+        "continuations": 8
+      },
+      "behaviourRed": {
+        "decisions": 175,
+        "fastFails": 2,
+        "cooledDown": 2,
+        "interruptedActions": 129,
+        "completedCycles": 6,
+        "idleS": 10.449999999999987,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 52314.61170000001,
+      "providerWaitMs": 51698.14319999982,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 158,
+      "blueRunningActionsReplaced": 31,
+      "redRunningActionsReplaced": 89,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          65
+        ],
+        [
+          "shoot_now",
+          35
+        ],
+        [
+          "collect:local",
+          16
+        ],
+        [
+          "align_then_shoot",
+          9
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          5
+        ],
+        [
+          "load_outpost",
+          3
+        ]
+      ]
+    }
+  ],
+  "summary": {}
+}

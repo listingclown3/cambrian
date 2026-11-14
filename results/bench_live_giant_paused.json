@@ -1,9 +1,9 @@
 {
   "experiment": "bench_live_giant_paused",
-  "createdTs": "2026-11-14T20:57:50.323Z",
+  "createdTs": "2026-11-14T21:56:01.187Z",
   "isMock": false,
-  "gitCommit": "2c3bdc75edac-dirty",
-  "simHash": "2cc2e7f621722c58",
+  "gitCommit": "067ebfb92e1e-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
     "part": "giant_paused",
     "spec": "deepinfra",
@@ -15,17 +15,28 @@
         9002,
         9003,
         9004,
-        9005
+        9005,
+        9006,
+        9007,
+        9008,
+        9009,
+        9010
       ]
     },
-    "parallel": 1,
+    "parallel": 2,
+    "timings": [
+      "paused"
+    ],
     "realtimeLatencyCharging": {
       "_status": "TUNABLE",
       "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
       "enabled": true,
       "latencyScale": 1
     },
-    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+    "lineup": "drawLineup(league, live:<seed>): blue = decider, red = scripted archetype",
+    "promptVersion": "p2-v2-curated10-facts",
+    "aborted": null,
+    "note": "written after every match; a match not in rows did not finish"
   },
   "rows": [
     {
@@ -43,24 +54,115 @@
         "frc_10219",
         "fab_10"
       ],
-      "scoreBlue": 726,
-      "scoreRed": 263,
-      "margin": 463,
-      "requests": 188,
-      "providerCalls": 188,
-      "robotDecisions": 239,
+      "scoreBlue": 347,
+      "scoreRed": 457,
+      "margin": -110,
+      "requests": 156,
+      "providerCalls": 156,
+      "robotDecisions": 222,
       "fallbacks": 0,
       "fallbackMetas": 0,
       "dropped": 0,
       "chargedS": 0,
-      "wallS": 169.23,
-      "latencyP50Ms": 745.3,
-      "latencyP95Ms": 1371.6,
-      "costUsd": 0.182023,
+      "wallS": 104.52,
+      "latencyP50Ms": 566.9,
+      "latencyP95Ms": 1104.4,
+      "costUsd": 0.113901,
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "isMock": false
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 156,
+        "calls": 156,
+        "questions": 222,
+        "httpCalls": 222,
+        "robotDecisions": 222,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 102911.38359999994,
+        "chargedS": 0,
+        "inputTokens": 229301,
+        "outputTokens": 3572,
+        "costUsd": 0.11390144999999995,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 15,
+        "cooledDown": 15,
+        "interruptedActions": 103,
+        "completedCycles": 0,
+        "idleS": 26.249999999999968,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 222,
+        "fastFails": 15,
+        "cooledDown": 15,
+        "interruptedActions": 103,
+        "completedCycles": 0,
+        "idleS": 26.249999999999968,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 195,
+        "fastFails": 6,
+        "cooledDown": 6,
+        "interruptedActions": 117,
+        "completedCycles": 6,
+        "idleS": 17.59999999999996,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 104498.7443,
+      "providerWaitMs": 103342.4212,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 222,
+      "blueRunningActionsReplaced": 47,
+      "redRunningActionsReplaced": 74,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          95
+        ],
+        [
+          "collect:local",
+          38
+        ],
+        [
+          "escape_reverse:our_alliance",
+          23
+        ],
+        [
+          "shoot_now",
+          15
+        ],
+        [
+          "collect:neutral",
+          9
+        ],
+        [
+          "collect:depot",
+          7
+        ]
+      ]
     },
     {
       "part": "giant_paused",
@@ -77,24 +179,115 @@
         "frc_6800",
         "fab_21"
       ],
-      "scoreBlue": 141,
-      "scoreRed": 309,
-      "margin": -168,
-      "requests": 197,
-      "providerCalls": 197,
-      "robotDecisions": 232,
+      "scoreBlue": 138,
+      "scoreRed": 477,
+      "margin": -339,
+      "requests": 146,
+      "providerCalls": 146,
+      "robotDecisions": 200,
       "fallbacks": 0,
       "fallbackMetas": 0,
       "dropped": 0,
       "chargedS": 0,
-      "wallS": 154.65,
-      "latencyP50Ms": 702.1,
-      "latencyP95Ms": 1140.1,
-      "costUsd": 0.168631,
+      "wallS": 88.55,
+      "latencyP50Ms": 559.4,
+      "latencyP95Ms": 964.5,
+      "costUsd": 0.10146,
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "isMock": false
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 146,
+        "calls": 146,
+        "questions": 200,
+        "httpCalls": 200,
+        "robotDecisions": 200,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 87144.70070000003,
+        "chargedS": 0,
+        "inputTokens": 203780,
+        "outputTokens": 3253,
+        "costUsd": 0.10146000000000006,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 11,
+        "cooledDown": 11,
+        "interruptedActions": 124,
+        "completedCycles": 0,
+        "idleS": 16.999999999999964,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 200,
+        "fastFails": 11,
+        "cooledDown": 11,
+        "interruptedActions": 124,
+        "completedCycles": 0,
+        "idleS": 16.999999999999964,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 361,
+        "fastFails": 2,
+        "cooledDown": 2,
+        "interruptedActions": 314,
+        "completedCycles": 5,
+        "idleS": 10.049999999999988,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 88548.28709999999,
+      "providerWaitMs": 87457.1415999999,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 200,
+      "blueRunningActionsReplaced": 52,
+      "redRunningActionsReplaced": 69,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          94
+        ],
+        [
+          "escape_reverse:our_alliance",
+          30
+        ],
+        [
+          "collect:local",
+          23
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          17
+        ],
+        [
+          "hold_position",
+          7
+        ],
+        [
+          "climb:1",
+          7
+        ]
+      ]
     },
     {
       "part": "giant_paused",
@@ -111,24 +304,115 @@
         "frc_4322",
         "fab_14"
       ],
-      "scoreBlue": 460,
-      "scoreRed": 185,
-      "margin": 275,
-      "requests": 181,
-      "providerCalls": 181,
-      "robotDecisions": 211,
+      "scoreBlue": 307,
+      "scoreRed": 331,
+      "margin": -24,
+      "requests": 170,
+      "providerCalls": 170,
+      "robotDecisions": 246,
       "fallbacks": 0,
       "fallbackMetas": 0,
       "dropped": 0,
       "chargedS": 0,
-      "wallS": 169.41,
-      "latencyP50Ms": 725.6,
-      "latencyP95Ms": 1409.3,
-      "costUsd": 0.159415,
+      "wallS": 172.39,
+      "latencyP50Ms": 876.1,
+      "latencyP95Ms": 1790.6,
+      "costUsd": 0.124232,
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "isMock": false
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 170,
+        "calls": 170,
+        "questions": 246,
+        "httpCalls": 246,
+        "robotDecisions": 246,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 167819.38300000006,
+        "chargedS": 0,
+        "inputTokens": 248857,
+        "outputTokens": 4082,
+        "costUsd": 0.12423165,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 28,
+        "cooledDown": 28,
+        "interruptedActions": 100,
+        "completedCycles": 0,
+        "idleS": 32.15000000000006,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 246,
+        "fastFails": 28,
+        "cooledDown": 28,
+        "interruptedActions": 100,
+        "completedCycles": 0,
+        "idleS": 32.15000000000006,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 182,
+        "fastFails": 1,
+        "cooledDown": 1,
+        "interruptedActions": 136,
+        "completedCycles": 3,
+        "idleS": 10.549999999999986,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 172385.73940000002,
+      "providerWaitMs": 168193.20420000018,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 246,
+      "blueRunningActionsReplaced": 49,
+      "redRunningActionsReplaced": 85,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          84
+        ],
+        [
+          "escape_reverse:our_alliance",
+          52
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          28
+        ],
+        [
+          "collect:local",
+          19
+        ],
+        [
+          "hold_position",
+          11
+        ],
+        [
+          "escape_spin:our_alliance",
+          10
+        ]
+      ]
     },
     {
       "part": "giant_paused",
@@ -145,24 +429,115 @@
         "fab_12",
         "frc_1690"
       ],
-      "scoreBlue": 425,
-      "scoreRed": 352,
-      "margin": 73,
-      "requests": 176,
-      "providerCalls": 176,
-      "robotDecisions": 207,
+      "scoreBlue": 450,
+      "scoreRed": 366,
+      "margin": 84,
+      "requests": 194,
+      "providerCalls": 194,
+      "robotDecisions": 271,
       "fallbacks": 0,
       "fallbackMetas": 0,
       "dropped": 0,
       "chargedS": 0,
-      "wallS": 149.4,
-      "latencyP50Ms": 754.6,
-      "latencyP95Ms": 1288.2,
-      "costUsd": 0.17942,
+      "wallS": 196.74,
+      "latencyP50Ms": 899.5,
+      "latencyP95Ms": 1664.7,
+      "costUsd": 0.137307,
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "isMock": false
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 194,
+        "calls": 194,
+        "questions": 271,
+        "httpCalls": 271,
+        "robotDecisions": 271,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 194935.8689999999,
+        "chargedS": 0,
+        "inputTokens": 276606,
+        "outputTokens": 4278,
+        "costUsd": 0.13730669999999995,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 39,
+        "cooledDown": 39,
+        "interruptedActions": 138,
+        "completedCycles": 0,
+        "idleS": 28.900000000000038,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 271,
+        "fastFails": 39,
+        "cooledDown": 39,
+        "interruptedActions": 138,
+        "completedCycles": 0,
+        "idleS": 28.900000000000038,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 192,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 131,
+        "completedCycles": 5,
+        "idleS": 13.699999999999974,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 196736.2513,
+      "providerWaitMs": 195406.17469999992,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 271,
+      "blueRunningActionsReplaced": 73,
+      "redRunningActionsReplaced": 83,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          92
+        ],
+        [
+          "collect:local",
+          68
+        ],
+        [
+          "shoot_now",
+          37
+        ],
+        [
+          "escape_reverse:our_alliance",
+          22
+        ],
+        [
+          "collect:neutral",
+          19
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          10
+        ]
+      ]
     },
     {
       "part": "giant_paused",
@@ -179,24 +554,740 @@
         "fab_28",
         "fab_24"
       ],
-      "scoreBlue": 266,
-      "scoreRed": 246,
-      "margin": 20,
-      "requests": 444,
-      "providerCalls": 444,
-      "robotDecisions": 484,
+      "scoreBlue": 277,
+      "scoreRed": 532,
+      "margin": -255,
+      "requests": 185,
+      "providerCalls": 185,
+      "robotDecisions": 257,
       "fallbacks": 0,
       "fallbackMetas": 0,
       "dropped": 0,
       "chargedS": 0,
-      "wallS": 412.98,
-      "latencyP50Ms": 816.4,
-      "latencyP95Ms": 1425.2,
-      "costUsd": 0.336179,
+      "wallS": 184.82,
+      "latencyP50Ms": 903.6,
+      "latencyP95Ms": 1640.1,
+      "costUsd": 0.129064,
       "models": [
         "Qwen/Qwen3.5-397B-A17B"
       ],
-      "isMock": false
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 185,
+        "calls": 185,
+        "questions": 257,
+        "httpCalls": 257,
+        "robotDecisions": 257,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 181691.12520000007,
+        "chargedS": 0,
+        "inputTokens": 259329,
+        "outputTokens": 4122,
+        "costUsd": 0.12906405,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 29,
+        "cooledDown": 29,
+        "interruptedActions": 144,
+        "completedCycles": 1,
+        "idleS": 24.29999999999999,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 257,
+        "fastFails": 29,
+        "cooledDown": 29,
+        "interruptedActions": 144,
+        "completedCycles": 1,
+        "idleS": 24.29999999999999,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 190,
+        "fastFails": 5,
+        "cooledDown": 5,
+        "interruptedActions": 138,
+        "completedCycles": 9,
+        "idleS": 12.09999999999998,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 184821.7343,
+      "providerWaitMs": 182306.94060000026,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 257,
+      "blueRunningActionsReplaced": 69,
+      "redRunningActionsReplaced": 88,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          83
+        ],
+        [
+          "collect:local",
+          60
+        ],
+        [
+          "escape_reverse:our_alliance",
+          25
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          21
+        ],
+        [
+          "shoot_now",
+          15
+        ],
+        [
+          "collect:neutral",
+          9
+        ]
+      ]
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9006,
+      "blue": [
+        "fab_37",
+        "fab_18",
+        "fab_48"
+      ],
+      "red": [
+        "frc_10219",
+        "fab_45",
+        "frc_6800"
+      ],
+      "scoreBlue": 194,
+      "scoreRed": 575,
+      "margin": -381,
+      "requests": 146,
+      "providerCalls": 146,
+      "robotDecisions": 206,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 141.87,
+      "latencyP50Ms": 879.4,
+      "latencyP95Ms": 1379.2,
+      "costUsd": 0.107598,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 146,
+        "calls": 146,
+        "questions": 206,
+        "httpCalls": 206,
+        "robotDecisions": 206,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 137289.60530000017,
+        "chargedS": 0,
+        "inputTokens": 216526,
+        "outputTokens": 3387,
+        "costUsd": 0.10759770000000009,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 20,
+        "cooledDown": 20,
+        "interruptedActions": 122,
+        "completedCycles": 0,
+        "idleS": 19.249999999999982,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 206,
+        "fastFails": 20,
+        "cooledDown": 20,
+        "interruptedActions": 122,
+        "completedCycles": 0,
+        "idleS": 19.249999999999982,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 280,
+        "fastFails": 17,
+        "cooledDown": 17,
+        "interruptedActions": 186,
+        "completedCycles": 11,
+        "idleS": 18.94999999999996,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 141868.58229999995,
+      "providerWaitMs": 137722.28989999997,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 206,
+      "blueRunningActionsReplaced": 46,
+      "redRunningActionsReplaced": 66,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          50
+        ],
+        [
+          "defend:R1",
+          25
+        ],
+        [
+          "escape_reverse:our_alliance",
+          23
+        ],
+        [
+          "defend:R2",
+          21
+        ],
+        [
+          "collect:local",
+          16
+        ],
+        [
+          "shoot_now",
+          12
+        ]
+      ]
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9007,
+      "blue": [
+        "frc_1757",
+        "fab_46",
+        "fab_31"
+      ],
+      "red": [
+        "fab_27",
+        "fab_28",
+        "fab_20"
+      ],
+      "scoreBlue": 67,
+      "scoreRed": 587,
+      "margin": -520,
+      "requests": 128,
+      "providerCalls": 128,
+      "robotDecisions": 186,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 115.26,
+      "latencyP50Ms": 799.7,
+      "latencyP95Ms": 1575.8,
+      "costUsd": 0.093372,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 128,
+        "calls": 128,
+        "questions": 186,
+        "httpCalls": 186,
+        "robotDecisions": 186,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 114364.95759999932,
+        "chargedS": 0,
+        "inputTokens": 187360,
+        "outputTokens": 3020,
+        "costUsd": 0.09337200000000005,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 4,
+        "cooledDown": 4,
+        "interruptedActions": 136,
+        "completedCycles": 2,
+        "idleS": 11.349999999999977,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 186,
+        "fastFails": 4,
+        "cooledDown": 4,
+        "interruptedActions": 136,
+        "completedCycles": 2,
+        "idleS": 11.349999999999977,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 223,
+        "fastFails": 13,
+        "cooledDown": 13,
+        "interruptedActions": 121,
+        "completedCycles": 15,
+        "idleS": 21.84999999999998,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 115263.57510000007,
+      "providerWaitMs": 114515.4141000004,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 186,
+      "blueRunningActionsReplaced": 39,
+      "redRunningActionsReplaced": 69,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          79
+        ],
+        [
+          "defend:R1",
+          27
+        ],
+        [
+          "defend:R3",
+          19
+        ],
+        [
+          "collect:local",
+          17
+        ],
+        [
+          "shoot_now",
+          10
+        ],
+        [
+          "defend:R2",
+          7
+        ]
+      ]
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9008,
+      "blue": [
+        "fab_29",
+        "fab_34",
+        "fab_11"
+      ],
+      "red": [
+        "frc_1729",
+        "fab_38",
+        "fab_30"
+      ],
+      "scoreBlue": 255,
+      "scoreRed": 530,
+      "margin": -275,
+      "requests": 163,
+      "providerCalls": 163,
+      "robotDecisions": 221,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 139.64,
+      "latencyP50Ms": 770,
+      "latencyP95Ms": 1446.2,
+      "costUsd": 0.110649,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 163,
+        "calls": 163,
+        "questions": 221,
+        "httpCalls": 221,
+        "robotDecisions": 221,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 138031.70930000028,
+        "chargedS": 0,
+        "inputTokens": 222026,
+        "outputTokens": 3579,
+        "costUsd": 0.11064869999999997,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 19,
+        "cooledDown": 19,
+        "interruptedActions": 117,
+        "completedCycles": 0,
+        "idleS": 23.49999999999998,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 221,
+        "fastFails": 19,
+        "cooledDown": 19,
+        "interruptedActions": 117,
+        "completedCycles": 0,
+        "idleS": 23.49999999999998,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 181,
+        "fastFails": 4,
+        "cooledDown": 4,
+        "interruptedActions": 122,
+        "completedCycles": 9,
+        "idleS": 12.849999999999978,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 139639.83980000002,
+      "providerWaitMs": 138396.80709999986,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 221,
+      "blueRunningActionsReplaced": 42,
+      "redRunningActionsReplaced": 84,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          100
+        ],
+        [
+          "collect:local",
+          26
+        ],
+        [
+          "escape_reverse:our_alliance",
+          21
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          17
+        ],
+        [
+          "shoot_now",
+          15
+        ],
+        [
+          "collect:neutral",
+          9
+        ]
+      ]
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9009,
+      "blue": [
+        "frc_2056",
+        "fab_03",
+        "fab_24"
+      ],
+      "red": [
+        "fab_28",
+        "frc_1729",
+        "fab_30"
+      ],
+      "scoreBlue": 172,
+      "scoreRed": 744,
+      "margin": -572,
+      "requests": 120,
+      "providerCalls": 120,
+      "robotDecisions": 184,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 112.14,
+      "latencyP50Ms": 754.8,
+      "latencyP95Ms": 1538.5,
+      "costUsd": 0.093346,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 120,
+        "calls": 120,
+        "questions": 184,
+        "httpCalls": 184,
+        "robotDecisions": 184,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 110704.24720000057,
+        "chargedS": 0,
+        "inputTokens": 187770,
+        "outputTokens": 2950,
+        "costUsd": 0.0933465,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 5,
+        "cooledDown": 5,
+        "interruptedActions": 124,
+        "completedCycles": 6,
+        "idleS": 13.099999999999977,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 184,
+        "fastFails": 5,
+        "cooledDown": 5,
+        "interruptedActions": 124,
+        "completedCycles": 6,
+        "idleS": 13.099999999999977,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 180,
+        "fastFails": 6,
+        "cooledDown": 6,
+        "interruptedActions": 130,
+        "completedCycles": 7,
+        "idleS": 10.649999999999986,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 112124.57830000005,
+      "providerWaitMs": 111005.5999000005,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 184,
+      "blueRunningActionsReplaced": 36,
+      "redRunningActionsReplaced": 66,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          103
+        ],
+        [
+          "collect:local",
+          17
+        ],
+        [
+          "escape_reverse:our_alliance",
+          14
+        ],
+        [
+          "shoot_now",
+          11
+        ],
+        [
+          "collect:depot",
+          4
+        ],
+        [
+          "align_then_shoot",
+          4
+        ]
+      ]
+    },
+    {
+      "part": "giant_paused",
+      "decider": "deepinfra",
+      "timing": "paused",
+      "seed": 9010,
+      "blue": [
+        "fab_05",
+        "fab_45",
+        "fab_35"
+      ],
+      "red": [
+        "fab_17",
+        "frc_1690",
+        "frc_4322"
+      ],
+      "scoreBlue": 137,
+      "scoreRed": 366,
+      "margin": -229,
+      "requests": 116,
+      "providerCalls": 116,
+      "robotDecisions": 185,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 108.47,
+      "latencyP50Ms": 746.9,
+      "latencyP95Ms": 1444.6,
+      "costUsd": 0.093182,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "totalsBlue": {
+        "decisions": 116,
+        "calls": 116,
+        "questions": 185,
+        "httpCalls": 185,
+        "robotDecisions": 185,
+        "fallbacks": 0,
+        "cachedCalls": 0,
+        "latencyMs": 107748.5190000009,
+        "chargedS": 0,
+        "inputTokens": 187231,
+        "outputTokens": 2976,
+        "costUsd": 0.09318194999999997,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "isMock": false,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 128,
+        "completedCycles": 4,
+        "idleS": 12.249999999999979,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourBlue": {
+        "decisions": 185,
+        "fastFails": 8,
+        "cooledDown": 8,
+        "interruptedActions": 128,
+        "completedCycles": 4,
+        "idleS": 12.249999999999979,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "behaviourRed": {
+        "decisions": 178,
+        "fastFails": 6,
+        "cooledDown": 6,
+        "interruptedActions": 131,
+        "completedCycles": 6,
+        "idleS": 10.549999999999986,
+        "continuationS": 0,
+        "continuations": 0
+      },
+      "fairness": {
+        "commitment": true,
+        "noIdle": true,
+        "minCommitS": 2,
+        "coalesceS": 0.25,
+        "criticalPinS": 1.5,
+        "maxIdleS": 1,
+        "failFastS": 0.5,
+        "optionCooldownS": 5,
+        "optionCooldownLongS": 15
+      },
+      "controllerWallMs": 108457.45420000004,
+      "providerWaitMs": 107927.43469999917,
+      "abortedReason": null,
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 185,
+      "blueRunningActionsReplaced": 37,
+      "redRunningActionsReplaced": 92,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          117
+        ],
+        [
+          "collect:local",
+          13
+        ],
+        [
+          "shoot_now",
+          11
+        ],
+        [
+          "collect:neutral",
+          9
+        ],
+        [
+          "escape_reverse:our_alliance",
+          8
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          8
+        ]
+      ]
     }
   ],
   "summary": {}
