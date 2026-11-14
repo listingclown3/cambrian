@@ -73,6 +73,10 @@ for (const spec of specs) {
     if (response.meta.fallbackUsed || response.meta.error) {
       console.error(`FAIL [${spec}] call ${i + 1}: fallback used: ${response.meta.error}`);
       failed = true;
+      if ((response.meta.error ?? "").includes("blocked_by_checkpoint")) {
+        console.error(`STOP [${spec}]: behind a bot-protection checkpoint; no further calls to it.`);
+        break;
+      }
       continue;
     }
     if (!option) {

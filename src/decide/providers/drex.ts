@@ -16,7 +16,9 @@
 import { costFromConfig } from "../../ledger";
 import type { Answer, Config, DecisionProvider, DecisionRequest, DecisionResponse, Question } from "../../contracts";
 import { defaultAnswer, fallbackResponse } from "./shared";
-import { authHeaders, estimateCostUsd, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
+import { repoPath } from "../../util/config";
+import { acquireShared } from "./sharedLimit";
+import { BLOCKED_BY_CHECKPOINT, HttpError, authHeaders, breakerState, estimateCostUsd, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
 
 export interface DrexOptions extends ProviderDeps {
   /** Drex model id to request (default: cfg.providers.byId.drex.model). */
@@ -104,15 +106,32 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
     const body = drexBody(model, req);
     const blocked = spendCapBlock(cfg, "drex", estimateCostUsd(cfg, "drex", model, JSON.stringify(body).length, 0));
     if (blocked) return fallbackResponse(req, "drex", model, started, blocked);
+    const breaker = breakerState(p.endpoint);
+    if (breaker.open) {
+      return fallbackResponse(req, "drex", model, started, `drex ${model}: ${BLOCKED_BY_CHECKPOINT}: circuit open after ${breaker.consecutive} checkpoint responses; next probe at ${new Date(breaker.openUntilMs).toISOString()} (request not sent)`);
+    }
+
+    // Machine-wide pacing shared with every other process calling Drex (config sharedRateLimit).
+    // The wait counts in latencyMs: a robot waiting for a slot is waiting for its answer.
+    const timeoutMs = opts.timeoutMs ?? p.timeoutMs;
+    let release: (() => void) | null = null;
+    if (p.sharedRateLimit && opts.sharedLimitDir !== false) {
+      const maxWait = req.mode === "live" ? timeoutMs : 120_000;
+      release = await acquireShared({ dir: opts.sharedLimitDir ?? repoPath("cache", "ratelimit", "drex"), ...p.sharedRateLimit }, maxWait, timeoutMs * (1 + retriesFor(p, req.mode)) + 5_000);
+      if (!release) return fallbackResponse(req, "drex", model, started, `drex ${model}: rate_limited_locally: no shared Drex slot within ${maxWait} ms (request not sent)`);
+    }
 
     let json: any;
     try {
-      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs: opts.timeoutMs ?? p.timeoutMs, retries: retriesFor(p, req.mode), deps: opts, queuedMs }));
+      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs, retries: retriesFor(p, req.mode), deps: opts, queuedMs }));
     } catch (e) {
+      release?.();
       // The request was sent, so it may have been billed: record it (tokens unknown = 0).
-      recordRealCall(cfg, "drex", opts, { tool: "drex", model, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });
+      // A call refused locally (open circuit breaker, limiter) never left: not recorded.
+      if (!(e instanceof HttpError && !e.sent)) recordRealCall(cfg, "drex", opts, { tool: "drex", model, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });
       return fallbackResponse(req, "drex", model, started, `drex ${model}: ${(e as Error).message}`);
     }
+    release?.();
     const latencyMs = performance.now() - started;
     const served = typeof json?.model === "string" ? json.model : model;
     const inputTokens = Math.max(0, Math.round(num(json?.usage?.input_tokens) ?? 0));

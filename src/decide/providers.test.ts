@@ -4,7 +4,11 @@ import { loadConfig } from "../util/config";
 import { getProvider, getProviderBySpec, parseProviderSpec, providerLabel, providerModel } from "./registry";
 import { deepinfraProvider, renderLlmPrompt } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
-import { addSpend, redact, resetSpend } from "./providers/http";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { addSpend, breakerState, redact, resetBreakers, resetSpend } from "./providers/http";
+import { acquireShared } from "./providers/sharedLimit";
 import { fakeDeps } from "./testing";
 
 const cfg = loadConfig();
@@ -188,5 +192,52 @@ describe("redaction", () => {
   it("removes key values and bearer tokens from error text", () => {
     const env = { NACE_API_KEY: "sk-very-secret-value" }; // secret-scan:allow (fake value used to test redaction)
     expect(redact("failed with sk-very-secret-value and Authorization: Bearer abcdefghijkl", env)).toBe("failed with <redacted> and Authorization: Bearer <redacted>");
+  });
+});
+
+describe("bot-protection checkpoint", () => {
+  it("is a distinct, unretried error and opens a circuit breaker after 3 in a row", async () => {
+    resetBreakers();
+    const deps = fakeDeps({}, { checkpoint: true });
+    const p = drexProvider(cfg, deps);
+    for (let i = 0; i < 3; i++) {
+      const res = await p.decide({ ...request, mode: "offline" });
+      expect(res.meta.fallbackUsed).toBe(true);
+      expect(res.meta.error).toMatch(/blocked_by_checkpoint: http 403 .*x-vercel-mitigated: challenge/);
+    }
+    expect(deps.requests).toHaveLength(3); // no retries even offline
+    expect(deps.ledger).toHaveLength(3);
+    const blocked = await p.decide(request);
+    expect(blocked.meta.error).toMatch(/blocked_by_checkpoint: circuit open/);
+    expect(deps.requests).toHaveLength(3); // not sent
+    expect(deps.ledger).toHaveLength(3); // not recorded
+    expect(breakerState(cfg.providers.byId.drex.endpoint!).open).toBe(true);
+    resetBreakers();
+  });
+});
+
+describe("machine-wide shared limiter", () => {
+  it("caps in-flight requests and spaces starts across callers", async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "shared-limit-"));
+    try {
+      const opts = { dir, requestsPerSecond: 20, maxInFlight: 2 };
+      const a = await acquireShared(opts, 1000, 5000);
+      const b = await acquireShared(opts, 1000, 5000);
+      expect(a && b).toBeTruthy();
+      expect(await acquireShared(opts, 120, 5000)).toBeNull(); // both slots held
+      a!();
+      const t0 = Date.now();
+      const c = await acquireShared(opts, 1000, 5000);
+      expect(c).toBeTruthy();
+      b!();
+      c!();
+      await new Promise((r) => setTimeout(r, 30));
+      const t1 = Date.now();
+      for (let i = 0; i < 4; i++) (await acquireShared(opts, 2000, 5000))!();
+      expect(Date.now() - t1).toBeGreaterThanOrEqual(3 * 50 - 5); // 20 rps = one start per 50 ms
+      expect(t0).toBeGreaterThan(0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

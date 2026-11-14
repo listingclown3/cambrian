@@ -19,15 +19,16 @@
  * Writes results/bench_batch.json.
  */
 import "dotenv/config";
+import { existsSync, readFileSync } from "node:fs";
 import { maskThenOptions, type DecisionRequest, type DecisionResponse, type Question } from "../contracts";
 import { ENGINE_IS_STUB, buildObservationView, engine } from "../engine";
 import { MatchRunner, basicCyclePolicy, demoRobots } from "../exec";
-import { loadConfig } from "../util/config";
+import { loadConfig, repoPath } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
 import { buildBatchActionRequest, buildCaptainRequest } from "./ask";
 import { parseLlmAnswers, type ChatDecisionProvider } from "./providers/deepinfra";
-import { callStats } from "./providers/http";
+import { BLOCKED_BY_CHECKPOINT, callStats } from "./providers/http";
 import { getProvider, providerReasoning, warmupProvider } from "./registry";
 import { renderSelfText, renderSharedStateText } from "./stateText";
 
@@ -93,7 +94,7 @@ const construction = {
 // -- deciders --
 
 const replies: { text: string; req: DecisionRequest; attempt: number }[] = [];
-const deciders = [
+const ALL_DECIDERS = [
   { key: "drex", provider: getProvider("drex", cfg, { purpose: "bench_batch", timeoutMs: 30_000 }) },
   { key: "drex_latest", provider: getProvider("drex", cfg, { purpose: "bench_batch", timeoutMs: 30_000, model: "drex-latest" }) },
   {
@@ -101,9 +102,16 @@ const deciders = [
     provider: getProvider("deepinfra", cfg, { purpose: "bench_batch", timeoutMs: 180_000, splitQuestions: false, thinking: "off", onReply: (text, req, attempt) => replies.push({ text, req, attempt }) }),
   },
 ] as const;
-const giantModel = await (deciders[2].provider as ChatDecisionProvider).resolveModel();
-const giantReasoning = providerReasoning(deciders[2].provider);
-console.log(`engine ${ENGINE_IS_STUB ? "STUB" : "rebuilt"}; ${construction.state}; giant ${giantModel} (reasoning ${giantReasoning})`);
+type DeciderKey = (typeof ALL_DECIDERS)[number]["key"];
+// --only drex,giant runs only those deciders; --merge keeps the other deciders' cells, rows and
+// agreement from the existing results/bench_batch.json (so a blocked decider can resume later).
+const only = new Set(arg("--only", "drex,drex_latest,giant").split(",")) as Set<string>;
+const merge = process.argv.includes("--merge");
+const deciders = ALL_DECIDERS.filter((d) => only.has(d.key));
+const giant = ALL_DECIDERS[2];
+const giantModel = await (giant.provider as ChatDecisionProvider).resolveModel();
+const giantReasoning = providerReasoning(giant.provider);
+console.log(`engine ${ENGINE_IS_STUB ? "STUB" : "rebuilt"}; ${construction.state}; giant ${giantModel} (reasoning ${giantReasoning}); running ${deciders.map((d) => d.key).join(", ")}${merge ? " (merging into the existing results)" : ""}`);
 for (const d of deciders) await warmupProvider(d.provider);
 
 /** Per-answer validity of a raw giant reply (each question scored on its own). */
@@ -123,10 +131,16 @@ function validFraction(req: DecisionRequest, text: string): number {
 
 const pct = (xs: number[], q: number) => (xs.length ? [...xs].sort((a, b) => a - b)[Math.min(xs.length - 1, Math.floor(q * xs.length))]! : null);
 const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+const isCheckpoint = (res: DecisionResponse) => (res.meta.error ?? "").includes(BLOCKED_BY_CHECKPOINT);
 
-const rows: Record<string, unknown>[] = [];
-const firstAnswers = new Map<string, DecisionResponse>(); // `${decider}:${size}` -> first good batched response
+const previous = merge && existsSync(repoPath("results", "bench_batch.json")) ? JSON.parse(readFileSync(repoPath("results", "bench_batch.json"), "utf8")) : null;
+const rows: Record<string, unknown>[] = previous ? previous.rows.filter((r: any) => !only.has(r.decider) && !/Security Checkpoint|blocked_by_checkpoint/.test(String(r.error ?? ""))) : [];
 const cells: Record<string, any> = {};
+if (previous) for (const [k, c] of Object.entries<any>(previous.summary.cells ?? {})) if (!only.has(c.decider)) cells[k] = { ...c, complete: c.complete ?? (c.okCalls === c.n && c.fallbacks === 0) };
+const agreement: Record<string, Record<number, number | null>> = {};
+if (previous) for (const [k, a] of Object.entries<any>(previous.summary.agreement_with_single ?? {})) if (!only.has(k)) agreement[k] = a;
+const firstAnswers = new Map<string, DecisionResponse>(); // `${decider}:${size}` -> first good batched response
+const blockedDeciders = new Set<DeciderKey>(); // Drex behind the bot-protection checkpoint: stop, do not fill with fallbacks
 
 for (const size of SIZES) {
   const questions = batchQuestions(size);
@@ -139,11 +153,17 @@ for (const size of SIZES) {
     const valid: number[] = [];
     let fallbacks = 0;
     const models = new Set<string>();
-    for (let i = 0; i < calls; i++) {
+    for (let i = 0; i < calls && !blockedDeciders.has(d.key); i++) {
       const req: DecisionRequest = { stateText, questions, seed: seed + i, mode: "live" };
       const before = replies.length;
       const statsBefore = callStats.length;
       const res = await d.provider.decide(req);
+      if (isCheckpoint(res)) {
+        console.error(`STOP ${d.key}: ${res.meta.error}`);
+        blockedDeciders.add(d.key);
+        if (d.key !== "giant") ALL_DECIDERS.filter((x) => x.key !== "giant").forEach((x) => blockedDeciders.add(x.key)); // same host
+        break;
+      }
       models.add(res.meta.model);
       if (!firstAnswers.has(`${d.key}:${size}`) && !res.meta.fallbackUsed) firstAnswers.set(`${d.key}:${size}`, res);
       const firstReply = replies.slice(before).find((r) => r.attempt === 0);
@@ -185,6 +205,8 @@ for (const size of SIZES) {
       n: calls,
       okCalls: lat.length,
       fallbacks,
+      complete: lat.length === calls && fallbacks === 0,
+      blockedByCheckpoint: blockedDeciders.has(d.key) && lat.length < calls,
       p50Ms: p50,
       p95Ms: pct(lat, 0.95),
       msPerDecisionP50: p50 === null ? null : p50 / size,
@@ -196,7 +218,7 @@ for (const size of SIZES) {
     };
     cells[`${d.key}:${size}`] = c;
     console.log(
-      `size ${String(size).padStart(2)} ${d.key.padEnd(11)} ${[...models].join(",").padEnd(24)} n ${calls} ok ${lat.length} fb ${fallbacks}  p50 ${p50?.toFixed(0)} ms p95 ${c.p95Ms?.toFixed(0)} ms  ${c.msPerDecisionP50?.toFixed(1)} ms/decision  $${c.costPerDecisionUsd?.toFixed(7)}/decision  in ${c.inputTokensMean?.toFixed(0)} out ${c.outputTokensMean?.toFixed(0)}  valid ${((c.validAnswerFraction ?? 0) * 100).toFixed(0)}%`,
+      `size ${String(size).padStart(2)} ${d.key.padEnd(11)} ${[...models].join(",").padEnd(24)} n ${calls} ok ${lat.length} fb ${fallbacks}${c.complete ? "" : " INCOMPLETE"}  p50 ${p50?.toFixed(0)} ms p95 ${c.p95Ms?.toFixed(0)} ms  ${c.msPerDecisionP50?.toFixed(1)} ms/decision  $${c.costPerDecisionUsd?.toFixed(7)}/decision  in ${c.inputTokensMean?.toFixed(0)} out ${c.outputTokensMean?.toFixed(0)}  valid ${((c.validAnswerFraction ?? 0) * 100).toFixed(0)}%`,
     );
   }
 }
@@ -204,11 +226,18 @@ for (const size of SIZES) {
 // -- agreement: batched answers vs the same decider's single-question answers --
 
 const pool32 = batchQuestions(32);
-const agreement: Record<string, Record<number, number | null>> = {};
 for (const d of deciders) {
+  if (blockedDeciders.has(d.key)) {
+    agreement[d.key] = Object.fromEntries(SIZES.map((s) => [s, null]));
+    continue;
+  }
   const single = new Map<string, string | undefined>();
   for (const q of pool32) {
     const res = await d.provider.decide({ stateText, questions: [q], seed, mode: "live" });
+    if (isCheckpoint(res)) {
+      blockedDeciders.add(d.key);
+      break;
+    }
     single.set(q.id, res.meta.fallbackUsed ? undefined : res.answers[q.id]?.chosen);
   }
   const byDecider: Record<number, number | null> = {};
@@ -217,29 +246,35 @@ for (const d of deciders) {
     const ids = batchQuestions(size)
       .map((q) => q.id)
       .filter((id) => single.get(id) !== undefined);
-    byDecider[size] = batched && ids.length ? ids.filter((id) => batched.answers[id]?.chosen === single.get(id)).length / ids.length : null;
+    byDecider[size] = !blockedDeciders.has(d.key) && batched && ids.length ? ids.filter((id) => batched.answers[id]?.chosen === single.get(id)).length / ids.length : null;
   }
   agreement[d.key] = byDecider;
   console.log(`agreement with own single-question answers, ${d.key}: ${SIZES.map((s) => `size ${s} ${byDecider[s] == null ? "n/a" : `${(byDecider[s]! * 100).toFixed(0)}%`}`).join(", ")}`);
 }
 
-// -- results --
+// -- results: a summary number is null unless its cell is complete --
 
+const val = (key: string, field: string) => (cells[key]?.complete ? cells[key][field] : null);
 const summary: Record<string, unknown> = {};
 for (const size of SIZES) {
-  summary[`batch${size}_ms_per_decision_drex`] = cells[`drex:${size}`].msPerDecisionP50;
-  summary[`batch${size}_ms_per_decision_giant`] = cells[`giant:${size}`].msPerDecisionP50;
-  summary[`batch${size}_ms_per_decision_drex_latest`] = cells[`drex_latest:${size}`].msPerDecisionP50;
-  summary[`batch${size}_usd_per_decision_drex`] = cells[`drex:${size}`].costPerDecisionUsd;
-  summary[`batch${size}_usd_per_decision_giant`] = cells[`giant:${size}`].costPerDecisionUsd;
-  summary[`batch${size}_usd_per_decision_drex_latest`] = cells[`drex_latest:${size}`].costPerDecisionUsd;
-  summary[`batch${size}_fallbacks_giant`] = cells[`giant:${size}`].fallbacks;
-  summary[`batch${size}_valid_answer_fraction_giant`] = cells[`giant:${size}`].validAnswerFraction;
+  summary[`batch${size}_ms_per_decision_drex`] = val(`drex:${size}`, "msPerDecisionP50");
+  summary[`batch${size}_ms_per_decision_giant`] = val(`giant:${size}`, "msPerDecisionP50");
+  summary[`batch${size}_ms_per_decision_drex_latest`] = val(`drex_latest:${size}`, "msPerDecisionP50");
+  summary[`batch${size}_usd_per_decision_drex`] = val(`drex:${size}`, "costPerDecisionUsd");
+  summary[`batch${size}_usd_per_decision_giant`] = val(`giant:${size}`, "costPerDecisionUsd");
+  summary[`batch${size}_usd_per_decision_drex_latest`] = val(`drex_latest:${size}`, "costPerDecisionUsd");
+  summary[`batch${size}_fallbacks_giant`] = cells[`giant:${size}`]?.fallbacks ?? null;
+  summary[`batch${size}_valid_answer_fraction_giant`] = cells[`giant:${size}`]?.validAnswerFraction ?? null;
 }
 summary.cells = cells;
+summary.incomplete_cells = Object.keys(cells).filter((k) => !cells[k].complete);
 summary.agreement_with_single = agreement;
-summary.models = { drex: cells["drex:1"].models, drex_latest: cells["drex_latest:1"].models, giant: giantModel, giant_reasoning: giantReasoning, giant_label: `${giantModel} (reasoning ${giantReasoning})` };
+summary.models = { drex: cells["drex:1"]?.models ?? null, drex_latest: cells["drex_latest:1"]?.models ?? null, giant: giantModel, giant_reasoning: giantReasoning, giant_label: `${giantModel} (reasoning ${giantReasoning})` };
 summary.engine_is_stub = ENGINE_IS_STUB;
+summary.notes = [
+  "A number is null when its cell is incomplete (see incomplete_cells).",
+  "Drex size-32 cells and Drex agreement could not be measured on 2026-11-14 from about 20:58 UTC: console.nace.ai answered every request with HTTP 403 (Vercel security checkpoint, x-vercel-mitigated: challenge). Those calls are not results.",
+];
 
 const file = writeResults({
   experiment: "bench_batch",
@@ -259,8 +294,13 @@ const file = writeResults({
     mode: "live (no network retries, no cache); one warm-up call per decider first",
     construction,
     prices: cfg.pricesPerMTokUsd,
+    lastRun: { deciders: deciders.map((d) => d.key), merged: merge },
   },
   rows,
   summary,
 });
 console.log(`wrote ${file}`);
+if (blockedDeciders.size > 0) {
+  console.error(`STOPPED: ${[...blockedDeciders].join(", ")} behind the bot-protection checkpoint; their cells are marked incomplete. Re-run with --only ${[...blockedDeciders].join(",")} --merge once the service answers again.`);
+  process.exitCode = 2;
+}

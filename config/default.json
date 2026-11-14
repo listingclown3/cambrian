@@ -612,7 +612,8 @@
         "extraHeaders": {},
         "concurrency": 8,
         "timeoutMs": 2000,
-        "retries": 2
+        "retries": 2,
+        "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 }
       },
       "drex_mock": {
         "endpoint": null,
