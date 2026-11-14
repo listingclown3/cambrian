@@ -1,9 +1,9 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:48:45.341Z",
+  "createdTs": "2026-11-14T22:00:23.729Z",
   "isMock": false,
-  "gitCommit": "458a30cca52b-dirty",
-  "simHash": "547d0ca0d9b67f1b",
+  "gitCommit": "3ee3405a4ce0-dirty",
+  "simHash": "73ee0c8a610a44cc",
   "config": {
     "contributing": [
       {
@@ -53,7 +53,7 @@
         "simHash": "e7daa7a2a621cf3c"
       }
     ],
-    "current_sim_hash": "547d0ca0d9b67f1b",
+    "current_sim_hash": "73ee0c8a610a44cc",
     "n_live_seeds_meaning": "paired eval seeds in the realtime Drex-vs-giant comparison; each condition has its own n in n.live_conditions",
     "matches_per_sec_source": "1 / mean wall seconds of the scripted-vs-scripted reference matches in bench_live (AgentController, no model calls), same sim hash",
     "live_fallbacks_and_exclusions": {
@@ -196,6 +196,151 @@
         "giant:32"
       ]
     },
+    "live_check": {
+      "note": "DECIDER PROPOSES, SIMULATOR CHECKS mode (off by default; run by the integrator). Never merged with the decider-alone live_margin_* numbers.",
+      "simHash": "547d0ca0d9b67f1b",
+      "sameSimHash": false,
+      "gitCommit": "3ee3405a4ce0",
+      "conditions": {
+        "drex_check_realtime": {
+          "model": "drex-v2.0",
+          "margin": {
+            "n": 3,
+            "mean": 73.3,
+            "ci95": 37.4
+          },
+          "marginMinusScriptedReference": {
+            "n": 3,
+            "mean": 16.7,
+            "ci95": 72.3
+          },
+          "acceptRatePct": {
+            "n": 3,
+            "mean": 55,
+            "ci95": 6.3
+          },
+          "checkP50Ms": {
+            "n": 3,
+            "mean": 327.3,
+            "ci95": 85.8
+          },
+          "chargedS": {
+            "n": 3,
+            "mean": 82,
+            "ci95": 27.9
+          },
+          "robotDecisions": {
+            "n": 3,
+            "mean": 144.3,
+            "ci95": 23
+          },
+          "fallbacksTotal": 0,
+          "wallS": {
+            "n": 3,
+            "mean": 82.8,
+            "ci95": 28.7
+          },
+          "excluded": []
+        },
+        "deepinfra_check_realtime": {
+          "model": "Qwen/Qwen3.5-397B-A17B",
+          "margin": {
+            "n": 2,
+            "mean": -21,
+            "ci95": 135.2
+          },
+          "marginMinusScriptedReference": {
+            "n": 2,
+            "mean": -66.5,
+            "ci95": 189.1
+          },
+          "acceptRatePct": {
+            "n": 2,
+            "mean": 76,
+            "ci95": 2
+          },
+          "checkP50Ms": {
+            "n": 2,
+            "mean": 228.5,
+            "ci95": 132.3
+          },
+          "chargedS": {
+            "n": 2,
+            "mean": 114.1,
+            "ci95": 26.6
+          },
+          "robotDecisions": {
+            "n": 2,
+            "mean": 132.5,
+            "ci95": 26.5
+          },
+          "fallbacksTotal": 0,
+          "wallS": {
+            "n": 2,
+            "mean": 114.7,
+            "ci95": 27
+          },
+          "excluded": []
+        },
+        "random_check_realtime": {
+          "model": "uniform",
+          "margin": {
+            "n": 4,
+            "mean": 67.8,
+            "ci95": 49
+          },
+          "marginMinusScriptedReference": {
+            "n": 4,
+            "mean": 14.5,
+            "ci95": 56.9
+          },
+          "acceptRatePct": {
+            "n": 4,
+            "mean": 54.3,
+            "ci95": 3.2
+          },
+          "checkP50Ms": {
+            "n": 4,
+            "mean": 274,
+            "ci95": 61.3
+          },
+          "chargedS": {
+            "n": 4,
+            "mean": 54.6,
+            "ci95": 17.5
+          },
+          "robotDecisions": {
+            "n": 4,
+            "mean": 159,
+            "ci95": 8.7
+          },
+          "fallbacksTotal": 0,
+          "wallS": {
+            "n": 4,
+            "mean": 55,
+            "ci95": 17.7
+          },
+          "excluded": []
+        }
+      },
+      "paired": {
+        "drex_minus_giant": {
+          "n": 2,
+          "mean": 95,
+          "ci95": 70.6
+        },
+        "drex_minus_random": {
+          "n": 3,
+          "mean": 25.3,
+          "ci95": 75.1
+        },
+        "giant_minus_random": {
+          "n": 2,
+          "mean": -82.5,
+          "ci95": 193.1
+        }
+      }
+    },
     "speed_headline": {
       "label": "per decision, one alliance batched (3 questions per call)",
       "batch3_ms_per_decision": {
@@ -310,12 +455,12 @@
     "matches_per_sec": null,
     "sim_matches_per_hour_drex": null,
     "sim_matches_per_hour_deepinfra": null,
-    "usage_drex_questions": 19253,
+    "usage_drex_questions": 25484,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,
     "usage_intern_system1_judgments": 136,
-    "usage_deepinfra_calls": 4164,
+    "usage_deepinfra_calls": 9572,
     "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 2,

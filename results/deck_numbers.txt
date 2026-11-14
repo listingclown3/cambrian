@@ -1,51 +1,46 @@
-deck numbers, generated 2026-11-14T21:48:50.858Z
-source: results/headline.json (git 458a30cca52b-dirty, simHash 547d0ca0d9b67f1b), all_real: true
-format: deck blank | value | source key(s). NOT RUN means the experiment did not run: delete that line from the deck.
+deck numbers, generated 2026-11-14T22:00:25.977Z (git 3ee3405a4ce0-dirty)
+format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
+giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 
-[cover]
-none
+[results slide, in slide order]
+1. batch-3 speed ratio (ms per decision, 3 questions per call) | 7.1x faster | FINAL | results/bench_batch.json batch3_ms_per_decision_*
+1. Drex ms per decision (batch 3) | 94 ms | FINAL | batch3_ms_per_decision_drex
+1. giant ms per decision (batch 3) | 671 ms | FINAL | batch3_ms_per_decision_giant
+2. cost ratio | 19x cheaper | FINAL | headline deepinfra_cost_per_1k_usd / drex_cost_per_1k_usd (results/smoke_latency.json)
+2. Drex $ per 1k decisions | $0.026 | FINAL | drex_cost_per_1k_usd
+2. giant $ per 1k decisions | $0.48 | FINAL | deepinfra_cost_per_1k_usd
+3. mean regret, Drex vs giant (lower is better) | Drex 20.8 ± 12.7 (n 39) vs giant 30.2 ± 13.5 (n 45) | INTERIM (pre-final run; will change) | results/bench_scenarios.json deciders.*.regret
+3. paired difference, Drex minus giant, 95% CI | -10.8 ± 9.8 (n 39) | INTERIM (pre-final run; will change) | bench_scenarios paired_regret.drex_minus_giant
+3. n scenarios | 45 | INTERIM (pre-final run; will change) | bench_scenarios n_scenarios
+3. n families | 15 | INTERIM (pre-final run; will change) | bench_scenarios n_families
+4. rollout savings % (Drex-guided vs uniform) | 12% | INTERIM (pre-final run; will change) | results/bench_explore.json rollout_savings_pct_drex_vs_uniform
+5. rule calls vs human-reviewed labels (drex-v2.0) | 59 of 60 | FINAL | results/rule_judge.json
+5. NDI scouting fields read | 245 of 248 (0 wrong) on 24 fabricated sheets | FINAL | results/ingest_scouting.json
+5. tower post-up legality result | RISKY: G210 violation probability 0.63 (manual p.59); probability 0.83 that its value depends on inducing opponent fouls; in 10 matches: 0 G420 fouls drawn, 0 points gained | INTERIM (pre-final run; will change) | results/quirks.json tower_post_up
+6. TITLE VERDICT | BETTER (paired regret difference -10.8 ± 9.8; its 95% CI excludes 0) | INTERIM (pre-final run; will change) | from line 3; use only when it reads FINAL
 
-[results]
-MAIN SPEED STAT: per decision, one alliance batched (3 questions per call) | Drex 94 ms vs giant 671 ms (7.1x faster) | batch3_ms_per_decision_drex, batch3_ms_per_decision_giant (results/bench_batch.json)
-single-question latency ratio (x faster) | 2.4x | latency_ratio_deepinfra_over_drex
-drex p50 ms | 297 ms | drex_p50_ms
-giant p50 ms | 701 ms | deepinfra_p50_ms
-cost ratio (x cheaper) | 19x | deepinfra_cost_per_1k_usd / drex_cost_per_1k_usd
-drex $ per 1k decisions | $0.026 | drex_cost_per_1k_usd
-giant $ per 1k decisions | $0.48 | deepinfra_cost_per_1k_usd
-top-1 drex vs giant | NOT RUN | -
-n scenarios | NOT RUN | -
-n families | NOT RUN | -
-sim matches per hour drex vs giant | NOT RUN | -
-real-time sim margin drex vs giant | NOT RUN | -
-rollout savings % | NOT RUN | -
+[for Q&A, not on the slide]
+real-time sim margin, Drex ALONE (thinking time on the sim clock) | NOT RUN | - | -
+real-time sim margin, giant ALONE (thinking time on the sim clock) | NOT RUN | - | -
+scripted reference margin on the same eval seeds (scripted both sides) | +49.5 ± 25.5 (n 8 seeds) | PARTIAL RUN (still playing) | results/bench_live_check.json
+real-time sim margin, Drex + SIMULATOR CHECK | +73.3 ± 37.4 (n 3 seeds); vs scripted reference +16.7 ± 72.3 (n 3 seeds); decider's pick kept 55%; fallbacks 0 | PARTIAL RUN (still playing) | bench_live_check conditions.drex_check_realtime
+real-time sim margin, giant + SIMULATOR CHECK | -21 ± 135.2 (n 2 seeds); vs scripted reference -66.5 ± 189.1 (n 2 seeds); decider's pick kept 76%; fallbacks 0 | PARTIAL RUN (still playing) | bench_live_check conditions.deepinfra_check_realtime
+real-time sim margin, random proposer (control) + SIMULATOR CHECK | +67.8 ± 49 (n 4 seeds); vs scripted reference +14.5 ± 56.9 (n 4 seeds); decider's pick kept 54%; fallbacks 0 | PARTIAL RUN (still playing) | bench_live_check conditions.random_check_realtime
+check mode, paired Drex minus giant | +95 ± 70.6 (n 2 seeds) | PARTIAL RUN (still playing) | bench_live_check paired.drex_minus_giant
+check mode, paired Drex minus random-proposer control | +25.3 ± 75.1 (n 3 seeds) | PARTIAL RUN (still playing) | bench_live_check paired.drex_minus_random
+Drex robot decisions per match, BEFORE the fairness rules (dev seeds, rules off) | one paused dev match reached 1,372 decisions, 1,001 of them the same instantly-ending option (realtime: 279 and 239) | FINAL | results/bench_live_drex_dev.json
+Drex robot decisions per match, AFTER (commitment + anti-loop rules; check mode, eval seeds) | 144 | PARTIAL RUN (still playing) | bench_live_check conditions.drex_check_realtime.robotDecisions
+idle seconds per robot per match, scripted policy, before vs after the no-idle rule | 41.35 s vs 0.4 s | FINAL | results/idle_report.json
+sim matches per hour, Drex vs giant (decider alone) | NOT RUN | - | -
+single-call latency p50, Drex vs giant (sequential, clean) | 297 ms vs 701 ms (2.4x) | FINAL | drex_p50_ms, deepinfra_p50_ms
+batch 1 ms per decision, Drex vs giant | 382 ms vs 695 ms (1.8x) | FINAL | bench_batch batch1_ms_per_decision_*
+batch 8 ms per decision, Drex vs giant (stress size) | 99 ms vs 385 ms (3.9x) | FINAL | bench_batch batch8_ms_per_decision_*
+batch 32 ms per decision, Drex vs giant (stress size) | Drex 27 ms; giant NOT RUN | FINAL | bench_batch batch32_ms_per_decision_*
+regret, scripted and random baselines | scripted 23.5 ± 11.2 (n 45); random 31.5 ± 9.2 (n 45) | INTERIM (pre-final run; will change) | bench_scenarios deciders.scripted / random
 
-[batch table: ms per decision when one call answers N questions about one state]
-sizes 1 and 3 are match sizes (one robot, one alliance); 8 and 32 are stress sizes; giant = reasoning off
-batch 1 | Drex 382 ms vs giant 695 ms (1.8x) | batch1_ms_per_decision_drex, batch1_ms_per_decision_giant
-batch 3 | Drex 94 ms vs giant 671 ms (7.1x) | batch3_ms_per_decision_drex, batch3_ms_per_decision_giant
-batch 8 | Drex 99 ms vs giant 385 ms (3.9x) | batch8_ms_per_decision_drex, batch8_ms_per_decision_giant
-batch 32 | Drex 27 ms; giant NOT RUN | batch32_ms_per_decision_drex, batch32_ms_per_decision_giant
-NOTE: the giant's batch 8 time varied a lot between runs (491 ms and 1362 ms were both observed); quote it as a range.
-
-[scenario quality: mean regret against the end-of-match answer key (lower is better)]
-regret: Drex vs giant vs scripted vs random | Drex 20.8 ± 12.7 (n 39); giant 30.2 ± 13.5 (n 45); scripted 23.5 ± 11.2 (n 45); random 31.5 ± 9.2 (n 45) | results/bench_scenarios.json summary.deciders[*].regret
-paired difference, Drex minus giant (negative = Drex better) | -10.8 ± 9.8 (n 39) | results/bench_scenarios.json summary.paired_regret.drex_minus_giant
-paired difference, Drex minus scripted | -2.9 ± 5.8 (n 39) | results/bench_scenarios.json summary.paired_regret.drex_minus_scripted
-prompt version: not recorded; sim hash e7daa7a2a621cf3c; answer key sim hash e7daa7a2a621cf3c
-
-[quirk check]
-tower post-up | tested the tower post-up; Drex flagged it RISKY: G210 violation probability 0.63 (manual p.59), and probability 0.83 that its value depends on inducing opponent fouls; in 10 matches it drew 0 G420 fouls and added 0 points | results/quirks.json row tower_post_up
-all playbook entries: 10 LEGAL, 1 RISKY, 0 ILLEGAL; 3 simulated
-
-[builtwith]
-drex questions | 19,253 | usage_drex_questions
-intern sessions | 6 | usage_intern_sessions
-ndi docs | 90 | usage_ndi_docs
-deepinfra calls | 4,164 | usage_deepinfra_calls
-keenable pages | 58 | keenable_pages
-
-[plus]
-rule judge (drex-v2.0): accuracy vs human-reviewed labels | 59/60 (98.3%) | results/rule_judge.json summary
-rule judge (drex-latest): accuracy vs human-reviewed labels | 59/60 (98.3%) | results/rule_judge_drex-latest.json summary
-NDI scouting extraction | 245 of 248 stated fields recovered, 0 wrong, on 24 fabricated sheets (98.8%) | results/ingest_scouting.json summary
+[builtwith: real calls only]
+drex questions | 25,484 | LIVE COUNT (grows until the last run) | usage_drex_questions
+intern sessions | 6 | LIVE COUNT | usage_intern_sessions
+ndi docs | 90 | LIVE COUNT | usage_ndi_docs
+deepinfra calls | 9,572 | LIVE COUNT | usage_deepinfra_calls
+keenable pages | 58 | FINAL | keenable_pages
