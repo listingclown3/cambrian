@@ -1,4 +1,4 @@
-deck numbers, generated 2026-11-14T22:16:02.330Z (git 5bb31cc8fceb-dirty)
+deck numbers, generated 2026-11-14T22:17:12.990Z (git 5bb31cc8fceb-dirty)
 format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
 giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 
@@ -33,7 +33,7 @@ check mode, paired Drex minus random-proposer control | +55.3 ± 44.4 (n 8 seeds
 Drex robot decisions per match, BEFORE the fairness rules (dev seeds, rules off) | one paused dev match reached 1,372 decisions, 1,001 of them the same instantly-ending option (realtime: 279 and 239) | FINAL | results/bench_live_drex_dev.json
 Drex robot decisions per match, AFTER (commitment + anti-loop rules; check mode, eval seeds) | 149 | FINAL | bench_live_check conditions.drex_check_realtime.robotDecisions
 idle seconds per robot per match, scripted policy, before vs after the no-idle rule | 41.35 s vs 0.4 s | FINAL | results/idle_report.json
-sim matches per hour, Drex vs giant (decider alone, real-time; measured while other jobs were running) | 49 vs 39 | FINAL | bench_live conditions.*.sim_matches_per_hour
+sim matches per hour, Drex vs giant (decider alone; measured while other jobs were running) | 43 vs 26 with the match paused while the model thinks (the description uses this); 49 vs 39 in real-time mode | FINAL | headline sim_matches_per_hour_*; bench_live conditions.*.sim_matches_per_hour
 single-call latency p50, Drex vs giant (sequential, clean) | 297 ms vs 701 ms (2.4x) | FINAL | drex_p50_ms, deepinfra_p50_ms
 batch 1 ms per decision, Drex vs giant | 382 ms vs 695 ms (1.8x) | FINAL | bench_batch batch1_ms_per_decision_*
 batch 8 ms per decision, Drex vs giant (stress size) | 99 ms vs 385 ms (3.9x) | FINAL | bench_batch batch8_ms_per_decision_*
