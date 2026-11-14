@@ -12,6 +12,7 @@
  * constants; they are named and commented where they are defined.
  */
 import { climbTimeForLevel, dist, type Intent, type ObservationView, type ScriptedPolicy, type ShotSpot } from "../contracts";
+import { hashString } from "../util/rng";
 
 /** Collect until half full, score when our hub is active, climb in endgame. */
 export const basicCyclePolicy: ScriptedPolicy = {
@@ -71,6 +72,14 @@ const CLIMB_START_FACTOR = 1.5;
 const SPOT_TAKEN_M = 0.9;
 /** Heuristic: go score once the hopper is at least this full (fraction of capacity). */
 const SCORE_WHEN_FULL_FRACTION = 0.6;
+/** Heuristic: an opponent this close to its own tower counts as "at the tower", metres. */
+const TOWER_NEAR_M = 1.5;
+
+/** Options of the archetype policy. */
+export interface ArchetypePolicyOptions {
+  /** Defenders sometimes contest opponents at their tower in the endgame (where G420 applies). */
+  contestTowerInEndgame: boolean;
+}
 
 function optionIndex(view: ObservationView): Map<string, Intent> {
   const m = new Map<string, Intent>();
@@ -144,9 +153,12 @@ function scoreIntent(view: ObservationView, opts: Map<string, Intent>): Intent |
 }
 
 /** Plays to the robot's archetype. Reads only the ObservationView (own profile, others' visible traits). */
-export const archetypePolicy: ScriptedPolicy = {
-  id: "archetype",
-  decide(view: ObservationView): Intent {
+export function makeArchetypePolicy(id: string, options: ArchetypePolicyOptions): ScriptedPolicy {
+  return { id, decide: (view) => decideArchetype(view, options) };
+}
+
+function decideArchetype(view: ObservationView, options: ArchetypePolicyOptions): Intent {
+  {
     const { self } = view;
     const p = self.profile;
     const opts = optionIndex(view);
@@ -178,8 +190,18 @@ export const archetypePolicy: ScriptedPolicy = {
       }
     }
 
-    // Defender: shadow the most dangerous opponent shooter.
+    // Defender: shadow the most dangerous opponent shooter. In the endgame it sometimes (a
+    // deterministic coin from the view) goes after an opponent at its tower instead, which is
+    // what rule G420 penalises; turn this off with contestTowerInEndgame: false.
     if (p.shooterType === "none") {
+      if (options.contestTowerInEndgame && view.phase === "endgame" && (hashString(`${self.id}:${Math.floor(view.timeS)}`) & 1) === 0) {
+        const theirTower = view.field.alliances[self.alliance === "red" ? "blue" : "red"].tower;
+        const atTower = view.robots
+          .filter((r) => !r.isPartner && (r.climbLevel > 0 || r.apparentAction === "climb" || dist(r.pose, theirTower) <= TOWER_NEAR_M))
+          .sort((a, b) => dist(self.pose, a.pose) - dist(self.pose, b.pose))[0];
+        const contest = atTower ? opts.get(`defend:${atTower.id}`) : undefined;
+        if (contest) return contest;
+      }
       const target = defendTarget(view);
       const defend = target ? opts.get(`defend:${target}`) : undefined;
       if (defend && !lastOwnEvent(view, "action_done", "disengage")) return defend;
@@ -220,8 +242,13 @@ export const archetypePolicy: ScriptedPolicy = {
       if (score) return score;
     }
     return opts.get("hold_position") ?? hold;
-  },
-};
+  }
+}
+
+/** The archetype policy, with endgame tower contesting on. */
+export const archetypePolicy: ScriptedPolicy = makeArchetypePolicy("archetype", { contestTowerInEndgame: true });
+/** The archetype policy without endgame tower contesting. */
+export const archetypeNoContestPolicy: ScriptedPolicy = makeArchetypePolicy("archetype_no_tower_contest", { contestTowerInEndgame: false });
 
 /** Policy used by `pnpm match` and other tools when none is named. */
 export const DEFAULT_POLICY_ID = "archetype";
@@ -230,5 +257,6 @@ export const DEFAULT_POLICY_ID = "archetype";
 export const SCRIPTED_POLICIES: Record<string, ScriptedPolicy> = {
   [basicCyclePolicy.id]: basicCyclePolicy,
   [archetypePolicy.id]: archetypePolicy,
+  [archetypeNoContestPolicy.id]: archetypeNoContestPolicy,
   [holdPolicy.id]: holdPolicy,
 };

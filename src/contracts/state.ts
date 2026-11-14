@@ -47,6 +47,11 @@ export const ContactStateSchema = z.object({
   pinnedByRobotId: RobotIdSchema.nullable(),
   /** Seconds this robot has been continuously pinned. */
   pinS: z.number().nonnegative(),
+  /**
+   * Opponents already called for a tower-protection foul against this robot during their
+   * current contact (one call per contact). Optional (additive, P1).
+   */
+  towerFoulBy: z.array(RobotIdSchema).optional(),
 });
 
 /** Hub alignment state for one robot. */
@@ -262,6 +267,22 @@ export const MatchRulesSchema = z.object({
     /** Rule clause id recorded on the foul. */
     clauseId: z.string(),
   }),
+  /**
+   * Tower protection (rule G420, manual p.73): no contact with an opponent robot that touches its
+   * own tower during the last `lastS` seconds of the match. Optional (additive, P1); absent = not enforced.
+   */
+  towerProtection: z
+    .object({
+      /** Rule clause id recorded on the foul. */
+      clauseId: z.string(),
+      /** Window at the end of the match in which the rule applies, seconds. */
+      lastS: z.number().nonnegative(),
+      /** Severity of the foul. */
+      severity: z.enum(["minor", "major"]),
+      /** Tower level whose teleop points go to a victim that is off the ground (1-3). */
+      offGroundAwardLevel: z.number().int().min(1).max(3),
+    })
+    .optional(),
   /** Physics knobs (copy of config.physics). */
   physics: PhysicsParamsSchema,
   /** Shot model knobs (copy of config.shotModel). */

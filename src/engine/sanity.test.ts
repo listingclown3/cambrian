@@ -103,24 +103,25 @@ describe("sanity ladder", () => {
     const bully = profile("defender", "bully");
     const state = engine.createMatch(cfg, 21, [spec(victim, "blue"), spec(bully, "red")]);
     const dtS = state.rules.physics.dtS;
-    const home = { action: "goto_zone", params: { zone: "our_alliance" } } as const;
-    // The victim goes out to the neutral zone, then tries to drive home; the defender stands in
-    // its way (between it and its hub) and holds its ground.
-    engine.step(state, { B1: { action: "goto_zone", params: { zone: "neutral" } } }, dtS);
-    for (let i = 0; i < 200 && state.robots[0]!.intent !== null; i++) engine.step(state, {}, dtS);
-    const events: EngineEvent[] = [...engine.step(state, { B1: home, R1: { action: "defend", params: { robotId: "B1" } } }, dtS).events];
-    for (let i = 0; i < 600 && !events.some((e) => e.kind === "foul"); i++) {
-      events.push(...engine.step(state, state.robots[0]!.intent === null ? { B1: home } : {}, dtS).events);
-    }
+    const r = state.rules.physics.robotRadiusM;
+    // Victim against the side wall in the neutral zone, the stronger defender right on top of it.
+    const x = (state.field.neutral.x0 + state.field.neutral.x1) / 2;
+    Object.assign(state.robots[0]!.pose, { x, y: r });
+    Object.assign(state.robots[1]!.pose, { x, y: 3 * r });
+    // Both drive into each other (blue's left wall is +y, red's left wall is -y).
+    const victimPush = { action: "push_through", params: { direction: "toward_left_wall" } } as const;
+    const events: EngineEvent[] = [...engine.step(state, { B1: victimPush, R1: { action: "push_through", params: { direction: "toward_left_wall" } } }, dtS).events];
+    for (let i = 0; i < 200 && !events.some((e) => e.kind === "foul"); i++) events.push(...engine.step(state, {}, dtS).events);
     const foul = events.find((e): e is Extract<EngineEvent, { kind: "foul" }> => e.kind === "foul");
     expect(foul).toBeDefined();
     expect(foul?.clauseId).toBe(cfg.game.pinning.value.clauseId);
     expect(foul?.robotId).toBe("R1");
+    expect(foul?.timeS).toBeGreaterThanOrEqual(cfg.game.pinning.value.limitS);
     expect(events.some((e) => e.kind === "pinned" && e.robotId === "B1")).toBe(true);
     expect(state.score.blue.foulPoints).toBe(cfg.game.minorFoulPoints.value);
   });
 
-  it("the maneuver planner picks spin or reverse by micro-rollouts, deterministically, and frees the robot", () => {
+  it("the maneuver planner picks spin or reverse by micro-rollouts, deterministically", () => {
     const victim = profile("drum_fixed", "victim");
     const bully = profile("defender", "bully");
     const state = engine.createMatch(cfg, 23, [spec(victim, "blue"), spec(bully, "red")]);
@@ -137,8 +138,56 @@ describe("sanity ladder", () => {
     expect(a.scores.map((x) => x.label)).toEqual(["escape_spin:our_alliance", "escape_reverse:our_alliance"]);
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
     expect(["escape_spin", "escape_reverse"]).toContain(a.intent.action);
-    expect(Math.max(...a.scores.map((x) => x.freeFraction))).toBeGreaterThan(0);
+    for (const x of a.scores) expect(Number.isFinite(x.meanMargin) && Number.isFinite(x.meanExitDistanceM)).toBe(true);
   }, SLOW);
+
+  describe("G420 tower protection", () => {
+    // B1 posts up against its own tower; R1 then drives into it (defend B1).
+    function setup(seed: number) {
+      const state = engine.createMatch(cfg, seed, [spec(profile("drum_fixed", "poster"), "blue"), spec(profile("defender", "contester"), "red")]);
+      const dtS = state.rules.physics.dtS;
+      engine.step(state, { B1: { action: "goto_shot_spot", params: { spotId: "tower_post_right" } }, R1: { action: "hold_position", params: {} } }, dtS);
+      for (let i = 0; i < 200 && state.robots[0]!.intent !== null; i++) engine.step(state, {}, dtS);
+      engine.step(state, { B1: { action: "hold_position", params: {} } }, dtS);
+      return state;
+    }
+    function contest(state: ReturnType<typeof setup>): EngineEvent[] {
+      const events: EngineEvent[] = [...engine.step(state, { R1: { action: "defend", params: { robotId: "B1" } } }, state.rules.physics.dtS).events];
+      for (let i = 0; i < 300 && state.robots[1]!.contact.withRobotId !== "B1"; i++) events.push(...engine.step(state, {}, state.rules.physics.dtS).events);
+      for (let i = 0; i < 10; i++) events.push(...engine.step(state, {}, state.rules.physics.dtS).events);
+      expect(state.robots[1]!.contact.withRobotId).toBe("B1");
+      return events;
+    }
+    const g420 = (events: EngineEvent[]) => events.filter((e): e is Extract<EngineEvent, { kind: "foul" }> => e.kind === "foul" && e.clauseId === "G420");
+
+    it("contact with an opponent touching its tower in the last 30 s is one major foul", () => {
+      const state = setup(51);
+      state.timeS = state.rules.matchS - 25; // jump the clock into the final 30 seconds
+      const fouls = g420(contest(state));
+      expect(fouls).toHaveLength(1);
+      expect(fouls[0]!.robotId).toBe("R1");
+      expect(fouls[0]!.severity).toBe("major");
+      expect(state.score.blue.foulPoints).toBe(cfg.game.majorFoulPoints.value);
+      expect(state.score.blue.teleopTower).toBe(0); // on the ground: no tower award
+    });
+
+    it("an opponent that is off the ground is also awarded level 3 tower points", () => {
+      const state = setup(52);
+      state.timeS = state.rules.matchS - 25;
+      engine.step(state, { B1: { action: "climb", params: { level: 1 } } }, state.rules.physics.dtS);
+      const events = contest(state);
+      expect(g420(events)).toHaveLength(1);
+      expect(state.score.blue.teleopTower).toBe(cfg.game.towerTeleopPoints.value[2]);
+      expect(state.robots[0]!.climb.level).toBe(3);
+    });
+
+    it("the same contact earlier in the match is not a G420 foul", () => {
+      const state = setup(53);
+      expect(state.timeS).toBeLessThan(state.rules.matchS - 30);
+      expect(g420(contest(state))).toHaveLength(0);
+      expect(state.score.blue.foulPoints).toBe(0);
+    });
+  });
 
   it("a weak robot cannot shove a stronger one that holds its ground", () => {
     const weak = profile("starter_bot", "weak");

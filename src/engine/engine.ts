@@ -59,6 +59,16 @@ const DEFAULT_GRAVITY = 9.81;
 /** A point target counts as reached once the robot centre is this close, metres (well below any tolerance). */
 const ARRIVE_EXACT_M = 1e-3;
 
+/**
+ * Rule G420 "TOWER protection", 2026 manual p.73 (data/rules/conduct_rules.json): "A ROBOT may
+ * not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact
+ * with an opponent TOWER during the last 30 seconds of the MATCH regardless of who initiates
+ * contact. Violation: MAJOR FOUL and if the opponent ROBOT is off the ground the opponent ROBOT is
+ * awarded LEVEL 3 TOWER points." Not yet in config/default.json, hence a named constant; it is
+ * copied into MatchState.rules.towerProtection at createMatch.
+ */
+const TOWER_PROTECTION = { clauseId: "G420", lastS: 30, severity: "major", offGroundAwardLevel: 3 } as const;
+
 /** Steps during which the shooter stays spun up. */
 const SHOOTING: ReadonlySet<string> = new Set(["shoot_now", "align_then_shoot", "dump_unaligned", "shoot_on_move", "hold_fire_until_active"]);
 
@@ -162,6 +172,7 @@ function createMatch(cfg: Config, seed: number, specs: MatchRobotSpec[]): MatchS
         majorFoul: g.majorFoulPoints.value,
       },
       pinning: { ...g.pinning.value },
+      towerProtection: { ...TOWER_PROTECTION },
       physics,
       shotModel: ShotModelParamsSchema.parse(cfg.shotModel),
       triggers: TriggerParamsSchema.parse(cfg.triggers),
@@ -877,7 +888,9 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
     const route = step.action === "route_via" ? step.params.route : step.action === "shoot_on_move" && "path" in step.params ? step.params.path : null;
     const goal = route ? crossingWaypoint(state, robot, route, robot.navTarget) : robot.navTarget;
     const before = { x: robot.pose.x, y: robot.pose.y };
-    arrived = moveToward(state, robot, goal, dtS, physics.arriveToleranceM, follows);
+    // Followers (defend, screen, protect) drive right up to their point so they really make contact.
+    const stopM = follows ? Math.min(physics.arriveToleranceM, physics.contactMarginM ?? physics.arriveToleranceM) : physics.arriveToleranceM;
+    arrived = moveToward(state, robot, goal, dtS, stopM, follows);
     if (!arrived) wantsToMove = true;
     if (goal !== robot.navTarget) arrived = false;
     trackProgress(state, robot, before, arrived, dtS, events);
@@ -995,10 +1008,11 @@ function separateRobots(state: MatchState, trying: Uint8Array): void {
   const grid = getGrid(state.field, state.rules.physics);
   for (let i = 0; i < robots.length; i++) {
     const a = robots[i]!;
-    if (a.climb.level > 0 || a.climb.inProgress) continue;
+    const aFixed = a.climb.level > 0 || a.climb.inProgress; // on the tower: does not move
     for (let j = i + 1; j < robots.length; j++) {
       const b = robots[j]!;
-      if (b.climb.level > 0 || b.climb.inProgress) continue;
+      const bFixed = b.climb.level > 0 || b.climb.inProgress;
+      if (aFixed && bFixed) continue;
       const dx = b.pose.x - a.pose.x;
       const dy = b.pose.y - a.pose.y;
       const d = Math.hypot(dx, dy);
@@ -1014,6 +1028,8 @@ function separateRobots(state: MatchState, trying: Uint8Array): void {
       else if (pa > 0) shareA = 1 - Math.max(0, Math.min(1, (pa - gripForce(state, b)) / pa));
       else if (pb > 0) shareA = Math.max(0, Math.min(1, (pb - gripForce(state, a)) / pb));
       else shareA = 0.5;
+      if (aFixed) shareA = 0;
+      else if (bFixed) shareA = 1;
       a.pose.x -= ux * overlap * shareA;
       a.pose.y -= uy * overlap * shareA;
       b.pose.x += ux * overlap * (1 - shareA);
@@ -1021,6 +1037,57 @@ function separateRobots(state: MatchState, trying: Uint8Array): void {
       resolvePosition(grid, a.pose, a.profile.fitsUnderTrench);
       resolvePosition(grid, b.pose, b.profile.fitsUnderTrench);
     }
+  }
+}
+
+/** True while a robot touches its own tower: climbing or hanging, or bumpers against the footprint. */
+function touchesOwnTower(state: MatchState, robot: RobotState): boolean {
+  if (robot.climb.inProgress || robot.climb.level > 0) return true;
+  const physics = state.rules.physics;
+  const tower = state.field.alliances[robot.alliance].tower;
+  const r = physics.robotRadiusM;
+  const sz = state.field.elementSizes;
+  const dx = Math.max(0, Math.abs(robot.pose.x - tower.x) - (sz ? sz.towerDepthM / 2 : 0));
+  const dy = Math.max(0, Math.abs(robot.pose.y - tower.y) - (sz ? sz.towerWidthM / 2 : 0));
+  return Math.hypot(dx, dy) <= r + (physics.contactMarginM ?? 0) + EPS;
+}
+
+/**
+ * Tower protection (MatchState.rules.towerProtection, rule G420): in the last `lastS` seconds,
+ * any contact with an opponent robot that touches its own tower is a foul on the contacting
+ * robot, whoever started it; one call per contact. If the victim is off the ground it is awarded
+ * the tower points of `offGroundAwardLevel` (less any tower points it already earned) and its
+ * climb counts as done at that level. Transitive contact through fuel is not modelled.
+ */
+function updateTowerProtection(state: MatchState, events: EngineEvent[]): void {
+  const tp = state.rules.towerProtection;
+  if (!tp) return;
+  const inWindow = state.timeS >= state.rules.matchS - tp.lastS - EPS;
+  const touch = contactDistance(state) + (state.rules.physics.contactMarginM ?? 0);
+  for (const victim of state.robots) {
+    const called = victim.contact.towerFoulBy;
+    if (!inWindow && called === undefined) continue;
+    const next: RobotId[] = [];
+    for (const opp of state.robots) {
+      if (opp.alliance === victim.alliance || dist(opp.pose, victim.pose) > touch) continue;
+      if (called?.includes(opp.id)) {
+        next.push(opp.id);
+        continue;
+      }
+      if (!inWindow || !touchesOwnTower(state, victim)) continue;
+      next.push(opp.id);
+      callFoul(state, opp, tp.clauseId, tp.severity, events);
+      if (victim.climb.inProgress || victim.climb.level > 0) {
+        const pts = state.rules.points.towerTeleop;
+        const already = victim.climb.level > 0 ? (pts[victim.climb.level - 1] ?? 0) : 0;
+        const award = Math.max(0, (pts[tp.offGroundAwardLevel - 1] ?? 0) - already);
+        const level = Math.max(victim.climb.level, tp.offGroundAwardLevel);
+        victim.climb = { level, inProgress: false, targetLevel: 0, remainingS: 0 };
+        if (award > 0) addScore(state, victim.alliance, award, "tower", victim.id, events);
+        if (currentStep(victim)?.action === "climb") finish(state, victim, events);
+      }
+    }
+    if (next.length > 0 || called !== undefined) victim.contact.towerFoulBy = next;
   }
 }
 
@@ -1052,10 +1119,21 @@ function updatePins(state: MatchState, startX: Float64Array, startY: Float64Arra
     const other = c.withRobotId !== null ? robotById(state, c.withRobotId) : null;
     let pinner: RobotState | null = null;
     if (other && other.alliance !== robot.alliance && trying[i] === 1) {
-      const moved = Math.hypot(robot.pose.x - startX[i]!, robot.pose.y - startY[i]!);
+      // Headway toward where it is going (being shoved backwards is no headway either).
+      const goal = robot.navTarget;
+      const moved = goal
+        ? Math.hypot(goal.x - startX[i]!, goal.y - startY[i]!) - Math.hypot(goal.x - robot.pose.x, goal.y - robot.pose.y)
+        : Math.hypot(robot.pose.x - startX[i]!, robot.pose.y - startY[i]!);
       const tx = robot.pose.x - other.pose.x;
       const ty = robot.pose.y - other.pose.y;
-      const into = other.velocity.vx * tx + other.velocity.vy * ty > EPS || currentStep(other)?.action === "defend";
+      // The opponent pins only if it is the one holding: driving into this robot (or defending it)
+      // with at least the force this robot pushes back with.
+      const td = Math.hypot(tx, ty) || 1;
+      const j = robots.indexOf(other);
+      const theirs = pushingForce(state, other, tx / td, ty / td, trying[j] === 1);
+      const ours = pushingForce(state, robot, -tx / td, -ty / td, true);
+      const holding = theirs > 0 ? theirs : currentStep(other)?.action === "defend" ? gripForce(state, other) : 0;
+      const into = holding > 0 && holding >= ours;
       if (moved < stuckM && into) pinner = other;
     }
     if (pinner) {
@@ -1198,6 +1276,7 @@ function step(state: MatchState, intents: Record<RobotId, Intent | undefined>, d
   advanceClock(state, dtS, rng, events);
   updateContacts(state, dtS, wasNear, events);
   updatePins(state, startX, startY, trying, dtS, events);
+  updateTowerProtection(state, events);
   timers(state, dtS, events);
 
   state.tick += 1;
