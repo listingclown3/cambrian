@@ -57,6 +57,7 @@
     "deck": "node scripts/deck-numbers.mjs",
     "ci:status": "node scripts/ci-status.mjs",
     "bench:engine": "tsx src/exec/benchEngine.ts",
+    "idle:report": "tsx src/exec/idleReport.ts",
     "field:build": "tsx src/field/build.ts",
     "field:extract": "tsx src/field/extract.ts"
   },

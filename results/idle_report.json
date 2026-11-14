@@ -1,0 +1,854 @@
+{
+  "experiment": "idle_report",
+  "definition": "idle = stationary (speed below triggers.noProgressMinMoveM / triggers.noProgressS) with no active intent (none, hold_position or hold_fire_until_active); climbing, hanging and pinned robots excepted",
+  "lineup": "demoRobots (3v3 archetype midpoints)",
+  "seeds": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010
+  ],
+  "maxIdleS": 1,
+  "before": {
+    "policy": "archetype_v1 (frozen at 6616170)",
+    "meanIdleSPerRobotPerMatch": 39.32,
+    "maxIdleSPerRobotPerMatch": 50.35,
+    "longestIdleStretchS": 25,
+    "matches": [
+      {
+        "seed": 1001,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 41.35,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 47.65,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 11.35,
+            "longestIdleS": 10.6
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 35.15,
+            "longestIdleS": 24.7
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 39,
+            "longestIdleS": 19.35
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 47.1,
+            "longestIdleS": 25
+          }
+        ]
+      },
+      {
+        "seed": 1002,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 43.5,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 47.45,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 18,
+            "longestIdleS": 13.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 45.75,
+            "longestIdleS": 23.25
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 41.15,
+            "longestIdleS": 22.75
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 43,
+            "longestIdleS": 21.65
+          }
+        ]
+      },
+      {
+        "seed": 1003,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 49.75,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 49.6,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 25.1,
+            "longestIdleS": 20
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 47.05,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 45.15,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 47.25,
+            "longestIdleS": 25
+          }
+        ]
+      },
+      {
+        "seed": 1004,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 47.55,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 45.6,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 10.95,
+            "longestIdleS": 8.1
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 42.35,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 33.45,
+            "longestIdleS": 17.9
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 36.1,
+            "longestIdleS": 22
+          }
+        ]
+      },
+      {
+        "seed": 1005,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 42.65,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 47.75,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 8.15,
+            "longestIdleS": 4.1
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 45.35,
+            "longestIdleS": 22.95
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 43.95,
+            "longestIdleS": 23.8
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 44.05,
+            "longestIdleS": 21.9
+          }
+        ]
+      },
+      {
+        "seed": 1006,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 46.2,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 50.35,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 15,
+            "longestIdleS": 12.3
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 47.4,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 38.05,
+            "longestIdleS": 20.1
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 39.05,
+            "longestIdleS": 21.7
+          }
+        ]
+      },
+      {
+        "seed": 1007,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 45.75,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 49.25,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 18.6,
+            "longestIdleS": 13.3
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 47.1,
+            "longestIdleS": 24.85
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 37.65,
+            "longestIdleS": 19.65
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 49.25,
+            "longestIdleS": 25
+          }
+        ]
+      },
+      {
+        "seed": 1008,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 46.65,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 47.4,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 18.05,
+            "longestIdleS": 13.3
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 46.35,
+            "longestIdleS": 23.8
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 32.75,
+            "longestIdleS": 16.95
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 37.25,
+            "longestIdleS": 21.3
+          }
+        ]
+      },
+      {
+        "seed": 1009,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 47.3,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 45.25,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 13.35,
+            "longestIdleS": 8.4
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 44.25,
+            "longestIdleS": 24
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 24.3,
+            "longestIdleS": 23.85
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 46.8,
+            "longestIdleS": 25
+          }
+        ]
+      },
+      {
+        "seed": 1010,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 49.75,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 47.3,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 22.65,
+            "longestIdleS": 13.65
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 50.1,
+            "longestIdleS": 25
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 40.95,
+            "longestIdleS": 23.2
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 43.1,
+            "longestIdleS": 22
+          }
+        ]
+      }
+    ]
+  },
+  "after": {
+    "policy": "archetype (no-idle role table)",
+    "meanIdleSPerRobotPerMatch": 0.55,
+    "maxIdleSPerRobotPerMatch": 1.45,
+    "longestIdleStretchS": 0.1,
+    "matches": [
+      {
+        "seed": 1001,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.35,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.1,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.7,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.55,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1002,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.25,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.1,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.35,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.75,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1003,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.3,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.25,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.3,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.55,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.5,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1004,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.2,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.35,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.15,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.6,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.65,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1005,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.3,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.25,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.2,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.3,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.5,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.35,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1006,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.3,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.55,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 0.8,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.55,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.6,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1007,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.2,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 0.8,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.6,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.65,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1008,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.15,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 0.95,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.8,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1009,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.45,
+            "longestIdleS": 0.1
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.5,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.4,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.6,
+            "longestIdleS": 0.05
+          }
+        ]
+      },
+      {
+        "seed": 1010,
+        "robots": [
+          {
+            "robotId": "B1",
+            "archetype": "turret_sotm",
+            "idleS": 0.25,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B2",
+            "archetype": "drum_fixed",
+            "idleS": 0.35,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "B3",
+            "archetype": "feeder_passer",
+            "idleS": 1.15,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R1",
+            "archetype": "multilane_fixed",
+            "idleS": 0.45,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R2",
+            "archetype": "dumper",
+            "idleS": 0.55,
+            "longestIdleS": 0.05
+          },
+          {
+            "robotId": "R3",
+            "archetype": "big_hopper_hauler",
+            "idleS": 0.65,
+            "longestIdleS": 0.05
+          }
+        ]
+      }
+    ]
+  }
+}
