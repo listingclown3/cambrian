@@ -105,7 +105,7 @@ describe("drex provider", () => {
 describe("deepinfra provider", () => {
   it("sends the identical state text and options at temperature 0 and parses a JSON answer", async () => {
     const deps = fakeDeps({ pick: "c", yes_no: 0.2, rate: "medium" });
-    const provider = deepinfraProvider(cfg, deps);
+    const provider = deepinfraProvider(cfg, { ...deps, splitQuestions: false });
     const res = DecisionResponseSchema.parse(await provider.decide(request));
     const chat = deps.requests.find((r) => r.url.includes("chat"))!.body;
     expect(chat.model).toBe("Qwen/Qwen3.5-397B-A17B");
@@ -131,7 +131,7 @@ describe("deepinfra provider", () => {
   it("parse-retries once, then falls back, counting every call", async () => {
     const good = JSON.stringify({ pick: { choice: "a" }, yes_no: { probability_yes: 1 }, rate: { level: "low" } });
     const once = fakeDeps({}, { chatContent: ["not json at all", good] });
-    const r1 = await deepinfraProvider(cfg, once).decide(request);
+    const r1 = await deepinfraProvider(cfg, { ...once, splitQuestions: false }).decide(request);
     expect(r1.meta.fallbackUsed).toBe(false);
     expect(r1.answers.pick!.chosen).toBe("a");
     expect(r1.meta.inputTokens).toBe(400);
@@ -140,11 +140,25 @@ describe("deepinfra provider", () => {
     expect(retryMessages.at(-1).content).toMatch(/rejected/);
 
     const twice = fakeDeps({}, { chatContent: ['{"pick":{"choice":"zzz"}}'] });
-    const r2 = await deepinfraProvider(cfg, twice).decide(request);
+    const r2 = await deepinfraProvider(cfg, { ...twice, splitQuestions: false }).decide(request);
     expect(r2.meta.fallbackUsed).toBe(true);
     expect(r2.meta.error).toMatch(/parse-retry/);
     expect(r2.meta.costUsd).toBeCloseTo(0.001, 9);
     expect(twice.ledger).toHaveLength(2);
+  });
+
+  it("by default answers each question in its own call with the same state text, and sums usage", async () => {
+    const deps = fakeDeps({ pick: "b", yes_no: 0.4, rate: "low" });
+    const res = DecisionResponseSchema.parse(await deepinfraProvider(cfg, deps).decide(request));
+    const chats = deps.requests.filter((r) => r.url.includes("chat"));
+    expect(chats).toHaveLength(3);
+    for (const c of chats) expect(c.body.messages[1].content).toContain(request.stateText);
+    expect(chats.filter((c) => c.body.messages[1].content.includes('Question "pick"'))).toHaveLength(1);
+    expect(res.answers.pick!.chosen).toBe("b");
+    expect(res.answers.yes_no!.probability).toBe(0.4);
+    expect(res.meta).toMatchObject({ inputTokens: 600, outputTokens: 60, fallbackUsed: false, error: null });
+    expect(res.meta.costUsd).toBeCloseTo(0.0015, 9);
+    expect(deps.ledger).toHaveLength(3);
   });
 
   it("moves to the next preferred model on an access error", async () => {

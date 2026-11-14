@@ -41,6 +41,12 @@ export interface ChatProviderOptions extends ProviderDeps {
    *   "on"      - ask the model to think (chat_template_kwargs.enable_thinking = true)
    */
   thinking?: "default" | "off" | "on";
+  /**
+   * Answer a multi-question request with one chat call per question, run concurrently
+   * (default true). Each call carries the identical stateText and that one question, so a
+   * robot's private self-description in its question never reaches another robot's answer.
+   */
+  splitQuestions?: boolean;
 }
 
 /** A chat provider that can say exactly which model it is using. */
@@ -252,9 +258,32 @@ export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cf
     }
   }
 
+  async function decideSplit(req: DecisionRequest): Promise<DecisionResponse> {
+    const started = performance.now();
+    const parts = await Promise.all(req.questions.map((q) => limit(() => call({ ...req, questions: [q] }))));
+    const metas = parts.map((r) => r.meta);
+    const errors = metas.map((m) => m.error).filter((e): e is string => e !== null);
+    return {
+      answers: Object.assign({}, ...parts.map((r) => r.answers)),
+      meta: {
+        provider: id,
+        model: [...new Set(metas.map((m) => m.model))].join(","),
+        latencyMs: performance.now() - started,
+        inputTokens: metas.reduce((s, m) => s + m.inputTokens, 0),
+        outputTokens: metas.reduce((s, m) => s + m.outputTokens, 0),
+        costUsd: metas.reduce((s, m) => s + m.costUsd, 0),
+        fallbackUsed: metas.some((m) => m.fallbackUsed),
+        cached: metas.every((m) => m.cached),
+        error: errors.length > 0 ? errors.join(" | ") : null,
+        isMock: false,
+      },
+    };
+  }
+
+  const split = opts.splitQuestions ?? true;
   return {
     id,
-    decide: (req) => limit(() => call(req)),
+    decide: (req) => (split && req.questions.length > 1 ? decideSplit(req) : limit(() => call(req))),
     async resolveModel() {
       const key = env[p.apiKeyEnv ?? ""];
       if (!key) return fixedModel;
