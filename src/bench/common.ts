@@ -162,7 +162,7 @@ export function curateOptions(state: MatchState, robotId: string): IntentOption[
     by("hold_fire_until_active")?.label,
     by("collect:neutral")?.label ?? by("collect:local")?.label ?? by("collect:depot")?.label,
     spotsInRange[0] ? by(`goto_shot_spot:${spotsInRange[0].id}`)?.label : undefined,
-    climbs[climbs.length - 1]?.label,
+    state.phase === "endgame" ? climbs[climbs.length - 1]?.label : undefined,
     by("escape_spin:neutral")?.label,
     by("disengage")?.label,
     opponents[0] ? by(`defend:${opponents[0].id}`)?.label : undefined,
@@ -186,6 +186,24 @@ export function curateOptions(state: MatchState, robotId: string): IntentOption[
     chosen.add(l);
   });
   return all.filter((o) => chosen.has(o.label));
+}
+
+/**
+ * Rule fixed at 1:05 PM, before any re-scoring: a team would not consider climbing before the
+ * end game, so climb options are not part of a scenario's choice set unless the snapshot is in
+ * the endgame phase. Applied to the answer key (and to option curation for new scenarios).
+ * Reason: with a 20 s horizon a pre-endgame climb banks tower points inside the horizon while its
+ * real cost (no more scoring for the rest of the match) falls outside it.
+ */
+export function isExcludedOption(s: Pick<Scenario, "snapshot">, label: string): boolean {
+  return s.snapshot.state.phase !== "endgame" && label.startsWith("climb");
+}
+
+/** Recompute best and ambiguous from values (best = highest mean; ambiguous = CI overlap with the runner-up). */
+export function keyFromValues(values: Record<string, { mean: number; ci95: number; n: number }>): { values: typeof values; best: string; ambiguous: boolean } {
+  const ranked = Object.entries(values).sort((a, b) => b[1].mean - a[1].mean);
+  const [best, second] = ranked;
+  return { values, best: best![0], ambiguous: second ? best![1].mean - best![1].ci95 <= second[1].mean + second[1].ci95 : false };
 }
 
 /** The scripted policy's pick for the focus robot, as a label of `options` (or null if not offered). */

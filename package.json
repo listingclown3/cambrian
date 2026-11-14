@@ -27,6 +27,7 @@
     "mine": "tsx src/bench/mine.ts",
     "families": "tsx src/bench/families.ts",
     "answerkey": "tsx src/bench/answerkey.ts",
+    "rekey": "tsx src/bench/rekey.ts",
     "bench:scenarios": "tsx src/bench/benchScenarios.ts",
     "bench:explore": "tsx src/bench/benchExplore.ts",
     "bench:myrobot": "tsx src/bench/benchMyRobot.ts",

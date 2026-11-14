@@ -1,527 +1,583 @@
 {
   "experiment": "answerkey",
-  "createdTs": "2026-11-14T20:30:46.324Z",
+  "createdTs": "2026-11-14T21:00:43.648Z",
   "isMock": false,
-  "gitCommit": "98773512b7a7-dirty",
+  "gitCommit": "f4465c3c62d3-dirty",
   "simHash": "2cc2e7f621722c58",
   "config": {
-    "rolloutsPerOption": 50,
-    "horizonS": 20,
-    "configAnswerKey": {
-      "_status": "TUNABLE",
-      "_note": "Long rollouts that define the answer key of each scenario.",
-      "rollouts": 50,
-      "horizonS": 20
-    },
-    "workers": 11,
+    "horizon": "20 s",
+    "rule": "climb options excluded before the end game (isExcludedOption, fixed before re-scoring)",
+    "optionsRemovedByRule": 25,
     "rolloutPolicy": "basic_cycle for every robot not overridden",
-    "seeds": "rollout seed i of scenario s = fnv1a(`${s}:${i}`), shared by all options (common random numbers); scenarios come from dev-seed matches"
+    "seeds": "rollout seed i of scenario s = fnv1a(`${s}:${i}`), shared by all options; scenarios mined from dev-seed matches",
+    "currentSimHash": "2cc2e7f621722c58"
   },
   "rows": [
     {
       "scenarioId": "contact_while_loaded_1",
       "familyId": "fam_contact_while_loaded_1",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "disengage",
       "bestMean": 61.68,
       "bestCi95": 1.384,
       "secondMean": 59.1,
       "ambiguous": true,
-      "spread": 43.08
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_1__fuel",
       "familyId": "fam_contact_while_loaded_1",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "escape_spin:neutral",
       "bestMean": 55.66,
       "bestCi95": 1.041,
       "secondMean": 46.06,
       "ambiguous": false,
-      "spread": 36.46
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_1__opp",
       "familyId": "fam_contact_while_loaded_1",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "shoot_now",
       "bestMean": 65.72,
       "bestCi95": 1.439,
       "secondMean": 65.72,
       "ambiguous": true,
-      "spread": 40.5
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_2",
       "familyId": "fam_contact_while_loaded_2",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "disengage",
       "bestMean": 47.04,
       "bestCi95": 1.372,
       "secondMean": 41.88,
       "ambiguous": false,
-      "spread": 35.18
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_2__fuel",
       "familyId": "fam_contact_while_loaded_2",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "goto_zone:neutral",
       "bestMean": 32.06,
       "bestCi95": 1.673,
       "secondMean": 30.8,
       "ambiguous": true,
-      "spread": 21.86
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_2__opp",
       "familyId": "fam_contact_while_loaded_2",
-      "nOptions": 8,
+      "phase": "transition",
+      "nOptions": 7,
       "best": "shoot_now",
       "bestMean": 41.82,
       "bestCi95": 1.416,
       "secondMean": 41.82,
       "ambiguous": true,
-      "spread": 30.06
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_3",
       "familyId": "fam_contact_while_loaded_3",
-      "nOptions": 8,
-      "best": "climb:3",
-      "bestMean": -25.18,
-      "bestCi95": 1.269,
-      "secondMean": -35.82,
-      "ambiguous": false,
-      "spread": 30.86
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "disengage",
+      "bestMean": -35.82,
+      "bestCi95": 1.566,
+      "secondMean": -36.52,
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_3__fuel",
       "familyId": "fam_contact_while_loaded_3",
-      "nOptions": 8,
-      "best": "climb:3",
-      "bestMean": -23.86,
-      "bestCi95": 1.276,
-      "secondMean": -50.64,
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "escape_spin:neutral",
+      "bestMean": -50.64,
+      "bestCi95": 1.215,
+      "secondMean": -53.44,
       "ambiguous": false,
-      "spread": 31.62
+      "n": 50
     },
     {
       "scenarioId": "contact_while_loaded_3__opp",
       "familyId": "fam_contact_while_loaded_3",
-      "nOptions": 8,
-      "best": "climb:3",
-      "bestMean": -24.64,
-      "bestCi95": 1.343,
-      "secondMean": -32.44,
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "disengage",
+      "bestMean": -32.44,
+      "bestCi95": 1.411,
+      "secondMean": -36.78,
       "ambiguous": false,
-      "spread": 30.88
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1",
       "familyId": "fam_endgame_climb_or_cycle_1",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "shoot_now",
       "bestMean": 17.28,
       "bestCi95": 0.732,
       "secondMean": 17.28,
       "ambiguous": true,
-      "spread": 34.04
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1__fuel",
       "familyId": "fam_endgame_climb_or_cycle_1",
+      "phase": "endgame",
       "nOptions": 7,
       "best": "goto_shot_spot:tower_side",
       "bestMean": 3.46,
       "bestCi95": 0.385,
       "secondMean": 3.46,
       "ambiguous": true,
-      "spread": 20.04
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1__time",
       "familyId": "fam_endgame_climb_or_cycle_1",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "shoot_now",
       "bestMean": 5.72,
       "bestCi95": 0.999,
       "secondMean": 5.72,
       "ambiguous": true,
-      "spread": 18.62
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2",
       "familyId": "fam_endgame_climb_or_cycle_2",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "collect:neutral",
       "bestMean": -3.22,
       "bestCi95": 0.97,
       "secondMean": -3.44,
       "ambiguous": true,
-      "spread": 20.32
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2__fuel",
       "familyId": "fam_endgame_climb_or_cycle_2",
+      "phase": "endgame",
       "nOptions": 7,
       "best": "goto_zone:neutral",
       "bestMean": -3.62,
       "bestCi95": 0.922,
       "secondMean": -3.62,
       "ambiguous": true,
-      "spread": 20
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2__time",
       "familyId": "fam_endgame_climb_or_cycle_2",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "align_then_shoot",
       "bestMean": -5.62,
       "bestCi95": 1.232,
       "secondMean": -5.62,
       "ambiguous": true,
-      "spread": 13.26
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3",
       "familyId": "fam_endgame_climb_or_cycle_3",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "shoot_now",
       "bestMean": -2.54,
       "bestCi95": 1.057,
       "secondMean": -2.54,
       "ambiguous": true,
-      "spread": 60.3
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3__fuel",
       "familyId": "fam_endgame_climb_or_cycle_3",
+      "phase": "endgame",
       "nOptions": 7,
       "best": "goto_zone:neutral",
       "bestMean": -42.8,
       "bestCi95": 0.54,
       "secondMean": -42.8,
       "ambiguous": true,
-      "spread": 20.92
+      "n": 50
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3__time",
       "familyId": "fam_endgame_climb_or_cycle_3",
+      "phase": "endgame",
       "nOptions": 8,
       "best": "shoot_now",
       "bestMean": 1.3,
       "bestCi95": 1.172,
       "secondMean": 1.3,
       "ambiguous": true,
-      "spread": 38.98
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_1",
       "familyId": "fam_full_far_from_hub_1",
+      "phase": "shift",
       "nOptions": 6,
       "best": "goto_zone:our_alliance",
       "bestMean": -64.1,
       "bestCi95": 1.413,
       "secondMean": -64.1,
       "ambiguous": true,
-      "spread": 1.02
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_1__hub",
       "familyId": "fam_full_far_from_hub_1",
+      "phase": "shift",
       "nOptions": 6,
       "best": "stage_fuel:deep_center",
       "bestMean": 81.32,
       "bestCi95": 1.399,
       "secondMean": 80.86,
       "ambiguous": true,
-      "spread": 1.32
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_1__fuel",
       "familyId": "fam_full_far_from_hub_1",
+      "phase": "shift",
       "nOptions": 6,
       "best": "goto_shot_spot:tower_side",
       "bestMean": -64.68,
       "bestCi95": 1.336,
       "secondMean": -64.68,
       "ambiguous": true,
-      "spread": 0.96
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_2",
       "familyId": "fam_full_far_from_hub_2",
+      "phase": "transition",
       "nOptions": 7,
       "best": "goto_shot_spot:left_wing",
       "bestMean": 33.28,
       "bestCi95": 1.364,
       "secondMean": 29.24,
       "ambiguous": false,
-      "spread": 13.28
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_2__fuel",
       "familyId": "fam_full_far_from_hub_2",
+      "phase": "transition",
       "nOptions": 6,
       "best": "load_outpost",
       "bestMean": 32.56,
       "bestCi95": 1.208,
       "secondMean": 31.6,
       "ambiguous": true,
-      "spread": 5.98
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_2__opp",
       "familyId": "fam_full_far_from_hub_2",
+      "phase": "transition",
       "nOptions": 7,
       "best": "goto_zone:neutral",
       "bestMean": 36.08,
       "bestCi95": 1.213,
       "secondMean": 35.42,
       "ambiguous": true,
-      "spread": 8.22
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_3",
       "familyId": "fam_full_far_from_hub_3",
+      "phase": "transition",
       "nOptions": 7,
       "best": "goto_shot_spot:hub_close",
       "bestMean": 24.12,
       "bestCi95": 1.472,
       "secondMean": 23.7,
       "ambiguous": true,
-      "spread": 8.54
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_3__fuel",
       "familyId": "fam_full_far_from_hub_3",
+      "phase": "transition",
       "nOptions": 6,
       "best": "goto_shot_spot:hub_close",
       "bestMean": 20.16,
       "bestCi95": 1.342,
       "secondMean": 20.12,
       "ambiguous": true,
-      "spread": 6.16
+      "n": 50
     },
     {
       "scenarioId": "full_far_from_hub_3__opp",
       "familyId": "fam_full_far_from_hub_3",
+      "phase": "transition",
       "nOptions": 7,
       "best": "goto_zone:neutral",
       "bestMean": 23.28,
       "bestCi95": 1.391,
       "secondMean": 23.02,
       "ambiguous": true,
-      "spread": 9
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_1",
       "familyId": "fam_hub_about_to_deactivate_1",
+      "phase": "transition",
       "nOptions": 6,
       "best": "hold_position",
       "bestMean": -29.9,
       "bestCi95": 1.085,
       "secondMean": -42.46,
       "ambiguous": false,
-      "spread": 19.42
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_1__fuel",
       "familyId": "fam_hub_about_to_deactivate_1",
+      "phase": "transition",
       "nOptions": 6,
       "best": "hold_position",
       "bestMean": -30.6,
       "bestCi95": 1.323,
       "secondMean": -30.6,
       "ambiguous": true,
-      "spread": 19.96
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_2",
       "familyId": "fam_hub_about_to_deactivate_2",
-      "nOptions": 8,
-      "best": "climb:1",
-      "bestMean": -24.3,
-      "bestCi95": 1.235,
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -34.24,
+      "bestCi95": 1.219,
       "secondMean": -34.24,
-      "ambiguous": false,
-      "spread": 10.68
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_2__fuel",
       "familyId": "fam_hub_about_to_deactivate_2",
-      "nOptions": 7,
-      "best": "climb:1",
-      "bestMean": -24.34,
-      "bestCi95": 1.308,
-      "secondMean": -31.46,
+      "phase": "transition",
+      "nOptions": 6,
+      "best": "goto_zone:neutral",
+      "bestMean": -31.46,
+      "bestCi95": 1.163,
+      "secondMean": -33.94,
       "ambiguous": false,
-      "spread": 9.82
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_2__opp",
       "familyId": "fam_hub_about_to_deactivate_2",
-      "nOptions": 8,
-      "best": "climb:1",
-      "bestMean": -24.44,
-      "bestCi95": 1.033,
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "dump_unaligned",
+      "bestMean": -33.5,
+      "bestCi95": 1.024,
       "secondMean": -33.5,
-      "ambiguous": false,
-      "spread": 10.66
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_3",
       "familyId": "fam_hub_about_to_deactivate_3",
-      "nOptions": 8,
-      "best": "climb:2",
-      "bestMean": -29.84,
-      "bestCi95": 1.162,
-      "secondMean": -41.98,
-      "ambiguous": false,
-      "spread": 20.34
+      "phase": "transition",
+      "nOptions": 7,
+      "best": "hold_fire_until_active",
+      "bestMean": -41.98,
+      "bestCi95": 1.196,
+      "secondMean": -43,
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_about_to_deactivate_3__fuel",
       "familyId": "fam_hub_about_to_deactivate_3",
-      "nOptions": 7,
-      "best": "climb:2",
-      "bestMean": -30.8,
+      "phase": "transition",
+      "nOptions": 6,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -50.8,
       "bestCi95": 1.161,
       "secondMean": -50.8,
-      "ambiguous": false,
-      "spread": 20.6
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_1",
       "familyId": "fam_hub_inactive_loaded_1",
-      "nOptions": 8,
-      "best": "climb:2",
-      "bestMean": -44.9,
-      "bestCi95": 1.561,
-      "secondMean": -64.76,
-      "ambiguous": false,
-      "spread": 21.08
+      "phase": "shift",
+      "nOptions": 7,
+      "best": "dump_unaligned",
+      "bestMean": -64.76,
+      "bestCi95": 1.592,
+      "secondMean": -64.9,
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_1__hub",
       "familyId": "fam_hub_inactive_loaded_1",
-      "nOptions": 8,
+      "phase": "shift",
+      "nOptions": 7,
       "best": "collect:neutral",
       "bestMean": 93.14,
       "bestCi95": 1.106,
       "secondMean": 88.96,
       "ambiguous": false,
-      "spread": 59.46
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_1__fuel",
       "familyId": "fam_hub_inactive_loaded_1",
-      "nOptions": 7,
-      "best": "climb:2",
-      "bestMean": -44.1,
+      "phase": "shift",
+      "nOptions": 6,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": -64.1,
       "bestCi95": 1.398,
       "secondMean": -64.1,
-      "ambiguous": false,
-      "spread": 21.64
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_1__opp",
       "familyId": "fam_hub_inactive_loaded_1",
-      "nOptions": 8,
-      "best": "climb:2",
-      "bestMean": -48.4,
-      "bestCi95": 1.438,
-      "secondMean": -68.1,
-      "ambiguous": false,
-      "spread": 20
+      "phase": "shift",
+      "nOptions": 7,
+      "best": "dump_unaligned",
+      "bestMean": -68.1,
+      "bestCi95": 1.477,
+      "secondMean": -68.3,
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_2",
       "familyId": "fam_hub_inactive_loaded_2",
-      "nOptions": 8,
-      "best": "climb:1",
-      "bestMean": -46.26,
-      "bestCi95": 1.15,
+      "phase": "shift",
+      "nOptions": 7,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -56.48,
+      "bestCi95": 1.164,
       "secondMean": -56.48,
-      "ambiguous": false,
-      "spread": 13.62
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_2__hub",
       "familyId": "fam_hub_inactive_loaded_2",
-      "nOptions": 8,
+      "phase": "shift",
+      "nOptions": 7,
       "best": "goto_shot_spot:right_wing",
       "bestMean": 47.86,
       "bestCi95": 0.937,
-      "secondMean": 47.84,
-      "ambiguous": true,
-      "spread": 10.02
+      "secondMean": 45.04,
+      "ambiguous": false,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_2__fuel",
       "familyId": "fam_hub_inactive_loaded_2",
-      "nOptions": 7,
-      "best": "climb:1",
-      "bestMean": -45.7,
-      "bestCi95": 1.652,
+      "phase": "shift",
+      "nOptions": 6,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -56.18,
+      "bestCi95": 1.684,
       "secondMean": -56.18,
-      "ambiguous": false,
-      "spread": 14.16
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_2__opp",
       "familyId": "fam_hub_inactive_loaded_2",
-      "nOptions": 8,
-      "best": "climb:1",
-      "bestMean": -51.38,
-      "bestCi95": 1.26,
-      "secondMean": -53.64,
-      "ambiguous": true,
-      "spread": 10
+      "phase": "shift",
+      "nOptions": 7,
+      "best": "defend:B1",
+      "bestMean": -53.64,
+      "bestCi95": 1.108,
+      "secondMean": -60.58,
+      "ambiguous": false,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_3",
       "familyId": "fam_hub_inactive_loaded_3",
-      "nOptions": 8,
-      "best": "climb:2",
-      "bestMean": -26.62,
-      "bestCi95": 1.127,
-      "secondMean": -45.28,
-      "ambiguous": false,
-      "spread": 20.02
+      "phase": "shift",
+      "nOptions": 7,
+      "best": "dump_unaligned",
+      "bestMean": -45.28,
+      "bestCi95": 1.058,
+      "secondMean": -45.8,
+      "ambiguous": true,
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_3__hub",
       "familyId": "fam_hub_inactive_loaded_3",
-      "nOptions": 8,
+      "phase": "shift",
+      "nOptions": 7,
       "best": "goto_shot_spot:right_wing",
       "bestMean": 67.62,
       "bestCi95": 1.157,
       "secondMean": 65.82,
       "ambiguous": true,
-      "spread": 30.26
+      "n": 50
     },
     {
       "scenarioId": "hub_inactive_loaded_3__fuel",
       "familyId": "fam_hub_inactive_loaded_3",
-      "nOptions": 7,
-      "best": "climb:2",
-      "bestMean": -26.32,
-      "bestCi95": 1.024,
-      "secondMean": -45.92,
-      "ambiguous": false,
-      "spread": 20
+      "phase": "shift",
+      "nOptions": 6,
+      "best": "goto_zone:neutral",
+      "bestMean": -45.92,
+      "bestCi95": 0.96,
+      "secondMean": -46.32,
+      "ambiguous": true,
+      "n": 50
     }
   ],
   "summary": {
     "n_scenarios": 45,
-    "n_families": 15,
-    "n_unambiguous": 20,
-    "rollouts_total": 16700,
-    "rollouts_per_option": 50,
-    "horizon_s": 20,
-    "wall_s": 116.9,
-    "rollouts_per_sec": 142.8
+    "n_unambiguous": 10,
+    "distinct_best_labels": 17,
+    "best_label_counts": {
+      "goto_zone:neutral": 7,
+      "shoot_now": 6,
+      "goto_shot_spot:right_wing": 6,
+      "disengage": 4,
+      "dump_unaligned": 4,
+      "goto_shot_spot:hub_close": 3,
+      "escape_spin:neutral": 2,
+      "goto_shot_spot:tower_side": 2,
+      "collect:neutral": 2,
+      "hold_position": 2,
+      "align_then_shoot": 1,
+      "goto_zone:our_alliance": 1,
+      "stage_fuel:deep_center": 1,
+      "goto_shot_spot:left_wing": 1,
+      "load_outpost": 1,
+      "hold_fire_until_active": 1,
+      "defend:B1": 1
+    },
+    "share_best_is_climb": 0,
+    "rollouts_per_option": 50
   }
 }
