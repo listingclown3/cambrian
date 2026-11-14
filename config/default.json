@@ -22,7 +22,11 @@
       "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
     },
     "towerTeleopPoints": {
-      "value": [10, 20, 30],
+      "value": [
+        10,
+        20,
+        30
+      ],
       "status": "VERIFIED",
       "source": "official cheat sheet (per planner brief); levels 2 and 3 confirmed by 2026 FRC Game Manual (version TU22) p.47, extracted with NDI (data/rules/rules.json)"
     },
@@ -62,7 +66,12 @@
       "source": "EXTERNAL, not from the manual (NDI did not find it there): Wikipedia, Rebuilt (FIRST), gives the FUEL weight as about 0.5 pounds (about 0.23 kg); https://en.wikipedia.org/wiki/Rebuilt_(FIRST), fetched 2026-11-14"
     },
     "hubShiftSchedule": {
-      "value": { "transitionS": 10, "shiftS": 25, "numShifts": 4, "autoWinnerInactiveFirst": true },
+      "value": {
+        "transitionS": 10,
+        "shiftS": 25,
+        "numShifts": 4,
+        "autoWinnerInactiveFirst": true
+      },
       "status": "VERIFIED",
       "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json); transitionS is what remains of the 140 s teleop (p.15) after four 25 s shifts and the 30 s end game"
     },
@@ -72,46 +81,72 @@
       "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
     },
     "pinning": {
-      "value": { "limitS": 3, "releaseDistanceM": 1.83, "severity": "minor", "clauseId": "G418" },
+      "value": {
+        "limitS": 3,
+        "releaseDistanceM": 1.83,
+        "severity": "minor",
+        "clauseId": "G418"
+      },
       "status": "VERIFIED",
       "source": "2026 FRC Game Manual (version TU22) p.72, extracted with NDI (data/rules/rules.json)"
     },
     "fuelStart": {
-      "value": { "neutral": 360, "depotEach": 24, "outpostEach": 24 },
+      "value": {
+        "neutral": 360,
+        "depotEach": 24,
+        "outpostEach": 24
+      },
       "status": "TODO_VERIFY_AGAINST_MANUAL",
       "source": "depotEach and outpostEach: 2026 FRC Game Manual (version TU22) p.43, extracted with NDI (data/rules/rules.json). neutral is NOT stated directly: it is the manual's 504 total FUEL (p.43) minus both depots, both outposts and six 8-FUEL preloads; confirm how preloads are sourced"
     }
   },
   "field": {
     "lengthM": {
-      "value": 16.54,
+      "value": 16.541,
       "status": "VERIFIED",
-      "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (651.2 in)"
+      "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 3: \"WELDED PERIMETER (651.22)\""
     },
     "widthM": {
-      "value": 8.07,
+      "value": 8.069,
       "status": "VERIFIED",
-      "source": "2026 FRC Game Manual (version TU22) p.18, extracted with NDI (data/rules/rules.json) (317.7 in)"
+      "source": "2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 3: \"(317.69)\""
     },
     "allianceZoneDepthM": {
-      "value": 4.03,
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "NDI extract of the 2026 FRC Game Manual (version TU22) gave 158.6 in but returned no page citation; confirm against the field drawings"
+      "value": 4.028,
+      "status": "VERIFIED",
+      "source": "2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 22: \"ALLIANCE ZONE : A 158.6in deep by 317.7in long (~4.03m by 8.07m)\""
     },
     "blueElements": {
       "value": {
-        "hub": { "x": 4, "y": 4.035 },
-        "tower": { "x": 1, "y": 5.2 },
-        "depot": { "x": 0.7, "y": 6.6 },
-        "outpost": { "x": 0.4, "y": 0.7 }
+        "hub": {
+          "x": 4.626,
+          "y": 4.035
+        },
+        "tower": {
+          "x": 0.572,
+          "y": 3.962
+        },
+        "depot": {
+          "x": 0.343,
+          "y": 6.6
+        },
+        "outpost": {
+          "x": 0.4,
+          "y": 0.882
+        }
       },
       "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "source": "From official FIRST field data (games/rebuilt-2026/field.json has the full citations). hub.x: DERIVED: 2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"18 Hub, Blue (182.11) (135.09) (44.25) 270; 21 Hub, Blue (182.11) (182.60) (44.25) 90\" [deri | hub.y: DERIVED: 2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 4: \"(317.688) ... (158.84)\" [derived: HUB centred across the width: 317.688 / 2 = 158.844 in (tag | tower.x: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep ... integrated into each ALLIANCE WALL\" [derived: TOWER is 45.0 i | tower.y: DERIVED: 2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"31 Tower, Blue (0.32) (147.47) (21.75) 0; 32 Tower, Blue (0.32) (164.47) (21.75) 0\" [derived | depot.x: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 27: \"A DEPOT is a 42.0in (1.07m) wide, 27.0in (68.6cm) deep structure located along the ALLIANCE WALL.\" [derived: Depth 27.0 in | outpost.y: DERIVED: 2026 REBUILT Playing Field, Field Dimension Drawings FE-2026 rev B, https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf, page 11: \"28 Outpost, Blue (0.30) (26.22) (21.75) 0\" [derived: Midpoint of the blue OUTPOST AprilTags  | STILL A PLACEHOLDER, not found in official data: depot.y, outpost.x"
     },
     "blueLaneY": {
-      "value": { "left_trench": 7.4, "left_bump": 5.6, "right_bump": 2.47, "right_trench": 0.67 },
+      "value": {
+        "left_trench": 7.236,
+        "left_bump": 5.559,
+        "right_bump": 2.511,
+        "right_trench": 0.834
+      },
       "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "placeholder guess, not from the manual"
+      "source": "From official FIRST field data (games/rebuilt-2026/field.json has the full citations). right_bump: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide, 44.4in (1.128m) deep ... on either side of the HUB\" [derived: Bump adjacent to the 47 in H | left_bump: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide ... on either side of the HUB\" [derived: Mirror of right_bump: 4.035 + 1.524 = 5.559 m.] | right_trench: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide, 47.0in (1.194m) deep ... The TRENCH extends from the guardrail to the BUMP\" [derived | left_trench: DERIVED: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide ... extends from the guardrail to the BUMP on both sides of the FIELD\" [derived: Mirr"
     },
     "laneLengthM": {
       "value": 1.5,
@@ -119,9 +154,15 @@
       "source": "placeholder guess, not from the manual"
     },
     "elementSizes": {
-      "value": { "hubSizeM": 1.19, "towerWidthM": 1.25, "towerDepthM": 1.14, "trenchWidthM": 1.34, "bumpWidthM": 1.85 },
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "approximate footprints from memory of the 2026 manual drawings (hub 47 in square, bump about 73 in wide); trench width chosen so the trench fits between the wall and blueLaneY; not checked"
+      "value": {
+        "hubSizeM": 1.194,
+        "towerWidthM": 1.251,
+        "towerDepthM": 1.143,
+        "trenchWidthM": 1.668,
+        "bumpWidthM": 1.854
+      },
+      "status": "VERIFIED",
+      "source": "From official FIRST field data (games/rebuilt-2026/field.json has the full citations). hubSizeM: official: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 23: \"A HUB is one of two 47in by 47in (~1.19m by 1.19m) rectangular prism structures\" | towerWidthM: official: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep, and 78.25in (1.988m) tall structure\" | towerDepthM: official: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 28: \"A TOWER is a 49.25in (1.251m) wide, 45.0in (1.143m) deep\" | trenchWidthM: official: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"TRENCHES are a 65.65in (1.668m) wide, 47.0in (1.194m) deep\" | bumpWidthM: official: 2026 FRC Game Manual (REBUILT, TU22) section 5 ARENA, https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf, page 26: \"BUMPS are 73.0in (1.854m) wide, 44.4in (1.128m) deep\""
     },
     "shotSpots": {
       "_status": "FABRICATED",
@@ -168,372 +209,1145 @@
         "description": "Drum shooter aimed by turning the drivetrain; high volume, often tall.",
         "shooterType": "drum",
         "aimMethod": "drivetrain",
-        "lanes": [1, 2],
-        "fireRatePerS": [6, 10],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0.6, 1],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.92 },
-          { "distanceM": 2.5, "accuracy": 0.85 },
-          { "distanceM": 4, "accuracy": 0.65 },
-          { "distanceM": 6, "accuracy": 0.35 }
+        "lanes": [
+          1,
+          2
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [40, 60],
-        "intakeRatePerS": [5, 9],
+        "fireRatePerS": [
+          6,
+          10
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0.6,
+          1
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 1,
+            "accuracy": 0.92
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.85
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.65
+          },
+          {
+            "distanceM": 6,
+            "accuracy": 0.35
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          40,
+          60
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.5,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4, 4.8],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4,
+          4.8
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 1,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0.7,
         "fitsUnderTrenchProbability": 0.3,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "turret_sotm": {
         "description": "Single turret that scores while driving.",
         "shooterType": "turret",
         "aimMethod": "turret",
-        "lanes": [1, 1],
-        "fireRatePerS": [3, 6],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0, 0],
-        "turretSlewDegPerS": [180, 360],
+        "lanes": [
+          1,
+          1
+        ],
+        "fireRatePerS": [
+          3,
+          6
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0,
+          0
+        ],
+        "turretSlewDegPerS": [
+          180,
+          360
+        ],
         "shootOnMove": true,
         "sotmAccuracyBySpeed": [
-          { "speedMps": 0, "accuracy": 1 },
-          { "speedMps": 1.5, "accuracy": 0.92 },
-          { "speedMps": 3, "accuracy": 0.75 },
-          { "speedMps": 5, "accuracy": 0.5 }
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 1.5,
+            "accuracy": 0.92
+          },
+          {
+            "speedMps": 3,
+            "accuracy": 0.75
+          },
+          {
+            "speedMps": 5,
+            "accuracy": 0.5
+          }
         ],
         "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.92 },
-          { "distanceM": 2.5, "accuracy": 0.85 },
-          { "distanceM": 4, "accuracy": 0.65 },
-          { "distanceM": 6, "accuracy": 0.35 }
+          {
+            "distanceM": 1,
+            "accuracy": 0.92
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.85
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.65
+          },
+          {
+            "distanceM": 6,
+            "accuracy": 0.35
+          }
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [50, 60],
-        "intakeRatePerS": [5, 9],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          50,
+          60
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.5,
         "canCollectWhileShootingProbability": 0.7,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4.5, 5],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4.5,
+          5
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 1,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0.4,
         "fitsUnderTrenchProbability": 0.6,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "multilane_fixed": {
         "description": "Two or three fixed shooting lanes aimed by the drivetrain.",
         "shooterType": "lanes",
         "aimMethod": "drivetrain",
-        "lanes": [2, 3],
-        "fireRatePerS": [3, 8],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0.6, 1],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.92 },
-          { "distanceM": 2.5, "accuracy": 0.85 },
-          { "distanceM": 4, "accuracy": 0.65 },
-          { "distanceM": 6, "accuracy": 0.35 }
+        "lanes": [
+          2,
+          3
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [40, 50],
-        "intakeRatePerS": [5, 9],
+        "fireRatePerS": [
+          3,
+          8
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0.6,
+          1
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 1,
+            "accuracy": 0.92
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.85
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.65
+          },
+          {
+            "distanceM": 6,
+            "accuracy": 0.35
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          40,
+          50
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.5,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4, 4.8],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4,
+          4.8
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.9,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0.5,
         "fitsUnderTrenchProbability": 0.5,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "big_hopper_hauler": {
         "description": "Very large hopper; tall, cannot use the trench, slow when full.",
         "shooterType": "lanes",
         "aimMethod": "drivetrain",
-        "lanes": [2, 3],
-        "fireRatePerS": [5, 9],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0.6, 1],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.92 },
-          { "distanceM": 2.5, "accuracy": 0.85 },
-          { "distanceM": 4, "accuracy": 0.65 },
-          { "distanceM": 6, "accuracy": 0.35 }
+        "lanes": [
+          2,
+          3
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [80, 110],
-        "intakeRatePerS": [5, 9],
+        "fireRatePerS": [
+          5,
+          9
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0.6,
+          1
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 1,
+            "accuracy": 0.92
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.85
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.65
+          },
+          {
+            "distanceM": 6,
+            "accuracy": 0.35
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          80,
+          110
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.8,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [3.8, 4.4],
-        "speedFullFraction": [0.6, 0.75],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.5, 0.7],
-        "massEmptyKg": [56, 66],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          3.8,
+          4.4
+        ],
+        "speedFullFraction": [
+          0.6,
+          0.75
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.5,
+          0.7
+        ],
+        "massEmptyKg": [
+          56,
+          66
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.9,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 1,
         "fitsUnderTrenchProbability": 0,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "dumper": {
         "description": "Wide close-range dumper that must be next to the hub; fits the trench.",
         "shooterType": "dumper",
         "aimMethod": "drivetrain",
-        "lanes": [3, 4],
-        "fireRatePerS": [8, 12],
-        "spinUpS": [0, 0.1],
-        "hoodAdjustS": [0, 0],
-        "alignTimeS": [0.2, 0.5],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 0.5, "accuracy": 0.97 },
-          { "distanceM": 1.2, "accuracy": 0.9 },
-          { "distanceM": 1.6, "accuracy": 0.3 }
+        "lanes": [
+          3,
+          4
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.3, 0.5],
-        "maxShotDistanceM": [1, 1.3],
-        "capacity": [30, 50],
-        "intakeRatePerS": [5, 9],
+        "fireRatePerS": [
+          8,
+          12
+        ],
+        "spinUpS": [
+          0,
+          0.1
+        ],
+        "hoodAdjustS": [
+          0,
+          0
+        ],
+        "alignTimeS": [
+          0.2,
+          0.5
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 0.5,
+            "accuracy": 0.97
+          },
+          {
+            "distanceM": 1.2,
+            "accuracy": 0.9
+          },
+          {
+            "distanceM": 1.6,
+            "accuracy": 0.3
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.3,
+          0.5
+        ],
+        "maxShotDistanceM": [
+          1,
+          1.3
+        ],
+        "capacity": [
+          30,
+          50
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.9,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4, 4.8],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4,
+          4.8
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.9,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0,
         "fitsUnderTrenchProbability": 1,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "zero_hopper_turret": {
         "description": "Almost no hopper; shoots fuel nearly as fast as it picks it up, so it needs loose or staged fuel nearby.",
         "shooterType": "turret",
         "aimMethod": "turret",
-        "lanes": [1, 1],
-        "fireRatePerS": [4, 7],
-        "spinUpS": [0.2, 0.4],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0, 0],
-        "turretSlewDegPerS": [240, 420],
+        "lanes": [
+          1,
+          1
+        ],
+        "fireRatePerS": [
+          4,
+          7
+        ],
+        "spinUpS": [
+          0.2,
+          0.4
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0,
+          0
+        ],
+        "turretSlewDegPerS": [
+          240,
+          420
+        ],
         "shootOnMove": true,
         "sotmAccuracyBySpeed": [
-          { "speedMps": 0, "accuracy": 1 },
-          { "speedMps": 1.5, "accuracy": 0.92 },
-          { "speedMps": 3, "accuracy": 0.75 },
-          { "speedMps": 5, "accuracy": 0.5 }
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 1.5,
+            "accuracy": 0.92
+          },
+          {
+            "speedMps": 3,
+            "accuracy": 0.75
+          },
+          {
+            "speedMps": 5,
+            "accuracy": 0.5
+          }
         ],
         "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.92 },
-          { "distanceM": 2.5, "accuracy": 0.85 },
-          { "distanceM": 4, "accuracy": 0.65 },
-          { "distanceM": 6, "accuracy": 0.35 }
+          {
+            "distanceM": 1,
+            "accuracy": 0.92
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.85
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.65
+          },
+          {
+            "distanceM": 6,
+            "accuracy": 0.35
+          }
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [4, 10],
-        "intakeRatePerS": [6, 10],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          4,
+          10
+        ],
+        "intakeRatePerS": [
+          6,
+          10
+        ],
         "wideIntakeProbability": 0.5,
         "canCollectWhileShootingProbability": 1,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4.6, 5.2],
-        "speedFullFraction": [0.97, 1],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.95, 1],
-        "massEmptyKg": [42, 52],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4.6,
+          5.2
+        ],
+        "speedFullFraction": [
+          0.97,
+          1
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.95,
+          1
+        ],
+        "massEmptyKg": [
+          42,
+          52
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.9,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0.1,
         "fitsUnderTrenchProbability": 0.9,
-        "passRangeM": [0, 3],
-        "passRatePerS": [0, 3],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          3
+        ],
+        "passRatePerS": [
+          0,
+          3
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "feeder_passer": {
         "description": "Scores little; moves fuel to partners quickly by passing.",
         "shooterType": "lanes",
         "aimMethod": "drivetrain",
-        "lanes": [1, 1],
-        "fireRatePerS": [1, 3],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0.6, 1],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.75 },
-          { "distanceM": 2.5, "accuracy": 0.6 },
-          { "distanceM": 4, "accuracy": 0.35 }
+        "lanes": [
+          1,
+          1
         ],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [4, 5.5],
-        "capacity": [30, 45],
-        "intakeRatePerS": [5, 9],
+        "fireRatePerS": [
+          1,
+          3
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0.6,
+          1
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 1,
+            "accuracy": 0.75
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.6
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.35
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          4,
+          5.5
+        ],
+        "capacity": [
+          30,
+          45
+        ],
+        "intakeRatePerS": [
+          5,
+          9
+        ],
         "wideIntakeProbability": 0.8,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [4, 4.8],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          4,
+          4.8
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.9,
-        "pushForceN": [450, 650],
+        "pushForceN": [
+          450,
+          650
+        ],
         "tallProbability": 0.2,
         "fitsUnderTrenchProbability": 0.8,
-        "passRangeM": [5, 9],
-        "passRatePerS": [6, 10],
-        "climbLevel": [1, 2],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          5,
+          9
+        ],
+        "passRatePerS": [
+          6,
+          10
+        ],
+        "climbLevel": [
+          1,
+          2
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "defender": {
         "description": "Heavy tank drive with high push force and little or no shooter.",
         "shooterType": "none",
         "aimMethod": "drivetrain",
-        "lanes": [1, 1],
-        "fireRatePerS": [0, 0],
-        "spinUpS": [0, 0],
-        "hoodAdjustS": [0, 0],
-        "alignTimeS": [0, 0],
-        "turretSlewDegPerS": [0, 0],
+        "lanes": [
+          1,
+          1
+        ],
+        "fireRatePerS": [
+          0,
+          0
+        ],
+        "spinUpS": [
+          0,
+          0
+        ],
+        "hoodAdjustS": [
+          0,
+          0
+        ],
+        "alignTimeS": [
+          0,
+          0
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
         "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [{ "distanceM": 0, "accuracy": 0 }],
-        "accuracyScale": [0.85, 1.05],
-        "minShotDistanceM": [0, 0],
-        "maxShotDistanceM": [0, 0],
-        "capacity": [0, 10],
-        "intakeRatePerS": [0, 3],
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 0,
+            "accuracy": 0
+          }
+        ],
+        "accuracyScale": [
+          0.85,
+          1.05
+        ],
+        "minShotDistanceM": [
+          0,
+          0
+        ],
+        "maxShotDistanceM": [
+          0,
+          0
+        ],
+        "capacity": [
+          0,
+          10
+        ],
+        "intakeRatePerS": [
+          0,
+          3
+        ],
         "wideIntakeProbability": 0.5,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [3.6, 4.4],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [60, 68],
-        "traction": [1.2, 1.4],
+        "speedEmptyMps": [
+          3.6,
+          4.4
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          60,
+          68
+        ],
+        "traction": [
+          1.2,
+          1.4
+        ],
         "swerveProbability": 0,
-        "pushForceN": [750, 950],
+        "pushForceN": [
+          750,
+          950
+        ],
         "tallProbability": 0.3,
         "fitsUnderTrenchProbability": 0.7,
-        "passRangeM": [0, 0],
-        "passRatePerS": [0, 0],
-        "climbLevel": [0, 1],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          0
+        ],
+        "passRatePerS": [
+          0,
+          0
+        ],
+        "climbLevel": [
+          0,
+          1
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       },
       "starter_bot": {
         "description": "Simple single-lane robot with a low fire rate and a small hopper.",
         "shooterType": "lanes",
         "aimMethod": "drivetrain",
-        "lanes": [1, 1],
-        "fireRatePerS": [1, 3],
-        "spinUpS": [0.4, 0.8],
-        "hoodAdjustS": [0.2, 0.5],
-        "alignTimeS": [0.6, 1],
-        "turretSlewDegPerS": [0, 0],
-        "shootOnMove": false,
-        "sotmAccuracyBySpeed": [{ "speedMps": 0, "accuracy": 1 }, { "speedMps": 0.5, "accuracy": 0 }],
-        "shotAccuracyByDistance": [
-          { "distanceM": 1, "accuracy": 0.75 },
-          { "distanceM": 2.5, "accuracy": 0.6 },
-          { "distanceM": 4, "accuracy": 0.35 }
+        "lanes": [
+          1,
+          1
         ],
-        "accuracyScale": [0.7, 1],
-        "minShotDistanceM": [0.8, 1.2],
-        "maxShotDistanceM": [2.5, 4],
-        "capacity": [8, 20],
-        "intakeRatePerS": [2, 5],
+        "fireRatePerS": [
+          1,
+          3
+        ],
+        "spinUpS": [
+          0.4,
+          0.8
+        ],
+        "hoodAdjustS": [
+          0.2,
+          0.5
+        ],
+        "alignTimeS": [
+          0.6,
+          1
+        ],
+        "turretSlewDegPerS": [
+          0,
+          0
+        ],
+        "shootOnMove": false,
+        "sotmAccuracyBySpeed": [
+          {
+            "speedMps": 0,
+            "accuracy": 1
+          },
+          {
+            "speedMps": 0.5,
+            "accuracy": 0
+          }
+        ],
+        "shotAccuracyByDistance": [
+          {
+            "distanceM": 1,
+            "accuracy": 0.75
+          },
+          {
+            "distanceM": 2.5,
+            "accuracy": 0.6
+          },
+          {
+            "distanceM": 4,
+            "accuracy": 0.35
+          }
+        ],
+        "accuracyScale": [
+          0.7,
+          1
+        ],
+        "minShotDistanceM": [
+          0.8,
+          1.2
+        ],
+        "maxShotDistanceM": [
+          2.5,
+          4
+        ],
+        "capacity": [
+          8,
+          20
+        ],
+        "intakeRatePerS": [
+          2,
+          5
+        ],
         "wideIntakeProbability": 0.2,
         "canCollectWhileShootingProbability": 0.3,
         "canIntakeOverBumpProbability": 0.3,
-        "speedEmptyMps": [3.2, 4.2],
-        "speedFullFraction": [0.85, 0.95],
-        "accelEmpty": [6, 9],
-        "accelFullFraction": [0.75, 0.9],
-        "massEmptyKg": [50, 62],
-        "traction": [1, 1.25],
+        "speedEmptyMps": [
+          3.2,
+          4.2
+        ],
+        "speedFullFraction": [
+          0.85,
+          0.95
+        ],
+        "accelEmpty": [
+          6,
+          9
+        ],
+        "accelFullFraction": [
+          0.75,
+          0.9
+        ],
+        "massEmptyKg": [
+          50,
+          62
+        ],
+        "traction": [
+          1,
+          1.25
+        ],
         "swerveProbability": 0.4,
-        "pushForceN": [350, 550],
+        "pushForceN": [
+          350,
+          550
+        ],
         "tallProbability": 0.5,
         "fitsUnderTrenchProbability": 0.5,
-        "passRangeM": [0, 0],
-        "passRatePerS": [0, 0],
-        "climbLevel": [0, 1],
-        "climbTimeS": [5, 9]
+        "passRangeM": [
+          0,
+          0
+        ],
+        "passRatePerS": [
+          0,
+          0
+        ],
+        "climbLevel": [
+          0,
+          1
+        ],
+        "climbTimeS": [
+          5,
+          9
+        ]
       }
     }
   },
@@ -613,7 +1427,8 @@
         "extraHeaders": {},
         "concurrency": 8,
         "timeoutMs": 2000,
-        "retries": 2
+        "retries": 2,
+        "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 }
       },
       "drex_mock": {
         "endpoint": null,
@@ -698,31 +1513,90 @@
     "_status": "TUNABLE",
     "_note": "US dollars per 1M tokens. byModel (exact model id) takes precedence over byId (provider fallback). null = unknown: cost is then recorded as 0, never guessed. Sources, 2026-11-14: DeepInfra models are from the pricing metadata in its live model list, and DeepInfra responses also report usage.estimated_cost, which is recorded in preference. Drex is VERIFIED from the Nace console usage export (2026-11-14, confirmed by the project owner): 0.03 per 1M input tokens and output tokens free, the same for drex-v2.0 and drex-latest (drex-max-v1.1). NDI is not token-priced: each job reports its own charge, which is what the ledger records. openai and gemini are not filled in.",
     "byId": {
-      "drex": { "input": 0.03, "output": 0 },
-      "drex_mock": { "input": 0, "output": 0 },
-      "deepinfra": { "input": 0.45, "output": 3 },
-      "openai": { "input": null, "output": null },
-      "gemini": { "input": null, "output": null },
-      "scripted": { "input": 0, "output": 0 },
-      "random": { "input": 0, "output": 0 }
+      "drex": {
+        "input": 0.03,
+        "output": 0
+      },
+      "drex_mock": {
+        "input": 0,
+        "output": 0
+      },
+      "deepinfra": {
+        "input": 0.45,
+        "output": 3
+      },
+      "openai": {
+        "input": null,
+        "output": null
+      },
+      "gemini": {
+        "input": null,
+        "output": null
+      },
+      "scripted": {
+        "input": 0,
+        "output": 0
+      },
+      "random": {
+        "input": 0,
+        "output": 0
+      }
     },
     "byModel": {
-      "drex-v2.0": { "input": 0.03, "output": 0 },
-      "drex-max-v1.1": { "input": 0.03, "output": 0 },
-      "Qwen/Qwen3.5-397B-A17B": { "input": 0.45, "output": 3 },
-      "Qwen/Qwen3-235B-A22B-Instruct-2507": { "input": 0.09, "output": 0.55 },
-      "deepseek-ai/DeepSeek-V4-Pro": { "input": 1.3, "output": 2.6 },
-      "moonshotai/Kimi-K3.1-Pro": { "input": 2, "output": 10 },
-      "zai-org/GLM-5.3": { "input": 0.9, "output": 4 },
-      "openai/gpt-oss-120b": { "input": 0.037, "output": 0.17 },
-      "meta-llama/Llama-3.3-70B-Instruct-Turbo": { "input": 0.1, "output": 0.32 },
-      "Qwen/Qwen3.8-27B": { "input": 0.2, "output": 2.5 }
+      "drex-v2.0": {
+        "input": 0.03,
+        "output": 0
+      },
+      "drex-max-v1.1": {
+        "input": 0.03,
+        "output": 0
+      },
+      "Qwen/Qwen3.5-397B-A17B": {
+        "input": 0.45,
+        "output": 3
+      },
+      "Qwen/Qwen3-235B-A22B-Instruct-2507": {
+        "input": 0.09,
+        "output": 0.55
+      },
+      "deepseek-ai/DeepSeek-V4-Pro": {
+        "input": 1.3,
+        "output": 2.6
+      },
+      "moonshotai/Kimi-K3.1-Pro": {
+        "input": 2,
+        "output": 10
+      },
+      "zai-org/GLM-5.3": {
+        "input": 0.9,
+        "output": 4
+      },
+      "openai/gpt-oss-120b": {
+        "input": 0.037,
+        "output": 0.17
+      },
+      "meta-llama/Llama-3.3-70B-Instruct-Turbo": {
+        "input": 0.1,
+        "output": 0.32
+      },
+      "Qwen/Qwen3.8-27B": {
+        "input": 0.2,
+        "output": 2.5
+      }
     }
   },
   "spendCapsUsd": {
     "_status": "TUNABLE",
     "_note": "Hard spend limits per run; a run aborts rather than exceed them.",
-    "perProviderPerRun": { "drex": 5, "drex_mock": 0, "deepinfra": 5, "openai": 5, "gemini": 5, "scripted": 0, "random": 0 },
+    "perProviderPerRun": {
+      "drex": 5,
+      "drex_mock": 0,
+      "deepinfra": 5,
+      "openai": 5,
+      "gemini": 5,
+      "scripted": 0,
+      "random": 0
+    },
     "totalPerRun": 15
   },
   "realtimeLatencyCharging": {
@@ -788,7 +1662,14 @@
   "lab": {
     "_status": "TUNABLE",
     "_note": "Strategy Lab: Intern (github.com/nace-ai/intern) run headless as `intern -p --json --system2 <system2Provider>/<model> -- \"TASK\"` inside workspaceDir (the subprocess cwd). Intern 0.30.1 does not start on native Windows (it imports fcntl), so on this machine internCommand runs it inside WSL; on Linux or macOS set internCommand to the single entry intern. system2Model is the organizer-tested model; system1Model is the Drex id the organizers gave. Here the workspace lives inside WSL (workspaceDir is how Node reaches it, internCwd is the same folder as Intern sees it), where the Windows drives are not mounted, so Intern cannot reach the repo or .env. Intern is not a sandbox: the workspace holds copies only.",
-    "internCommand": ["wsl.exe", "-e", "bash", "-lc", "exec ~/.local/bin/intern \"$@\"", "intern"],
+    "internCommand": [
+      "wsl.exe",
+      "-e",
+      "bash",
+      "-lc",
+      "exec ~/.local/bin/intern \"$@\"",
+      "intern"
+    ],
     "system2Provider": "deepinfra",
     "system2Model": "Qwen/Qwen3.8-27B",
     "system1Model": "drex-latest",
@@ -805,7 +1686,18 @@
   "seeds": {
     "_status": "TUNABLE",
     "_note": "Dev seeds are for tuning; eval seeds are only for reported numbers. Never tune on eval seeds.",
-    "dev": [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010],
+    "dev": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009,
+      1010
+    ],
     "eval": [
       9001,
       9002,

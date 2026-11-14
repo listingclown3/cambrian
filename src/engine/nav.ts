@@ -480,6 +480,8 @@ export function steer(grid: NavGrid, from: Vec2, target: Vec2, fits: boolean): S
   if (plan === DIRECT) return { waypoint: target, remainingM: Math.hypot(target.x - from.x, target.y - from.y) };
   if (plan === UNREACHABLE) return { waypoint: target, remainingM: Infinity };
   const d = distanceField(grid, tc, fits);
+  // At the goal's (free stand-in) cell already: the target itself is a legal point, so go straight at it.
+  if (d[plan] === 0) return { waypoint: target, remainingM: Math.hypot(target.x - from.x, target.y - from.y) };
   const waypoint = cellCenter(grid, plan);
   return { waypoint, remainingM: d[plan]! + Math.hypot(waypoint.x - from.x, waypoint.y - from.y) };
 }

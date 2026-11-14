@@ -22,6 +22,8 @@ export interface ProviderDeps {
   purpose?: string;
   /** Run id stamped on ledger entries. */
   runId?: string | null;
+  /** Directory of the machine-wide shared limiter, or false to bypass it (tests). Default cache/ratelimit/<id>. */
+  sharedLimitDir?: string | false;
   /** Sleep used between retries (default: setTimeout). */
   sleep?: (ms: number) => Promise<void>;
 }
@@ -63,9 +65,54 @@ export class HttpError extends Error {
     message: string,
     readonly status: number | null,
     readonly body: unknown = null,
+    /** Machine-readable cause, e.g. "blocked_by_checkpoint"; null otherwise. */
+    readonly code: string | null = null,
+    /** False when the request never left this process (circuit open, limiter wait too long). */
+    readonly sent: boolean = true,
   ) {
     super(message);
   }
+}
+
+// -- bot-protection checkpoint detection and circuit breaker (per origin, per process) --
+//
+// On 2026-11-14 at about 20:58 UTC console.nace.ai began answering every request from our IP
+// with HTTP 403 + an HTML "Vercel Security Checkpoint" page (x-vercel-mitigated: challenge).
+// Such a response is never retried. After CHECKPOINT_TRIP consecutive ones the breaker opens for
+// CHECKPOINT_OPEN_MS: every request fails fast without touching the network, except one probe
+// per CHECKPOINT_OPEN_MS. A successful response closes it.
+
+export const BLOCKED_BY_CHECKPOINT = "blocked_by_checkpoint";
+const CHECKPOINT_TRIP = 3;
+const CHECKPOINT_OPEN_MS = 60_000;
+const breakers = new Map<string, { consecutive: number; openUntilMs: number }>();
+
+/** True when a non-2xx response is a bot-protection checkpoint rather than an API error. */
+export function isCheckpointResponse(status: number, headers: Headers, text: string): boolean {
+  if (status !== 403) return false;
+  return headers.has("x-vercel-mitigated") || /security checkpoint/i.test(text) || /text\/html/i.test(headers.get("content-type") ?? "") || /^\s*<!doctype html/i.test(text);
+}
+
+/** Breaker state for a URL's origin: open = calls fail fast; consecutive = checkpoint responses in a row. */
+export function breakerState(url: string, nowMs = Date.now()): { open: boolean; consecutive: number; openUntilMs: number } {
+  const b = breakers.get(new URL(url).origin) ?? { consecutive: 0, openUntilMs: 0 };
+  return { open: b.openUntilMs > nowMs, consecutive: b.consecutive, openUntilMs: b.openUntilMs };
+}
+
+/** Reset every breaker (tests). */
+export function resetBreakers(): void {
+  breakers.clear();
+}
+
+function noteCheckpoint(origin: string): void {
+  const b = breakers.get(origin) ?? { consecutive: 0, openUntilMs: 0 };
+  b.consecutive += 1;
+  if (b.consecutive >= CHECKPOINT_TRIP) b.openUntilMs = Date.now() + CHECKPOINT_OPEN_MS;
+  breakers.set(origin, b);
+}
+
+function noteSuccess(origin: string): void {
+  breakers.delete(origin);
 }
 
 const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -122,6 +169,11 @@ export async function requestJson(
   const env = opts.deps.env ?? process.env;
   let lastError: HttpError | null = null;
   for (let attempt = 0; attempt <= opts.retries; attempt++) {
+    const breaker = breakers.get(u.origin);
+    if (breaker && breaker.openUntilMs > Date.now()) {
+      throw new HttpError(`${BLOCKED_BY_CHECKPOINT}: circuit open after ${breaker.consecutive} checkpoint responses; next probe at ${new Date(breaker.openUntilMs).toISOString()}`, 403, null, BLOCKED_BY_CHECKPOINT, false);
+    }
+    if (breaker && breaker.consecutive >= CHECKPOINT_TRIP) breaker.openUntilMs = Date.now() + CHECKPOINT_OPEN_MS; // this call is the probe; others wait
     let res: Response | null = null;
     const startedMs = performance.now();
     const inFlight = (inFlightByOrigin.get(u.origin) ?? 0) + 1;
@@ -144,7 +196,7 @@ export async function requestJson(
       stat.headersMs = performance.now() - startedMs;
       stat.status = res.status;
       res.headers.forEach((value, name) => {
-        if (/^(retry-after|retry-after-ms|x-ratelimit-.*|ratelimit.*)$/i.test(name)) stat.rateHeaders[name] = value;
+        if (/^(retry-after|retry-after-ms|x-ratelimit-.*|ratelimit.*|x-vercel-mitigated)$/i.test(name)) stat.rateHeaders[name] = value;
       });
       const text = await res.text();
       let json: any = null;
@@ -155,7 +207,20 @@ export async function requestJson(
       }
       if (res.ok) {
         finish(null);
+        noteSuccess(u.origin);
         return { status: res.status, json, attempts: attempt + 1 };
+      }
+      if (isCheckpointResponse(res.status, res.headers, text)) {
+        noteCheckpoint(u.origin);
+        const mitigated = res.headers.get("x-vercel-mitigated");
+        lastError = new HttpError(
+          `${BLOCKED_BY_CHECKPOINT}: http 403 bot-protection checkpoint page${mitigated ? ` (x-vercel-mitigated: ${mitigated})` : ""}${res.headers.get("retry-after") ? `, retry-after ${res.headers.get("retry-after")}` : ""}`,
+          403,
+          null,
+          BLOCKED_BY_CHECKPOINT,
+        );
+        finish(lastError.message);
+        throw lastError;
       }
       const detail = JSON.stringify(json?.error ?? json?.detail ?? json ?? "");
       lastError = new HttpError(redact(`http ${res.status} ${detail}`, env), res.status, json);

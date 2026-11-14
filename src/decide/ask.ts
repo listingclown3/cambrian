@@ -4,6 +4,7 @@
  * LLMs alike.
  */
 import { CAPTAIN_ROLE_NAMES, type CaptainRole, type DecisionRequest, type DecisionResponse, type Intent, type IntentOption, type ObservationView, type QuestionOption } from "../contracts";
+import { liveOptions, type OptionRules } from "./options";
 import { renderSelfText, renderSharedStateText, renderStateText } from "./stateText";
 
 /** Id of the question that asks a robot what to do next. */
@@ -15,7 +16,22 @@ export const actionQuestionId = (robotId: string) => `next_action_${robotId}`;
 const actionInstructions = (robotId: string) => `Choose the single best next action for robot ${robotId} to maximise its alliance's final score margin.`;
 
 /** Build the standard "what should this robot do next?" request from a view. */
-export function buildActionRequest(view: ObservationView, seed: number, mode: DecisionRequest["mode"]): DecisionRequest {
+/**
+ * How a request presents a robot's options.
+ *   rules given  -> live play: curateOptions (at most maxOptions, default 10) with
+ *                   describeWithFacts descriptions (see options.ts, PROMPT_VERSION)
+ *   no rules     -> the full masked list with plain descriptions (legacy / analysis)
+ */
+export interface OptionPresentation {
+  rules?: OptionRules;
+  maxOptions?: number;
+}
+
+function presentOptions(view: ObservationView, p: OptionPresentation): { label: string; description: string }[] {
+  return p.rules ? liveOptions(view, p.rules, p.maxOptions ?? 10) : view.options.map(({ label, description }) => ({ label, description }));
+}
+
+export function buildActionRequest(view: ObservationView, seed: number, mode: DecisionRequest["mode"], present: OptionPresentation = {}): DecisionRequest {
   return {
     stateText: renderStateText(view),
     questions: [
@@ -23,7 +39,7 @@ export function buildActionRequest(view: ObservationView, seed: number, mode: De
         id: ACTION_QUESTION_ID,
         kind: "choice",
         instructions: actionInstructions(view.self.id),
-        options: view.options.map(({ label, description }) => ({ label, description })),
+        options: presentOptions(view, present),
       },
     ],
     seed,
@@ -41,6 +57,7 @@ export function buildBatchActionRequest(
   seed: number,
   mode: DecisionRequest["mode"],
   roles: Readonly<Record<string, CaptainRole | undefined>> = {},
+  present: OptionPresentation = {},
 ): DecisionRequest {
   return {
     stateText: renderSharedStateText(views),
@@ -51,7 +68,7 @@ export function buildBatchActionRequest(
         id: actionQuestionId(v.self.id),
         kind: "choice" as const,
         instructions: `${renderSelfText(v, extra)}\n${actionInstructions(v.self.id)}`,
-        options: v.options.map(({ label, description }) => ({ label, description })),
+        options: presentOptions(v, present),
       };
     }),
     seed,

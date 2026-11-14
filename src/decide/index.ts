@@ -27,3 +27,5 @@ export { cachedProvider, cacheKey, type CachedProvider, type CacheOptions } from
 export { anonymizedProvider, anonymizeRequest, deanonymizeResponse, neutralLabel, type LabelMap } from "./anonymize";
 export { buildJudgeRequests, judgeIncidents, judgeQuestionId, type Incident, type Judgment, type JudgeResult, type RuleToJudge } from "./judge";
 export { MatchRecorder } from "./recorder";
+export { CLIMB_WINDOW_EXTRA_S, PROMPT_VERSION, accuracyAt, curateOptions, describeWithFacts, liveOptions, type OptionRules } from "./options";
+export type { OptionPresentation } from "./ask";

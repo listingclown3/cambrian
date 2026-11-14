@@ -2,7 +2,7 @@
  * Offline response cache (owner: P2): wraps a provider so an identical OFFLINE request is
  * answered from disk instead of a fresh call.
  *
- * Key = sha256 of (provider id, model key, variant, stateText, questions). The seed and mode are
+ * Key = sha256 of (PROMPT_VERSION, provider id, model key, variant, stateText, questions). The seed and mode are
  * not part of the key: network providers run at temperature 0 and the request content fully
  * determines what was asked.
  *
@@ -20,6 +20,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { DecisionResponseSchema, type DecisionProvider, type DecisionRequest, type DecisionResponse } from "../contracts";
 import { repoPath } from "../util/config";
+import { PROMPT_VERSION } from "./options";
 
 export interface CacheOptions {
   /** Model the provider will use, or a function resolving it (e.g. ChatDecisionProvider.resolveModel). */
@@ -33,7 +34,7 @@ export interface CacheOptions {
 /** Cache key for a request. */
 export function cacheKey(providerId: string, model: string, variant: string, req: Pick<DecisionRequest, "stateText" | "questions">): string {
   return createHash("sha256")
-    .update(JSON.stringify([providerId, model, variant, req.stateText, req.questions]))
+    .update(JSON.stringify([PROMPT_VERSION, providerId, model, variant, req.stateText, req.questions]))
     .digest("hex");
 }
 

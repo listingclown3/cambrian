@@ -54,7 +54,8 @@ import {
 } from "../contracts";
 import { buildObservationView } from "../engine";
 import { robotsNeedingDecision } from "../exec";
-import { actionQuestionId, buildBatchActionRequest, buildCaptainRequest, captainQuestionId, captainRoleOptions } from "./ask";
+import { PROMPT_VERSION } from "./options";
+import { actionQuestionId, buildBatchActionRequest, type OptionPresentation, buildCaptainRequest, captainQuestionId, captainRoleOptions } from "./ask";
 
 /** Floating-point slack when comparing match times. */
 const EPS = 1e-9;
@@ -90,8 +91,15 @@ export interface ControllerOptions {
   onDecision?: (d: ControllerDecision) => void;
   /** Called for every scripted-robot decision (applied on the same tick it is made). */
   onScriptedDecision?: (d: { robotId: RobotId; timeS: number; policyId: string; view: ObservationView; intent: Intent }) => void;
+  /**
+   * Option presentation (default: live play = curated to 10 options with fact-rich descriptions,
+   * rules from the match state). Pass { full: true } to offer the full masked list instead.
+   */
+  options?: { full?: boolean; maxOptions?: number };
   /** Called after every engine step with that step's events and the state after it. */
   onStep?: (events: EngineEvent[], state: MatchState) => void;
+  /** Checked before every tick; return a reason to stop the match early (e.g. provider blocked). */
+  shouldStop?: () => string | null;
 }
 
 /** One robot's part of a decision. */
@@ -151,6 +159,8 @@ export interface ControllerSummary {
   simWallMs: number;
   /** Matches per hour at this match's wall time (3,600,000 / wallMs). */
   matchesPerHour: number;
+  /** Why the match stopped early (shouldStop), or null when it ran to the end / untilS. */
+  abortedReason: string | null;
 }
 
 /** Exact totals for one alliance's decider in one match. */
@@ -208,8 +218,11 @@ export class AgentController {
   private providerWaitMs = 0;
   readonly decisions: ControllerDecision[] = [];
 
+  private readonly present: OptionPresentation;
+
   constructor(private readonly opts: ControllerOptions) {
     this.state = opts.engine.createMatch(opts.cfg, opts.seed, opts.robots);
+    this.present = opts.options?.full ? {} : { rules: this.state.rules, maxOptions: opts.options?.maxOptions ?? 10 };
     this.timing = opts.timing ?? "paused";
     this.latencyScale = opts.latencyScale ?? opts.cfg.realtimeLatencyCharging.latencyScale;
     this.requestMode = opts.requestMode ?? "live";
@@ -279,7 +292,7 @@ export class AgentController {
     const roles = Object.fromEntries(robotIds.map((id) => [id, this.roles.get(id)]));
     const results = await Promise.all(
       groups.map(async (group) => {
-        const req = buildBatchActionRequest(group, this.nextSeed(), this.requestMode, roles);
+        const req = buildBatchActionRequest(group, this.nextSeed(), this.requestMode, roles, this.present);
         const res = await agent.provider.decide(req);
         return { group, req, res };
       }),
@@ -398,7 +411,12 @@ export class AgentController {
    */
   async run(untilS = Infinity): Promise<ControllerSummary> {
     const started = performance.now();
-    while (!this.finished && this.state.timeS < untilS - EPS) await this.tick();
+    let abortedReason: string | null = null;
+    while (!this.finished && this.state.timeS < untilS - EPS) {
+      abortedReason = this.opts.shouldStop?.() ?? null;
+      if (abortedReason) break;
+      await this.tick();
+    }
     const wallMs = performance.now() - started;
     const dropped = this.pending.splice(0);
     for (const p of dropped) this.finalize(p.decision); // appliedAtS stays null
@@ -447,6 +465,7 @@ export class AgentController {
       providerWaitMs: this.providerWaitMs,
       simWallMs: Math.max(0, wallMs - this.providerWaitMs),
       matchesPerHour: wallMs > 0 ? 3_600_000 / wallMs : Infinity,
+      abortedReason,
     };
   }
 }
@@ -461,7 +480,8 @@ export class AgentController {
  * Answers that arrived after the match ended keep matchTimeS = request time and intent = null.
  *
  * Extra keys beyond the contract (kept by JSON, stripped by a strict schema parse until the
- * contract has them): decisionKind, requestedAtS, appliedAtS, chargedS, probabilities, role.
+ * contract has them): decisionKind, requestedAtS, appliedAtS, chargedS, probabilities, role,
+ * promptVersion.
  */
 export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
   return d.choices.map((c, i) => {
@@ -481,6 +501,7 @@ export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
       appliedAtS: d.appliedAtS,
       chargedS: d.chargedS,
       probabilities: c.probabilities,
+      promptVersion: PROMPT_VERSION,
       ...(c.role ? { role: c.role } : {}),
     } as RunEventBody;
   });

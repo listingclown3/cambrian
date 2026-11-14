@@ -18,6 +18,8 @@ export interface FakeOptions {
   listed?: string[];
   /** Model ids that return 403 from the chat endpoint. */
   forbidden?: string[];
+  /** Answer every decision call with a 403 bot-protection checkpoint HTML page. */
+  checkpoint?: boolean;
 }
 
 export interface FakeDeps extends ProviderDeps {
@@ -38,6 +40,9 @@ export function fakeDeps(answers: FakeAnswers, opts: FakeOptions = {}): FakeDeps
     const body = typeof init?.body === "string" ? JSON.parse(init.body) : null;
     requests.push({ url, body });
     if (url.endsWith("/models")) return json(200, { data: (opts.listed ?? ["Qwen/Qwen3.5-397B-A17B"]).map((id) => ({ id })) });
+    if (opts.checkpoint) {
+      return new Response("<!DOCTYPE html><html><head><title>Vercel Security Checkpoint</title></head></html>", { status: 403, headers: { "content-type": "text/html", "x-vercel-mitigated": "challenge", "retry-after": "30" } });
+    }
     if (opts.status && opts.status !== 200) return json(opts.status, { error: { message: "fake failure" } });
     if (url.includes("systemone")) {
       const out: Record<string, unknown> = {};
@@ -70,6 +75,7 @@ export function fakeDeps(answers: FakeAnswers, opts: FakeOptions = {}): FakeDeps
     record: (_cfg, input) => ledger.push(input),
     env: { NACE_API_KEY: "test-nace-key-0000", DEEPINFRA_API_KEY: "test-deepinfra-key-0000" }, // secret-scan:allow (fake test values)
     sleep: async () => {},
+    sharedLimitDir: false,
     requests,
     ledger,
   };
