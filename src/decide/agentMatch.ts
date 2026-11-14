@@ -80,7 +80,7 @@ for (const a of ["blue", "red"] as const) {
   const models = [...new Set(metas.map((m) => m.model))].join(",");
   const sum = (f: (m: (typeof metas)[number]) => number) => metas.reduce((s, m) => s + f(m), 0);
   console.log(
-    `${a.padEnd(5)} ${specs[a]} (${models}${metas.some((m) => m.isMock) ? ", MOCK" : ""}): ${summary.calls[a]} calls, ${ds.reduce((s, d) => s + d.choices.length, 0)} robot decisions, ` +
+    `${a.padEnd(5)} ${specs[a]} (${models}${metas.some((m) => m.isMock) ? ", MOCK" : ""}): ${summary.calls[a]} requests (${summary.byAlliance[a].httpCalls} HTTP calls, ${summary.byAlliance[a].questions} questions), ${ds.reduce((s, d) => s + d.choices.length, 0)} robot decisions, ` +
       `${summary.fallbacks[a]} fallbacks, charged ${summary.chargedS[a].toFixed(2)} match s, p50 ${pct(lat, 0.5).toFixed(0)} ms, p95 ${pct(lat, 0.95).toFixed(0)} ms, ` +
       `${sum((m) => m.inputTokens)} in / ${sum((m) => m.outputTokens)} out tokens, $${sum((m) => m.costUsd).toFixed(4)}`,
   );

@@ -159,6 +159,14 @@ export interface AllianceTotals {
   decisions: number;
   /** Provider calls (DecisionRequests sent). */
   calls: number;
+  /** Questions asked across those requests. */
+  questions: number;
+  /**
+   * HTTP calls those requests needed: one per request for Drex (all robots deciding on one tick
+   * share one call), one per QUESTION for chat providers that split batches (deepinfra default).
+   * Parse-retries are not included here; they are in the usage ledger.
+   */
+  httpCalls: number;
   /** Robot decisions made (intent choices + captain role choices). */
   robotDecisions: number;
   /** Robot decisions answered by the fallback policy. */
@@ -410,6 +418,10 @@ export class AgentController {
       return {
         decisions: ds.length,
         calls: metas.length,
+        questions: ds.reduce((s, d) => s + d.requests.reduce((t, r) => t + r.questions.length, 0), 0),
+        httpCalls: (this.opts.agents[a]?.provider as { splitQuestions?: boolean } | undefined)?.splitQuestions
+          ? ds.reduce((s, d) => s + d.requests.reduce((t, r) => t + r.questions.length, 0), 0)
+          : metas.length,
         robotDecisions: ds.reduce((s, d) => s + d.choices.length, 0),
         fallbacks: fallbacks[a],
         cachedCalls: metas.filter((m) => m.cached).length,
