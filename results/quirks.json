@@ -1,8 +1,8 @@
 {
   "experiment": "quirks",
-  "createdTs": "2026-11-14T21:01:12.590Z",
+  "createdTs": "2026-11-14T21:02:56.034Z",
   "isMock": false,
-  "gitCommit": "f882b10eb241-dirty",
+  "gitCommit": "ae85975341d5-dirty",
   "simHash": "7160952d70dcba39",
   "config": {
     "drex": "drex-latest",
@@ -280,7 +280,7 @@
         "marginDiff": null,
         "ci95": null,
         "n": null,
-        "reason": "not run: engine support pending (no post-up shot spot in config.field.shotSpots)"
+        "reason": "not run: engine support pending (no tower_post* shot spot in the built field layout)"
       },
       "legality": null,
       "rules": [],
