@@ -307,6 +307,15 @@ export const TriggerParamsSchema = z.object({
    * decider, or whose action just finished, follows its role continuation in the meantime.
    */
   maxIdleS: z.number().positive().optional(),
+  /**
+   * ANTI-LOOP RULE (applies identically to every decider): an option whose action ends within
+   * this many seconds of being applied counts as a fast fail.
+   */
+  failFastS: z.number().nonnegative().optional(),
+  /** A fast-failed option is not offered to that robot again for this many seconds. */
+  optionCooldownS: z.number().nonnegative().optional(),
+  /** Cool-down after the same option fast-fails three times in a row, seconds. */
+  optionCooldownLongS: z.number().nonnegative().optional(),
 });
 export type TriggerParams = z.infer<typeof TriggerParamsSchema>;
 
