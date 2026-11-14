@@ -162,7 +162,7 @@ export function curateOptions(state: MatchState, robotId: string): IntentOption[
     by("hold_fire_until_active")?.label,
     by("collect:neutral")?.label ?? by("collect:local")?.label ?? by("collect:depot")?.label,
     spotsInRange[0] ? by(`goto_shot_spot:${spotsInRange[0].id}`)?.label : undefined,
-    state.phase === "endgame" ? climbs[climbs.length - 1]?.label : undefined,
+    state.rules.matchS - state.timeS <= CLIMB_WINDOW_S ? climbs[climbs.length - 1]?.label : undefined,
     by("escape_spin:neutral")?.label,
     by("disengage")?.label,
     opponents[0] ? by(`defend:${opponents[0].id}`)?.label : undefined,
@@ -196,8 +196,12 @@ export function curateOptions(state: MatchState, robotId: string): IntentOption[
  * real cost (no more scoring for the rest of the match) falls outside it.
  */
 export function isExcludedOption(s: Pick<Scenario, "snapshot">, label: string): boolean {
-  return s.snapshot.state.phase !== "endgame" && label.startsWith("climb");
+  const st = s.snapshot.state;
+  return label.startsWith("climb") && st.rules.matchS - st.timeS > CLIMB_WINDOW_S;
 }
+/** Planner rule (1:20 PM): climb options only when time left <= the endgame window (30 s, verified) + 5 s. */
+export const CLIMB_WINDOW_S = 35;
+export const CLIMB_RULE = `climb options excluded unless time left <= ${CLIMB_WINDOW_S} s (endgame 30 s + 5 s)`;
 
 /** Recompute best and ambiguous from values (best = highest mean; ambiguous = CI overlap with the runner-up). */
 export function keyFromValues(values: Record<string, { mean: number; ci95: number; n: number }>): { values: typeof values; best: string; ambiguous: boolean } {
