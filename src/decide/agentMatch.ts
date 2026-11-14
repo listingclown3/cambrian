@@ -29,6 +29,8 @@ const cfg = loadConfig();
 const seed = Number(arg("--seed", String(cfg.seeds.dev[0] ?? 1)));
 const timing = arg("--timing", "paused") as "paused" | "realtime";
 // --no-commit / --no-noidle turn the fairness rules off for the before/after comparison.
+// --check rollouts: "decider proposes, simulator checks" (off by default); --check-horizon <s>.
+const check = arg("--check", "") === "rollouts" ? { mode: "rollouts" as const, ...(process.argv.includes("--check-horizon") ? { horizonS: Number(arg("--check-horizon", "5")) } : {}) } : undefined;
 const fairness = { commitment: !process.argv.includes("--no-commit"), noIdle: !process.argv.includes("--no-noidle"), antiLoop: !process.argv.includes("--no-antiloop") };
 const captain = process.argv.includes("--captain");
 const specs: Record<Alliance, string> = { blue: arg("--blue", "drex_mock"), red: arg("--red", "scripted") };
@@ -54,7 +56,7 @@ const onDecision = (d: Parameters<NonNullable<typeof hooks.onDecision>>[0]) => {
   for (const m of d.metas) if (!checkpoint && (m.error ?? "").includes(BLOCKED_BY_CHECKPOINT)) checkpoint = m.error;
   hooks.onDecision?.(d);
 };
-const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, fairness, ...hooks, onDecision, shouldStop: () => checkpoint });
+const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, fairness, ...(check ? { check } : {}), ...hooks, onDecision, shouldStop: () => checkpoint });
 let summary: Awaited<ReturnType<AgentController["run"]>>;
 try {
   summary = await controller.run();
@@ -107,6 +109,13 @@ for (const a of ["blue", "red"] as const) {
   const t = summary.byAlliance[a];
   const robotDecisions = agents[a] ? t.robotDecisions : summary.state.robots.filter((r) => r.alliance === a).reduce((s, r) => s + summary.byRobot[r.id]!.decisions, 0);
   console.log(`${a.padEnd(5)} ${specs[a].padEnd(16)} robot decisions ${robotDecisions}, fast-failed ${t.fastFails}, cooled down ${t.cooledDown}, interrupted actions ${t.interruptedActions}, completed cycles ${t.completedCycles}, idle ${t.idleS.toFixed(1)} robot-s, role continuation ${t.continuationS.toFixed(1)} robot-s (${t.continuations} handed out)`);
+}
+if (check) {
+  for (const a of ["blue", "red"] as const) {
+    if (!agents[a]) continue;
+    const k = summary.byAlliance[a].check;
+    console.log(`${a.padEnd(5)} check (rollouts): ${k.checked} checked, decider kept ${k.keptDecider} (accept rate ${k.acceptRate === null ? "n/a" : (k.acceptRate * 100).toFixed(0) + "%"}), replaced by scripted ${k.replacedByScripted}, by second pick ${k.replacedBySecond}, mean margin gain ${k.meanMarginGain?.toFixed(2) ?? "n/a"}, check time p50 ${k.checkMsP50?.toFixed(0) ?? "n/a"} ms (total ${(k.checkMsTotal / 1000).toFixed(1)} s)`);
+  }
 }
 console.log(`wall ${(summary.wallMs / 1000).toFixed(1)} s (provider wait ${(summary.providerWaitMs / 1000).toFixed(1)} s, sim ${(summary.simWallMs / 1000).toFixed(1)} s) = ${summary.matchesPerHour.toFixed(1)} matches/hour`);
 if (process.argv.includes("--diag")) {

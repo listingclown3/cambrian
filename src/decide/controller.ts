@@ -54,7 +54,7 @@ import {
 } from "../contracts";
 import { buildObservationView } from "../engine";
 import * as execApi from "../exec";
-import { robotsNeedingDecision } from "../exec";
+import { robotsNeedingDecision, scoreCandidates } from "../exec";
 import { PROMPT_VERSION } from "./options";
 import { actionQuestionId, buildBatchActionRequest, type OptionPresentation, buildCaptainRequest, captainQuestionId, captainRoleOptions } from "./ask";
 
@@ -109,6 +109,14 @@ export interface ControllerOptions {
    * Turn either off for the before/after comparison.
    */
   fairness?: { commitment?: boolean; noIdle?: boolean; antiLoop?: boolean };
+  /**
+   * "Decider proposes, simulator checks" (off by default), identical for every decider: the
+   * decider's pick, roleContinuation(view) and (with probabilities) the decider's second pick are
+   * scored with micro-rollouts (common random numbers; every robot then follows the scripted
+   * policy); the best is played, ties keep the decider's pick. Its wall time is charged to the sim
+   * clock in realtime timing exactly like provider latency.
+   */
+  check?: CheckOptions;
   /** Called for every role-continuation intent (never counted as the decider's decision). */
   onContinuation?: (d: { robotId: RobotId; timeS: number; view: ObservationView; intent: Intent }) => void;
   /** Checked before every tick; return a reason to stop the match early (e.g. provider blocked). */
@@ -128,6 +136,8 @@ export interface RobotChoice {
   usedFallbackPolicy: boolean;
   /** The provider's probability per option label for this robot's question (null when it gives none or fell back). */
   probabilities: Record<string, number> | null;
+  /** "Decider proposes, simulator checks": the candidates, their rollout scores and the outcome. */
+  checked?: CheckRecord;
 }
 
 /** One provider call (or one sequential captain step) and when its answer took effect. */
@@ -147,6 +157,8 @@ export interface ControllerDecision {
   /** Provider bookkeeping for each request. */
   metas: DecisionMeta[];
   choices: RobotChoice[];
+  /** Wall-clock milliseconds the rollout check took for this decision (0 when off). Charged in realtime. */
+  checkMs: number;
 }
 
 /** Totals for one match. */
@@ -215,6 +227,8 @@ export interface AllianceTotals {
   fastFails: number;
   /** Options put on cool-down. */
   cooledDown: number;
+  /** Rollout check: robot decisions checked, kept, replaced, mean margin gain and check time. */
+  check: { checked: number; keptDecider: number; replacedByScripted: number; replacedBySecond: number; acceptRate: number | null; meanMarginGain: number | null; checkMsP50: number | null; checkMsTotal: number };
   /** Intents replaced before their action finished (action_done / failed / timeout). */
   interruptedActions: number;
   /** Completed cycles: a finished collect followed by fuel scored by the same robot. */
@@ -256,6 +270,36 @@ export interface FairnessParams {
   /** ... or optionCooldownLongS after the same label fast-ended 3 times in a row. */
   optionCooldownLongS: number;
 }
+
+/** One candidate in a rollout check. */
+export interface CheckCandidate {
+  label: string;
+  /** decider = the decider's pick; scripted = roleContinuation; second = the decider's second-highest option. */
+  source: "decider" | "scripted" | "second";
+  /** Mean (points for - points against) over the micro-rollouts. */
+  meanMargin: number;
+}
+export interface CheckRecord {
+  candidates: CheckCandidate[];
+  /** Label played. */
+  played: string;
+  /** Which candidate was played. */
+  playedSource: CheckCandidate["source"];
+  /** Rollout margin of the played candidate minus the decider's pick (>= 0). */
+  marginGain: number;
+}
+
+/** "Decider proposes, simulator checks" settings (off unless given). */
+export interface CheckOptions {
+  mode: "rollouts";
+  /** Rollouts per candidate (default config.microRollouts.count). */
+  count?: number;
+  /** Horizon, seconds (default config.microRollouts.checkHorizonS, else CHECK_HORIZON_DEFAULT_S). */
+  horizonS?: number;
+}
+
+/** Default check horizon when config.microRollouts.checkHorizonS is absent (chosen on dev seeds). */
+export const CHECK_HORIZON_DEFAULT_S = 5;
 
 const COLLECT_ACTIONS = new Set(["collect", "load_outpost", "steal_fuel"]);
 const ROBOT_CRITICAL = new Set(["hopper_full", "hopper_empty", "action_done", "action_failed", "action_timeout"]);
@@ -453,7 +497,32 @@ export class AgentController {
       choices.push({ robotId, chosenLabel: role ? label : null, intent: null, ...(role ? { role } : {}), probabilities: role ? (answer?.probabilities ?? null) : null, usedFallbackPolicy: !role });
     }
     const [chargedS] = this.charge(requestedAtS, latencyMs);
-    return { kind: "captain", alliance, requestedAtS, latencyMs, chargedS, appliedAtS: null, requests, metas, choices };
+    return { kind: "captain", alliance, requestedAtS, latencyMs, chargedS, appliedAtS: null, requests, metas, choices, checkMs: 0 };
+  }
+
+  /** Score the decider's pick against the scripted and second candidates; play the best (ties: the decider's). */
+  private checkChoice(c: RobotChoice, view: ObservationView): void {
+    const mr = this.opts.cfg.microRollouts as typeof this.opts.cfg.microRollouts & { checkHorizonS?: number };
+    const settings = { count: this.opts.check?.count ?? mr.count, horizonS: this.opts.check?.horizonS ?? mr.checkHorizonS ?? CHECK_HORIZON_DEFAULT_S };
+    const cands: { source: CheckCandidate["source"]; intent: Intent }[] = [{ source: "decider", intent: c.intent! }];
+    cands.push({ source: "scripted", intent: this.continuation(view) });
+    if (c.probabilities) {
+      const second = Object.entries(c.probabilities)
+        .filter(([l]) => l !== c.chosenLabel)
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+      const opt = second && view.options.find((o) => o.label === second[0]);
+      if (opt) cands.push({ source: "second", intent: opt.intent });
+    }
+    const unique = cands.filter((x, i) => cands.findIndex((y) => intentLabel(y.intent) === intentLabel(x.intent)) === i);
+    const scores = scoreCandidates(this.opts.engine, this.state, c.robotId, unique.map((u) => u.intent), settings, this.opts.scripted);
+    let best = 0;
+    for (let i = 1; i < scores.length; i++) if (scores[i]!.meanMargin > scores[best]!.meanMargin + 1e-9) best = i;
+    const candidates = scores.map((s, i) => ({ label: s.label, source: unique[i]!.source, meanMargin: s.meanMargin }));
+    c.checked = { candidates, played: candidates[best]!.label, playedSource: candidates[best]!.source, marginGain: scores[best]!.meanMargin - scores[0]!.meanMargin };
+    if (best !== 0) {
+      c.intent = unique[best]!.intent;
+      c.chosenLabel = candidates[best]!.label;
+    }
   }
 
   /** One intent request for some robots of one alliance. */
@@ -483,8 +552,11 @@ export class AgentController {
         }
         return { robotId: v.self.id, chosenLabel: label, intent: option.intent, probabilities: answer?.probabilities ?? null, usedFallbackPolicy: false };
       });
-      const [chargedS] = this.charge(requestedAtS, res.meta.latencyMs);
-      return { kind: "intent" as const, alliance, requestedAtS, latencyMs: res.meta.latencyMs, chargedS, appliedAtS: null, requests: [req], metas: [res.meta], choices };
+      const checkStarted = performance.now();
+      if (this.opts.check?.mode === "rollouts") for (const c of choices) if (!c.usedFallbackPolicy && c.intent) this.checkChoice(c, group.find((v) => v.self.id === c.robotId)!);
+      const checkMs = this.opts.check?.mode === "rollouts" ? performance.now() - checkStarted : 0;
+      const [chargedS] = this.charge(requestedAtS, res.meta.latencyMs + checkMs);
+      return { kind: "intent" as const, alliance, requestedAtS, latencyMs: res.meta.latencyMs, chargedS, appliedAtS: null, requests: [req], metas: [res.meta], choices, checkMs };
     });
   }
 
@@ -677,6 +749,22 @@ export class AgentController {
         models: [...new Set(metas.map((m) => m.model))],
         isMock: metas.some((m) => m.isMock),
         ...behaviourTotals(a),
+        check: checkTotals(ds),
+      };
+    };
+    const checkTotals = (ds: ControllerDecision[]) => {
+      const recs = ds.flatMap((d) => d.choices.flatMap((c) => (c.checked ? [c.checked] : [])));
+      const ms = ds.filter((d) => d.checkMs > 0).map((d) => d.checkMs).sort((x, y) => x - y);
+      const kept = recs.filter((r) => r.playedSource === "decider").length;
+      return {
+        checked: recs.length,
+        keptDecider: kept,
+        replacedByScripted: recs.filter((r) => r.playedSource === "scripted").length,
+        replacedBySecond: recs.filter((r) => r.playedSource === "second").length,
+        acceptRate: recs.length ? kept / recs.length : null,
+        meanMarginGain: recs.length ? recs.reduce((s, r) => s + r.marginGain, 0) / recs.length : null,
+        checkMsP50: ms.length ? ms[Math.floor(ms.length / 2)]! : null,
+        checkMsTotal: ms.reduce((s, x) => s + x, 0),
       };
     };
     const behaviourTotals = (a: Alliance) => {
@@ -736,6 +824,7 @@ export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
       chargedS: d.chargedS,
       probabilities: c.probabilities,
       promptVersion: PROMPT_VERSION,
+      ...(c.checked ? { checked: c.checked, checkMs: d.checkMs } : {}),
       ...(c.role ? { role: c.role } : {}),
     } as RunEventBody;
   });

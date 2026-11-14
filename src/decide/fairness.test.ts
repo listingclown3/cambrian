@@ -159,3 +159,52 @@ describe("anti-loop guard", () => {
     expect(q.options!.some((o) => o.label === "hold_position")).toBe(false); // on cool-down
   });
 });
+
+describe("decider proposes, simulator checks", () => {
+  /** Real engine whose rollouts score 0 for the robot doing hold_position and `other` for anything else. */
+  function judged(other: number, busyMs = 0): Engine {
+    return {
+      ...engine,
+      rollout(snapshot, overrides, horizonS, seed, policies, options) {
+        const r = engine.rollout(snapshot, overrides, 0.05, seed, policies, options);
+        const until = performance.now() + busyMs;
+        while (performance.now() < until) {
+          /* simulate rollout cost */
+        }
+        const held = Object.values(overrides).some((i) => i.action === "hold_position");
+        return { ...r, pointsFor: held ? 0 : other, pointsAgainst: 0 };
+      },
+    };
+  }
+  const run = async (eng: Engine, timing: "paused" | "realtime" = "paused") => {
+    const c = new AgentController({ engine: eng, cfg, seed: 1001, robots: demoRobots(cfg), agents: { blue: { provider: holder(100) } }, scripted: { default: basicCyclePolicy }, timing, check: { mode: "rollouts", count: 2, horizonS: 1 } });
+    await c.run(1);
+    return c.decisions.filter((d) => d.kind === "intent");
+  };
+
+  it("vetoes the worse candidate and records the scores", async () => {
+    const ds = await run(judged(5));
+    const ch = ds[0]!.choices.find((x) => x.robotId === "B1")!;
+    expect(ch.checked!.candidates[0]).toMatchObject({ label: "hold_position", source: "decider", meanMargin: 0 });
+    expect(ch.checked!.playedSource).toBe("scripted");
+    expect(ch.chosenLabel).not.toBe("hold_position");
+    expect(ch.checked!.marginGain).toBe(5);
+  });
+
+  it("keeps the decider's pick on a tie", async () => {
+    const ds = await run(judged(0));
+    for (const ch of ds[0]!.choices) {
+      expect(ch.checked!.playedSource).toBe("decider");
+      expect(ch.chosenLabel).toBe("hold_position");
+    }
+  });
+
+  it("charges the check time to the sim clock in realtime only", async () => {
+    const rt = await run(judged(5, 3), "realtime");
+    expect(rt[0]!.checkMs).toBeGreaterThan(10);
+    expect(rt[0]!.chargedS).toBeCloseTo((100 + rt[0]!.checkMs) / 1000, 9);
+    const paused = await run(judged(5, 3), "paused");
+    expect(paused[0]!.checkMs).toBeGreaterThan(10);
+    expect(paused[0]!.chargedS).toBe(0);
+  });
+});
