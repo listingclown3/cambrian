@@ -33,7 +33,8 @@
     "usage": "tsx src/ledger/cli.ts",
     "prepush": "node scripts/prepush.mjs",
     "ingest:rules": "tsx src/ingest/manualRules.ts",
-    "describe": "node scripts/describe.mjs"
+    "describe": "node scripts/describe.mjs",
+    "match": "tsx src/exec/playMatch.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
