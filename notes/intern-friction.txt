@@ -62,3 +62,18 @@
 [2026-11-14] What worked well: the trial task (write one file, reply "done") finished in 6.7 s
   wall-clock, 3 turns, 4 System 1 judgments; --json events were easy to consume; passing the
   task on stdin avoids all shell quoting through wsl.exe.
+
+[2026-11-14] --cwd is not validated at start-up; a bad path only shows up when a tool runs.
+  What happened: we launched Intern from Git Bash on Windows, which silently rewrote the Linux
+    path argument (/home/chris/cambrian-lab/scoutgen became C:/Program Files/Git/home/chris/...).
+    That is our environment's fault, not Intern's. But Intern started normally with a --cwd
+    that did not exist, and the first sign was a tool error several turns in:
+  Output (tool_call_end, bash):
+    Error: bash failed unexpectedly: FileNotFoundError: [Errno 2] No such file or directory:
+    PosixPath('/home/chris/C:/Program Files/Git/home/chris/cambr...
+  Effect: the agent kept going for five minutes using absolute paths with read/find, could not
+    run anything, and we had to stop the session by hand.
+  Suggestion: check that --cwd exists and is a directory before the first turn and exit with a
+    one-line error; also report run_start.cwd exactly as resolved (it did, which is how we
+    found the cause).
+  Fix on our side: set MSYS_NO_PATHCONV=1 when calling from Git Bash (Node's spawn is not affected).

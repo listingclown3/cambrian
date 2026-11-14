@@ -1,5 +1,5 @@
 {
-  "_readme": "Every tunable and every assumed number lives here, never in code. game/field values carry {value,status,source}; status is VERIFIED or TODO_VERIFY_AGAINST_MANUAL. Other sections carry _status FABRICATED (invented plausible numbers) or TUNABLE (engineering knobs). NEVER take game numbers from Chief Delphi parody documents; only the official manual counts. Schema: src/contracts/config.ts.",
+  "_readme": "Every tunable and every assumed number lives here, never in code. game/field values carry {value,status,source}; status is VERIFIED (official manual, with page), EXTERNAL_SOURCE (a named public source outside the manual) or TODO_VERIFY_AGAINST_MANUAL. Other sections carry _status FABRICATED (invented plausible numbers) or TUNABLE (engineering knobs). NEVER take game numbers from Chief Delphi parody documents; only the official manual counts. Schema: src/contracts/config.ts.",
   "game": {
     "autoS": {
       "value": 20,
@@ -58,8 +58,8 @@
     },
     "fuelMassKg": {
       "value": 0.23,
-      "status": "TODO_VERIFY_AGAINST_MANUAL",
-      "source": "planner brief; confirm against the fuel specification in the manual"
+      "status": "EXTERNAL_SOURCE",
+      "source": "EXTERNAL, not from the manual (NDI did not find it there): Wikipedia, Rebuilt (FIRST), gives the FUEL weight as about 0.5 pounds (about 0.23 kg); https://en.wikipedia.org/wiki/Rebuilt_(FIRST), fetched 2026-11-14"
     },
     "hubShiftSchedule": {
       "value": { "transitionS": 10, "shiftS": 25, "numShifts": 4, "autoWinnerInactiveFirst": true },
@@ -696,9 +696,9 @@
   },
   "pricesPerMTokUsd": {
     "_status": "TUNABLE",
-    "_note": "US dollars per 1M tokens. byModel (exact model id) takes precedence over byId (provider fallback). null = unknown: cost is then recorded as 0, never guessed. Sources, 2026-11-14: DeepInfra models are from the pricing metadata in its live model list, and DeepInfra responses also report usage.estimated_cost, which is recorded in preference. drex-max-v1.1 is from the Nace pricing page (0.12 per 1M input tokens). drex-v2.0 at 0.06 is the price DeepInfra lists for the same model and is NOT yet confirmed against the Nace console billing page: confirm it before quoting a cost ratio. Drex bills input tokens only. openai and gemini are not filled in.",
+    "_note": "US dollars per 1M tokens. byModel (exact model id) takes precedence over byId (provider fallback). null = unknown: cost is then recorded as 0, never guessed. Sources, 2026-11-14: DeepInfra models are from the pricing metadata in its live model list, and DeepInfra responses also report usage.estimated_cost, which is recorded in preference. Drex is VERIFIED from the Nace console usage export (2026-11-14, confirmed by the project owner): 0.03 per 1M input tokens and output tokens free, the same for drex-v2.0 and drex-latest (drex-max-v1.1). NDI is not token-priced: each job reports its own charge, which is what the ledger records. openai and gemini are not filled in.",
     "byId": {
-      "drex": { "input": 0.06, "output": 0 },
+      "drex": { "input": 0.03, "output": 0 },
       "drex_mock": { "input": 0, "output": 0 },
       "deepinfra": { "input": 0.45, "output": 3 },
       "openai": { "input": null, "output": null },
@@ -707,8 +707,8 @@
       "random": { "input": 0, "output": 0 }
     },
     "byModel": {
-      "drex-v2.0": { "input": 0.06, "output": 0 },
-      "drex-max-v1.1": { "input": 0.12, "output": 0 },
+      "drex-v2.0": { "input": 0.03, "output": 0 },
+      "drex-max-v1.1": { "input": 0.03, "output": 0 },
       "Qwen/Qwen3.5-397B-A17B": { "input": 0.45, "output": 3 },
       "Qwen/Qwen3-235B-A22B-Instruct-2507": { "input": 0.09, "output": 0.55 },
       "deepseek-ai/DeepSeek-V4-Pro": { "input": 1.3, "output": 2.6 },

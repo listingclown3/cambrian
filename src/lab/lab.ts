@@ -30,7 +30,7 @@ import { MAX_LAB_PROPOSALS, ProposalSchema, type Config, type Proposal } from ".
 import { costFromConfig, recordUsage } from "../ledger";
 import { loadConfig, repoPath } from "../util/config";
 import { notImplementedYet } from "../util/stub";
-import { runIntern, type InternRunSummary } from "./intern-client";
+import { runIntern, type InternEvent, type InternRunSummary } from "./intern-client";
 
 /**
  * Validate proposals written by Intern. Returns the valid ones (at most MAX_LAB_PROPOSALS, first
@@ -61,16 +61,28 @@ export function workspacePath(cfg: Config): string {
  * Run one Intern session with the configured models and record it in the usage ledger.
  * System 2 cost is computed from config prices when Intern reports none.
  */
-export async function runLabSession(cfg: Config, task: string, purpose: string, maxTurns?: number): Promise<InternRunSummary> {
+export interface LabSessionOptions {
+  /** Stop after this many turns. */
+  maxTurns?: number;
+  /** Folder Intern works in, as Intern sees it; defaults to the configured lab workspace. */
+  internCwd?: string;
+  /** Wall-clock limit in seconds; defaults to cfg.lab.timeoutS. */
+  timeoutS?: number;
+  /** Called for every Intern event as it arrives. */
+  onEvent?: (event: InternEvent) => void;
+}
+
+export async function runLabSession(cfg: Config, task: string, purpose: string, options: LabSessionOptions = {}): Promise<InternRunSummary> {
   const system2 = `${cfg.lab.system2Provider}/${cfg.lab.system2Model}`;
   const run = await runIntern({
     command: cfg.lab.internCommand,
     system2,
     system1: cfg.lab.system1Model ?? undefined,
-    internCwd: cfg.lab.internCwd ?? workspacePath(cfg),
+    internCwd: options.internCwd ?? cfg.lab.internCwd ?? workspacePath(cfg),
     task,
-    maxTurns,
-    timeoutMs: cfg.lab.timeoutS * 1000,
+    maxTurns: options.maxTurns,
+    timeoutMs: (options.timeoutS ?? cfg.lab.timeoutS) * 1000,
+    onEvent: options.onEvent,
   });
   if (run.eventCounts.run_start) {
     const s2Cost = run.system2.costUsd || (costFromConfig(cfg, "deepinfra", cfg.lab.system2Model, run.system2.inputTokens, run.system2.outputTokens) ?? 0);
@@ -97,7 +109,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
     mkdirSync(dir, { recursive: true });
     const file = path.join(dir, "trial.json");
     rmSync(file, { force: true });
-    const run = await runLabSession(cfg, 'Create a file named trial.json in the working directory containing exactly {"ok": true}. Then reply with the single word done.', "trial", 8);
+    const run = await runLabSession(cfg, 'Create a file named trial.json in the working directory containing exactly {"ok": true}. Then reply with the single word done.', "trial", { maxTurns: 8 });
     const wrote = existsSync(file) ? readFileSync(file, "utf8").trim() : "(no file)";
     console.log(`[lab] trial: ${run.ok ? "OK" : "FAILED"} reason=${run.reason} exit=${run.exitCode} model=${run.model}`);
     console.log(`[lab]   ${run.turns} turns, ${run.toolCalls.length} tool calls, ${run.system1.judgments} System 1 judgments (${[...new Set(run.system1.decisions.map((d) => d.backend))].join(", ")}), ${(run.durationMs / 1000).toFixed(1)} s`);
