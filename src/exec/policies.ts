@@ -3,9 +3,12 @@
  * not being evaluated during rollouts.
  *
  *   basic_cycle - one collect-then-score cycle for every robot (the original baseline)
- *   archetype   - plays to the robot's archetype: defenders defend, feeders pass, the
- *                 zero-hopper turret shoots as it collects, dumpers score only from the hub,
- *                 drum and lane shooters align first, turrets shoot on the move; escapes pins
+ *   archetype   - the no-idle role table (see decideRole): plays to the robot's archetype in
+ *                 every phase and never stands still; roleContinuation() exposes it to controllers
+ *   archetype_v1 - the archetype policy as frozen at 6616170 (defenders defend, feeders pass,
+ *                 the zero-hopper turret shoots as it collects, dumpers score only from the hub,
+ *                 drum and lane shooters align first, turrets shoot on the move; escapes pins),
+ *                 which can hold still while its hub is inactive
  *   hold        - never moves (a control)
  *
  * The few numbers in here are strategy heuristics of a scripted baseline, not game or physics
@@ -245,10 +248,142 @@ function decideArchetype(view: ObservationView, options: ArchetypePolicyOptions)
   }
 }
 
-/** The archetype policy, with endgame tower contesting on. */
-export const archetypePolicy: ScriptedPolicy = makeArchetypePolicy("archetype", { contestTowerInEndgame: true });
-/** The archetype policy without endgame tower contesting. */
+/**
+ * The archetype policy as frozen at commit 6616170 (kept for before/after comparisons). It can
+ * stand still, for example holding fire while its hub is inactive.
+ */
+export const archetypeV1Policy: ScriptedPolicy = makeArchetypePolicy("archetype_v1", { contestTowerInEndgame: true });
+/** archetype_v1 without endgame tower contesting. */
 export const archetypeNoContestPolicy: ScriptedPolicy = makeArchetypePolicy("archetype_no_tower_contest", { contestTowerInEndgame: false });
+
+// ── no-idle role table ───────────────────────────────────────────────────────
+
+/**
+ * Role logic that never idles (the "no-idle rule"): every robot is always doing something
+ * useful for its archetype.
+ *   hub active (and auto, transition, endgame): score; collect when empty
+ *   hub inactive, by archetype:
+ *     defender            - defend the opponents' top scorer
+ *     big hopper hauler   - collect; when full, stage fuel at the spot nearest our hub
+ *     feeder              - pass to a partner, else collect, else stage
+ *     turrets, dumpers, drum, lane and starter shooters
+ *                         - collect; when full, reposition to a shot spot, then defend
+ *   endgame: climb when climb time versus time left says so (as archetype_v1)
+ * Returns hold_position only while hanging on the tower or when no other option exists.
+ */
+function decideRole(view: ObservationView, options: ArchetypePolicyOptions): Intent {
+  const { self } = view;
+  const p = self.profile;
+  // Options whose action just failed for this robot are skipped, so a failing choice is not
+  // re-picked every tick (which would leave the robot standing still).
+  const failed = new Set(view.recentEvents.flatMap((e) => (e.kind === "action_failed" && e.robotId === self.id ? [e.action] : [])));
+  const opts = optionIndex(view);
+  for (const [label, intent] of [...opts]) if (failed.has(intent.action) && intent.action !== "climb") opts.delete(label);
+  const hold: Intent = { action: "hold_position", params: {} };
+
+  if (self.climb.inProgress && self.intent) return self.intent;
+  if (self.climb.level > 0) return opts.get("hold_position") ?? hold;
+
+  // Endgame climb, escapes and endgame tower contest: exactly as archetype_v1.
+  if (view.phase === "endgame") {
+    const climbs = view.options.filter((o) => o.intent.action === "climb");
+    const best = climbs[climbs.length - 1];
+    if (best && best.intent.action === "climb") {
+      const tower = view.field.alliances[self.alliance].tower;
+      const needS = dist(self.pose, tower) / p.speedEmptyMps + climbTimeForLevel(p, best.intent.params.level);
+      if (view.matchRemainingS <= needS * CLIMB_START_FACTOR || self.fuelHeld === 0) return best.intent;
+    }
+  }
+  const opponentContact = self.contact.withRobotId !== null && view.robots.some((r) => r.id === self.contact.withRobotId && !r.isPartner);
+  if (opponentContact && (lastOwnEvent(view, "pinned") || lastOwnEvent(view, "contact_long") || lastOwnEvent(view, "no_progress"))) {
+    if (p.shooterType === "none") {
+      if (opts.has("disengage")) return opts.get("disengage")!;
+    } else {
+      const exit = self.fuelHeld > 0 ? "our_alliance" : "neutral";
+      const escape = opts.get(`escape_spin:${exit}`) ?? opts.get(`escape_reverse:${exit}`);
+      if (escape) return escape;
+    }
+  }
+  if (p.shooterType === "none" && options.contestTowerInEndgame && view.phase === "endgame" && (hashString(`${self.id}:${Math.floor(view.timeS)}`) & 1) === 0) {
+    const theirTower = view.field.alliances[self.alliance === "red" ? "blue" : "red"].tower;
+    const atTower = view.robots
+      .filter((r) => !r.isPartner && (r.climbLevel > 0 || r.apparentAction === "climb" || dist(r.pose, theirTower) <= TOWER_NEAR_M))
+      .sort((a, b) => dist(self.pose, a.pose) - dist(self.pose, b.pose))[0];
+    const contest = atTower ? opts.get(`defend:${atTower.id}`) : undefined;
+    if (contest) return contest;
+  }
+
+  const target = defendTarget(view);
+  const defendTop = target ? opts.get(`defend:${target}`) : undefined;
+  const room = self.fuelHeld < p.capacity;
+  const theirZone = view.fuel.byZone[`${self.alliance === "red" ? "blue" : "red"}_alliance`];
+  const steal = theirZone > 0 ? opts.get("steal_fuel:their_alliance") : view.fuel.byZone.neutral > 0 ? opts.get("steal_fuel:neutral") : undefined;
+  const collect = collectIntent(view, opts) ?? (room ? steal : undefined);
+  const spots = scoringSpots(view);
+  const justArrived = lastOwnEvent(view, "action_done", "goto_shot_spot");
+  const reposition = !justArrived && spots[0] ? opts.get(`goto_shot_spot:${spots[0].id}`) : undefined;
+  const stageSpot = view.field.shotSpots.filter((s) => s.alliance === self.alliance).sort((a, b) => a.distanceToHubM - b.distanceToHubM)[0];
+  const stage = stageSpot ? opts.get(`stage_fuel:${stageSpot.id}`) : undefined;
+  const passTo =
+    p.archetype === "feeder_passer" && self.fuelHeld > 0
+      ? view.robots
+          .filter((r) => r.isPartner && r.fuelLevel !== "full" && r.traits.shooterType !== "none" && r.climbLevel === 0 && opts.has(`pass_to:robot=${r.id}`))
+          .sort((a, b) => b.traits.lanes - a.traits.lanes || dist(self.pose, a.pose) - dist(self.pose, b.pose))[0]
+      : undefined;
+  const pass = passTo ? opts.get(`pass_to:robot=${passTo.id}`) : undefined;
+  const inNeutral = view.field.neutral.x0 <= self.pose.x && self.pose.x <= view.field.neutral.x1;
+  const fallback = (): Intent => defendTop ?? opts.get(inNeutral ? "goto_zone:our_alliance" : "goto_zone:neutral") ?? opts.get("hold_position") ?? hold;
+
+  if (p.shooterType === "none") return defendTop ?? collect ?? fallback();
+
+  if (view.hubs.ours.active) {
+    if (pass) return pass;
+    if (p.canCollectWhileShooting && p.aimMethod === "turret" && collect) return collect;
+    if (self.fuelHeld > 0 && (self.fuelHeld >= p.capacity * SCORE_WHEN_FULL_FRACTION || !collect || view.phase === "auto")) {
+      const score = scoreIntent(view, opts);
+      if (score) return score;
+      if (p.shooterType !== "dumper" && opts.has("dump_unaligned")) return opts.get("dump_unaligned")!;
+    }
+    if (collect) {
+      if (spots[0] && collect.action === "collect") return { ...collect, then: { action: "goto_shot_spot", params: { spotId: spots[0].id } } };
+      return collect;
+    }
+    if (self.fuelHeld > 0) {
+      const score = scoreIntent(view, opts);
+      if (score) return score;
+    }
+    return fallback();
+  }
+
+  // Our hub is inactive.
+  switch (p.archetype) {
+    case "big_hopper_hauler":
+      return (room ? collect : undefined) ?? stage ?? fallback();
+    case "feeder_passer":
+      return pass ?? (room ? collect : undefined) ?? stage ?? fallback();
+    default:
+      return (room ? collect : undefined) ?? reposition ?? fallback();
+  }
+}
+
+/** Build a no-idle role policy. */
+export function makeRolePolicy(id: string, options: ArchetypePolicyOptions): ScriptedPolicy {
+  return { id, decide: (view) => decideRole(view, options) };
+}
+
+/** The archetype policy: the no-idle role table, with endgame tower contesting on. */
+export const archetypePolicy: ScriptedPolicy = makeRolePolicy("archetype", { contestTowerInEndgame: true });
+/** The no-idle role table without endgame tower contesting. */
+export const archetypeNoIdleNoContestPolicy: ScriptedPolicy = makeRolePolicy("archetype_no_idle_no_tower_contest", { contestTowerInEndgame: false });
+
+/**
+ * What a decider-controlled robot does while it waits for its decider's answer, or after its
+ * action completed with no new answer yet: the same no-idle role logic, as a pure function of
+ * the view. Only returns intents from view.options (or one of them with an allowed `then`).
+ */
+export function roleContinuation(view: ObservationView): Intent {
+  return decideRole(view, { contestTowerInEndgame: true });
+}
 
 /** Policy used by `pnpm match` and other tools when none is named. */
 export const DEFAULT_POLICY_ID = "archetype";
@@ -257,6 +392,8 @@ export const DEFAULT_POLICY_ID = "archetype";
 export const SCRIPTED_POLICIES: Record<string, ScriptedPolicy> = {
   [basicCyclePolicy.id]: basicCyclePolicy,
   [archetypePolicy.id]: archetypePolicy,
+  [archetypeNoIdleNoContestPolicy.id]: archetypeNoIdleNoContestPolicy,
+  [archetypeV1Policy.id]: archetypeV1Policy,
   [archetypeNoContestPolicy.id]: archetypeNoContestPolicy,
   [holdPolicy.id]: holdPolicy,
 };
