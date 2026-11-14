@@ -51,7 +51,7 @@ import { Rng, seedState } from "../util/rng";
 import { buildFieldLayout } from "./field";
 import { isTriggerFor } from "../exec/triggers";
 import { buildObservationView, eventConcerns } from "./observe";
-import { getGrid, resolvePosition, snapTarget, steer, terrainFactor } from "./nav";
+import { blockedAt, getGrid, resolvePosition, snapTarget, steer, terrainFactor } from "./nav";
 
 const EPS = 1e-9;
 /** Standard gravity, used only when physics.gravityMps2 is absent (config/default.json sets it). */
@@ -346,7 +346,7 @@ function resolveTarget(state: MatchState, robot: RobotState, step: IntentStep): 
       // Stand in front of the opponent, on the line from it to the hub it scores in.
       const other = robotById(state, step.params.robotId);
       if (!other || other.alliance === robot.alliance) return null;
-      return offsetToward(other.pose, field.alliances[other.alliance].hub, contactDistance(state));
+      return touchPoint(state, robot, other, field.alliances[other.alliance].hub);
     }
     case "screen":
     case "protect_climber": {
@@ -376,6 +376,24 @@ function resolveTarget(state: MatchState, robot: RobotState, step: IntentStep): 
     default:
       return undefined;
   }
+}
+
+/** Angles tried, in order, when the preferred side of a robot is blocked by a field element (radians). */
+const TOUCH_ANGLES = [0, Math.PI / 6, -Math.PI / 6, Math.PI / 3, -Math.PI / 3, Math.PI / 2, -Math.PI / 2, (2 * Math.PI) / 3, (-2 * Math.PI) / 3, Math.PI];
+
+/**
+ * A legal point where `robot` touches `other`, on the side facing `toward` if possible, otherwise
+ * the nearest side (by angle) that is clear of field elements.
+ */
+function touchPoint(state: MatchState, robot: RobotState, other: RobotState, toward: Vec2): Vec2 {
+  const grid = getGrid(state.field, state.rules.physics);
+  const d = contactDistance(state);
+  const base = Math.atan2(toward.y - other.pose.y, toward.x - other.pose.x);
+  for (const a of TOUCH_ANGLES) {
+    const p = { x: other.pose.x + Math.cos(base + a) * d, y: other.pose.y + Math.sin(base + a) * d };
+    if (!blockedAt(grid, p, robot.profile.fitsUnderTrench)) return p;
+  }
+  return offsetToward(other.pose, toward, d);
 }
 
 /** Centre-to-centre distance at which two robots touch. */
@@ -552,8 +570,8 @@ function moveToward(state: MatchState, robot: RobotState, target: Vec2, dtS: num
   }
   const left = dist(robot.pose, target);
   if (left <= ARRIVE_EXACT_M) return true;
-  // Close enough and no longer making headway (another robot sits on the point): call it arrived.
-  return left <= stopDistanceM && moved < physics.arriveToleranceM * dtS;
+  // Close enough, no longer making headway, and another robot is in the way (sitting on the point): call it arrived.
+  return left <= stopDistanceM && moved < physics.arriveToleranceM * dtS && robot.contact.withRobotId !== null;
 }
 
 function addScore(state: MatchState, alliance: Alliance, points: number, source: "fuel" | "tower", robotId: RobotId, events: EngineEvent[]): void {
