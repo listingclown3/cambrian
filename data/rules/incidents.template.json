@@ -1,5 +1,6 @@
 {
-  "note": "These incidents are FABRICATED for testing. The expectedViolation labels are a draft written by an AI from the extracted rule text (data/rules/conduct_rules.json) and MUST be confirmed by a human who knows the rules before any accuracy number is reported.",
+  "note": "These incidents are FABRICATED for testing. The expectedViolation labels began as a draft written by an AI from the extracted rule text; they were then reviewed against the full TU22 manual (AI-assisted review; it is not confirmed that a person did the review). Whether a person did the review is not confirmed in the repo, so labels_human_verified stays false until it is; any number reported against them is agreement with reviewed labels, not accuracy. inc_44 was changed from violation to no violation after the review, per G413 Exception C (manual p.67: MOMENTARY, under about 3 seconds, and not used for strategic benefit, is not penalized); note its description does not state that there was no strategic benefit.",
+  "labels_review": "ai_assisted_full_manual",
   "labels_human_verified": false,
   "incidents": [
     { "id": "inc_01", "description": "A robot drives an opponent into the field wall and holds it there, preventing it from moving, for 8 seconds before the match ends that period. The pinned robot cannot move at all during that time.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
@@ -49,7 +50,7 @@
     { "id": "inc_41", "description": "A robot extends its intake within the horizontal and vertical expansion limits to pick up FUEL.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
     { "id": "inc_42", "description": "A robot stays in its starting configuration and drives around the field the entire match without extending anything.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
     { "id": "inc_43", "description": "A robot's arm swings up during the match, and from the stands it looks like it might go above the vertical limit, but the referee measures it at just inside the limit.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_44", "description": "A robot's climbing hook extends sideways beyond the horizontal expansion limit for about a second before it retracts.", "ruleId": "G413", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
+    { "id": "inc_44", "description": "A robot's climbing hook extends sideways beyond the horizontal expansion limit for about a second before it retracts.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
 
     { "id": "inc_45", "description": "A human player throws FUEL into the FIELD through the CHUTE.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
     { "id": "inc_46", "description": "A human player tosses FUEL over the top of the ALLIANCE WALL from the OUTPOST AREA.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },

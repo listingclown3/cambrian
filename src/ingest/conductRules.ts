@@ -6,6 +6,7 @@ import "dotenv/config";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { loadConfig, repoPath } from "../util/config";
+import { getManualMarkdown } from "./manualText";
 import { citationPage, citationQuote, ndiJob } from "./ndiClient";
 
 const TOPICS: { name: string; topic: string; about: string }[] = [
@@ -61,6 +62,43 @@ for (const t of TOPICS) {
   if (rules.some((r) => r.id === id)) { console.log(`[conductRules] ${t.topic}: same rule ${id} as an earlier topic, kept once`); continue; }
   const src = ftx?.citations?.length ? ftx : fid;
   rules.push({ topic: t.topic, id, text, violation: val(fv), page: citationPage(ftx) ?? citationPage(fid), quote: citationQuote(src, 25) });
+}
+
+// Enrich each rule with its complete text (requirement, Violation, exceptions, blue-box notes) from the
+// full manual markdown. Local text search only; the parse is paid once and cached (see manualText.ts).
+const BOILERPLATE = /^(--- Page \d+ ---|firstinspires\.org\/robotics\/frc|FIRST|ROBOTICS|COMPETITION|FIRST® AGE™.*|REBUILT|PRESENTED BY.*|Gene .*Foundation|\d+ of \d+|Version: TU\d+|Section \d+ .*)$/;
+const manual = await getManualMarkdown(cfg);
+const lines = manual.markdown.split("\n");
+const isHeading = (l: string) => /^(# )?G\d{3}\b/.test(l) || /^# \d+\.\d/.test(l);
+const KEY = /exception|MOMENTARY|intent|no penalty|no violation|not a violation|does not apply|not in violation/i;
+for (const r of rules) {
+  const start = lines.findIndex((l) => new RegExp(`^(# )?${r.id}\\b`).test(l));
+  if (start < 0) { r.fullText = null; r.exceptions = []; continue; }
+  let page: number | null = null;
+  for (let i = start; i >= 0 && page === null; i--) { const m = /^--- Page (\d+) ---$/.exec(lines[i]); if (m) page = Number(m[1]); }
+  let end = start + 1;
+  while (end < lines.length && !isHeading(lines[end])) end++;
+  const body = lines.slice(start, end).map((l) => l.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().replace(/^# /, "")).filter((l) => l && !BOILERPLATE.test(l));
+  // exceptions: lettered lines after "Exceptions to this rule" (until Violation), plus sentences saying the rule does not apply
+  const exceptions: string[] = [];
+  for (let i = 0; i < body.length; i++) {
+    if (/^Exceptions? (to this rule|are granted)/i.test(body[i]) || /^This rule does not apply/i.test(body[i])) {
+      if (/^This rule does not apply/i.test(body[i])) exceptions.push(body[i]);
+      for (let j = i + 1; j < body.length && !/^Violation:/.test(body[j]); j++) { if (/^[A-Z]\. /.test(body[j])) exceptions.push(body[j]); else if (/^This rule does not apply/i.test(body[i])) break; else break; }
+    } else if (/bexceptionb/i.test(body[i]) && i > 0 && !/^Exceptions? /i.test(body[i]) && !/^[A-Z]\. /.test(body[i])) exceptions.push(body[i]);
+  }
+  const CAP = 2500;
+  const keep = new Set<number>();
+  let used = 0;
+  const coreEnd = Math.max(body.findIndex((l) => /^Violation:/.test(l)), 0);
+  const take = (i: number) => { if (!keep.has(i) && used + body[i].length + 1 <= CAP) { keep.add(i); used += body[i].length + 1; } };
+  for (let i = 0; i <= coreEnd; i++) take(i);
+  for (let i = coreEnd + 1; i < body.length; i++) if (KEY.test(body[i])) take(i);
+  for (let i = coreEnd + 1; i < body.length; i++) take(i);
+  r.fullText = body.filter((_, i) => keep.has(i)).join("\n");
+  r.exceptions = [...new Set(exceptions)];
+  r.fullTextPage = page;
+  r.fullTextTruncated = keep.size < body.length;
 }
 const file = repoPath("data", "rules", "conduct_rules.json");
 mkdirSync(path.dirname(file), { recursive: true });
