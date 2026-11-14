@@ -1,0 +1,162 @@
+{
+  "experiment": "bench_live_giant_realtime_dev",
+  "createdTs": "2026-11-14T21:26:10.972Z",
+  "isMock": false,
+  "gitCommit": "334c5756d8cd-dirty",
+  "simHash": "007a2b25fa5e3cf0",
+  "config": {
+    "part": "giant_realtime",
+    "spec": "deepinfra",
+    "reasoning": "off",
+    "seeds": {
+      "dev": [],
+      "eval": [
+        1001,
+        1002
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 1001,
+      "blue": [
+        "fab_25",
+        "fab_37",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_24",
+        "fab_45",
+        "frc_254"
+      ],
+      "scoreBlue": 385,
+      "scoreRed": 450,
+      "margin": -65,
+      "requests": 183,
+      "providerCalls": 183,
+      "robotDecisions": 210,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 1,
+      "chargedS": 154.137,
+      "wallS": 157.32,
+      "latencyP50Ms": 795.2,
+      "latencyP95Ms": 1342.8,
+      "costUsd": 0.102662,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 209,
+      "blueRunningActionsReplaced": 30,
+      "redRunningActionsReplaced": 70,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          70
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          49
+        ],
+        [
+          "collect:local",
+          35
+        ],
+        [
+          "escape_reverse:our_alliance",
+          20
+        ],
+        [
+          "shoot_now",
+          12
+        ],
+        [
+          "collect:neutral",
+          7
+        ]
+      ]
+    },
+    {
+      "part": "giant_realtime",
+      "decider": "deepinfra",
+      "timing": "realtime",
+      "seed": 1002,
+      "blue": [
+        "fab_48",
+        "frc_254",
+        "frc_2056"
+      ],
+      "red": [
+        "fab_36",
+        "fab_45",
+        "fab_32"
+      ],
+      "scoreBlue": 239,
+      "scoreRed": 345,
+      "margin": -106,
+      "requests": 191,
+      "providerCalls": 191,
+      "robotDecisions": 205,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 160.162,
+      "wallS": 163.89,
+      "latencyP50Ms": 730.7,
+      "latencyP95Ms": 1235.9,
+      "costUsd": 0.102486,
+      "models": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 205,
+      "blueRunningActionsReplaced": 48,
+      "redRunningActionsReplaced": 87,
+      "fallbackErrors": [],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          60
+        ],
+        [
+          "escape_reverse:our_alliance",
+          43
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          39
+        ],
+        [
+          "collect:local",
+          14
+        ],
+        [
+          "goto_shot_spot:deep_center",
+          7
+        ],
+        [
+          "collect:neutral",
+          7
+        ]
+      ]
+    }
+  ],
+  "summary": {}
+}

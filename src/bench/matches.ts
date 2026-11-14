@@ -12,11 +12,11 @@ import { performance } from "node:perf_hooks";
 import { intentLabel, type EngineEvent, type Intent, type RobotId } from "../contracts";
 import { buildActionRequest } from "../decide/ask";
 import { ENGINE_IS_STUB, buildObservationView, engine } from "../engine";
-import { basicCyclePolicy, robotsNeedingDecision } from "../exec";
+import { robotsNeedingDecision } from "../exec";
 import { loadConfig } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { RunLogger, buildManifest, newRunId, writeResults } from "../util/runLog";
-import { drawLineup, lineupKey, loadLeague, mean, round } from "./common";
+import { scriptedPolicy, drawLineup, lineupKey, loadLeague, mean, round } from "./common";
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -27,7 +27,7 @@ const cfg = loadConfig();
 const league = loadLeague();
 const perSeed = Number(arg("per-seed", "4"));
 const baseRunId = newRunId("matches");
-const policy = basicCyclePolicy;
+const policy = scriptedPolicy;
 
 const rows: Record<string, unknown>[] = [];
 let totalSimMs = 0;

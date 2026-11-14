@@ -25,7 +25,21 @@ import type { Alliance } from "../contracts";
 import { AgentController, type AllianceAgent, type TimingMode } from "../decide/controller";
 import { getProviderBySpec } from "../decide/registry";
 import { ENGINE_IS_STUB, engine } from "../engine";
-import { basicCyclePolicy } from "../exec";
+import { DEFAULT_POLICY_ID, SCRIPTED_POLICIES } from "../exec/policies";
+import { PROMPT_VERSION } from "../decide/options";
+import type { Engine, Intent, MatchState, RobotId } from "../contracts";
+
+const scriptedPolicy = SCRIPTED_POLICIES[DEFAULT_POLICY_ID]!;
+/** Wrap the engine to count intents that REPLACE a still-running action (thrash diagnostic), per alliance. */
+function countingEngine() {
+  const replaced = { blue: 0, red: 0 };
+  const applied = { blue: 0, red: 0 };
+  const e: Engine = { ...engine, step(state: MatchState, intents: Record<RobotId, Intent | undefined>, dtS: number) {
+    for (const r of state.robots) if (intents[r.id] !== undefined) { applied[r.alliance as "blue" | "red"] += 1; if (r.intent !== null && JSON.stringify(r.intent) !== JSON.stringify(intents[r.id])) replaced[r.alliance as "blue" | "red"] += 1; }
+    return engine.step(state, intents, dtS);
+  } };
+  return { e, replaced, applied };
+}
 import { loadConfig } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
@@ -49,17 +63,19 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
   if (!def) throw new Error(`unknown part ${part}; known: ${Object.keys(PARTS).join(", ")}`);
   const league = loadLeague();
   // --start k: play eval seeds k..n-1 only and keep the rows already recorded for the other seeds
-  const seeds = cfg.seeds.eval.slice(start, n);
-  const previous: any = start > 0 ? readJson("results", `bench_live_${part}.json`) : null;
+  const seedSet = arg("seeds", "eval") === "dev" ? cfg.seeds.dev : cfg.seeds.eval;
+  const seeds = seedSet.slice(start, n);
+  const previous: any = start > 0 ? readJson("results", `bench_live_${part}${arg("seeds", "eval") === "dev" ? "_dev" : ""}.json`) : null;
   const limit = pLimit(parallel);
   const rows: Record<string, unknown>[] = [];
   const jobs = def.timings.flatMap((timing) =>
     seeds.map((seed) =>
       limit(async () => {
-        const robots = drawLineup(league, `live:${seed}`, { blue: def.spec ?? "basic_cycle", red: "basic_cycle" });
+        const robots = drawLineup(league, `live:${seed}`, { blue: def.spec ?? scriptedPolicy.id, red: scriptedPolicy.id });
         const agents: Partial<Record<Alliance, AllianceAgent>> = def.spec ? { blue: { provider: getProviderBySpec(def.spec, cfg, { purpose: "bench_live" }) } } : {};
         const t0 = performance.now();
-        const s = await new AgentController({ engine, cfg, seed, robots, agents, scripted: { default: basicCyclePolicy }, timing }).run();
+        const ce = countingEngine();
+        const s = await new AgentController({ engine: ce.e, cfg, seed, robots, agents, scripted: { default: scriptedPolicy }, timing }).run();
         const wallS = (performance.now() - t0) / 1000;
         const metas = s.decisions.flatMap((d) => d.metas);
         const lat = metas.map((m) => m.latencyMs);
@@ -86,6 +102,12 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
           costUsd: round(metas.reduce((k, m) => k + m.costUsd, 0), 6),
           models: [...new Set(metas.map((m) => m.model))],
           isMock: metas.some((m) => m.isMock),
+          promptVersion: def.spec ? PROMPT_VERSION : null,
+          scriptedPolicy: scriptedPolicy.id,
+          blueIntentsApplied: ce.applied.blue,
+          blueRunningActionsReplaced: ce.replaced.blue,
+          redRunningActionsReplaced: ce.replaced.red,
+          fallbackErrors: [...new Set(metas.filter((m) => m.fallbackUsed).map((m) => String(m.error).slice(0, 120)))].slice(0, 3),
           topChosenLabels: Object.entries(s.decisions.flatMap((d) => d.choices.map((c) => c.chosenLabel ?? "(none)")).reduce<Record<string, number>>((acc, l) => ((acc[l] = (acc[l] ?? 0) + 1), acc), {})).sort((a, b) => b[1] - a[1]).slice(0, 6),
         };
         rows.push(row);
@@ -97,7 +119,7 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
   if (previous) rows.push(...previous.rows.filter((r: any) => !seeds.includes(r.seed)));
   rows.sort((a, b) => String(a.timing).localeCompare(String(b.timing)) || (a.seed as number) - (b.seed as number));
   writeResults({
-    experiment: `bench_live_${part}`,
+    experiment: `bench_live_${part}${seedSet === cfg.seeds.dev ? "_dev" : ""}`,
     createdTs: new Date().toISOString(),
     isMock: ENGINE_IS_STUB || rows.some((r) => r.isMock),
     gitCommit: gitCommit(),

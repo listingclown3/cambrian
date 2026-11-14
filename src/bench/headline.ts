@@ -52,7 +52,11 @@ const matches = results("matches")?.summary;
 const batch = results("bench_batch")?.summary;
 const lat = results("bench_latency")?.summary;
 // Latency and cost: the quiet-window sequential run (bench_latency) when it has >= 10 good calls, else bench_scenarios (measured under load).
-const latOf = (id: string) => (lat?.[id] && lat[id].n_ok >= 10 && !lat[id].isMock ? { p50: lat[id].p50_ms, p95: lat[id].p95_ms, cost: lat[id].cost_per_1k_usd, source: "results/bench_latency.json (sequential, quiet window)", n: lat[id].n_ok } : d(id) ? { p50: d(id).latency_p50_ms, p95: d(id).latency_p95_ms, cost: d(id).cost_per_1k_usd, source: "results/bench_scenarios.json (measured under load)", n: d(id).n_scored } : null);
+const smoke = results("smoke_latency")?.summary;
+const pickNum = (o: any, ...ks: string[]) => { for (const k of ks) if (typeof o?.[k] === "number") return o[k] as number; return null; };
+const smokeEntry = (id: string) => { const o = smoke?.[id] ?? smoke?.deciders?.[id] ?? (id === "drex" ? smoke?.["drex-v2.0"] ?? smoke?.deciders?.["drex-v2.0"] : smoke?.giant ?? smoke?.deciders?.giant); return o ? { p50: pickNum(o, "p50_ms", "latency_p50_ms", "p50Ms"), p95: pickNum(o, "p95_ms", "latency_p95_ms", "p95Ms"), cost: pickNum(o, "cost_per_1k_usd") ?? (pickNum(o, "usd_per_decision", "cost_per_decision_usd") !== null ? 1000 * pickNum(o, "usd_per_decision", "cost_per_decision_usd")! : null) } : null; };
+// Single-call latency and cost: the clean sequential measurement (smoke_latency, then bench_latency). The under-load bench_scenarios run is never used for headline latency.
+const latOf = (id: string) => { const s = smokeEntry(id); if (s && s.p50 !== null) return { ...s, source: "results/smoke_latency.json (sequential, concurrency 1)" }; return lat?.[id] && lat[id].n_ok >= 10 && !lat[id].isMock ? { p50: lat[id].p50_ms, p95: lat[id].p95_ms, cost: lat[id].cost_per_1k_usd, source: "results/bench_latency.json (sequential, quiet window)", n: lat[id].n_ok } : null; };
 const lab = results("lab")?.summary;
 const d = (id: string) => bs?.deciders?.[id] ?? null;
 const cond = (id: string) => live?.conditions?.[id] ?? null;
@@ -130,6 +134,7 @@ const file = writeResults({
       giant_reasoning: "off (main comparison; the giant's fastest setting)",
       live: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, v.models])),
     },
+    speed_headline: batch ? { label: "per decision, one alliance batched (3 questions per call)", batch3_ms_per_decision: { drex: batch.batch3_ms_per_decision_drex ?? null, giant: batch.batch3_ms_per_decision_giant ?? null }, single_question_ms_per_decision: { drex: batch.batch1_ms_per_decision_drex ?? null, giant: batch.batch1_ms_per_decision_giant ?? null }, batch8_stress_ms_per_decision: { drex: batch.batch8_ms_per_decision_drex ?? null, giant: batch.batch8_ms_per_decision_giant ?? null, giant_note: "P2 saw the giant at batch 8 vary between 491 and 1362 ms per decision across runs; report the range" }, ratio_batch3: batch.batch3_ms_per_decision_giant && batch.batch3_ms_per_decision_drex ? Number((batch.batch3_ms_per_decision_giant / batch.batch3_ms_per_decision_drex).toFixed(1)) : null } : null,
     latency_sources: { drex: latOf("drex"), deepinfra: latOf("deepinfra") },
     regret_with_ci: Object.fromEntries(Object.entries(bs?.deciders ?? {}).map(([k, v]: [string, any]) => [k, { regret: v.regret, ci95: v.regret_ci95 ?? null, n: v.n_regret ?? v.n_scored }])),
     paired_regret: bs?.paired_regret ?? null,
