@@ -234,6 +234,7 @@ function assemble() {
       excludedMatches: excluded,
       exclusionRule: "a match where more than half the decider robot decisions were fallbacks is excluded (listed in excludedMatches)",
       drexRealtimeOneAtATime: "Drex realtime matches were played one at a time so the shared Drex limiter queue is not charged to the sim clock; Drex paused ran in a second process at the same time (at most 2 Drex matches in flight)",
+      sharedLimiterLoad: "from about 1:55 PM the integrator ran check-mode Drex matches from another worktree on the same shared Drex limiter, so Drex latencies (and realtime charges) after that time were measured under that extra load",
       answerKeyRunning: "the answer key (11 rollout workers) ran on the same machine during these matches; wall times include that load",
     },
     rows,
