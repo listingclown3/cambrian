@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 import type { MatchState } from "../../../src/contracts";
 import type { Flags } from "../App";
 import { FieldCanvas } from "../FieldCanvas";
+import { Sources } from "../Sources";
 import { giantLabel, ms, robotName, useApi, type Health, type ProviderRow, type RunListing } from "../lib";
 import { stateFromFrame, type MatchView, type TickerRow } from "../matchReducer";
 import { useMatch } from "../useMatch";
@@ -226,6 +227,7 @@ export function LivePage({ launch, health, runs, providers, onFlags }: { launch:
         <Lane name="The giant" cls="giant" accent={CYAN} m={b} idle={idle} giant />
       </div>
       <Legend />
+      <Sources files={[]} extra={["runs/<runId>/events.jsonl (recorded replay, when playing)", "live provider calls (when R is used with keys)", "config/default.json (engine and match rules)"]} />
     </div>
   );
 }

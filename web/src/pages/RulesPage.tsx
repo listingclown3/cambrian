@@ -1,6 +1,7 @@
 /** RULES & SOURCES page (owner: P4): every game/field constant with status and source, conduct rules, research sources, NDI spend. */
 import { useEffect } from "react";
 import type { Flags } from "../App";
+import { Sources } from "../Sources";
 import { NOT_RUN, ms, usd, useApi, useResult, type UsageSummary } from "../lib";
 import { RobotBadge, useTeams } from "../RobotBadge";
 
@@ -12,7 +13,7 @@ interface Entry {
 type ConfigLike = { game: Record<string, Entry>; field: Record<string, Entry | { _status?: string; _note?: string }> };
 interface ConductPayload {
   available: boolean;
-  rules?: { id?: string; topic?: string; text?: string; violation?: string; page?: number; quote?: string; citation?: { document?: string; page?: number; quote?: string } }[];
+  rules?: { exceptions?: string | string[]; id?: string; topic?: string; text?: string; violation?: string; page?: number; quote?: string; citation?: { document?: string; page?: number; quote?: string } }[];
 }
 interface SourcesPayload {
   available: boolean;
@@ -35,11 +36,13 @@ function JudgeCard({ file, tier }: { file: string; tier: string }) {
   const n = (k: string) => (typeof s?.[k] === "number" ? (s[k] as number) : null);
   const name = typeof s?.metricName === "string" ? s.metricName : null;
   const agree = n("agreementPct");
+  const hit = n("agreeWithDraftLabels");
+  const total = n("incidents");
   const med = n("medianLatencyMsPerCall");
   return (
     <div className="kpi drex">
       <div className="lbl">{tier}{typeof s?.model === "string" ? ` · ${s.model}` : ""}</div>
-      <div className={`val ${agree === null ? "null" : ""}`}>{agree === null ? NOT_RUN : `${agree.toFixed(0)}%`}</div>
+      <div className={`val ${agree === null ? "null" : ""}`}>{agree === null ? NOT_RUN : hit !== null && total !== null ? `${hit} of ${total}` : `${agree.toFixed(0)}%`}</div>
       {name && <div className="note"><b>{name}</b></div>}
       {typeof s?.caveat === "string" && <div className="note">{s.caveat}</div>}
       {s && (
@@ -48,6 +51,43 @@ function JudgeCard({ file, tier }: { file: string; tier: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+interface FieldRow { key: string; configPath: string; configValue: number | null; officialValue: number | null; differenceM: number | null; status: string; page?: number }
+/** results/field_pack.json: official field values read from the manual drawings vs what the simulator config uses. */
+function FieldPack() {
+  const r = useResult("field_pack") as { rows?: FieldRow[]; summary?: { official?: number; derived?: number; notFound?: number } } | null;
+  const rows = r?.rows ?? [];
+  return (
+    <>
+      <h2>Official field values (field pack)</h2>
+      <div className="card scroll" style={{ maxHeight: "24rem", overflowY: "auto" }}>
+        {rows.length === 0 ? (
+          <span className="empty">field pack {NOT_RUN} (results/field_pack.json)</span>
+        ) : (
+          <>
+            <p className="hint" style={{ marginTop: 0 }}>{r?.summary?.official ?? 0} official, {r?.summary?.derived ?? 0} derived, {r?.summary?.notFound ?? 0} not found.</p>
+            <table>
+              <thead><tr><th>Value</th><th>Config path</th><th className="num">Config</th><th className="num">Official</th><th className="num">Difference (m)</th><th>Status</th><th>Page</th></tr></thead>
+              <tbody>
+                {rows.map((x) => (
+                  <tr key={x.key}>
+                    <td className="mono">{x.key}</td>
+                    <td className="mono">{x.configPath}</td>
+                    <td className="num mono">{x.configValue ?? NOT_RUN}</td>
+                    <td className="num mono">{x.officialValue ?? NOT_RUN}</td>
+                    <td className="num mono">{x.differenceM ?? "-"}</td>
+                    <td className={x.status === "official" ? "ver" : x.status === "notFound" ? "todo" : ""}>{x.status}</td>
+                    <td className="mono">{x.page ? `p.${x.page}` : "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -120,7 +160,8 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
               {conduct.rules.map((r, i) => (
                 <tr key={r.id ?? i}>
                   <td className="mono">{r.id}{r.topic && <div className="hint">{r.topic}</div>}</td>
-                  <td>{r.text}{r.violation && <div className="todo" style={{ fontWeight: 600 }}>{r.violation}</div>}</td>
+                  <td>{r.text}{r.violation && <div className="todo" style={{ fontWeight: 600 }}>{r.violation}</div>}
+                    {r.exceptions && (Array.isArray(r.exceptions) ? r.exceptions.length > 0 : String(r.exceptions).length > 0) && <div className="hint"><b>Exceptions:</b> {Array.isArray(r.exceptions) ? r.exceptions.join(" ") : String(r.exceptions)}</div>}</td>
                   <td className="mono">{(r.page ?? r.citation?.page) ? `p.${r.page ?? r.citation?.page}` : "-"}</td>
                 </tr>
               ))}
@@ -151,6 +192,8 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
         )}
       </div>
 
+      <FieldPack />
+
       <h2>Research sources {research?.available ? `(${research.pages ?? research.sources?.length ?? 0} pages)` : ""}</h2>
       <div className="card scroll" style={{ maxHeight: "22rem", overflowY: "auto" }}>
         {research?.available && research.sources ? (
@@ -170,6 +213,7 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
           <span className="empty">research sources {NOT_RUN}</span>
         )}
       </div>
+      <Sources files={["rule_judge", "rule_judge_drex-latest", "field_pack", "ingest_rules", "usage"]} extra={["config/default.json (via /api/config)", "data/rules/conduct_rules.json", "data/research/sources.json", "data/league/teams_from_docs.json"]} />
     </div>
   );
 }

@@ -4,6 +4,7 @@
  */
 import { useEffect } from "react";
 import type { Flags } from "../App";
+import { Sources } from "../Sources";
 import { NOT_RUN, giantLabel, ms, usd, useApi, useResult, type UsageSummary } from "../lib";
 
 type Sum = Record<string, unknown>;
@@ -100,8 +101,8 @@ const TOOLS: { id: "drex" | "intern" | "ndi" | "deepinfra" | "keenable"; name: s
 ];
 
 export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
-  const headRes = useApi<{ isMock?: boolean; summary: Sum }>("/api/results/headline");
-  const batchRes = useResult("bench_batch");
+  const headRes = useApi<{ isMock?: boolean; createdTs?: string; summary: Sum }>("/api/results/headline", 15000);
+  const batchRes = useResult("bench_batch", 15000);
   const usage = useApi<UsageSummary>("/api/usage");
   const giant = useApi<{ fixedModel: string | null; firstChoice: string | null; reasoning: string }>("/api/giant").data;
   const head = headRes.data?.summary ?? {};
@@ -111,9 +112,12 @@ export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
     onFlags({ mock: mock ? ["results include mock or non-real data"] : [], recorded: false });
   }, [mock, onFlags]);
 
-  const ratio = num(head, "latency_ratio_deepinfra_over_drex");
-  const dP50 = num(head, "drex_p50_ms");
-  const gP50 = num(head, "deepinfra_p50_ms");
+  // main speed card: per decision, one alliance batched (3 questions per call)
+  const b3d = num(head, "batch3_ms_per_decision_drex") ?? num(batch, "batch3_ms_per_decision_drex");
+  const b3g = num(head, "batch3_ms_per_decision_giant") ?? num(batch, "batch3_ms_per_decision_giant");
+  const ratio = b3d !== null && b3d > 0 && b3g !== null ? b3g / b3d : null;
+  const dP50 = b3d;
+  const gP50 = b3g;
   const dCost = num(head, "drex_cost_per_1k_usd");
   const gCost = num(head, "deepinfra_cost_per_1k_usd");
   const costRatio = dCost !== null && dCost > 0 && gCost !== null ? gCost / dCost : null;
@@ -136,7 +140,7 @@ export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
       {headRes.error && <div className="empty">results unavailable: {headRes.error}</div>}
 
       <div className="rs-cards">
-        <Big label="Speed" acc="drex" value={ratio === null ? null : `${times(ratio)} faster`} detail={dP50 !== null && gP50 !== null ? `Drex median ${ms(dP50)} vs the giant ${ms(gP50)} per decision` : null} />
+        <Big label="Speed" acc="drex" value={ratio === null ? null : `${times(ratio)} faster`} sub="per decision, one alliance batched (3 questions per call)" detail={dP50 !== null && gP50 !== null ? `Drex ${ms(dP50)} vs the giant ${ms(gP50)} per decision` : null} />
         <Big label="Cost" acc="drex" value={costRatio === null ? null : `${times(costRatio)} cheaper`} detail={dCost !== null && gCost !== null ? `${usd(dCost)} vs ${usd(gCost)} per 1,000 decisions` : null} />
         <Big label="Quality" acc="drex" value={dReg === null ? null : `${dReg.toFixed(2)} pts`} sub="mean regret per decision (lower is better)" detail={gReg !== null || dTop !== null ? `the giant ${gReg === null ? NOT_RUN : `${gReg.toFixed(2)} pts`} · top-1 ${pc(dTop)} vs ${pc(gTop)}` : null} />
         <Big label="Throughput" acc="drex" value={dMph === null ? null : `${Math.round(dMph).toLocaleString()} / hr`} sub="simulated matches per hour" detail={gMph !== null ? `the giant ${Math.round(gMph).toLocaleString()} / hr` : null} />
@@ -166,6 +170,7 @@ export function HeadlinePage({ onFlags }: { onFlags: (f: Flags) => void }) {
           })}
         </div>
       </section>
+      <Sources files={["headline", "bench_batch", "rule_judge", "ingest_scouting", "lab", "usage"]} extra={["config/default.json (via /api/config)"]} />
     </div>
   );
 }

@@ -167,7 +167,9 @@ function IdlePanel() {
   );
 }
 
-export function ComparePage({ runs, onFlags }: { runs: RunListing[]; onFlags: (f: Flags) => void }) {
+export function ComparePage({ runs: allRuns, onFlags }: { runs: RunListing[]; onFlags: (f: Flags) => void }) {
+  // The bundled fixture is listed only when there is no real recorded run (and then the MOCK banner shows).
+  const runs = allRuns.some((r) => r.source === "runs") ? allRuns.filter((r) => r.source === "runs") : allRuns;
   const results = useApi<ResultRow[]>("/api/results").data ?? [];
   const [picked, setPicked] = useState<string[]>([]);
   const anyMock = runs.some((r) => r.isMock) || results.some((r) => r.isMock);
