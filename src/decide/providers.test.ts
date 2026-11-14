@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DecisionResponseSchema, type DecisionRequest } from "../contracts";
 import { loadConfig } from "../util/config";
-import { getProvider, getProviderBySpec, parseProviderSpec, providerModel } from "./registry";
+import { getProvider, getProviderBySpec, parseProviderSpec, providerLabel, providerModel } from "./registry";
 import { deepinfraProvider, renderLlmPrompt } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
 import { addSpend, redact, resetSpend } from "./providers/http";
@@ -138,6 +138,9 @@ describe("deepinfra provider", () => {
     expect(await provider.resolveModel()).toBe("Qwen/Qwen3.5-397B-A17B");
     expect(await providerModel(getProvider("deepinfra", cfg, { ...deps, cache: true, anonymize: true }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B");
     expect(await providerModel(getProvider("drex", cfg, { ...deps, model: "drex-latest" }), cfg)).toBe("drex-latest");
+    expect(await providerLabel(getProvider("deepinfra", cfg, { ...deps, anonymize: true }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B (reasoning off)");
+    expect(await providerLabel(getProvider("deepinfra", cfg, { ...deps, thinking: "on" }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B (reasoning on)");
+    expect(await providerLabel(getProvider("drex", cfg, deps), cfg)).toBe("drex-v2.0");
   });
 
   it("parse-retries once, then falls back, counting every call", async () => {

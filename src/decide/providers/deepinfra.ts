@@ -47,6 +47,8 @@ export interface ChatProviderOptions extends ProviderDeps {
    * robot's private self-description in its question never reaches another robot's answer.
    */
   splitQuestions?: boolean;
+  /** Called with every raw reply text (benchmarks use it to score per-answer validity). */
+  onReply?: (text: string, req: DecisionRequest, attempt: number) => void;
 }
 
 /** A chat provider that can say exactly which model it is using. */
@@ -242,6 +244,7 @@ export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cf
 
       const choice = json?.choices?.[0];
       const text = typeof choice?.message?.content === "string" ? choice.message.content : "";
+      opts.onReply?.(text, req, parseAttempts);
       try {
         const answers = parseLlmAnswers(req, text);
         return {
