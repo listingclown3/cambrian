@@ -1,5 +1,6 @@
 {
   "note": "These incidents are FABRICATED for testing. The expectedViolation labels are a draft written by an AI from the extracted rule text (data/rules/conduct_rules.json) and MUST be confirmed by a human who knows the rules before any accuracy number is reported.",
+  "labels_human_verified": false,
   "incidents": [
     { "id": "inc_01", "description": "A robot drives an opponent into the field wall and holds it there, preventing it from moving, for 8 seconds before the match ends that period. The pinned robot cannot move at all during that time.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
     { "id": "inc_02", "description": "A robot pushes an opponent against the wall for about 1 second, then the opponent drives away freely.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },

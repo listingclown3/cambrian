@@ -16,7 +16,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from "node:path";
 import pLimit from "p-limit";
 import {
-  ARCHETYPES,
   RawPageSchema,
   ResearchNoteSchema,
   SourcedProfileSchema,
@@ -29,6 +28,7 @@ import {
   type SourcedProfile,
 } from "../contracts";
 import { profileFromTemplate } from "../contracts/profiles";
+import { costFromConfig } from "../ledger";
 import { loadConfig, repoPath } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
@@ -115,58 +115,127 @@ const bool = (v: unknown): boolean | null => (typeof v === "boolean" ? v : v ===
 const round = (v: number, places = 2) => Number(v.toFixed(places));
 const words = (s: string, max: number) => s.trim().split(/\s+/).slice(0, max).join(" ");
 
-function shooterTypeOf(v: unknown): RobotProfile["shooterType"] | null {
-  const s = String(v).toLowerCase();
-  if (s.includes("turret")) return "turret";
-  if (s.includes("drum")) return "drum";
-  if (s.includes("lane") || s.includes("multi")) return "lanes";
-  if (s.includes("dump")) return "dumper";
-  if (s.includes("none")) return "none";
-  return null;
-}
-
 function cacheExists(key: string): boolean {
   return existsSync(repoPath("cache", "ndi", `${key.replace(/[^A-Za-z0-9._-]/g, "_")}.json`));
 }
 
-/** Fallback archetype when Drex is unavailable (classifiedArchetype is then null). */
-function heuristicArchetype(f: FoundMap): Archetype {
-  const t = f.shooter_type ? shooterTypeOf(f.shooter_type.value) : null;
-  if (t === "turret") return "turret_sotm";
-  if (t === "drum") return "drum_fixed";
-  if (t === "lanes") return "multilane_fixed";
-  if (t === "dumper") return "dumper";
-  if (t === "none") return "defender";
-  return "starter_bot";
+// ── archetype classification ─────────────────────────────────────────────────
+// Drex answers two evidence questions per robot (shooter family, shoots on the move); the
+// archetype then follows deterministically in code. A label needs a supporting NDI quote and
+// Drex confidence >= 0.5, otherwise it is "unknown". Nothing is forced.
+type ShooterLabel = "turret" | "drum" | "multi_lane" | "dumper" | "none" | "unknown";
+const SHOOTER_LABELS: readonly ShooterLabel[] = ["turret", "drum", "multi_lane", "dumper", "none", "unknown"];
+const SHOOTER_CRITERIA: Record<ShooterLabel, string> = {
+  turret: "The evidence explicitly says the shooter is mounted on a turret that rotates independently of the drivetrain. Shooting while moving, by itself, is NOT evidence of a turret.",
+  drum: "The evidence explicitly says the robot shoots with a single wide drum or wide flywheel roller across the robot, aimed by turning the drivetrain.",
+  multi_lane: "The evidence explicitly says the robot has two or more fixed shooter lanes or separate shooter wheels side by side, aimed by turning the drivetrain.",
+  dumper: "The evidence explicitly says the robot drops or dumps fuel into the hub from right next to it, without a flywheel shooter.",
+  none: "The evidence explicitly says the robot has no shooter and cannot score fuel itself.",
+  unknown: "The evidence does not say what kind of shooter the robot has, or it is too vague or contradictory to tell.",
+};
+const SHOOTER_TO_TYPE: Record<Exclude<ShooterLabel, "unknown">, RobotProfile["shooterType"]> = { turret: "turret", drum: "drum", multi_lane: "lanes", dumper: "dumper", none: "none" };
+
+interface Classification {
+  shooter: ShooterLabel;
+  shooterConfidence: number | null;
+  shootsOnMoveProbability: number | null;
+  quotes: { shooter: string | null; shootsOnMove: string | null };
+  basis: string;
+}
+interface ClassifyOut {
+  classification: Classification;
+  /** Template used to fill unstated fields. */
+  templateArchetype: Archetype;
+  /** Set only when the archetype follows from established evidence. */
+  classified: { archetype: Archetype; confidence: number } | null;
+  /** True when shoot-on-move is established (Drex >= 0.5 and an NDI quote). */
+  sotmEstablished: boolean;
 }
 
-async function classify(f: FoundMap, teamNumber: number): Promise<{ archetype: Archetype; confidence: number } | null> {
-  const state: Record<string, unknown> = { team_number: teamNumber };
-  for (const [k, v] of Object.entries(f)) if (!k.startsWith("strategy_claim") && k !== "describes_one_robot") state[k] = v.value;
-  const criteria = Object.fromEntries(ARCHETYPES.map((a) => [a, cfg.archetypes.templates[a].description]));
+let drexCostUsd = 0;
+let drexCalls = 0;
+
+async function classify(f: FoundMap, teamNumber: number): Promise<ClassifyOut> {
+  const evidence: Record<string, { value: unknown; quote: string | null }> = {};
+  for (const [k, v] of Object.entries(f)) if (!k.startsWith("strategy_claim") && k !== "describes_one_robot") evidence[k] = { value: v.value, quote: v.quote };
+  const state = { team_number: teamNumber, evidence, note: "Each evidence entry is a value a document stated about this robot, with the supporting quote (null when no quote was found)." };
   const questions: Record<string, DrexQuestion> = {
-    archetype: {
-      type: "choice",
-      instructions: "The state lists specifications of one FRC 2026 REBUILT robot, as stated in a document. Which robot archetype describes this robot best?",
-      criteria,
-    },
+    shooter: { type: "choice", instructions: "Based only on the evidence (values and quotes), what kind of shooter does this FRC robot have? Choose unknown unless the evidence clearly supports a label.", criteria: SHOOTER_CRITERIA },
+    shoots_on_move: { type: "noul", instructions: "Does the evidence explicitly say this robot can score while driving?" },
   };
+  let choice: string | null = null;
+  let choiceConf: number | null = null;
+  let sotmP: number | null = null;
   try {
     const res = await drexAsk(cfg, { state, questions, purpose: "archetype_classification" });
-    const a = res.answers.archetype;
-    if (a && (ARCHETYPES as readonly string[]).includes(a.choice)) {
-      return { archetype: a.choice as Archetype, confidence: Math.min(1, Math.max(0, Number(a.confidence) || 0)) };
+    drexCalls++;
+    drexCostUsd += costFromConfig(cfg, "drex", res.model ?? null, res.inputTokens, 0) ?? 0;
+    const a = res.answers.shooter;
+    if (a && (SHOOTER_LABELS as readonly string[]).includes(a.choice)) {
+      choice = a.choice;
+      choiceConf = Math.min(1, Math.max(0, Number(a.confidence) || 0));
     }
-    console.warn(`[ingest:pages] Drex returned no usable choice for team ${teamNumber}`);
+    const b = res.answers.shoots_on_move;
+    if (b && Number.isFinite(Number(b.noul))) sotmP = Math.min(1, Math.max(0, Number(b.noul)));
   } catch (err) {
     console.warn(`[ingest:pages] Drex failed for team ${teamNumber}: ${(err as Error).message.slice(0, 200)}`);
   }
-  return null;
+
+  const shooterQuote = f.shooter_type?.quote ?? null;
+  const sotmQuote = f.shoots_on_the_move?.quote ?? null;
+  let shooter: ShooterLabel = "unknown";
+  let why: string;
+  if (choice === null) why = "Drex gave no usable shooter answer";
+  else if (!shooterQuote) why = "no NDI quote supports the shooter type";
+  else if (choice === "unknown") why = "Drex judged the shooter evidence insufficient";
+  else if ((choiceConf ?? 0) < 0.5) why = `Drex confidence ${choiceConf?.toFixed(2)} is under 0.5`;
+  else {
+    shooter = choice as ShooterLabel;
+    why = `quoted evidence supports a ${shooter} shooter (confidence ${choiceConf?.toFixed(2)})`;
+  }
+  const sotmEstablished = sotmQuote !== null && sotmP !== null && sotmP >= 0.5;
+  const capacity = f.hopper_capacity_fuel ? num(f.hopper_capacity_fuel.value) : null;
+
+  // Shooter label -> archetype (deterministic):
+  //   turret + shoot-on-move established        -> turret_sotm        (classified)
+  //   turret + capacity stated and <= 10        -> zero_hopper_turret (classified)
+  //   turret otherwise                          -> classified null; turret_sotm template for
+  //                                                defaults only, with shootOnMove forced false
+  //   drum                                      -> drum_fixed         (classified)
+  //   multi_lane + capacity stated and >= 80    -> big_hopper_hauler  (classified)
+  //   multi_lane otherwise                      -> multilane_fixed    (classified)
+  //   dumper                                    -> dumper             (classified)
+  //   none                                      -> defender           (classified)
+  //   unknown                                   -> classified null; starter_bot template as default
+  let templateArchetype: Archetype = "starter_bot";
+  let established = false;
+  if (shooter === "turret") {
+    if (sotmEstablished) [templateArchetype, established] = ["turret_sotm", true];
+    else if (capacity !== null && capacity <= 10) [templateArchetype, established] = ["zero_hopper_turret", true];
+    else {
+      templateArchetype = "turret_sotm";
+      why += "; shoot-on-move not established, so no archetype is claimed (turret_sotm template used for defaults only, shootOnMove false)";
+    }
+  } else if (shooter === "drum") [templateArchetype, established] = ["drum_fixed", true];
+  else if (shooter === "multi_lane") [templateArchetype, established] = [capacity !== null && capacity >= 80 ? "big_hopper_hauler" : "multilane_fixed", true];
+  else if (shooter === "dumper") [templateArchetype, established] = ["dumper", true];
+  else if (shooter === "none") [templateArchetype, established] = ["defender", true];
+  else why += "; starter_bot template used for defaults";
+
+  return {
+    classification: { shooter, shooterConfidence: choiceConf, shootsOnMoveProbability: sotmP, quotes: { shooter: shooterQuote, shootsOnMove: sotmQuote }, basis: `Shooter ${shooter}: ${why}.` },
+    templateArchetype,
+    classified: established && choiceConf !== null ? { archetype: templateArchetype, confidence: choiceConf } : null,
+    sotmEstablished,
+  };
 }
 
-async function buildProfile(page: RawPage, f: FoundMap, teamNumber: number): Promise<SourcedProfile> {
-  const classified = await classify(f, teamNumber);
-  const archetype = classified?.archetype ?? heuristicArchetype(f);
+type TeamRecord = SourcedProfile & { classification: Classification };
+
+async function buildProfile(page: RawPage, f: FoundMap, teamNumber: number): Promise<TeamRecord> {
+  const cls = await classify(f, teamNumber);
+  const classified = cls.classified;
+  const archetype = cls.templateArchetype;
   const tpl = cfg.archetypes.templates[archetype];
   const rawName = f.team_name ? String(f.team_name.value).trim() : "";
   const teamName = rawName && rawName !== String(teamNumber) && !/^(team\s*)?\d+$/i.test(rawName) ? rawName : "";
@@ -181,12 +250,10 @@ async function buildProfile(page: RawPage, f: FoundMap, teamNumber: number): Pro
     prov[field] = { source: page.url, quote, parser: "ndi" };
   };
 
-  if (f.shooter_type) {
-    const t = shooterTypeOf(f.shooter_type.value);
-    if (t) {
-      p.shooterType = t;
-      mark("shooterType", f.shooter_type);
-    }
+  // Shooter type comes from the established classification label (quote required), not raw NDI text.
+  if (cls.classification.shooter !== "unknown" && f.shooter_type) {
+    p.shooterType = SHOOTER_TO_TYPE[cls.classification.shooter];
+    mark("shooterType", f.shooter_type);
   }
   if (f.shooter_lanes) {
     const n = num(f.shooter_lanes.value);
@@ -202,12 +269,17 @@ async function buildProfile(page: RawPage, f: FoundMap, teamNumber: number): Pro
       mark("aimMethod", f.aims_with_turret);
     }
   }
-  if (f.shoots_on_the_move) {
-    const b = bool(f.shoots_on_the_move.value);
-    if (b !== null) {
-      p.shootOnMove = b;
-      mark("shootOnMove", f.shoots_on_the_move);
-    }
+  // Shoot on the move: true only when established (Drex >= 0.5 and a quote); a quoted "false"
+  // from the page is also a fact. Otherwise it is never assumed: false, with no provenance.
+  const sotmStated = f.shoots_on_the_move ? bool(f.shoots_on_the_move.value) : null;
+  if (cls.sotmEstablished) {
+    p.shootOnMove = true;
+    mark("shootOnMove", f.shoots_on_the_move!);
+  } else if (sotmStated === false && f.shoots_on_the_move?.quote) {
+    p.shootOnMove = false;
+    mark("shootOnMove", f.shoots_on_the_move);
+  } else {
+    p.shootOnMove = false;
   }
   if (f.hopper_capacity_fuel) {
     const n = num(f.hopper_capacity_fuel.value);
@@ -284,7 +356,8 @@ async function buildProfile(page: RawPage, f: FoundMap, teamNumber: number): Pro
     mark("passRatePerS", f.can_pass_fuel);
   }
 
-  return SourcedProfileSchema.parse({ profile: p, provenance: prov, classifiedArchetype: classified });
+  const validated = SourcedProfileSchema.parse({ profile: p, provenance: prov, classifiedArchetype: classified });
+  return { ...validated, classification: cls.classification };
 }
 
 // ── per page ─────────────────────────────────────────────────────────────────
@@ -304,7 +377,7 @@ interface PageRow {
 interface PageOut {
   row: PageRow;
   notes: ResearchNote[];
-  profile: SourcedProfile | null;
+  profile: TeamRecord | null;
 }
 
 let spentUsd = 0;
@@ -399,7 +472,7 @@ const outs = await Promise.all(
 );
 
 // Profiles: one per team number, keeping the one with more provenance.
-const byTeam = new Map<string, SourcedProfile>();
+const byTeam = new Map<string, TeamRecord>();
 for (const o of outs) {
   if (!o.profile) continue;
   const prev = byTeam.get(o.profile.profile.id);
@@ -427,7 +500,7 @@ const writeJson = (file: string, data: unknown) => {
 const teamsFile = repoPath("data", "league", "teams_from_docs.json");
 writeJson(teamsFile, {
   generatedTs,
-  note: "Robot profiles built from real web pages with NDI Extract; archetype chosen by Drex. Only fields with a provenance entry were read from a page (source URL + quote). Every field WITHOUT a provenance entry is an archetype-template assumption (the template midpoint), not a fact about the team.",
+  note: "Robot profiles built from real web pages with NDI Extract. Drex judged the shooter family and shoot-on-the-move from quoted evidence only; the archetype follows from those labels in code, and classifiedArchetype is null (unknown) when the evidence does not establish it (profile.archetype then only names the template used for defaults). Only fields with a provenance entry were read from a page (source URL + quote). Every field WITHOUT a provenance entry is an archetype-template assumption (the template midpoint), not a fact about the team.",
   teams,
 });
 const notesFile = repoPath(...cfg.research.notesFile.split("/"));
@@ -435,7 +508,12 @@ writeJson(notesFile, { generatedTs, notes });
 
 const rows = outs.map((o) => o.row);
 const archetypeCounts: Record<string, number> = {};
-for (const t of teams) archetypeCounts[t.profile.archetype] = (archetypeCounts[t.profile.archetype] ?? 0) + 1;
+const shooterLabels: Record<string, number> = {};
+for (const t of teams) {
+  const a = t.classifiedArchetype?.archetype ?? "unknown";
+  archetypeCounts[a] = (archetypeCounts[a] ?? 0) + 1;
+  shooterLabels[t.classification.shooter] = (shooterLabels[t.classification.shooter] ?? 0) + 1;
+}
 const summary = {
   pagesProcessed: rows.filter((r) => r.status.startsWith("ok")).length,
   pagesFailed: rows.filter((r) => !r.status.startsWith("ok")).length,
@@ -445,6 +523,10 @@ const summary = {
   ndiCostUsd: round(rows.reduce((s, r) => s + r.costUsd, 0), 4),
   ndiCostUsdThisRun: round(spentUsd, 4),
   archetypes: archetypeCounts,
+  shooterLabels,
+  classifiedWithConfidenceAtLeast0_5: teams.filter((t) => (t.classifiedArchetype?.confidence ?? 0) >= 0.5).length,
+  drexCalls,
+  drexCostUsdEstimate: round(drexCostUsd, 6),
 };
 const resultsFile = writeResults({
   experiment: "ingest_pages",
@@ -460,7 +542,7 @@ const resultsFile = writeResults({
 console.log("\nstem/url                                                     status        fields notes team");
 for (const r of rows) console.log(`${r.url.slice(0, 60).padEnd(60)} ${r.status.padEnd(13)} ${String(r.fieldsFound).padStart(6)} ${String(r.notes).padStart(5)} ${r.teamNumber ?? ""}`);
 console.log("\nrobots:");
-for (const t of teams) console.log(`  ${t.profile.teamLabel.padEnd(40)} ${t.profile.archetype.padEnd(20)} conf=${t.classifiedArchetype?.confidence.toFixed(2) ?? "n/a (heuristic)"} provenance=${Object.keys(t.provenance).length}`);
+for (const t of teams) console.log(`  ${t.profile.teamLabel.padEnd(40)} shooter=${t.classification.shooter.padEnd(10)} archetype=${(t.classifiedArchetype?.archetype ?? "unknown").padEnd(18)} conf=${t.classification.shooterConfidence?.toFixed(2) ?? "-"} sotmP=${t.classification.shootsOnMoveProbability?.toFixed(2) ?? "-"} provenance=${Object.keys(t.provenance).length}`);
 console.log(`\n[ingest:pages] processed ${summary.pagesProcessed}, failed ${summary.pagesFailed}, robots ${summary.robots}, notes ${summary.notes}, provenance fields ${summary.provenanceFieldsTotal}, NDI cost $${summary.ndiCostUsd} (new this run $${summary.ndiCostUsdThisRun})`);
 console.log(`[ingest:pages] wrote ${teamsFile}, ${notesFile}, ${resultsFile}`);
 if (budgetStop) console.warn(`[ingest:pages] stopped starting new NDI jobs after $${BUDGET_USD} of spend; rerun to continue (cached pages are free).`);

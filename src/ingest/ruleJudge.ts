@@ -16,7 +16,10 @@ const mi = process.argv.indexOf("--model");
 const model = mi >= 0 ? process.argv[mi + 1] : undefined;
 
 const conduct = JSON.parse(readFileSync(repoPath("data", "rules", "conduct_rules.json"), "utf8"));
-const incidents: any[] = JSON.parse(readFileSync(repoPath("data", "rules", "incidents.template.json"), "utf8")).incidents;
+const incidentsFile = JSON.parse(readFileSync(repoPath("data", "rules", "incidents.template.json"), "utf8"));
+const incidents: any[] = incidentsFile.incidents;
+const verified = incidentsFile.labels_human_verified === true;
+const metricName = verified ? "accuracy against human-verified labels" : "agreement with AI-drafted labels (not yet human-verified)";
 const rules = new Map<string, any>((conduct.rules as any[]).map((r) => [r.id, r]));
 
 const rows: Record<string, any>[] = [];
@@ -36,7 +39,7 @@ for (const [ruleId, rule] of rules) {
     const p = res.answers[inc.id]?.noul;
     const pYes = typeof p === "number" ? p : null;
     const judged = pYes === null ? null : pYes >= 0.5;
-    rows.push({ id: inc.id, ruleId, rulePage: rule.page ?? null, difficulty: inc.difficulty, expectedViolation: inc.expectedViolation, pYes, judgedViolation: judged, agrees: judged === null ? null : judged === inc.expectedViolation, labelSource: inc.labelSource });
+    rows.push({ id: inc.id, ruleId, rulePage: rule.page ?? null, difficulty: inc.difficulty, expectedViolation: inc.expectedViolation, pYes, judgedViolation: judged, agrees: judged === null ? null : judged === inc.expectedViolation, labelSource: verified ? "human_verified" : inc.labelSource });
   }
 }
 const unknown = incidents.filter((i) => !rules.has(i.ruleId)).map((i) => i.id);
@@ -55,8 +58,10 @@ const summary = {
   medianLatencyMsPerCall: median(latencies),
   questionsPerCall: perCall.length ? Math.round((10 * rows.length) / perCall.length) / 10 : 0,
   model: usedModel,
-  labelsConfirmedByHuman: false,
-  caveat: "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy",
+  metricName,
+  labels_human_verified: verified,
+  labelsConfirmedByHuman: verified,
+  caveat: verified ? "labels confirmed by a human" : "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy",
 };
 const experiment = model ? `rule_judge_${model.replace(/[^A-Za-z0-9._-]/g, "_")}` : "rule_judge";
 const out = writeResults({ experiment, createdTs: new Date().toISOString(), isMock: false, gitCommit: gitCommit(), simHash: simHash(cfg), config: { model: usedModel, threshold: 0.5, rulesFile: "data/rules/conduct_rules.json", incidentsFile: "data/rules/incidents.template.json" }, rows, summary });
@@ -66,7 +71,7 @@ for (const [ruleId] of rules) {
   const rs = rows.filter((r) => r.ruleId === ruleId);
   if (rs.length) console.log(`${ruleId.padEnd(6)} ${String(rs[0].rulePage ?? "?").padEnd(4)} ${String(rs.length).padEnd(3)} ${rs.filter((r) => r.agrees).length}/${rs.length} (${pct(rs)}%)`);
 }
-console.log(`\nTOTAL ${summary.agreeWithDraftLabels}/${summary.incidents} agree with draft labels (${summary.agreementPct}%); clear ${summary.agreementPctClear}%, borderline ${summary.agreementPctBorderline}%`);
+console.log(`\nTOTAL ${metricName}: ${summary.agreeWithDraftLabels}/${summary.incidents} (${summary.agreementPct}%); clear ${summary.agreementPctClear}%, borderline ${summary.agreementPctBorderline}%`);
 console.log(`model ${summary.model}; ${summary.drexCalls} calls, ${summary.questionsPerCall} questions/call, median ${summary.medianLatencyMsPerCall} ms/call`);
 console.log(`NOTE: ${summary.caveat}\n`);
 console.log("10 largest disagreements (for human review):");

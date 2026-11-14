@@ -1,9 +1,9 @@
 {
   "experiment": "usage",
-  "createdTs": "2026-11-14T19:30:16.181Z",
+  "createdTs": "2026-11-14T20:08:38.218Z",
   "isMock": false,
-  "gitCommit": "c599804f6d6e-dirty",
-  "simHash": "d7fc51a99caf3c93",
+  "gitCommit": "9c88e2b74658-dirty",
+  "simHash": "34e201ecdd19725e",
   "config": {
     "ledger": {
       "_status": "TUNABLE",
@@ -14,48 +14,57 @@
   "rows": [
     {
       "tool": "drex",
-      "calls": 25,
-      "inputTokens": 48514,
-      "outputTokens": 41973,
-      "costUsd": 0.004887480000000003,
-      "latencyMs": 6732.7408,
+      "calls": 104,
+      "inputTokens": 89677,
+      "outputTokens": 58467,
+      "costUsd": 0.0026903100000000004,
+      "latencyMs": 31144.249800000005,
       "counts": {
-        "questions": 26
+        "questions": 439
       },
       "byPurpose": {
         "key_check": 1,
-        "model_check": 24
+        "model_check": 24,
+        "probe": 1,
+        "archetype_classification": 36,
+        "rule_judge": 42
       }
     },
     {
       "tool": "ndi",
-      "calls": 1,
+      "calls": 65,
       "inputTokens": 0,
       "outputTokens": 0,
-      "costUsd": 1.992,
-      "latencyMs": 30933.8366,
+      "costUsd": 6.96449999999999,
+      "latencyMs": 504980.2373,
       "counts": {
-        "docs": 1,
-        "pages": 166
+        "docs": 65,
+        "pages": 583
       },
       "byPurpose": {
-        "rules_extract": 1
+        "rules_extract": 1,
+        "probe": 1,
+        "conduct_rules_extract": 1,
+        "scouting_extract": 3,
+        "page_extract": 59
       }
     },
     {
       "tool": "intern",
-      "calls": 2,
-      "inputTokens": 12351,
-      "outputTokens": 1274,
-      "costUsd": 0.0028780000000000003,
-      "latencyMs": 18349,
+      "calls": 5,
+      "inputTokens": 396042,
+      "outputTokens": 17035,
+      "costUsd": 0.04979797999999999,
+      "latencyMs": 1553187,
       "counts": {
-        "sessions": 2,
-        "system1Judgments": 6,
-        "turns": 5
+        "sessions": 5,
+        "system1Judgments": 108,
+        "turns": 42
       },
       "byPurpose": {
-        "trial": 2
+        "trial": 2,
+        "coding_scouting_generator": 2,
+        "coding_scouting_generator_aborted": 1
       }
     },
     {
@@ -99,51 +108,60 @@
     }
   ],
   "summary": {
-    "generatedTs": "2026-11-14T19:30:16.181Z",
-    "totalCalls": 102,
-    "totalCostUsd": 1.9997980300000002,
+    "generatedTs": "2026-11-14T20:08:38.218Z",
+    "totalCalls": 248,
+    "totalCostUsd": 7.017020839999993,
     "byTool": {
       "drex": {
-        "calls": 25,
-        "inputTokens": 48514,
-        "outputTokens": 41973,
-        "costUsd": 0.004887480000000003,
-        "latencyMs": 6732.7408,
+        "calls": 104,
+        "inputTokens": 89677,
+        "outputTokens": 58467,
+        "costUsd": 0.0026903100000000004,
+        "latencyMs": 31144.249800000005,
         "counts": {
-          "questions": 26
+          "questions": 439
         },
         "byPurpose": {
           "key_check": 1,
-          "model_check": 24
+          "model_check": 24,
+          "probe": 1,
+          "archetype_classification": 36,
+          "rule_judge": 42
         }
       },
       "ndi": {
-        "calls": 1,
+        "calls": 65,
         "inputTokens": 0,
         "outputTokens": 0,
-        "costUsd": 1.992,
-        "latencyMs": 30933.8366,
+        "costUsd": 6.96449999999999,
+        "latencyMs": 504980.2373,
         "counts": {
-          "docs": 1,
-          "pages": 166
+          "docs": 65,
+          "pages": 583
         },
         "byPurpose": {
-          "rules_extract": 1
+          "rules_extract": 1,
+          "probe": 1,
+          "conduct_rules_extract": 1,
+          "scouting_extract": 3,
+          "page_extract": 59
         }
       },
       "intern": {
-        "calls": 2,
-        "inputTokens": 12351,
-        "outputTokens": 1274,
-        "costUsd": 0.0028780000000000003,
-        "latencyMs": 18349,
+        "calls": 5,
+        "inputTokens": 396042,
+        "outputTokens": 17035,
+        "costUsd": 0.04979797999999999,
+        "latencyMs": 1553187,
         "counts": {
-          "sessions": 2,
-          "system1Judgments": 6,
-          "turns": 5
+          "sessions": 5,
+          "system1Judgments": 108,
+          "turns": 42
         },
         "byPurpose": {
-          "trial": 2
+          "trial": 2,
+          "coding_scouting_generator": 2,
+          "coding_scouting_generator_aborted": 1
         }
       },
       "deepinfra": {

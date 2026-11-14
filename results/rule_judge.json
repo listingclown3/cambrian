@@ -1,9 +1,9 @@
 {
   "experiment": "rule_judge",
-  "createdTs": "2026-11-14T19:45:44.641Z",
+  "createdTs": "2026-11-14T20:04:23.888Z",
   "isMock": false,
-  "gitCommit": "42750b61bb2b-dirty",
-  "simHash": "d7fc51a99caf3c93",
+  "gitCommit": "9c88e2b74658-dirty",
+  "simHash": "7b72e7413d084948",
   "config": {
     "model": "drex-v2.0",
     "threshold": 0.5,
@@ -680,9 +680,11 @@
     "agreementPctClear": 97.4,
     "agreementPctBorderline": 90.5,
     "drexCalls": 7,
-    "medianLatencyMsPerCall": 231,
+    "medianLatencyMsPerCall": 255,
     "questionsPerCall": 8.6,
     "model": "drex-v2.0",
+    "metricName": "agreement with AI-drafted labels (not yet human-verified)",
+    "labels_human_verified": false,
     "labelsConfirmedByHuman": false,
     "caveat": "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy"
   }

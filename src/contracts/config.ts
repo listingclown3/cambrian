@@ -16,7 +16,12 @@ import { RouteIdSchema } from "./field";
 import { ArchetypeSchema, ArchetypeTemplateSchema } from "./profiles";
 
 /** Provenance of a game or field constant. */
-export const ProvenanceStatusSchema = z.enum(["VERIFIED", "TODO_VERIFY_AGAINST_MANUAL"]);
+/**
+ *   VERIFIED                   - confirmed against the official manual (source gives the page)
+ *   EXTERNAL_SOURCE            - not in the manual; taken from a named public source, not official
+ *   TODO_VERIFY_AGAINST_MANUAL - a placeholder or guess that nobody has confirmed
+ */
+export const ProvenanceStatusSchema = z.enum(["VERIFIED", "EXTERNAL_SOURCE", "TODO_VERIFY_AGAINST_MANUAL"]);
 export type ProvenanceStatus = z.infer<typeof ProvenanceStatusSchema>;
 
 /** A constant together with where it came from. */

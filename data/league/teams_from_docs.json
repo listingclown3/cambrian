@@ -1,6 +1,6 @@
 {
-  "generatedTs": "2026-11-14T19:49:25.828Z",
-  "note": "Robot profiles built from real web pages with NDI Extract; archetype chosen by Drex. Only fields with a provenance entry were read from a page (source URL + quote). Every field WITHOUT a provenance entry is an archetype-template assumption (the template midpoint), not a fact about the team.",
+  "generatedTs": "2026-11-14T20:05:38.974Z",
+  "note": "Robot profiles built from real web pages with NDI Extract. Drex judged the shooter family and shoot-on-the-move from quoted evidence only; the archetype follows from those labels in code, and classifiedArchetype is null (unknown) when the evidence does not establish it (profile.archetype then only names the template used for defaults). Only fields with a provenance entry were read from a page (source URL + quote). Every field WITHOUT a provenance entry is an archetype-template assumption (the template midpoint), not a fact about the team.",
   "teams": [
     {
       "profile": {
@@ -91,65 +91,63 @@
       },
       "classifiedArchetype": {
         "archetype": "drum_fixed",
-        "confidence": 0.4133
+        "confidence": 0.9963
+      },
+      "classification": {
+        "shooter": "drum",
+        "shooterConfidence": 0.9963,
+        "shootsOnMoveProbability": 0.0761,
+        "quotes": {
+          "shooter": "Full width drum shooter with an adjustable hood for shooting and passing",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter drum: quoted evidence supports a drum shooter (confidence 1.00)."
       }
     },
     {
       "profile": {
         "id": "frc_1690",
         "teamLabel": "Team 1690 Orbit",
-        "archetype": "turret_sotm",
-        "shooterType": "turret",
+        "archetype": "starter_bot",
+        "shooterType": "lanes",
         "lanes": 1,
         "aimMethod": "turret",
-        "fireRatePerS": 4.5,
+        "fireRatePerS": 2,
         "spinUpS": 0.6,
         "hoodAdjustS": 0.35,
-        "alignTimeS": 0,
-        "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "alignTimeS": 0.8,
+        "turretSlewDegPerS": 0,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
             "accuracy": 1
           },
           {
-            "speedMps": 1.5,
-            "accuracy": 0.92
-          },
-          {
-            "speedMps": 3,
-            "accuracy": 0.75
-          },
-          {
-            "speedMps": 5,
-            "accuracy": 0.5
+            "speedMps": 0.5,
+            "accuracy": 0
           }
         ],
         "shotAccuracyByDistance": [
           {
             "distanceM": 1,
-            "accuracy": 0.874
+            "accuracy": 0.637
           },
           {
             "distanceM": 2.5,
-            "accuracy": 0.807
+            "accuracy": 0.51
           },
           {
             "distanceM": 4,
-            "accuracy": 0.617
-          },
-          {
-            "distanceM": 6,
-            "accuracy": 0.332
+            "accuracy": 0.297
           }
         ],
         "minShotDistanceM": 1,
-        "maxShotDistanceM": 4.75,
-        "capacity": 55,
-        "intakeRatePerS": 7,
+        "maxShotDistanceM": 3.25,
+        "capacity": 14,
+        "intakeRatePerS": 3.5,
         "intakeWidth": "narrow",
-        "canCollectWhileShooting": true,
+        "canCollectWhileShooting": false,
         "canIntakeOverBump": false,
         "speedEmptyMps": 3.99,
         "speedFullMps": 3.59,
@@ -159,20 +157,15 @@
         "fuelMassKg": 0.23,
         "traction": 1.13,
         "drivetrain": "swerve",
-        "pushForceN": 550,
+        "pushForceN": 450,
         "heightClass": "short",
-        "fitsUnderTrench": true,
-        "passRangeM": 1.5,
-        "passRatePerS": 1.5,
-        "climbLevel": 2,
+        "fitsUnderTrench": false,
+        "passRangeM": 0,
+        "passRatePerS": 0,
+        "climbLevel": 1,
         "climbTimeS": 7
       },
       "provenance": {
-        "shooterType": {
-          "source": "https://github.com/TylerHandel/rebuilt-sim-2026/commit/f3ba794bb75a77af22a78ef845338d3544b05f8d",
-          "quote": null,
-          "parser": "ndi"
-        },
         "lanes": {
           "source": "https://github.com/TylerHandel/rebuilt-sim-2026/commit/f3ba794bb75a77af22a78ef845338d3544b05f8d",
           "quote": "Shooter wheel | two X60s",
@@ -194,9 +187,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9576
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "unknown",
+        "shooterConfidence": 0.9794,
+        "shootsOnMoveProbability": 0.1048,
+        "quotes": {
+          "shooter": null,
+          "shootsOnMove": null
+        },
+        "basis": "Shooter unknown: no NDI quote supports the shooter type; starter_bot template used for defaults."
       }
     },
     {
@@ -212,7 +212,7 @@
         "hoodAdjustS": 0.35,
         "alignTimeS": 0,
         "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
@@ -294,9 +294,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9705
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9813,
+        "shootsOnMoveProbability": 0.0547,
+        "quotes": {
+          "shooter": "turreted shooter",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.98); shoot-on-move not established, so no archetype is claimed (turret_sotm template used for defaults only, shootOnMove false)."
       }
     },
     {
@@ -416,22 +423,32 @@
       },
       "classifiedArchetype": {
         "archetype": "turret_sotm",
-        "confidence": 0.9969
+        "confidence": 0.9905
+      },
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9905,
+        "shootsOnMoveProbability": 0.6814,
+        "quotes": {
+          "shooter": "The turret with adjustable hood concept came directly from studying 6800 and the Cranberry Alarm shooter.",
+          "shootsOnMove": "1.3 Shoot-On-The-Move as a Scoring Strategy"
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.99)."
       }
     },
     {
       "profile": {
         "id": "frc_2056",
         "teamLabel": "Team 2056 Orchard Park Robotics",
-        "archetype": "turret_sotm",
-        "shooterType": "turret",
+        "archetype": "starter_bot",
+        "shooterType": "lanes",
         "lanes": 1,
         "aimMethod": "turret",
-        "fireRatePerS": 4.5,
+        "fireRatePerS": 2,
         "spinUpS": 0.6,
         "hoodAdjustS": 0.35,
-        "alignTimeS": 0,
-        "turretSlewDegPerS": 270,
+        "alignTimeS": 0.8,
+        "turretSlewDegPerS": 0,
         "shootOnMove": true,
         "sotmAccuracyBySpeed": [
           {
@@ -439,42 +456,30 @@
             "accuracy": 1
           },
           {
-            "speedMps": 1.5,
-            "accuracy": 0.92
-          },
-          {
-            "speedMps": 3,
-            "accuracy": 0.75
-          },
-          {
-            "speedMps": 5,
-            "accuracy": 0.5
+            "speedMps": 0.5,
+            "accuracy": 0
           }
         ],
         "shotAccuracyByDistance": [
           {
             "distanceM": 1,
-            "accuracy": 0.874
+            "accuracy": 0.637
           },
           {
             "distanceM": 2.5,
-            "accuracy": 0.807
+            "accuracy": 0.51
           },
           {
             "distanceM": 4,
-            "accuracy": 0.617
-          },
-          {
-            "distanceM": 6,
-            "accuracy": 0.332
+            "accuracy": 0.297
           }
         ],
         "minShotDistanceM": 1,
-        "maxShotDistanceM": 4.75,
-        "capacity": 55,
-        "intakeRatePerS": 7,
+        "maxShotDistanceM": 3.25,
+        "capacity": 14,
+        "intakeRatePerS": 3.5,
         "intakeWidth": "narrow",
-        "canCollectWhileShooting": true,
+        "canCollectWhileShooting": false,
         "canIntakeOverBump": false,
         "speedEmptyMps": 4.57,
         "speedFullMps": 4.11,
@@ -484,20 +489,15 @@
         "fuelMassKg": 0.23,
         "traction": 1.13,
         "drivetrain": "swerve",
-        "pushForceN": 550,
+        "pushForceN": 450,
         "heightClass": "short",
-        "fitsUnderTrench": true,
-        "passRangeM": 1.5,
-        "passRatePerS": 1.5,
-        "climbLevel": 2,
+        "fitsUnderTrench": false,
+        "passRangeM": 0,
+        "passRatePerS": 0,
+        "climbLevel": 1,
         "climbTimeS": 7
       },
       "provenance": {
-        "shooterType": {
-          "source": "https://2056.ca/wp-content/uploads/2026/10/OPR26-B-2056-Technical-Binder.pdf",
-          "quote": null,
-          "parser": "ndi"
-        },
         "aimMethod": {
           "source": "https://2056.ca/wp-content/uploads/2026/10/OPR26-B-2056-Technical-Binder.pdf",
           "quote": "1x Kraken X44 on turret rotation",
@@ -519,9 +519,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.946
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "unknown",
+        "shooterConfidence": 0.9499,
+        "shootsOnMoveProbability": 0.514,
+        "quotes": {
+          "shooter": null,
+          "shootsOnMove": "Kinematically computed shot vector with time-of-flight compensation for shooting on the move."
+        },
+        "basis": "Shooter unknown: no NDI quote supports the shooter type; starter_bot template used for defaults."
       }
     },
     {
@@ -537,7 +544,7 @@
         "hoodAdjustS": 0.35,
         "alignTimeS": 0,
         "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
@@ -608,11 +615,6 @@
           "quote": "Turret shooter with about 200 degrees of travel each way",
           "parser": "ndi"
         },
-        "shootOnMove": {
-          "source": "https://2702rebels.com/robots/arc-flash",
-          "quote": null,
-          "parser": "ndi"
-        },
         "capacity": {
           "source": "https://2702rebels.com/robots/arc-flash",
           "quote": "Hopper50 ball capactiy, Spindexer into Feed tower",
@@ -639,9 +641,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9973
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9939,
+        "shootsOnMoveProbability": 0.6282,
+        "quotes": {
+          "shooter": "ScoringTurret shooter, 3\" flywheels, hood",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.99); shoot-on-move not established, so no archetype is claimed (turret_sotm template used for defaults only, shootOnMove false)."
       }
     },
     {
@@ -753,7 +762,17 @@
       },
       "classifiedArchetype": {
         "archetype": "multilane_fixed",
-        "confidence": 0.9308
+        "confidence": 0.9909
+      },
+      "classification": {
+        "shooter": "multi_lane",
+        "shooterConfidence": 0.9909,
+        "shootsOnMoveProbability": 0.0752,
+        "quotes": {
+          "shooter": "Three independent shooters, one per lane.",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter multi_lane: quoted evidence supports a multi_lane shooter (confidence 0.99)."
       }
     },
     {
@@ -769,7 +788,7 @@
         "hoodAdjustS": 0.35,
         "alignTimeS": 0.8,
         "turretSlewDegPerS": 0,
-        "shootOnMove": true,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
@@ -837,11 +856,6 @@
           "quote": "Fixed, fast dual-barrel flywheel (no hood)",
           "parser": "ndi"
         },
-        "shootOnMove": {
-          "source": "https://github.com/HotwireRobotics/Hotwire-2026-Season",
-          "quote": null,
-          "parser": "ndi"
-        },
         "drivetrain": {
           "source": "https://github.com/HotwireRobotics/Hotwire-2026-Season",
           "quote": "Swerve drive (4× Talon FX, Pigeon 2)",
@@ -860,7 +874,17 @@
       },
       "classifiedArchetype": {
         "archetype": "multilane_fixed",
-        "confidence": 0.9822
+        "confidence": 0.9831
+      },
+      "classification": {
+        "shooter": "multi_lane",
+        "shooterConfidence": 0.9831,
+        "shootsOnMoveProbability": 0.5794,
+        "quotes": {
+          "shooter": "Fixed, fast dual-barrel flywheel (no hood)",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter multi_lane: quoted evidence supports a multi_lane shooter (confidence 0.98)."
       }
     },
     {
@@ -876,7 +900,7 @@
         "hoodAdjustS": 0.35,
         "alignTimeS": 0,
         "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
@@ -958,9 +982,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9088
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9842,
+        "shootsOnMoveProbability": 0.0736,
+        "quotes": {
+          "shooter": "turret",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.98); shoot-on-move not established, so no archetype is claimed (turret_sotm template used for defaults only, shootOnMove false)."
       }
     },
     {
@@ -1065,7 +1096,17 @@
       },
       "classifiedArchetype": {
         "archetype": "turret_sotm",
-        "confidence": 0.9576
+        "confidence": 0.9428
+      },
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9428,
+        "shootsOnMoveProbability": 0.5482,
+        "quotes": {
+          "shooter": "Dual TalonFX (Kraken X60) flywheel, adjustable servo hood",
+          "shootsOnMove": "true`"
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.94)."
       }
     },
     {
@@ -1195,88 +1236,81 @@
       },
       "classifiedArchetype": {
         "archetype": "turret_sotm",
-        "confidence": 0.9758
+        "confidence": 0.9977
+      },
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9977,
+        "shootsOnMoveProbability": 0.6804,
+        "quotes": {
+          "shooter": "The turret rotates 400º to allow full 360º shooting with extra flexibility before realignment",
+          "shootsOnMove": "Shoot on the move (SOTM): We treat our shots as 3D velocity vectors"
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 1.00)."
       }
     },
     {
       "profile": {
         "id": "frc_6901",
         "teamLabel": "Team 6901",
-        "archetype": "zero_hopper_turret",
-        "shooterType": "turret",
+        "archetype": "starter_bot",
+        "shooterType": "lanes",
         "lanes": 1,
         "aimMethod": "drivetrain",
         "fireRatePerS": 20,
-        "spinUpS": 0.3,
+        "spinUpS": 0.6,
         "hoodAdjustS": 0.35,
-        "alignTimeS": 0,
-        "turretSlewDegPerS": 330,
-        "shootOnMove": true,
+        "alignTimeS": 0.8,
+        "turretSlewDegPerS": 0,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
             "accuracy": 1
           },
           {
-            "speedMps": 1.5,
-            "accuracy": 0.92
-          },
-          {
-            "speedMps": 3,
-            "accuracy": 0.75
-          },
-          {
-            "speedMps": 5,
-            "accuracy": 0.5
+            "speedMps": 0.5,
+            "accuracy": 0
           }
         ],
         "shotAccuracyByDistance": [
           {
             "distanceM": 1,
-            "accuracy": 0.874
+            "accuracy": 0.637
           },
           {
             "distanceM": 2.5,
-            "accuracy": 0.807
+            "accuracy": 0.51
           },
           {
             "distanceM": 4,
-            "accuracy": 0.617
-          },
-          {
-            "distanceM": 6,
-            "accuracy": 0.332
+            "accuracy": 0.297
           }
         ],
         "minShotDistanceM": 1,
-        "maxShotDistanceM": 4.75,
-        "capacity": 7,
-        "intakeRatePerS": 8,
+        "maxShotDistanceM": 3.25,
+        "capacity": 14,
+        "intakeRatePerS": 3.5,
         "intakeWidth": "narrow",
-        "canCollectWhileShooting": true,
+        "canCollectWhileShooting": false,
         "canIntakeOverBump": false,
-        "speedEmptyMps": 4.9,
-        "speedFullMps": 4.83,
+        "speedEmptyMps": 3.7,
+        "speedFullMps": 3.33,
         "accelEmpty": 7.5,
-        "accelFull": 7.31,
-        "massEmptyKg": 47,
+        "accelFull": 6.19,
+        "massEmptyKg": 56,
         "fuelMassKg": 0.23,
         "traction": 1.13,
         "drivetrain": "swerve",
-        "pushForceN": 550,
+        "pushForceN": 450,
         "heightClass": "short",
-        "fitsUnderTrench": true,
-        "passRangeM": 1.5,
-        "passRatePerS": 1.5,
-        "climbLevel": 2,
+        "fitsUnderTrench": false,
+        "passRangeM": 0,
+        "passRatePerS": 0,
+        "climbLevel": 1,
         "climbTimeS": 7
       },
       "provenance": {
-        "shooterType": {
-          "source": "https://github.com/frc-6901/2026-Rebuilt/blob/main/README.md",
-          "quote": null,
-          "parser": "ndi"
-        },
         "aimMethod": {
           "source": "https://github.com/frc-6901/2026-Rebuilt/blob/main/README.md",
           "quote": null,
@@ -1293,90 +1327,80 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "zero_hopper_turret",
-        "confidence": 0.3339
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "unknown",
+        "shooterConfidence": 0.7328,
+        "shootsOnMoveProbability": 0.0971,
+        "quotes": {
+          "shooter": null,
+          "shootsOnMove": null
+        },
+        "basis": "Shooter unknown: no NDI quote supports the shooter type; starter_bot template used for defaults."
       }
     },
     {
       "profile": {
         "id": "frc_6908",
         "teamLabel": "Team 6908 FRC Team 6908",
-        "archetype": "turret_sotm",
-        "shooterType": "turret",
+        "archetype": "starter_bot",
+        "shooterType": "lanes",
         "lanes": 1,
         "aimMethod": "turret",
-        "fireRatePerS": 4.5,
+        "fireRatePerS": 2,
         "spinUpS": 0.6,
         "hoodAdjustS": 0.35,
-        "alignTimeS": 0,
-        "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "alignTimeS": 0.8,
+        "turretSlewDegPerS": 0,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
             "accuracy": 1
           },
           {
-            "speedMps": 1.5,
-            "accuracy": 0.92
-          },
-          {
-            "speedMps": 3,
-            "accuracy": 0.75
-          },
-          {
-            "speedMps": 5,
-            "accuracy": 0.5
+            "speedMps": 0.5,
+            "accuracy": 0
           }
         ],
         "shotAccuracyByDistance": [
           {
             "distanceM": 1,
-            "accuracy": 0.874
+            "accuracy": 0.637
           },
           {
             "distanceM": 2.5,
-            "accuracy": 0.807
+            "accuracy": 0.51
           },
           {
             "distanceM": 4,
-            "accuracy": 0.617
-          },
-          {
-            "distanceM": 6,
-            "accuracy": 0.332
+            "accuracy": 0.297
           }
         ],
         "minShotDistanceM": 1,
-        "maxShotDistanceM": 4.75,
-        "capacity": 55,
-        "intakeRatePerS": 7,
+        "maxShotDistanceM": 3.25,
+        "capacity": 14,
+        "intakeRatePerS": 3.5,
         "intakeWidth": "narrow",
-        "canCollectWhileShooting": true,
+        "canCollectWhileShooting": false,
         "canIntakeOverBump": false,
-        "speedEmptyMps": 4.75,
-        "speedFullMps": 4.27,
+        "speedEmptyMps": 3.7,
+        "speedFullMps": 3.33,
         "accelEmpty": 7.5,
         "accelFull": 6.19,
         "massEmptyKg": 56,
         "fuelMassKg": 0.23,
         "traction": 1.13,
         "drivetrain": "swerve",
-        "pushForceN": 550,
+        "pushForceN": 450,
         "heightClass": "short",
-        "fitsUnderTrench": true,
+        "fitsUnderTrench": false,
         "passRangeM": 0,
         "passRatePerS": 0,
-        "climbLevel": 2,
+        "climbLevel": 1,
         "climbTimeS": 7
       },
       "provenance": {
-        "shooterType": {
-          "source": "https://github.com/frc6908/2026-Robot",
-          "quote": null,
-          "parser": "ndi"
-        },
         "lanes": {
           "source": "https://github.com/frc6908/2026-Robot",
           "quote": "Dual flywheel launches FUEL into the HUB. Kicker feeds the game piece into the spinning flywheel at 50% speed.",
@@ -1403,9 +1427,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9114
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "unknown",
+        "shooterConfidence": 0.8887,
+        "shootsOnMoveProbability": 0.0552,
+        "quotes": {
+          "shooter": null,
+          "shootsOnMove": null
+        },
+        "basis": "Shooter unknown: no NDI quote supports the shooter type; starter_bot template used for defaults."
       }
     },
     {
@@ -1421,7 +1452,7 @@
         "hoodAdjustS": 0.35,
         "alignTimeS": 0,
         "turretSlewDegPerS": 270,
-        "shootOnMove": true,
+        "shootOnMove": false,
         "sotmAccuracyBySpeed": [
           {
             "speedMps": 0,
@@ -1498,9 +1529,16 @@
           "parser": "ndi"
         }
       },
-      "classifiedArchetype": {
-        "archetype": "turret_sotm",
-        "confidence": 0.9526
+      "classifiedArchetype": null,
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.8921,
+        "shootsOnMoveProbability": 0.0544,
+        "quotes": {
+          "shooter": "Everybot-esque mechanism connected directly to the shooter plate",
+          "shootsOnMove": null
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.89); shoot-on-move not established, so no archetype is claimed (turret_sotm template used for defaults only, shootOnMove false)."
       }
     },
     {
@@ -1600,7 +1638,17 @@
       },
       "classifiedArchetype": {
         "archetype": "turret_sotm",
-        "confidence": 0.9578
+        "confidence": 0.9786
+      },
+      "classification": {
+        "shooter": "turret",
+        "shooterConfidence": 0.9786,
+        "shootsOnMoveProbability": 0.6,
+        "quotes": {
+          "shooter": "selects the appropriate aim target / shot mode (hub shot, ferry left, ferry right, stow)",
+          "shootsOnMove": "### Shoot-on-the-Move (SOTM)"
+        },
+        "basis": "Shooter turret: quoted evidence supports a turret shooter (confidence 0.98)."
       }
     }
   ]

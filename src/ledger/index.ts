@@ -83,7 +83,15 @@ const emptyTool = (): UsageToolSummary => ({ calls: 0, inputTokens: 0, outputTok
  */
 export function summarizeUsage(entries: readonly UsageEntry[], cfg?: Config): UsageSummary {
   const byTool = Object.fromEntries(USAGE_TOOLS.map((tool) => [tool, emptyTool()])) as Record<UsageTool, UsageToolSummary>;
-  const costOf = (e: UsageEntry) => (e.costUsd > 0 || !cfg ? e.costUsd : (costFromConfig(cfg, e.tool, e.model, e.inputTokens, e.outputTokens) ?? 0));
+  // Drex reports tokens but no charge, so its cost always comes from the current config price
+  // (which makes a corrected price apply to earlier entries too). Other tools keep the charge
+  // they reported, and fall back to config prices only when they reported none.
+  const costOf = (e: UsageEntry) => {
+    if (!cfg) return e.costUsd;
+    const priced = costFromConfig(cfg, e.tool, e.model, e.inputTokens, e.outputTokens);
+    if (e.tool === "drex") return priced ?? e.costUsd;
+    return e.costUsd > 0 ? e.costUsd : (priced ?? 0);
+  };
   let totalCostUsd = 0;
   for (const e of entries) {
     const t = byTool[e.tool];
