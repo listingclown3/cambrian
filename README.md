@@ -1,12 +1,17 @@
 # cambrian-frc: Drex vs the Giants
 
-**System 2 thinks between matches. System 1 decides during them.**
+**A strategy lab for FRC teams that runs on a laptop, not on the robot.**
+
+System 2 thinks between matches. System 1 decides during them. Drex drives every robot inside
+the simulator, so a team can play thousands of what-if matches: at kickoff (find what wins), in
+build season (your robot against the theoretical archetypes), and at competition (plan against
+real opponents; drivers spar against smart sim robots).
 
 This is an FRC REBUILT 2026 strategy simulator built on Nace's System 1 / System 2 idea. System 2
 is a large LLM on DeepInfra: slow, careful reasoning. System 1 is Drex: fast, closed-choice
 decisions. The claim we test is the Apex track's claim: take the in-match strategy decisions a
 big model would make, hand them to Drex, and measure whether it is faster, cheaper, about as good
-on decision quality, and better when thinking time is charged against a real match clock.
+on decision quality, and better on real-time sim margin (thinking time on the sim clock).
 
 Entry for the Nace AI Hackathon, Apex track. TypeScript end to end, one Node process, runs on a
 laptop.
@@ -65,6 +70,7 @@ pnpm bench:scenarios      # Drex vs DeepInfra vs baselines on the answer key
 pnpm bench:live           # full matches on eval seeds, latency charged and paused
 pnpm bench:explore        # rollouts needed to find the best option, by search order
 pnpm lab                  # Strategy Lab: Intern proposes, the simulator tests
+pnpm bench:myrobot        # your robot (data/profiles/my_robot.json) against each archetype
 pnpm headline             # assemble results/headline.json
 pnpm usage                # results/usage.json
 pnpm describe             # fill description.txt's {{placeholders}} from results/headline.json
@@ -89,7 +95,7 @@ Real so far (2026-11-14):
 - **Tool usage** is in `results/usage.json`.
 
 The benchmarks have not run yet. `results/headline.json` holds every headline number, in this order: live
-latency-charged match margin, latency and cost ratios, decision-quality parity, rollout savings,
+real-time sim margin, latency and cost ratios, decision-quality parity, rollout savings,
 then tool usage. A number is `null` until the experiment behind it has run with real provider
 calls, and `all_real` is true only when every number is real.
 

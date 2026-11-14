@@ -226,7 +226,8 @@ describe("config", () => {
     }
     expect(cfg.game.pinning.value.clauseId).toBe("G418");
     // Not found in the manual, or found without a citation: still open.
-    expect(cfg.game.fuelMassKg.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
+    // Taken from a public source outside the manual, and labelled as such.
+    expect(cfg.game.fuelMassKg.status).toBe("EXTERNAL_SOURCE");
     expect(cfg.field.allianceZoneDepthM.status).toBe("TODO_VERIFY_AGAINST_MANUAL");
   });
 
@@ -264,7 +265,7 @@ describe("results, events, providers", () => {
       "regret_drex", "regret_deepinfra", "regret_openai", "regret_scripted", "regret_random",
       "context_sensitivity_drex", "context_sensitivity_deepinfra", "context_sensitivity_openai", "top1_drex_anonymized",
       "rollouts_to_best_drex", "rollouts_to_best_uniform", "rollouts_to_best_deepinfra", "rollout_savings_pct_drex_vs_uniform",
-      "n_scenarios", "n_families", "n_live_seeds", "matches_per_sec",
+      "n_scenarios", "n_families", "n_live_seeds", "matches_per_sec", "sim_matches_per_hour_drex", "sim_matches_per_hour_deepinfra",
       "usage_drex_questions", "usage_ndi_docs", "usage_ndi_pages", "usage_intern_sessions", "usage_intern_system1_judgments",
       "usage_deepinfra_calls", "usage_keenable_requests",
       "lab_proposals_total", "lab_proposals_beating_baseline", "keenable_pages", "ndi_rules_verified_pct",

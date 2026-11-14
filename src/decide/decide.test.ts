@@ -3,7 +3,8 @@ import { DecisionRequestSchema, DecisionResponseSchema, IntentSchema, Observatio
 import { buildObservationView, engine } from "../engine";
 import { MatchRunner, basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
-import { IMPLEMENTED_PROVIDERS, buildActionRequest, chosenIntent, drexMockProvider, getProvider } from "./index";
+import { IMPLEMENTED_PROVIDERS, NETWORK_PROVIDERS, buildActionRequest, chosenIntent, drexMockProvider, getProvider } from "./index";
+import { fakeDeps } from "./testing";
 
 const cfg = loadConfig();
 
@@ -74,7 +75,9 @@ describe("drex_mock", () => {
 describe("providers", () => {
   it("every provider id resolves and returns a contract-valid response without throwing", async () => {
     for (const id of PROVIDER_IDS) {
-      const res = DecisionResponseSchema.parse(await getProvider(id, cfg).decide(request));
+      // Network providers get a fake fetch and a no-op ledger: tests never touch the network.
+      const provider = NETWORK_PROVIDERS.has(id) ? getProvider(id, cfg, fakeDeps({ pick: "b", yes_no: 0.7, rate: "high" })) : getProvider(id, cfg);
+      const res = DecisionResponseSchema.parse(await provider.decide(request));
       expect(res.meta.provider).toBe(id);
       expect(Object.keys(res.answers).sort()).toEqual(["pick", "rate", "yes_no"]);
       // unimplemented network providers must say so rather than look like a real answer

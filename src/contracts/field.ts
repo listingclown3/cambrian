@@ -102,6 +102,24 @@ export const LaneSchema = z.object({
 });
 export type Lane = z.infer<typeof LaneSchema>;
 
+/**
+ * Footprints of the field elements the engine treats as obstacles or crossings (additive, P1).
+ * Optional so older configs and snapshots stay valid; the engine falls back to built-in defaults.
+ */
+export const FieldElementSizesSchema = z.object({
+  /** Hub footprint side length, metres (the engine treats it as a circle of this diameter). */
+  hubSizeM: z.number().positive(),
+  /** Tower footprint across the field (along y), metres. */
+  towerWidthM: z.number().positive(),
+  /** Tower footprint along the field (along x), metres. */
+  towerDepthM: z.number().positive(),
+  /** Width of a trench opening (along y), metres. */
+  trenchWidthM: z.number().positive(),
+  /** Width of a bump (along y), metres. */
+  bumpWidthM: z.number().positive(),
+});
+export type FieldElementSizes = z.infer<typeof FieldElementSizesSchema>;
+
 /** Field elements belonging to one alliance. */
 export const AllianceFieldSchema = z.object({
   /** The alliance zone floor area. */
@@ -131,6 +149,8 @@ export const FieldLayoutSchema = z.object({
   shotSpots: z.array(ShotSpotSchema),
   /** All eight trench/bump crossings (four per alliance side). */
   lanes: z.array(LaneSchema),
+  /** Element footprints (optional; additive). */
+  elementSizes: FieldElementSizesSchema.optional(),
 });
 export type FieldLayout = z.infer<typeof FieldLayoutSchema>;
 
