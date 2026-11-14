@@ -7,8 +7,9 @@ import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { describeIntent, type Config, type Proposal } from "../contracts";
-import { drexAsk, type DrexQuestion } from "../ingest/drexClient";
+import { drexAsk as realAsk, type DrexQuestion } from "../ingest/drexClient";
 import { loadConfig, repoPath } from "../util/config";
+import { compareTowerPostUp } from "./towerPostUp";
 import { gitCommit, simHash } from "../util/provenance";
 import { writeResults } from "../util/runLog";
 
@@ -41,7 +42,10 @@ const ruleText = (r: ConductRule) => {
   return `Rule ${r.id} (manual p.${r.page}): ${(r.fullText ?? r.text).slice(0, 1500)}${ex}`;
 };
 
-export async function judgeLegality(cfg: Config, entries: { id: string; description: string }[], rules: ConductRule[]) {
+/** The Drex call, injectable so tests can use a fake judge. */
+export type Ask = typeof realAsk;
+
+export async function judgeLegality(cfg: Config, entries: { id: string; description: string }[], rules: ConductRule[], drexAsk: Ask = realAsk) {
   const errors: Record<string, string> = {};
   const out: Record<string, { rules: RuleVerdict[]; reliesOnOpponentFouls: number | null }> = {};
   for (const e of entries) {
@@ -69,12 +73,12 @@ export async function judgeLegality(cfg: Config, entries: { id: string; descript
   return { out, errors };
 }
 
-export async function runQuirks(cfg: Config): Promise<void> {
+export async function runQuirks(cfg: Config, ask: Ask = realAsk): Promise<void> {
   const proposals = (JSON.parse(readFileSync(repoPath("data", "lab", "proposals.json"), "utf8")) as { proposals: Proposal[] }).proposals;
   const lab = JSON.parse(readFileSync(repoPath("results", "lab.json"), "utf8")) as { rows: Record<string, any>[] };
   const rules = (JSON.parse(readFileSync(repoPath("data", "rules", "conduct_rules.json"), "utf8")) as { rules: ConductRule[] }).rules;
   const entries = proposals.map((p) => ({ id: p.id, description: `${p.title}. Play: ${describeIntent(p.intent)} Use when: ${p.situation}` }));
-  const { out: verdicts, errors } = await judgeLegality(cfg, entries, rules);
+  const { out: verdicts, errors } = await judgeLegality(cfg, entries, rules, ask);
 
   const rows: Record<string, unknown>[] = proposals.map((p) => {
     const v = verdicts[p.id]!;
@@ -92,21 +96,23 @@ export async function runQuirks(cfg: Config): Promise<void> {
       legality,
       rules: v.rules,
       reliesOnOpponentFouls: v.reliesOnOpponentFouls,
-      notes: `Drex noul probabilities of violating each extracted conduct rule (${rules.length} rules, manual pages in rules[].page). ${err ? `NOT JUDGED: Drex call failed (${err}).` : ""}`.trim(),
+      notes: `Drex noul probabilities of violating each extracted conduct rule (${rules.length} rules, manual pages in rules[].page). ${err ? `NOT JUDGED: Drex call failed (Drex unreachable: ${err}).` : ""}`.trim(),
     };
   });
 
   // Tower post-up test case: runs only when the engine offers post-up shot spots.
-  const postUp = cfg.field.shotSpots.spots.filter((s) => /post.?up/i.test(s.id)).map((s) => s.id);
+  const tower = compareTowerPostUp(cfg);
   rows.push({
     id: "tower_post_up",
     title: "Endgame tower post-up shooting spot vs a normal shot spot",
     source: "tower_post_up",
-    value: { marginDiff: null, ci95: null, n: null, reason: postUp.length === 0 ? "not run: engine support pending (no post-up shot spot in config.field.shotSpots)" : "spots present but comparison not yet implemented" },
+    value: tower.run
+      ? { marginDiff: tower.marginDiff, ci95: tower.ci95, n: tower.n, firesTotal: tower.fires, g420FoulsOnOpponents: tower.g420FoulsOnOpponents, g420FoulsOnUs: tower.g420FoulsOnUs, spotId: tower.spotId, controlSpotId: tower.controlSpotId }
+      : { marginDiff: null, ci95: null, n: null, reason: tower.reason },
     legality: null,
     rules: [],
     reliesOnOpponentFouls: null,
-    notes: "Intended: paired eval-seed matches, tower post-up vs normal spot in endgame, margin with 95% CI and count of G420 fouls drawn.",
+    notes: "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. Legality: not judged (Drex unreachable).",
   });
   rows.push({
     id: "intern_rule_scan",
@@ -135,5 +141,9 @@ export async function runQuirks(cfg: Config): Promise<void> {
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const cfg = loadConfig();
-  await runQuirks(cfg);
+  // --no-drex: make no Drex call (it is unreachable); legality stays null with the reason
+  const offline: Ask = (async () => {
+    throw new Error("not called");
+  }) as Ask;
+  await runQuirks(cfg, process.argv.includes("--no-drex") ? offline : realAsk);
 }

@@ -1,8 +1,8 @@
 {
   "experiment": "quirks",
-  "createdTs": "2026-11-14T20:58:55.084Z",
+  "createdTs": "2026-11-14T21:01:12.590Z",
   "isMock": false,
-  "gitCommit": "54efb0636c32-dirty",
+  "gitCommit": "f882b10eb241-dirty",
   "simHash": "7160952d70dcba39",
   "config": {
     "drex": "drex-latest",
@@ -66,7 +66,7 @@
         }
       ],
       "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex http 403 {})."
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
     },
     {
       "id": "inactive_shift_depot_gather",
@@ -117,7 +117,7 @@
         }
       ],
       "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex http 403 {})."
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
     },
     {
       "id": "trench_shoot_on_move_refill",
@@ -168,7 +168,7 @@
         }
       ],
       "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex http 403 {})."
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
     },
     {
       "id": "spin_out_then_shadow_defend",
@@ -219,7 +219,7 @@
         }
       ],
       "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex http 403 {})."
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
     },
     {
       "id": "late_climb_level2_not_cycle",
@@ -270,7 +270,7 @@
         }
       ],
       "reliesOnOpponentFouls": null,
-      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex http 403 {})."
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page). NOT JUDGED: Drex call failed (Drex unreachable: not called)."
     },
     {
       "id": "tower_post_up",
@@ -285,7 +285,7 @@
       "legality": null,
       "rules": [],
       "reliesOnOpponentFouls": null,
-      "notes": "Intended: paired eval-seed matches, tower post-up vs normal spot in endgame, margin with 95% CI and count of G420 fouls drawn."
+      "notes": "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. Legality: not judged (Drex unreachable)."
     },
     {
       "id": "intern_rule_scan",
