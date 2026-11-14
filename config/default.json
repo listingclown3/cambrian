@@ -1404,7 +1404,10 @@
     "minCommitS": 2,
     "coalesceS": 0.25,
     "criticalPinS": 1.5,
-    "maxIdleS": 1
+    "maxIdleS": 1,
+    "failFastS": 0.5,
+    "optionCooldownS": 5,
+    "optionCooldownLongS": 15
   },
   "microRollouts": {
     "_status": "TUNABLE",
@@ -1432,15 +1435,25 @@
         "concurrency": 8,
         "timeoutMs": 2000,
         "retries": 2,
-        "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 },
+        "sharedRateLimit": {
+          "requestsPerSecond": 4,
+          "maxInFlight": 2
+        },
         "hosts": {
           "deepinfra": {
             "endpoint": "https://api.deepinfra.com/v1/decisions",
             "authHeader": "Authorization",
             "authScheme": "Bearer",
             "apiKeyEnv": "DEEPINFRA_API_KEY",
-            "models": { "drex-v2.0": "nace-ai/drex-v2.0", "drex-latest": "nace-ai/drex-max", "drex-max-v1.1": "nace-ai/drex-max" },
-            "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 }
+            "models": {
+              "drex-v2.0": "nace-ai/drex-v2.0",
+              "drex-latest": "nace-ai/drex-max",
+              "drex-max-v1.1": "nace-ai/drex-max"
+            },
+            "sharedRateLimit": {
+              "requestsPerSecond": 4,
+              "maxInFlight": 2
+            }
           }
         }
       },

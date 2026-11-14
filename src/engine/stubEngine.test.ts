@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { EngineEventSchema, MatchStateSchema, RolloutResultSchema, SnapshotSchema, type EngineEvent } from "../contracts";
-import { MatchRunner, basicCyclePolicy, demoRobots, holdPolicy } from "../exec";
+import { MatchRunner, archetypePolicy, demoRobots, holdPolicy } from "../exec";
 import { loadConfig } from "../util/config";
 import { engine } from "./index";
 
 const cfg = loadConfig();
-const policies = { default: basicCyclePolicy };
+// The archetype (no-idle) policy: with the 3 s watchdog, basic_cycle re-decides to score before a
+// hopper ever fills, so its matches never exercise hopper_full.
+const policies = { default: archetypePolicy };
 const newRunner = (seed: number) => new MatchRunner(engine, cfg, seed, demoRobots(cfg), policies);
 /** Per-test timeout for full matches: the machine may be busy with other work. */
 const SLOW = 120_000;
