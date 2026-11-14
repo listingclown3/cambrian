@@ -128,6 +128,7 @@ function assemble() {
       mean_robot_decisions_per_match: round(mean(g.map((r) => r.robotDecisions)), 1),
       mean_requests_per_match: round(mean(g.map((r) => r.requests)), 1),
       mean_wall_s_per_match: round(mean(wall), 2),
+      wall_ms_per_robot_decision: decider === "scripted" ? null : round((1000 * wall.reduce((a, b) => a + b, 0)) / Math.max(1, g.reduce((k, r) => k + r.robotDecisions, 0)), 1),
       mean_charged_s_per_match: round(mean(g.map((r) => r.chargedS)), 2),
       fallbacks_total: g.reduce((k, r) => k + r.fallbacks, 0),
       dropped_total: g.reduce((k, r) => k + r.dropped, 0),
