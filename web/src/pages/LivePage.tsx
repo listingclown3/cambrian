@@ -2,6 +2,7 @@
 import { useEffect, useMemo } from "react";
 import type { MatchState } from "../../../src/contracts";
 import { FieldCanvas } from "../FieldCanvas";
+import { RobotBadge, findTeam, useTeams } from "../RobotBadge";
 import { ms, robotName, signed, type Health, type RunListing } from "../lib";
 import { useMatch, type MatchView, type TickerRow } from "../useMatch";
 import type { Flags } from "../App";
@@ -199,6 +200,7 @@ export function LivePage({ launch, view, health, runs, onFlags }: { launch: Laun
 }
 
 function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: string; accent: string; recorded: boolean }) {
+  const teams = useTeams();
   const status = useMemo(() => (m.status === "connecting" ? "connecting…" : m.status === "error" ? "server not reachable" : m.status), [m.status]);
   return (
     <div className={`live ${accent}`}>
@@ -220,8 +222,18 @@ function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: s
       <div className="rail">
         <h3>Decisions · newest first</h3>
         <div className="ticker">
-          {m.ticker.slice(0, 9).map((d) => <DecisionCard key={d.n} d={d} />)}
+          {m.ticker.slice(0, 6).map((d) => <DecisionCard key={d.n} d={d} />)}
           {m.ticker.length === 0 && <div className="empty">no decisions yet</div>}
+        </div>
+        <h3>Robots</h3>
+        <div className="robots">
+          {m.state?.robots.map((r) => (
+            <div className="rrow" key={r.id}>
+              <span className={`id ${r.alliance}`}>{r.id}</span>
+              <span className="nm">{r.profile.teamLabel}<small>{r.profile.archetype.replaceAll("_", " ")} · {r.alliance.toUpperCase()} · fuel {r.fuelHeld}/{r.profile.capacity}</small></span>
+              <RobotBadge team={findTeam(teams, { id: r.profile.id, teamLabel: r.profile.teamLabel })} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

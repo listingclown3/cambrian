@@ -127,6 +127,15 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     return JSON.parse(readFileSync(repoPath("results", name + ".json"), "utf8"));
   });
 
+  // Static data files for the Rules & Sources page and robot provenance badges. Missing file = { available: false }.
+  const dataFile = (rel: string[], empty: object) => async () => {
+    const file = repoPath(...rel);
+    return existsSync(file) ? { available: true, ...(JSON.parse(readFileSync(file, "utf8")) as object) } : { available: false, ...empty };
+  };
+  app.get("/api/rules/conduct", dataFile(["data", "rules", "conduct_rules.json"], { rules: [] }));
+  app.get("/api/research/sources", dataFile(["data", "research", "sources.json"], { sources: [] }));
+  app.get("/api/league/teams", dataFile(["data", "league", "teams_from_docs.json"], { teams: [] }));
+
   // Scenario explorer data: real results/scenarios.json when it exists, else the bundled FIXTURE.
   app.get("/api/scenarios", async () => {
     const real = repoPath("results", "scenarios.json");

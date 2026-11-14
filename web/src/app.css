@@ -166,6 +166,7 @@ tr.sel td { background: var(--panel2); }
 /* race */
 .race { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .rbar { display: grid; grid-template-columns: 11rem 1fr 3rem; gap: 0.5rem; align-items: center; margin: 0.3rem 0; font-size: 0.85rem; }
+.rbar .fill, .bar .fill { display: block; }
 .rbar .track { height: 1.1rem; background: #121a23; border-radius: 0.3rem; overflow: hidden; }
 .rbar .fill { height: 100%; background: var(--acc); transition: width 0.12s linear; }
 .rbar.best .lbl { color: var(--ok); font-weight: 800; }
@@ -177,3 +178,19 @@ tr.sel td { background: var(--panel2); }
   .g5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* robot provenance badge */
+.prov { position: relative; display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; padding: 0 0.4rem; border-radius: 0.25rem; border: 1px solid var(--line); white-space: nowrap; }
+.prov.real { color: var(--ok); border-color: #1f5a3a; cursor: help; }
+.prov.fab { color: var(--faint); }
+.prov .tip { display: none; position: absolute; right: 0; top: 1.4rem; z-index: 9; width: 26rem; max-width: 80vw; background: #05070a; border: 1px solid var(--dim); border-radius: 0.5rem; padding: 0.5rem 0.7rem; font-weight: 500; letter-spacing: 0; white-space: normal; color: var(--text); }
+.prov:hover .tip, .prov:focus .tip { display: block; }
+.tipline { display: block; font-size: 0.75rem; word-break: break-all; margin: 0.15rem 0; }
+.tipline b { color: var(--dim); margin-right: 0.4rem; }
+.robots { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.4rem; }
+.rrow { display: grid; grid-template-columns: 2.6rem 1fr auto; gap: 0.5rem; align-items: center; font-size: 0.8rem; padding: 0.25rem 0.5rem; border: 1px solid var(--line); border-radius: 0.4rem; background: var(--panel); }
+.rrow .id { font-weight: 800; padding: 0 0.3rem; border-radius: 0.25rem; text-align: center; }
+.rrow .id.red { background: var(--red); }
+.rrow .id.blue { background: var(--blue); }
+.rrow .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rrow small { color: var(--dim); display: block; }

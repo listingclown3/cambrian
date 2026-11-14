@@ -29,8 +29,8 @@ const PAGES = [
 type PageId = (typeof PAGES)[number]["id"];
 
 export function App() {
-  const [page, setPage] = useState<PageId>("live");
-  const [view, setView] = useState<"single" | "split">("single");
+  const [page, setPage] = useState<PageId>(() => PAGES.find((p) => location.hash.slice(1).split(",").includes(p.id))?.id ?? "live");
+  const [view, setView] = useState<"single" | "split">(() => (location.hash.includes("split") ? "split" : "single"));
   const [launch, setLaunch] = useState<Launch>({ mode: "live", n: 0 });
   const [flags, setFlags] = useState<Record<string, Flags>>({});
   const health = useApi<Health>("/api/health").data;
