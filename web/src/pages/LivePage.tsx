@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import type { MatchState } from "../../../src/contracts";
 import { FieldCanvas } from "../FieldCanvas";
 import { RobotBadge, findTeam, useTeams } from "../RobotBadge";
-import { ms, robotName, signed, type Health, type ProviderRow, type RunListing } from "../lib";
+import { giantLabel, ms, robotName, signed, type Health, type ProviderRow, type RunListing } from "../lib";
 import { useMatch, type MatchView, type TickerRow } from "../useMatch";
 import type { Flags } from "../App";
 
@@ -110,6 +110,15 @@ function Pills({ m }: { m: MatchView }) {
   );
 }
 
+/** Exact model id (from the stream or the latest decision) plus the giant's reasoning setting. Simulated lanes name no model. */
+function ModelPill({ m, giant }: { m: MatchView; giant: boolean }) {
+  const h = m.hello;
+  if (!h || h.source === "simulated_latency") return h ? <span className="pill mono">no model called</span> : null;
+  const model = h.model ?? m.ticker.find((t) => t.model)?.model ?? null;
+  if (!giant) return model ? <span className="pill mono">{model}</span> : null;
+  return <span className="pill mono">{giantLabel(model)}</span>;
+}
+
 function margin(m: MatchView): number | null {
   if (!m.state) return null;
   return m.state.score.blue.total - m.state.score.red.total;
@@ -202,7 +211,7 @@ export function LivePage({ launch, view, health, runs, providers, onFlags }: { l
               <div className="topbar" style={{ marginBottom: 0 }}>
                 <div className="decider"><i />{name}</div>
                 <Pills m={m} />
-                {m.hello?.model && <span className="pill mono">{m.hello.model}</span>}
+                <ModelPill m={m} giant={cls === "giant"} />
               </div>
               <div className="mini">
                 <div className="stat"><span>decisions</span><b>{m.stats.decisions}</b></div>
@@ -240,7 +249,7 @@ function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: s
           <div className="stat"><span>clock lost to thinking</span><b>{m.stats.chargedS.toFixed(1)} s</b></div>
           <div className="stat"><span>seed</span><b>{m.hello?.seed ?? "-"}</b></div>
           <Pills m={m} />
-          {m.hello?.model && <span className="pill mono">{m.hello.model}</span>}
+          <ModelPill m={m} giant={decider === "The giant"} />
           {m.status !== "running" && <span className="pill">{status}</span>}
           {recorded && m.hello?.runId && <span className="hint">run {m.hello.runId}</span>}
         </div>

@@ -128,6 +128,12 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     return JSON.parse(readFileSync(repoPath("results", name + ".json"), "utf8"));
   });
 
+  // Which model the giant is: the first-choice id (the exact id used is logged in each run's manifest) and its reasoning mode.
+  app.get("/api/giant", async () => {
+    const p = cfg.providers.byId.deepinfra;
+    return { fixedModel: p.model, firstChoice: p.modelPreference?.[0] ?? null, reasoning: "off" };
+  });
+
   // Static data files for the Rules & Sources page and robot provenance badges. Missing file = { available: false }.
   const dataFile = (rel: string[], empty: object) => async () => {
     const file = repoPath(...rel);
