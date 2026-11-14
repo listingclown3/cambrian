@@ -28,6 +28,8 @@ const arg = (name: string, dflt: string) => {
 const cfg = loadConfig();
 const seed = Number(arg("--seed", String(cfg.seeds.dev[0] ?? 1)));
 const timing = arg("--timing", "paused") as "paused" | "realtime";
+// --no-commit / --no-noidle turn the fairness rules off for the before/after comparison.
+const fairness = { commitment: !process.argv.includes("--no-commit"), noIdle: !process.argv.includes("--no-noidle") };
 const captain = process.argv.includes("--captain");
 const specs: Record<Alliance, string> = { blue: arg("--blue", "drex_mock"), red: arg("--red", "scripted") };
 const agents: Partial<Record<Alliance, AllianceAgent>> = {};
@@ -52,7 +54,7 @@ const onDecision = (d: Parameters<NonNullable<typeof hooks.onDecision>>[0]) => {
   for (const m of d.metas) if (!checkpoint && (m.error ?? "").includes(BLOCKED_BY_CHECKPOINT)) checkpoint = m.error;
   hooks.onDecision?.(d);
 };
-const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, ...hooks, onDecision, shouldStop: () => checkpoint });
+const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, fairness, ...hooks, onDecision, shouldStop: () => checkpoint });
 let summary: Awaited<ReturnType<AgentController["run"]>>;
 try {
   summary = await controller.run();
@@ -75,7 +77,8 @@ if (recorder && recordId) {
     return r === null ? served : `${served} (reasoning ${r})`;
   };
   const model = deciders.length === 2 ? deciders.map((a) => `${a}=${label(a)}`).join(";") : deciders.length === 1 ? label(deciders[0]!) : "scripted";
-  const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, model, status: "ok", durationMs: summary.wallMs, error: null });
+  const behaviour = { fairness: summary.fairness, byAlliance: Object.fromEntries((["blue", "red"] as const).map((a) => [a, { decider: specs[a], robotDecisions: summary.byAlliance[a].robotDecisions, interruptedActions: summary.byAlliance[a].interruptedActions, completedCycles: summary.byAlliance[a].completedCycles, idleS: summary.byAlliance[a].idleS, continuationS: summary.byAlliance[a].continuationS, continuations: summary.byAlliance[a].continuations }])), byRobot: summary.byRobot };
+  const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, model, status: "ok", durationMs: summary.wallMs, error: null, behaviour });
   const bad = lines.filter((l) => !RunEventSchema.safeParse(l).success).length;
   console.log(`recorded ${lines.length} lines (${lines.filter((l) => l.type === "decision").length} decisions) to ${file}; ${bad} lines fail RunEventSchema`);
   if (bad > 0) process.exitCode = 1;
@@ -98,6 +101,12 @@ for (const a of ["blue", "red"] as const) {
   );
   const errors = [...new Set(metas.map((m) => m.error).filter((e): e is string => e !== null))];
   for (const e of errors.slice(0, 5)) console.log(`      error: ${e}`);
+}
+console.log(`fairness: commitment ${summary.fairness.commitment ? `on (hold ${summary.fairness.minCommitS} s, coalesce ${summary.fairness.coalesceS} s, critical pin ${summary.fairness.criticalPinS} s)` : "off"}, no-idle ${summary.fairness.noIdle ? `on (max idle ${summary.fairness.maxIdleS} s)` : "off"}`);
+for (const a of ["blue", "red"] as const) {
+  const t = summary.byAlliance[a];
+  const robotDecisions = agents[a] ? t.robotDecisions : summary.state.robots.filter((r) => r.alliance === a).reduce((s, r) => s + summary.byRobot[r.id]!.decisions, 0);
+  console.log(`${a.padEnd(5)} ${specs[a].padEnd(16)} robot decisions ${robotDecisions}, interrupted actions ${t.interruptedActions}, completed cycles ${t.completedCycles}, idle ${t.idleS.toFixed(1)} robot-s, role continuation ${t.continuationS.toFixed(1)} robot-s (${t.continuations} handed out)`);
 }
 console.log(`wall ${(summary.wallMs / 1000).toFixed(1)} s (provider wait ${(summary.providerWaitMs / 1000).toFixed(1)} s, sim ${(summary.simWallMs / 1000).toFixed(1)} s) = ${summary.matchesPerHour.toFixed(1)} matches/hour`);
 if (process.argv.includes("--diag")) {
