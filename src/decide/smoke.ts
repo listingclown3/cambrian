@@ -1,6 +1,7 @@
 /**
  * pnpm smoke:drex [-- --provider drex|drex:drex-latest|deepinfra|drex_mock] [--n 10] [--robot B1]
  *   [--thinking off|on|default] [--timeout ms]   (deepinfra only)
+ *   [--anon]   anonymized-labels ablation (labels shown as opt_01.., descriptions kept)
  * (owner: P2)
  *
  * End-to-end smoke test of the decision path: stub match -> one robot's view -> masked options
@@ -24,6 +25,7 @@ const n = Math.max(1, Number(argValues("--n")[0] ?? 1));
 const robotId = argValues("--robot")[0] ?? "B1";
 const verbose = n === 1 || process.argv.includes("--verbose");
 const thinking = argValues("--thinking")[0] as "default" | "off" | "on" | undefined;
+const anon = process.argv.includes("--anon");
 const timeoutMs = argValues("--timeout")[0] ? Number(argValues("--timeout")[0]) : undefined;
 
 const cfg = loadConfig();
@@ -51,7 +53,7 @@ const views = moments(n);
 const summary: string[] = [];
 for (const spec of specs) {
   const { id } = parseProviderSpec(spec);
-  const provider = getProviderBySpec(spec, cfg, { purpose: "smoke", ...(thinking ? { thinking } : {}), ...(timeoutMs ? { timeoutMs } : {}) });
+  const provider = getProviderBySpec(spec, cfg, { purpose: "smoke", ...(anon ? { anonymize: true } : {}), ...(thinking ? { thinking } : {}), ...(timeoutMs ? { timeoutMs } : {}) });
   const metas: DecisionResponse["meta"][] = [];
   const chosen = new Map<string, number>();
   for (let i = 0; i < views.length; i++) {

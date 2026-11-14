@@ -261,6 +261,8 @@ describe("results, events, providers", () => {
       "live_margin_drex_realtime", "live_margin_deepinfra_realtime", "live_margin_drex_paused", "live_margin_deepinfra_paused",
       "drex_p50_ms", "drex_p95_ms", "deepinfra_p50_ms", "openai_p50_ms", "latency_ratio_deepinfra_over_drex", "latency_ratio_openai_over_drex",
       "drex_cost_per_1k_usd", "deepinfra_cost_per_1k_usd", "openai_cost_per_1k_usd",
+      "batch1_ms_per_decision_drex", "batch1_ms_per_decision_giant", "batch3_ms_per_decision_drex", "batch3_ms_per_decision_giant",
+      "batch8_ms_per_decision_drex", "batch8_ms_per_decision_giant", "batch32_ms_per_decision_drex", "batch32_ms_per_decision_giant",
       "top1_drex", "top1_deepinfra", "top1_openai", "top1_scripted", "top1_random",
       "regret_drex", "regret_deepinfra", "regret_openai", "regret_scripted", "regret_random",
       "context_sensitivity_drex", "context_sensitivity_deepinfra", "context_sensitivity_openai", "top1_drex_anonymized",

@@ -1,0 +1,417 @@
+{
+  "experiment": "ingest_scouting",
+  "createdTs": "2026-11-14T20:17:16.459Z",
+  "isMock": false,
+  "gitCommit": "3a8cc85778da-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "fabricatedInputs": true,
+    "dir": "data\\scouting",
+    "ndi": {
+      "_status": "TUNABLE",
+      "_note": "NDI document intelligence, per console.nace.ai/docs/ndi: POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground} with Authorization: Bearer <key>; jobs are asynchronous (202 + job_id; ?wait_seconds=0..60). Same nace_sk_ key and balance as Drex. Jobs are read with GET {baseUrl}/v1/documents/jobs/{job_id}; a finished job carries cost.total_usd and cost.lines (quantity per page), which go in the usage ledger. manualUrls holds the official manual, which already includes the Team Updates (the copy fetched on 2026-11-14 is version TU22).",
+      "baseUrl": "https://console.nace.ai",
+      "apiKeyEnv": "NACE_API_KEY",
+      "waitSeconds": 60,
+      "manualUrls": [
+        "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf"
+      ],
+      "rulesFile": "data/rules/rules.json",
+      "scoutingSheets": 24
+    }
+  },
+  "rows": [
+    {
+      "sheetId": "s01",
+      "file": "s01.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 11,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s02",
+      "file": "s02.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 10,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s03",
+      "file": "s03.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 11,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s04",
+      "file": "s04.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s05",
+      "file": "s05.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s06",
+      "file": "s06.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 10,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s07",
+      "file": "s07.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s08",
+      "file": "s08.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s09",
+      "file": "s09.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 1,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s10",
+      "file": "s10.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 10,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 1
+    },
+    {
+      "sheetId": "s11",
+      "file": "s11.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s12",
+      "file": "s12.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s13",
+      "file": "s13.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s14",
+      "file": "s14.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 10,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s15",
+      "file": "s15.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 10,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 1
+    },
+    {
+      "sheetId": "s16",
+      "file": "s16.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 11,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s17",
+      "file": "s17.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 8,
+      "wrong": 0,
+      "missed": 1,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s18",
+      "file": "s18.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 8,
+      "wrong": 0,
+      "missed": 1,
+      "hallucinated": 1
+    },
+    {
+      "sheetId": "s19",
+      "file": "s19.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s20",
+      "file": "s20.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s21",
+      "file": "s21.csv",
+      "format": "csv",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 11,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0
+    },
+    {
+      "sheetId": "s22",
+      "file": "s22.md",
+      "format": "md",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 9,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 1
+    },
+    {
+      "sheetId": "s23",
+      "file": "s23.txt",
+      "format": "txt",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 1
+    },
+    {
+      "sheetId": "s24",
+      "file": "s24.html",
+      "format": "html",
+      "status": "succeeded",
+      "pages": 1,
+      "costUsd": 0.012,
+      "correct": 12,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 1
+    }
+  ],
+  "summary": {
+    "sheets": 24,
+    "fieldsStated": 248,
+    "correct": 245,
+    "wrong": 0,
+    "missed": 3,
+    "hallucinated": 6,
+    "accuracyPct": 98.8,
+    "precisionPct": 97.6,
+    "byField": {
+      "teamNumber": {
+        "correct": 24,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "shooterType": {
+        "correct": 18,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 5
+      },
+      "lanes": {
+        "correct": 20,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 1
+      },
+      "shootOnMove": {
+        "correct": 19,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "capacity": {
+        "correct": 14,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "fireRatePerS": {
+        "correct": 17,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "intakeWidth": {
+        "correct": 16,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "drivetrain": {
+        "correct": 17,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "speedEmptyMps": {
+        "correct": 17,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "massEmptyKg": {
+        "correct": 21,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "heightClass": {
+        "correct": 11,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "fitsUnderTrench": {
+        "correct": 20,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "climbLevel": {
+        "correct": 15,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0
+      },
+      "passRangeM": {
+        "correct": 16,
+        "wrong": 0,
+        "missed": 3,
+        "hallucinated": 0
+      }
+    },
+    "byFormat": {
+      "md": 98.3,
+      "txt": 100,
+      "csv": 96.8,
+      "html": 100
+    },
+    "ndiCostUsd": 0.288,
+    "inputsAreFabricated": true
+  }
+}

@@ -1,0 +1,37 @@
+STATUS (integrator), updated 12:43 PM. One line per workstream: state | last commit on main | blocker.
+
+engine (p1)            | step 1 + speed/rollout pool merged; step 2 in progress      | c25f07a | none. Sim behaviour changed in the speed commit: answer key must be recomputed.
+providers (p2)         | all 4 steps + --record merged; now timeouts and bench:batch | 3d5ff8a | none
+benchmarks (p3)        | league, matches, 45 scenarios / 15 families, answer key merged; bench:scenarios in progress | 676329d | answer key is on the old sim hash; recompute after merging main
+ui + server (p4)       | live page, replay sockets, 5 more commits merged             | 0e2def1 | replay of the recorded showcase not yet confirmed
+strategy lab (p5)      | launched 12:35: full pnpm lab run + proposal simulation      | -       | none
+my robot (p6)          | launched 12:35: bench:myrobot                                | -       | none
+rules / ingest (main)  | manual rules, 15 real robots, 71 notes, scouting 245/248 done; rule judge re-run with exceptions in progress | 8898c8b | inc_44 depends on finding the G413 exception in the manual text
+demo backup            | recorded-showcase-drex and -giant recorded (seed 9001, realtime), all lines valid | runs/ (local) | UI replay check pending
+deck numbers           | pnpm deck ready; 12 results blanks still NOT RUN             | ccae20d | waits on bench results
+push                   | NOT pushed                                                   | -       | waiting for the owner to confirm pushing the history as it is
+tests on main          | 87 passed before the last three merges; re-run in progress (machine is heavily loaded by parallel agents, tests are slow) | 0e2def1 | confirm green
+
+FINDING THE OWNER AND PLANNER NEED (12:40): on the showcase seed (9001, realtime, blue driven, red scripted)
+  Drex blue 331 - red 512 (margin -181, 213 decisions, 3 timeouts)
+  giant blue 364 - red 472 (margin -108, 162 decisions, 93 s of thinking charged)
+  scripted vs scripted blue 301 - red 419 (margin -118)
+  One seed, not a result. But Drex did not beat the giant or the scripted baseline here.
+
+PLANNER ITEMS 1-15 (answers block of 12:05)
+ 1 launch P3                         APPLIED (12:15); lab and my-robot later split out to p5 and p6
+ 2 cut order                         APPLIED (notes/backlog.md)
+ 3 incident labels                   IN PROGRESS (person-reviewed; being applied with rule exceptions; inc_44 pending)
+ 4 real robots in league + badges    IN PROGRESS (league merged from p3; UI badge requested from p4)
+ 5 archetype classifier fix          APPLIED (7 of 15 classified from quotes, 8 unknown)
+ 6 scouting formats in description   APPLIED
+ 7 Intern as coding agent            APPLIED (second attempt succeeded; generator committed "built with Intern")
+ 8 fuel mass external, rest flagged  APPLIED
+ 9 benchmark deciders                IN PROGRESS (p3)
+10 strategy-lab framing              APPLIED in README and description; UI labels requested from p4
+11 sim matches per hour keys         CONTRACT APPLIED; values pending (first single-match reading: Drex 70/h, giant 37/h)
+12 bench:myrobot                     IN PROGRESS (p6)
+13 game pack + pnpm newgame          NOT STARTED (on the cut list)
+14 NDI cache by document             PARTLY (jobs cached by key; manual parse-once in progress; no general sha256 layer)
+15 pricing                           APPLIED (Drex 0.03 USD per 1M input tokens, confirmed)
+later: bench:batch + timeout diagnosis IN PROGRESS (p2); continuous integration APPLIED (5-minute poll); deck sheet READY; demo backup RECORDED, replay check pending
