@@ -1,9 +1,9 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T20:52:18.871Z",
+  "createdTs": "2026-11-14T20:58:40.972Z",
   "isMock": false,
-  "gitCommit": "218ce58ef6da-dirty",
-  "simHash": "7160952d70dcba39",
+  "gitCommit": "c071d9770de5-dirty",
+  "simHash": "e7daa7a2a621cf3c",
   "config": {
     "contributing": [
       {
@@ -23,9 +23,15 @@
         "isMock": false,
         "simHash": "2cc2e7f621722c58",
         "gitCommit": "7238aec37b2e-dirty"
+      },
+      {
+        "file": "results/lab.json",
+        "isMock": false,
+        "simHash": "b9508e9c7510f637",
+        "gitCommit": "a509f34d5ada-dirty"
       }
     ],
-    "simHashesConsistent": true,
+    "simHashesConsistent": false,
     "models": {
       "drex": [
         "drex-v2.0"
@@ -153,15 +159,15 @@
     "matches_per_sec": 1.155,
     "sim_matches_per_hour_drex": null,
     "sim_matches_per_hour_deepinfra": null,
-    "usage_drex_questions": 7530,
+    "usage_drex_questions": 14199,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 5,
     "usage_intern_system1_judgments": 110,
-    "usage_deepinfra_calls": 2175,
+    "usage_deepinfra_calls": 3274,
     "usage_keenable_requests": 73,
-    "lab_proposals_total": null,
-    "lab_proposals_beating_baseline": null,
+    "lab_proposals_total": 5,
+    "lab_proposals_beating_baseline": 1,
     "keenable_pages": 58,
     "ndi_rules_verified_pct": 68,
     "all_real": true
