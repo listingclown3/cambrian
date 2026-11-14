@@ -565,7 +565,8 @@
     "restitution": 0.2,
     "maxTurnRateDegPerS": 360,
     "navCellM": 0.15,
-    "contactMarginM": 0.05
+    "contactMarginM": 0.05,
+    "gravityMps2": 9.81
   },
   "shotModel": {
     "_status": "FABRICATED",
