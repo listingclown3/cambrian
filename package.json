@@ -28,6 +28,8 @@
     "families": "tsx src/bench/families.ts",
     "answerkey": "tsx src/bench/answerkey.ts",
     "rekey": "tsx src/bench/rekey.ts",
+    "leaktest": "tsx src/bench/leakTest.ts",
+    "chain": "pnpm answerkey -- --in base_scenarios.json --rollouts 100 --horizon end --out scenarios.json --results answerkey && pnpm bench:scenarios -- --rescore && pnpm bench:explore && pnpm headline",
     "bench:scenarios": "tsx src/bench/benchScenarios.ts",
     "bench:explore": "tsx src/bench/benchExplore.ts",
     "bench:myrobot": "tsx src/bench/benchMyRobot.ts",

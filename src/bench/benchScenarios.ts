@@ -54,6 +54,41 @@ const scenarios = set.scenarios.filter((s) => s.answerKey);
 if (scenarios.length !== set.scenarios.length) throw new Error("some scenarios have no answer key: run pnpm answerkey first");
 const skipThink = process.argv.includes("--skip-think");
 const rescore = process.argv.includes("--rescore");
+
+// ── degeneracy gate (planner, 1:20 PM): checked on the answer key alone, before any scoring ──
+// no label best in > 35% of scenarios; >= 30% of flips change the best answer; scripted beats
+// random on mean regret. If it fails, nothing is scored: the gate is written and the run stops.
+function degeneracyGate() {
+  const counts = new Map<string, number>();
+  for (const s of scenarios) counts.set(s.answerKey!.best, (counts.get(s.answerKey!.best) ?? 0) + 1);
+  const [topLabel, topCount] = [...counts].sort((a, b) => b[1] - a[1])[0]!;
+  const byIdG = new Map(scenarios.map((s) => [s.id, s]));
+  const variants = scenarios.filter((s) => s.flip !== "");
+  const changed = variants.filter((v) => {
+    const base = byIdG.get(set.families.find((f) => f.id === v.familyId)!.baseScenarioId);
+    return base && base.answerKey!.best !== v.answerKey!.best;
+  }).length;
+  const reg = (s: Scenario, l: string | null) => (l && s.answerKey!.values[l] ? s.answerKey!.values[s.answerKey!.best]!.mean - s.answerKey!.values[l]!.mean : null);
+  const scr = scenarios.map((s) => reg(s, scriptedLabelFor(engine.restore(s.snapshot), s.focusRobotId, s.options))).filter((x): x is number => x !== null);
+  const rnd = scenarios.map((s) => mean(s.options.map((o) => reg(s, o.label)!)));
+  const gaps = scenarios.map((s) => {
+    const r = Object.values(s.answerKey!.values).map((v) => v.mean).sort((a, b) => b - a);
+    return r[0]! - (r[1] ?? r[0]!);
+  });
+  const checks = {
+    max_best_label_share: { value: round(topCount / scenarios.length), label: topLabel, limit: "<= 0.35", pass: topCount / scenarios.length <= 0.35 },
+    flips_changing_best: { value: round(changed / Math.max(1, variants.length)), n_flips: variants.length, limit: ">= 0.30", pass: changed / Math.max(1, variants.length) >= 0.3 },
+    scripted_vs_random_regret: { scripted: round(mean(scr)), n_scripted: scr.length, random_expected: round(mean(rnd)), limit: "scripted < random", pass: mean(scr) < mean(rnd) },
+  };
+  return { pass: Object.values(checks).every((c) => c.pass), checks, distinct_best_labels: counts.size, top_vs_second_gap: { mean: round(mean(gaps)), median: round([...gaps].sort((a, b) => a - b)[Math.floor(gaps.length / 2)]!) }, n_unambiguous: scenarios.filter((s) => !s.answerKey!.ambiguous).length };
+}
+const gate = degeneracyGate();
+console.log(`[bench:scenarios] degeneracy gate: ${gate.pass ? "PASS" : "FAIL"} ${JSON.stringify(gate)}`);
+if (!gate.pass && !process.argv.includes("--ignore-gate")) {
+  writeResults({ experiment: "bench_scenarios_gate", createdTs: new Date().toISOString(), isMock: false, gitCommit: gitCommit(), simHash: simHash(cfg), config: { answerKeySimHash: set.simHash, note: "Degeneracy gate failed: nothing was scored." }, rows: [], summary: gate });
+  console.log("[bench:scenarios] gate failed: not scoring (results/bench_scenarios_gate.json)");
+  process.exit(2);
+}
 const runId = newRunId("bench_scenarios");
 const logger = new RunLogger(runId);
 logger.write({ type: "run_start", isMock: false, manifest: buildManifest({ runId, cfg, seeds: { dev: [], eval: [] }, provider: "mixed", model: "mixed", isMock: false }) });
@@ -321,7 +356,7 @@ const file = writeResults({
     simplified: "options are a curated 6-8 option subset of the full mask (fixed rule in curateOptions); the scripted baseline is basic_cycle applied to the scenario view",
   },
   rows,
-  summary: { rescored: rescore, paired_regret: paired, n_scenarios: scenarios.length, n_families: set.families.length, n_unambiguous: scenarios.filter((s) => !s.answerKey!.ambiguous).length, wall_s: round((performance.now() - t0) / 1000, 1), deciders: summary },
+  summary: { degeneracy_gate: gate, rescored: rescore, paired_regret: paired, n_scenarios: scenarios.length, n_families: set.families.length, n_unambiguous: scenarios.filter((s) => !s.answerKey!.ambiguous).length, wall_s: round((performance.now() - t0) / 1000, 1), deciders: summary },
 });
 logger.write({ type: "run_end", isMock, status: "ok", durationMs: performance.now() - t0, totalCostUsd: Object.values(summary).reduce((s: number, v) => s + ((v as { total_cost_usd: number }).total_cost_usd ?? 0), 0), error: null });
 

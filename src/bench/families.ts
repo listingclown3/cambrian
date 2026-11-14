@@ -11,7 +11,8 @@
  * Options of every variant are re-curated by the same fixed rule (curateOptions), since the
  * legal options change with the state.
  *
- * Writes data/scenarios/scenarios.json (families + scenarios, no answer keys yet).
+ * Writes data/scenarios/base_scenarios.json (families + scenarios, no answer keys); pnpm answerkey
+ * reads it and writes the keyed data/scenarios/scenarios.json.
  */
 import { dist, rectCenter, otherAlliance, type MatchState, type Scenario, type ScenarioFamily, type Snapshot } from "../contracts";
 import { engine } from "../engine";
@@ -131,6 +132,6 @@ const set = ScenarioSetSchema.parse({
   families,
   scenarios,
 });
-const file = writeJson(set, "data", "scenarios", "scenarios.json");
+const file = writeJson(set, "data", "scenarios", "base_scenarios.json");
 for (const s of scenarios) console.log(`[families] ${s.id.padEnd(40)} ${s.options.length} options${s.flip ? `  flip: ${s.flip}` : ""}`);
 console.log(`[families] ${families.length} families, ${scenarios.length} scenarios -> ${file}`);
