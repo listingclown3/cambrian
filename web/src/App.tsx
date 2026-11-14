@@ -15,6 +15,8 @@ import { ScenarioPage } from "./pages/ScenarioPage";
 export interface Flags {
   mock: string[];
   recorded: boolean;
+  /** Seed of the match on screen, shown in the header. */
+  seed?: number | null;
 }
 const NONE: Flags = { mock: [], recorded: false };
 
@@ -73,7 +75,9 @@ export function App() {
           </button>
         ))}
         <span className="grow" />
-        <span className="hint">R live · P recorded replay · V split view</span>
+        {page === "live" && f.recorded && <span className="chip rec">RECORDED RUN</span>}
+        {page === "live" && typeof f.seed === "number" && <span className="chip">seed <b className="mono">{f.seed}</b></span>}
+        <span className="hint">R live · P recorded replay</span>
       </nav>
       {f.recorded && (
         <div className="banner recorded">RECORDED <span className="why">this is a replay of a logged run, not a live match</span></div>

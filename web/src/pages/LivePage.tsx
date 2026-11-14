@@ -1,279 +1,231 @@
-/** LIVE MATCH page (owner: P4): hero field, decision ticker, top bar, and the Drex vs giant split view. */
+/**
+ * LIVE MATCH page (owner: P4): "Same match. Two deciders." Two lanes side by side (Drex left, the giant right),
+ * each with score, four stat tiles, the field (always drawn), and a feed of the last 3 decisions.
+ * Streams: recorded replay (P), provider-driven live (R, when keys are present) or a badged simulated-latency fallback.
+ */
 import { useEffect, useMemo } from "react";
 import type { MatchState } from "../../../src/contracts";
-import { FieldCanvas } from "../FieldCanvas";
-import { RobotBadge, findTeam, useTeams } from "../RobotBadge";
-import { giantLabel, ms, robotName, signed, type Health, type ProviderRow, type RunListing } from "../lib";
-import { useMatch, type MatchView, type TickerRow } from "../useMatch";
 import type { Flags } from "../App";
+import { FieldCanvas } from "../FieldCanvas";
+import { giantLabel, ms, robotName, useApi, type Health, type ProviderRow, type RunListing } from "../lib";
+import { stateFromFrame, type MatchView, type TickerRow } from "../matchReducer";
+import { useMatch } from "../useMatch";
+import type { SlimFrame, SlimStatic } from "../../../src/server/protocol";
 
-/** Latencies fed to the simulated-latency stream. Drex ~48 ms is the figure from the brief; the giant's 3 s is an assumption. */
+/** Latencies for the simulated-latency fallback stream. Drex ~48 ms is the figure from the brief; the giant 3 s is an assumption. */
 const DREX_MS = 48;
 const GIANT_MS = 3000;
 const DEMO_SEED = 7;
+const AMBER = "#f5a524";
+const CYAN = "#38bdf8";
 
 export interface Launch {
   mode: "live" | "replay";
   n: number;
 }
 
-function fmtClock(s: number): string {
-  const m = Math.floor(s / 60);
-  return `${m}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
+const fmtClock = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
+const NOT_RUN_TXT = "not run yet";
+
+function Tile({ label, value, unit }: { label: string; value: string | null; unit?: string }) {
+  return (
+    <div className="lv-tile">
+      <span>{label}</span>
+      {value === null ? <b className="lv-null">{NOT_RUN_TXT}</b> : <b className="mono">{value}{unit && <small>{unit}</small>}</b>}
+    </div>
+  );
 }
 
-function Scoreboard({ state, final }: { state: MatchState | null; final: MatchView["final"] }) {
-  const red = final?.red ?? state?.score.red.total ?? 0;
-  const blue = final?.blue ?? state?.score.blue.total ?? 0;
-  const left = state ? Math.max(0, state.rules.matchS - state.timeS) : 0;
-  const phase = !state ? "waiting" : state.phase === "shift" ? `shift ${state.shiftIndex}` : state.phase;
+function Decision({ d, accent }: { d: TickerRow; accent: string }) {
+  const p = d.probabilities && d.label ? d.probabilities[d.label] : undefined;
   return (
-    <div className="scoreboard">
-      <div className="team blue">
-        <span className="tag">BLUE</span>
-        <span className="score">{Math.round(blue)}</span>
+    <div className="lv-dec" style={{ ["--acc" as string]: accent }}>
+      <div className="lv-dec1">
+        <b>{robotName(d.robotId)}</b>
+        <span className="lv-act">→ {(d.label ?? d.intent.action).replaceAll("_", " ")}</span>
+        <span className="mono lv-ms">{d.latencyMs !== undefined ? ms(d.latencyMs) : ""}</span>
       </div>
-      <div className="clock">
-        <div className="t">{fmtClock(left)}</div>
-        <div className="ph">{phase}</div>
-      </div>
-      <div className="team red">
-        <span className="score">{Math.round(red)}</span>
-        <span className="tag">RED</span>
+      {d.why && <div className="lv-why">{d.why}</div>}
+      <div className="lv-dec3">
+        {p !== undefined && (
+          <>
+            <span className="lv-track"><i style={{ width: `${Math.round(p * 100)}%` }} /></span>
+            <span className="mono">{p.toFixed(2)}</span>
+          </>
+        )}
+        {d.fallback && <span className="lv-fb">FALLBACK POLICY</span>}
       </div>
     </div>
   );
 }
 
-function HubTimers({ state }: { state: MatchState | null }) {
-  if (!state) return null;
-  return (
-    <div className="hubs">
-      {(["blue", "red"] as const).map((a) => {
-        const h = state.hubs[a];
-        return (
-          <div key={a} className={`hubtimer ${a} ${h.active ? "" : "off"} ${h.warning ? "warn" : ""}`}>
-            <span>
-              {a.toUpperCase()} HUB · {h.warning ? "CLOSING" : h.active ? "ACTIVE" : "INACTIVE"}
-            </span>
-            <span className="v">{h.timeToShiftS.toFixed(1)}s</span>
-          </div>
-        );
-      })}
-    </div>
-  );
+function ModelLine({ m, giant }: { m: MatchView; giant: boolean }) {
+  const h = m.hello;
+  if (!h) return <span className="lv-model">{giant ? giantLabel(null) : "drex-v2.0"}</span>;
+  if (h.source === "simulated_latency") return <span className="lv-model">no model called (simulated latency)</span>;
+  const model = h.model ?? m.ticker.find((t) => t.model)?.model ?? null;
+  return <span className="lv-model">{giant ? giantLabel(model) : (model ?? "model id pending")}</span>;
 }
 
-function DecisionCard({ d, accent }: { d: TickerRow; accent?: string }) {
-  const top = d.probabilities ? Object.entries(d.probabilities).sort((a, b) => b[1] - a[1]).slice(0, 3) : null;
-  const chosenP = top && d.label ? d.probabilities?.[d.label] : undefined;
-  const a = d.robotId.startsWith("R") ? "red" : "blue";
-  return (
-    <div className={`dec ${a}`} style={accent ? ({ "--acc": accent } as React.CSSProperties) : undefined}>
-      <div className="l1">
-        <span className="who">{robotName(d.robotId)}</span>
-        <span className="what">→ {(d.label ?? d.intent.action).replaceAll("_", " ")}</span>
-      </div>
-      <div className="l2 mono">
-        <span>{d.timeS.toFixed(1)}s</span>
-        {chosenP !== undefined && <span>p {chosenP.toFixed(2)}</span>}
-        {d.latencyMs !== undefined && <span>{ms(d.latencyMs)}</span>}
-        {d.fallback && <span className="todo">FALLBACK POLICY</span>}
-      </div>
-      {top && (
-        <div className="bars">
-          {top.map(([k, p]) => (
-            <div className="bar" key={k}>
-              <span className="lbl">{k}</span>
-              <span className="track"><span className="fill" style={{ width: `${Math.round(p * 100)}%` }} /></span>
-              <span className="mono">{p.toFixed(2)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Pills({ m }: { m: MatchView }) {
+function Badges({ m }: { m: MatchView }) {
   const h = m.hello;
   if (!h) return null;
   return (
     <>
       {h.source === "recorded" && <span className="pill rec">RECORDED</span>}
-      {h.source === "provider" && <span className="pill live">LIVE PROVIDER · {h.timing === "realtime" ? "REAL-TIME CLOCK" : "PAUSED CLOCK"}</span>}
+      {h.source === "provider" && <span className="pill live">LIVE · {h.timing === "realtime" ? "REAL-TIME CLOCK" : "PAUSED CLOCK"}</span>}
       {h.source === "simulated_latency" && <span className="pill mock">SIMULATED LATENCY</span>}
       {h.engineIsStub && <span className="pill mock">STUB ENGINE</span>}
+      {h.isMock && h.source !== "simulated_latency" && <span className="pill mock">MOCK</span>}
       {m.status === "error" && m.error && <span className="pill rec">{m.error}</span>}
-      {h.isMock && <span className="pill mock">MOCK</span>}
     </>
   );
 }
 
-/** Exact model id (from the stream or the latest decision) plus the giant's reasoning setting. Simulated lanes name no model. */
-function ModelPill({ m, giant }: { m: MatchView; giant: boolean }) {
-  const h = m.hello;
-  if (!h || h.source === "simulated_latency") return h ? <span className="pill mono">no model called</span> : null;
-  const model = h.model ?? m.ticker.find((t) => t.model)?.model ?? null;
-  if (!giant) return model ? <span className="pill mono">{model}</span> : null;
-  return <span className="pill mono">{giantLabel(model)}</span>;
+function Lane({ name, cls, accent, m, idle, giant }: { name: string; cls: "drex" | "giant"; accent: string; m: MatchView; idle: MatchState | null; giant: boolean }) {
+  const state = m.state ?? idle;
+  const red = m.final?.red ?? state?.score.red.total ?? 0;
+  const blue = m.final?.blue ?? state?.score.blue.total ?? 0;
+  const has = m.state !== null;
+  const simulated = m.hello?.source === "simulated_latency";
+  const median = m.stats.medianLatencyMs ?? (simulated ? m.hello?.chargedLatencyMs : undefined);
+  const thinking = useMemo(() => m.thinking, [m.thinking]);
+  return (
+    <section className={`lv-lane ${cls}`} style={{ ["--acc" as string]: accent }}>
+      <header className="lv-lh">
+        <i className="lv-dot" />
+        <div>
+          <div className="lv-name">{name}</div>
+          <ModelLine m={m} giant={giant} />
+        </div>
+        <div className="lv-badges"><Badges m={m} /></div>
+      </header>
+      <div className="lv-score">
+        <span className="tagc red">RED</span><b className="mono">{Math.round(red)}</b>
+        <span className="lv-vs">vs</span>
+        <b className="mono">{Math.round(blue)}</b><span className="tagc blue">BLUE</span>
+      </div>
+      <div className="lv-tiles">
+        <Tile label="decisions" value={has && m.stats.decisions > 0 ? String(m.stats.decisions) : null} />
+        <Tile label="median think" value={has && median !== undefined ? ms(median) : null} />
+        <Tile label="clock lost thinking" value={has && m.stats.decisions > 0 ? m.stats.chargedS.toFixed(1) : null} unit=" s" />
+        <Tile label="fallbacks" value={has && m.stats.decisions > 0 ? String(m.stats.fallbacks ?? 0) : null} />
+      </div>
+      <div className="lv-field"><FieldCanvas state={state} trails={m.trails} thinking={thinking} accent={accent} captions={false} /></div>
+      <div className="lv-feed">
+        {m.ticker.slice(0, 3).map((d) => <Decision key={d.n} d={d} accent={accent} />)}
+        {m.ticker.length === 0 && <div className="lv-empty">{m.status === "connecting" ? "connecting…" : "no decisions yet"}</div>}
+      </div>
+    </section>
+  );
 }
 
-function margin(m: MatchView): number | null {
-  if (!m.state) return null;
-  return m.state.score.blue.total - m.state.score.red.total;
+function Legend() {
+  return (
+    <div className="lv-legend">
+      <span><i className="bump red" />RED bumpers</span>
+      <span><i className="bump blue" />BLUE bumpers</span>
+      <span><b className="mono">T D M H X</b> turret · drum · multilane · hauler · other</span>
+      <span><i className="fuel" />fuel</span>
+      <span><i className="glow" />active hub</span>
+      <span><i className="dots" />path since last decision</span>
+    </div>
+  );
 }
 
-export function LivePage({ launch, view, health, runs, providers, onFlags }: { launch: Launch; view: "single" | "split"; health: Health | null; runs: RunListing[]; providers: ProviderRow[]; onFlags: (f: Flags) => void }) {
+export function LivePage({ launch, health, runs, providers, onFlags }: { launch: Launch; view?: "single" | "split"; health: Health | null; runs: RunListing[]; providers: ProviderRow[]; onFlags: (f: Flags) => void }) {
   const a = useMatch();
   const b = useMatch();
   const { start: startA, stop: stopA } = a;
   const { start: startB, stop: stopB } = b;
+  const idleData = useApi<{ statics: SlimStatic; frame: SlimFrame }>("/api/idle").data;
+  const idle = useMemo(() => (idleData ? stateFromFrame(idleData.statics, idleData.frame) : null), [idleData]);
 
   const ready = (id: string) => providers.some((p) => p.id === id && p.implemented && p.keyPresent);
-  const drexReal = ready("drex");
-  const giantReal = ready("deepinfra");
   const providersLoaded = providers.length > 0;
-  /** The recorded showcase pair (same seed, Drex and the giant, real-time clock) played by P. */
   const recDrex = runs.find((r) => r.source === "runs" && r.runId === "recorded-showcase-drex");
   const recGiant = runs.find((r) => r.source === "runs" && r.runId === "recorded-showcase-giant");
-  const replayPair = launch.mode === "replay" && Boolean(recDrex && recGiant);
-  const drexUrl = (seed: number) => (drexReal ? `/ws/agents?provider=drex&seed=${seed}&timing=realtime&speed=4` : `/ws/match?seed=${seed}&speed=4&decider=Drex&latencyMs=${DREX_MS}`);
-  const giantUrl = (seed: number) => (giantReal ? `/ws/agents?provider=deepinfra&seed=${seed}&timing=realtime&speed=4` : `/ws/match?seed=${seed}&speed=4&decider=Giant&latencyMs=${GIANT_MS}`);
+  const url = (r: RunListing) => `/ws/replay?source=${r.source}&run=${encodeURIComponent(r.runId)}&speed=6`;
+  const sim = (seed: number, who: string, ms_: number) => `/ws/match?seed=${seed}&speed=4&decider=${who}&latencyMs=${ms_}`;
 
   useEffect(() => {
     if (!providersLoaded) return;
-    if (launch.mode === "replay") {
-      const url = (r: RunListing) => `/ws/replay?source=${r.source}&run=${encodeURIComponent(r.runId)}&speed=6`;
+    const auto = launch.n === 0;
+    if (launch.mode === "replay" || (auto && (recDrex || recGiant))) {
       if (recDrex && recGiant) {
         startA(url(recDrex));
         startB(url(recGiant));
-      } else {
-        // one recorded showcase run, else any real run, else the bundled fixture (badged RECORDED + MOCK)
-        const run = recDrex ?? recGiant ?? runs.find((r) => r.source === "runs") ?? runs[0];
-        stopB();
-        if (run) startA(url(run));
-        else stopA();
+        return;
       }
-    } else if (view === "split") {
-      startA(drexUrl(DEMO_SEED));
-      startB(giantUrl(DEMO_SEED));
-    } else {
-      stopB();
-      startA(drexUrl(DEMO_SEED + launch.n));
+      const run = recDrex ?? recGiant ?? runs.find((r) => r.source === "runs") ?? runs[0];
+      if (!run) {
+        stopA();
+        stopB();
+        return;
+      }
+      if (run.provider === "deepinfra") {
+        stopA();
+        startB(url(run));
+      } else {
+        stopB();
+        startA(url(run));
+      }
+      return;
     }
-    // restart only when the launch token or the view changes
+    // Live (R): real providers when keys are present; the auto launch on page load never spends money.
+    const realDrex = !auto && ready("drex");
+    const realGiant = !auto && ready("deepinfra");
+    const seed = DEMO_SEED + (launch.n > 0 ? launch.n : 0);
+    startA(realDrex ? `/ws/agents?provider=drex&seed=${seed}&timing=realtime&speed=4` : sim(seed, "Drex", DREX_MS));
+    startB(realGiant ? `/ws/agents?provider=deepinfra&seed=${seed}&timing=realtime&speed=4` : sim(seed, "Giant", GIANT_MS));
+    // restart only when the launch token or the available data changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [launch.n, launch.mode, view, runs.length, providersLoaded, Boolean(recDrex), Boolean(recGiant)]);
+  }, [launch.n, launch.mode, runs.length, providersLoaded, Boolean(recDrex), Boolean(recGiant)]);
 
-  const recorded = a.hello?.source === "recorded";
-  const splitShown = replayPair || (launch.mode === "live" && view === "split");
+  const recorded = a.hello?.source === "recorded" || b.hello?.source === "recorded";
+  const seed = a.hello?.seed ?? b.hello?.seed ?? null;
   useEffect(() => {
     const reasons: string[] = [];
-    const hs = [a.hello, splitShown ? b.hello : null];
+    const hs = [a.hello, b.hello];
     if (health?.engineIsStub || hs.some((h) => h?.engineIsStub)) reasons.push("engine is the STUB");
     if (hs.some((h) => h?.source === "simulated_latency")) reasons.push("a lane's decision latency is SIMULATED (scripted policy, no provider called)");
     if (hs.some((h) => h?.isMock && h.source !== "recorded" && h.source !== "simulated_latency")) reasons.push("mock provider");
-    if (recorded && a.hello?.isMock) reasons.push("recorded fixture (scripted controller, not a provider result)");
-    onFlags({ mock: reasons, recorded });
-  }, [health?.engineIsStub, a.hello, b.hello, splitShown, recorded, onFlags]);
+    if (hs.some((h) => h?.source === "recorded" && h.isMock)) reasons.push("recorded fixture (scripted controller, not a provider result)");
+    onFlags({ mock: reasons, recorded, seed });
+  }, [health?.engineIsStub, a.hello, b.hello, recorded, seed, onFlags]);
 
-  const rawDecider = a.hello?.decider ?? "Drex";
-  const decider = rawDecider === "drex" ? "Drex" : rawDecider === "deepinfra" ? "The giant" : rawDecider;
-  const simulated = a.hello?.source === "simulated_latency" || b.hello?.source === "simulated_latency";
-
-  if (splitShown) {
-    const bothDone = a.status === "finished" && b.status === "finished";
-    const ma = margin(a);
-    const mb = margin(b);
-    return (
-      <div>
-        <div className="card versus">
-          <div className="drex">
-            <div className="cap">{bothDone ? "FINAL · " : ""}Drex margin</div>
-            <div className="big acc">{ma === null ? "-" : signed(ma, 0)}</div>
-            <div className="cap">clock lost to thinking {a.stats.chargedS.toFixed(1)} s</div>
-          </div>
-          <div>
-            <div className="cap">{replayPair ? "RECORDED · same seed · same field · same scripted opponent" : "same seed · same field · same scripted opponent"}</div>
-            <div className="big delta">{ma !== null && mb !== null ? `Δ ${signed(ma - mb, 0)}` : "-"}</div>
-            <div className="cap">{replayPair ? "margin difference with each decider's real recorded latency charged to the match clock" : simulated ? `margin difference with ${ms(GIANT_MS)} vs ${ms(DREX_MS)} charged per decision (simulated latency)` : "margin difference with measured latency charged to the match clock"}</div>
-          </div>
-          <div className="giant">
-            <div className="cap">{bothDone ? "FINAL · " : ""}Giant margin</div>
-            <div className="big acc">{mb === null ? "-" : signed(mb, 0)}</div>
-            <div className="cap">clock lost to thinking {b.stats.chargedS.toFixed(1)} s</div>
-          </div>
-        </div>
-        <div className="split">
-          {([["Drex", a, "drex"], ["The giant", b, "giant"]] as const).map(([name, m, cls]) => (
-            <div key={name} className={`lane ${cls}`}>
-              <div className="topbar" style={{ marginBottom: 0 }}>
-                <div className="decider"><i />{name}</div>
-                <Pills m={m} />
-                <ModelPill m={m} giant={cls === "giant"} />
-              </div>
-              <div className="mini">
-                <div className="stat"><span>decisions</span><b>{m.stats.decisions}</b></div>
-                <div className="stat"><span>{m.hello?.source === "simulated_latency" ? "charged latency (simulated)" : "avg latency"}</span><b>{m.hello?.source === "simulated_latency" ? ms(m.hello.chargedLatencyMs ?? 0) : m.stats.decisions ? ms(m.stats.avgLatencyMs) : "-"}</b></div>
-                <div className="stat"><span>thinking now</span><b>{m.thinking.length}</b></div>
-              </div>
-              <Scoreboard state={m.state} final={m.final} />
-              <div className="field-wrap"><FieldCanvas state={m.state} trails={m.trails} thinking={m.thinking} captions={false} /></div>
-              <HubTimers state={m.state} />
-              <div className="tickline mono">
-                {m.ticker.slice(0, 4).map((d) => (
-                  <div key={d.n}>{d.timeS.toFixed(0).padStart(3)}s {robotName(d.robotId)} → {d.label} · {ms(d.latencyMs ?? 0)}{d.fallback ? " · FALLBACK" : ""}</div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return <SingleView m={a} decider={decider} recorded={recorded} accent={decider === "Drex" ? "drex" : decider === "The giant" ? "giant" : ""} />;
-}
-
-function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: string; accent: string; recorded: boolean }) {
-  const teams = useTeams();
-  const status = useMemo(() => (m.status === "connecting" ? "connecting…" : m.status === "error" ? "server not reachable" : m.status), [m.status]);
+  const clockState = a.state ?? b.state ?? idle;
+  const left = clockState ? Math.max(0, clockState.rules.matchS - clockState.timeS) : null;
+  const phase = !clockState ? "" : clockState.phase === "shift" ? `shift ${clockState.shiftIndex}` : clockState.phase;
   return (
-    <div className={`live ${accent}`}>
-      <div>
-        <div className="topbar">
-          <div className="decider"><i />{decider}</div>
-          <div className="stat"><span>decisions</span><b>{m.stats.decisions}</b></div>
-          <div className="stat"><span>avg latency</span><b>{m.stats.decisions ? ms(m.stats.avgLatencyMs) : "-"}</b></div>
-          <div className="stat"><span>clock lost to thinking</span><b>{m.stats.chargedS.toFixed(1)} s</b></div>
-          <div className="stat"><span>seed</span><b>{m.hello?.seed ?? "-"}</b></div>
-          <Pills m={m} />
-          <ModelPill m={m} giant={decider === "The giant"} />
-          {m.status !== "running" && <span className="pill">{status}</span>}
-          {recorded && m.hello?.runId && <span className="hint">run {m.hello.runId}</span>}
+    <div className="lv">
+      <div className="lv-top">
+        <div>
+          <h1 className="lv-title">Same match. Two deciders.</h1>
+          <p className="lv-sub">Both get the same state and the same options. The match clock keeps running while a decider thinks.</p>
         </div>
-        <Scoreboard state={m.state} final={m.final} />
-        <div className="field-wrap"><FieldCanvas state={m.state} trails={m.trails} thinking={m.thinking} /></div>
-        <HubTimers state={m.state} />
-      </div>
-      <div className="rail">
-        <h3>Decisions · newest first</h3>
-        <div className="ticker">
-          {m.ticker.slice(0, 6).map((d) => <DecisionCard key={d.n} d={d} />)}
-          {m.ticker.length === 0 && <div className="empty">no decisions yet</div>}
-        </div>
-        <h3>Robots</h3>
-        <div className="robots">
-          {m.state?.robots.map((r) => (
-            <div className="rrow" key={r.id}>
-              <span className={`id ${r.alliance}`}>{r.id}</span>
-              <span className="nm">{r.profile.teamLabel}<small>{r.profile.archetype.replaceAll("_", " ")} · {r.alliance.toUpperCase()} · fuel {r.fuelHeld}/{r.profile.capacity}</small></span>
-              <RobotBadge team={findTeam(teams, { id: r.profile.id, teamLabel: r.profile.teamLabel })} />
+        <div className="lv-clock">
+          <div className="lv-ct mono">{left === null ? "-:--" : fmtClock(left)}</div>
+          <div className="lv-cp">{phase || "match clock"}</div>
+          {clockState && (
+            <div className="lv-hubs">
+              {(["blue", "red"] as const).map((x) => {
+                const h = clockState.hubs[x];
+                return (
+                  <span key={x} className={`${h.warning ? "warn" : ""} ${h.active ? "on" : "off"}`}>
+                    {x.toUpperCase()} HUB {h.warning ? "CLOSING" : h.active ? "ACTIVE" : "INACTIVE"} <b className="mono">{h.timeToShiftS.toFixed(0)}s</b>
+                  </span>
+                );
+              })}
             </div>
-          ))}
+          )}
         </div>
       </div>
+      <div className="lv-lanes">
+        <Lane name="Drex" cls="drex" accent={AMBER} m={a} idle={idle} giant={false} />
+        <Lane name="The giant" cls="giant" accent={CYAN} m={b} idle={idle} giant />
+      </div>
+      <Legend />
     </div>
   );
 }

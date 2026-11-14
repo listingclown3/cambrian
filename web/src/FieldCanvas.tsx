@@ -1,17 +1,19 @@
 /**
- * Field renderer (owner: P4). Draws a MatchState on a canvas: zones, hubs with active/inactive state and a
- * warning pulse, towers, trench and bump lanes, fuel, robots with team label, archetype badge and fuel bar,
- * and short trails. Field layout ideas adapted from FieldView.tsx in Team 488's rebuilt-robotsim
+ * Field renderer (owner: P4). Draws a MatchState on one canvas: zones, hubs (active hub glows in the lane accent,
+ * warning pulse in the last seconds), towers, trench and bump lanes, fuel as yellow dots, robots as bumpered rounded
+ * squares with an archetype letter, dotted paths in the lane accent, and a "thinking" marker. Alliance colours are
+ * used only on robot bumpers. Field layout ideas adapted from FieldView.tsx in Team 488's rebuilt-robotsim
  * (vendor/rebuilt-robotsim), used with permission.
  */
 import { useEffect, useRef } from "react";
 import type { MatchState } from "../../src/contracts";
 
-const RED = "#ef4444";
-const BLUE = "#3b82f6";
-const AMBER = "#ffb020";
-const FONT = '"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif';
-const MONO = '"Cascadia Mono", Consolas, "SF Mono", Menlo, ui-monospace, monospace';
+const RED = "#d84a4a";
+const BLUE = "#3b7de0";
+const AMBER = "#f5a524";
+const FUEL = "#ffd43b";
+const FONT = '"Inter", "Segoe UI", system-ui, sans-serif';
+const MONO = '"JetBrains Mono", "Cascadia Mono", Consolas, monospace';
 
 export interface FieldProps {
   state: MatchState | null;
@@ -19,27 +21,44 @@ export interface FieldProps {
   thinking?: { robotId: string; untilS: number }[];
   /** Robot to ring (scenario focus robot). */
   focusRobotId?: string;
+  /** Lane accent colour (Drex amber, giant cyan); used for hub glow and dotted paths. */
+  accent?: string;
   /** Draw lane and zone captions (turn off for small fields). */
   captions?: boolean;
 }
 
-const shortArch = (a: string) => a.replaceAll("_", " ").toUpperCase();
+/** One letter per archetype for the robot marker. */
+export function archLetter(archetype: string): string {
+  if (archetype.startsWith("turret")) return "T";
+  if (archetype.startsWith("drum")) return "D";
+  if (archetype.startsWith("multilane")) return "M";
+  if (archetype.startsWith("big_hopper")) return "H";
+  return "X";
+}
+
 const hash = (n: number) => {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 };
 
-export function FieldCanvas({ state, trails, thinking, focusRobotId, captions = true }: FieldProps) {
+type Live = FieldProps & { accent: string; captions: boolean };
+
+export function FieldCanvas({ state, trails, thinking, focusRobotId, accent = AMBER, captions = true }: FieldProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const live = useRef({ state, trails, thinking, focusRobotId, captions });
-  live.current = { state, trails, thinking, focusRobotId, captions };
+  const live = useRef<Live>({ state, trails, thinking, focusRobotId, accent, captions });
+  live.current = { state, trails, thinking, focusRobotId, accent, captions };
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     let raf = 0;
-    const loop = () => {
-      draw(canvas, live.current);
+    let last = 0;
+    const loop = (t: number) => {
+      // about 30 fps is plenty and keeps the main thread free
+      if (t - last > 30) {
+        last = t;
+        draw(canvas, live.current);
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -50,8 +69,13 @@ export function FieldCanvas({ state, trails, thinking, focusRobotId, captions = 
   return <canvas ref={ref} className="field-canvas" style={{ aspectRatio: f ? `${f.lengthM} / ${f.widthM}` : "2 / 1" }} aria-label="Field view" />;
 }
 
-function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }): void {
-  const dpr = window.devicePixelRatio || 1;
+function rgba(hex: string, a: number): string {
+  const n = Number.parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+
+function draw(canvas: HTMLCanvasElement, p: Live): void {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const cssW = canvas.clientWidth;
   const cssH = canvas.clientHeight;
   if (cssW === 0 || cssH === 0) return;
@@ -65,12 +89,8 @@ function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }):
   ctx.clearRect(0, 0, cssW, cssH);
   const state = p.state;
   if (!state) {
-    ctx.fillStyle = "#0b1017";
+    ctx.fillStyle = "#0f141b";
     ctx.fillRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "#6b7a8c";
-    ctx.font = `600 ${Math.max(14, cssW / 40)}px ${FONT}`;
-    ctx.textAlign = "center";
-    ctx.fillText("waiting for a match", cssW / 2, cssH / 2);
     return;
   }
   const field = state.field;
@@ -79,20 +99,19 @@ function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }):
   const py = (y: number) => (field.widthM - y) * s;
   const now = performance.now();
   const small = cssW < 520;
-  const fs = (m: number, min = 9) => Math.max(min, m * s); // font px from metres
+  const fs = (m: number, min = 9) => Math.max(min, m * s);
+  const accent = p.accent;
 
-  // floor
-  ctx.fillStyle = "#0b1017";
+  ctx.fillStyle = "#0f141b";
   ctx.fillRect(0, 0, cssW, cssH);
   const zoneRect = (r: { x0: number; y0: number; x1: number; y1: number }, fill: string) => {
     ctx.fillStyle = fill;
     ctx.fillRect(px(r.x0), py(r.y1), px(r.x1) - px(r.x0), py(r.y0) - py(r.y1));
   };
-  zoneRect(field.neutral, "#10171f");
-  zoneRect(field.alliances.blue.zone, "rgba(59,130,246,0.10)");
-  zoneRect(field.alliances.red.zone, "rgba(239,68,68,0.10)");
-  // boundaries
-  ctx.strokeStyle = "#263343";
+  zoneRect(field.neutral, "#131a23");
+  zoneRect(field.alliances.blue.zone, "#111821");
+  zoneRect(field.alliances.red.zone, "#111821");
+  ctx.strokeStyle = "#222b37";
   ctx.lineWidth = 2;
   ctx.strokeRect(1, 1, cssW - 2, cssH - 2);
   for (const x of [field.alliances.blue.zone.x1, field.alliances.red.zone.x0]) {
@@ -103,21 +122,19 @@ function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }):
   }
   if (p.captions) {
     ctx.textAlign = "center";
-    ctx.font = `700 ${fs(0.42, 11)}px ${FONT}`;
+    ctx.font = `700 ${fs(0.36, 10)}px ${FONT}`;
+    ctx.fillStyle = "rgba(138,150,166,0.5)";
     for (const a of ["blue", "red"] as const) {
       const z = field.alliances[a].zone;
-      ctx.fillStyle = a === "red" ? "rgba(239,68,68,0.45)" : "rgba(59,130,246,0.5)";
-      ctx.fillText(`${a.toUpperCase()} ZONE`, px((z.x0 + z.x1) / 2), py(field.widthM - 0.55));
+      ctx.fillText(`${a.toUpperCase()} ZONE`, px((z.x0 + z.x1) / 2), py(field.widthM - 0.5));
     }
-    ctx.fillStyle = "rgba(139,152,168,0.55)";
-    ctx.fillText("NEUTRAL ZONE", px((field.neutral.x0 + field.neutral.x1) / 2), py(field.widthM - 0.55));
+    ctx.fillText("NEUTRAL ZONE", px((field.neutral.x0 + field.neutral.x1) / 2), py(field.widthM - 0.5));
   }
 
-  // lanes: trench = solid bar, bump = dashed
   for (const lane of field.lanes) {
     const trench = lane.route.endsWith("trench");
-    ctx.strokeStyle = trench ? "#5c6b7e" : "#7a6a3a";
-    ctx.lineWidth = Math.max(3, 0.34 * s);
+    ctx.strokeStyle = trench ? "#3a4757" : "#5a4d2a";
+    ctx.lineWidth = Math.max(3, 0.3 * s);
     ctx.setLineDash(trench ? [] : [0.3 * s, 0.22 * s]);
     ctx.beginPath();
     ctx.moveTo(px(lane.allianceEnd.x), py(lane.allianceEnd.y));
@@ -125,184 +142,149 @@ function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }):
     ctx.stroke();
   }
   ctx.setLineDash([]);
-  if (p.captions && !small) {
-    ctx.font = `600 ${fs(0.26, 9)}px ${FONT}`;
-    ctx.textAlign = "center";
-    const seen = new Set<string>();
-    for (const lane of field.lanes) {
-      const key = lane.route.replace(/^(left|right)_/, "");
-      const k = `${lane.side}${key}`;
-      if (seen.has(k)) continue;
-      seen.add(k);
-      ctx.fillStyle = key === "trench" ? "#7d8da2" : "#a89455";
-      ctx.fillText(key.toUpperCase(), px((lane.allianceEnd.x + lane.neutralEnd.x) / 2), py((lane.allianceEnd.y + lane.neutralEnd.y) / 2) - 0.28 * s);
-    }
-  }
 
-  // shot spots
-  ctx.fillStyle = "#2a3646";
-  for (const sp of field.shotSpots) {
-    ctx.beginPath();
-    ctx.arc(px(sp.pos.x), py(sp.pos.y), Math.max(2, 0.07 * s), 0, 7);
-    ctx.fill();
-  }
-
-  // fuel: loose fuel as deterministic dots per zone (capped), counts as text
-  const zones = {
-    blue_alliance: field.alliances.blue.zone,
-    red_alliance: field.alliances.red.zone,
-    neutral: field.neutral,
-  } as const;
-  ctx.fillStyle = "rgba(255,200,60,0.75)";
+  // fuel: yellow dots per zone (capped, deterministic), counts as text
+  const zones = { blue_alliance: field.alliances.blue.zone, red_alliance: field.alliances.red.zone, neutral: field.neutral } as const;
+  ctx.fillStyle = FUEL;
   let seed = 0;
   for (const [zid, rect] of Object.entries(zones)) {
-    const n = Math.min(state.fuel.byZone[zid as keyof typeof zones] ?? 0, 70);
+    const n = Math.min(state.fuel.byZone[zid as keyof typeof zones] ?? 0, 60);
     for (let i = 0; i < n; i++) {
       seed++;
       const x = rect.x0 + 0.3 + hash(seed) * (rect.x1 - rect.x0 - 0.6);
       const y = 0.3 + hash(seed + 999) * (field.widthM - 0.6);
       ctx.beginPath();
-      ctx.arc(px(x), py(y), Math.max(1.5, 0.06 * s), 0, 7);
+      ctx.arc(px(x), py(y), Math.max(1.6, 0.055 * s), 0, 7);
       ctx.fill();
     }
   }
-  ctx.fillStyle = "#c9d3df";
-  ctx.font = `600 ${fs(0.3, 10)}px ${MONO}`;
+  ctx.fillStyle = "#a9b4c2";
+  ctx.font = `600 ${fs(0.28, 10)}px ${MONO}`;
   ctx.textAlign = "center";
-  const zoneCount = (id: string, rect: { x0: number; x1: number }) => {
-    ctx.fillText(`${state.fuel.byZone[id as keyof typeof state.fuel.byZone] ?? 0} fuel`, px((rect.x0 + rect.x1) / 2), py(0.28));
-  };
+  const zoneCount = (id: keyof typeof zones, rect: { x0: number; x1: number }) => ctx.fillText(`${state.fuel.byZone[id] ?? 0} fuel`, px((rect.x0 + rect.x1) / 2), py(0.25));
   zoneCount("blue_alliance", field.alliances.blue.zone);
   zoneCount("red_alliance", field.alliances.red.zone);
   zoneCount("neutral", field.neutral);
   for (const pile of state.fuel.piles) {
-    ctx.fillStyle = AMBER;
+    ctx.fillStyle = FUEL;
     ctx.beginPath();
-    ctx.arc(px(pile.pos.x), py(pile.pos.y), Math.max(4, 0.14 * s), 0, 7);
+    ctx.arc(px(pile.pos.x), py(pile.pos.y), Math.max(4, 0.13 * s), 0, 7);
     ctx.fill();
-    ctx.fillStyle = "#0b1017";
-    ctx.font = `700 ${fs(0.2, 8)}px ${MONO}`;
-    ctx.fillText(String(pile.count), px(pile.pos.x), py(pile.pos.y) + 0.07 * s);
   }
   for (const b of state.fuel.balls) {
-    ctx.fillStyle = "#ffe08a";
+    ctx.fillStyle = "#ffe58a";
     ctx.beginPath();
-    ctx.arc(px(b.pos.x), py(b.pos.y), Math.max(2, 0.07 * s), 0, 7);
+    ctx.arc(px(b.pos.x), py(b.pos.y), Math.max(2, 0.065 * s), 0, 7);
     ctx.fill();
   }
 
-  // per-alliance elements
   for (const a of ["blue", "red"] as const) {
     const el = field.alliances[a];
-    const col = a === "red" ? RED : BLUE;
     const hub = state.hubs[a];
     const hx = px(el.hub.x);
     const hy = py(el.hub.y);
-    const R = 0.62 * s;
-    // glow when active
+    const R = 0.6 * s;
     if (hub.active) {
-      const g = ctx.createRadialGradient(hx, hy, R * 0.5, hx, hy, R * 2.1);
-      g.addColorStop(0, col + "66");
-      g.addColorStop(1, col + "00");
+      const g = ctx.createRadialGradient(hx, hy, R * 0.4, hx, hy, R * 2.3);
+      g.addColorStop(0, rgba(accent, 0.55));
+      g.addColorStop(1, rgba(accent, 0));
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(hx, hy, R * 2.1, 0, 7);
+      ctx.arc(hx, hy, R * 2.3, 0, 7);
       ctx.fill();
     }
     ctx.beginPath();
     ctx.arc(hx, hy, R, 0, 7);
-    ctx.fillStyle = hub.active ? col : "#18212b";
+    ctx.fillStyle = hub.active ? rgba(accent, 0.9) : "#18212b";
     ctx.fill();
-    ctx.lineWidth = Math.max(3, 0.09 * s);
-    ctx.strokeStyle = hub.active ? "#ffffff" : col + "99";
+    ctx.lineWidth = Math.max(2.5, 0.08 * s);
+    ctx.strokeStyle = hub.active ? "#fff" : "#3a4757";
     ctx.stroke();
     if (hub.warning) {
       const pulse = (Math.sin(now / 110) + 1) / 2;
       ctx.beginPath();
       ctx.arc(hx, hy, R * (1.15 + pulse * 0.45), 0, 7);
-      ctx.strokeStyle = `rgba(255,176,32,${0.95 - pulse * 0.6})`;
-      ctx.lineWidth = Math.max(3, 0.12 * s);
+      ctx.strokeStyle = `rgba(255,255,255,${0.9 - pulse * 0.6})`;
+      ctx.lineWidth = Math.max(3, 0.1 * s);
       ctx.stroke();
     }
     ctx.textAlign = "center";
-    ctx.fillStyle = hub.active ? "#fff" : "#8b98a8";
-    ctx.font = `800 ${fs(0.3, 10)}px ${FONT}`;
+    ctx.fillStyle = hub.active ? "#0b0e13" : "#8a96a6";
+    ctx.font = `800 ${fs(0.28, 10)}px ${FONT}`;
     ctx.fillText("HUB", hx, hy - 0.02 * s);
-    ctx.font = `700 ${fs(0.26, 9)}px ${MONO}`;
-    ctx.fillText(`${hub.active ? "ON" : "OFF"} ${hub.timeToShiftS.toFixed(0)}s`, hx, hy + 0.3 * s);
+    ctx.font = `700 ${fs(0.24, 9)}px ${MONO}`;
+    ctx.fillText(`${hub.active ? "ON" : "OFF"} ${hub.timeToShiftS.toFixed(0)}s`, hx, hy + 0.28 * s);
 
-    // tower
     const tx = px(el.tower.x);
     const ty = py(el.tower.y);
     const tw = 0.7 * s;
     ctx.fillStyle = "#151d27";
-    ctx.strokeStyle = col;
+    ctx.strokeStyle = "#3a4757";
     ctx.lineWidth = 2;
     ctx.fillRect(tx - tw / 2, ty - tw / 2, tw, tw);
     ctx.strokeRect(tx - tw / 2, ty - tw / 2, tw, tw);
     if (p.captions) {
-      ctx.fillStyle = "#8b98a8";
-      ctx.font = `700 ${fs(0.24, 9)}px ${FONT}`;
-      ctx.fillText("TOWER", tx, ty + tw / 2 + 0.28 * s);
+      ctx.fillStyle = "#8a96a6";
+      ctx.font = `700 ${fs(0.22, 8)}px ${FONT}`;
+      ctx.fillText("TOWER", tx, ty + tw / 2 + 0.26 * s);
     }
-    // depot + outpost
     for (const [name, pos] of [["DEPOT", el.depot], ["OUTPOST", el.outpost]] as const) {
       const bw = 0.8 * s;
       const bh = 0.5 * s;
-      ctx.strokeStyle = col + "88";
+      ctx.strokeStyle = "#2a3646";
       ctx.lineWidth = 1.5;
       ctx.strokeRect(px(pos.x) - bw / 2, py(pos.y) - bh / 2, bw, bh);
       if (p.captions) {
         ctx.fillStyle = "#6f7e90";
-        ctx.font = `700 ${fs(0.2, 8)}px ${FONT}`;
+        ctx.font = `700 ${fs(0.18, 8)}px ${FONT}`;
         const n = state.fuel.byZone[`${a}_${name.toLowerCase()}` as keyof typeof state.fuel.byZone] ?? 0;
-        ctx.fillText(`${name} ${n}`, px(pos.x), py(pos.y) + 0.07 * s);
+        ctx.fillText(`${name} ${n}`, px(pos.x), py(pos.y) + 0.06 * s);
       }
     }
   }
 
-  // trails
+  // dotted paths since the last decision, in the lane accent
   if (p.trails) {
+    ctx.fillStyle = accent;
     for (const r of state.robots) {
       const t = p.trails[r.id];
-      if (!t || t.length < 2) continue;
-      const col = r.alliance === "red" ? "239,68,68" : "59,130,246";
-      for (let i = 1; i < t.length; i++) {
-        ctx.strokeStyle = `rgba(${col},${(i / t.length) * 0.5})`;
-        ctx.lineWidth = Math.max(2, 0.12 * s) * (i / t.length);
+      if (!t) continue;
+      for (let i = 0; i < t.length; i++) {
+        ctx.globalAlpha = 0.25 + 0.65 * ((i + 1) / t.length);
         ctx.beginPath();
-        ctx.moveTo(px(t[i - 1]!.x), py(t[i - 1]!.y));
-        ctx.lineTo(px(t[i]!.x), py(t[i]!.y));
-        ctx.stroke();
+        ctx.arc(px(t[i]!.x), py(t[i]!.y), Math.max(1.8, 0.05 * s), 0, 7);
+        ctx.fill();
       }
     }
+    ctx.globalAlpha = 1;
   }
 
-  // robots
+  // robots: bumpered rounded squares with an archetype letter
   const rr = state.rules.physics.robotRadiusM * s;
   for (const r of state.robots) {
     const x = px(r.pose.x);
     const y = py(r.pose.y);
     const col = r.alliance === "red" ? RED : BLUE;
+    const side = rr * 1.7;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-r.pose.headingRad);
     ctx.beginPath();
-    ctx.arc(x, y, rr, 0, 7);
-    ctx.fillStyle = "#0d141c";
+    ctx.roundRect(-side / 2, -side / 2, side, side, side * 0.22);
+    ctx.fillStyle = "#0b0e13";
     ctx.fill();
-    ctx.lineWidth = Math.max(4, rr * 0.34); // bumper
+    ctx.lineWidth = Math.max(4, rr * 0.32);
     ctx.strokeStyle = col;
     ctx.stroke();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#e8edf3";
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + Math.cos(r.pose.headingRad) * rr, y - Math.sin(r.pose.headingRad) * rr);
-    ctx.stroke();
+    ctx.fillStyle = "#eef1f4";
+    ctx.fillRect(side / 2 - 2, -side * 0.18, 4, side * 0.36); // front marker
+    ctx.restore();
     ctx.textAlign = "center";
-    ctx.fillStyle = "#fff";
-    ctx.font = `800 ${Math.max(11, rr * 0.9)}px ${FONT}`;
-    ctx.fillText(r.id, x, y + rr * 0.3);
+    ctx.fillStyle = "#eef1f4";
+    ctx.font = `700 ${Math.max(11, rr * 0.95)}px ${MONO}`;
+    ctx.fillText(archLetter(r.profile.archetype), x, y + rr * 0.33);
     if (p.focusRobotId === r.id) {
-      ctx.strokeStyle = AMBER;
+      ctx.strokeStyle = accent;
       ctx.setLineDash([6, 4]);
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -311,29 +293,24 @@ function draw(canvas: HTMLCanvasElement, p: FieldProps & { captions: boolean }):
       ctx.setLineDash([]);
     }
     if (p.thinking?.some((t) => t.robotId === r.id)) {
-      const ph = (now / 600) % 1;
-      ctx.strokeStyle = `rgba(255,176,32,${1 - ph})`;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(x, y, rr * (1.2 + ph * 0.8), 0, 7);
-      ctx.stroke();
+      ctx.font = `600 ${Math.max(10, rr * 0.5)}px ${FONT}`;
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.6 + 0.4 * Math.sin(now / 250);
+      ctx.fillText("thinking…", x, y - rr * 1.3);
+      ctx.globalAlpha = 1;
     }
-    // fuel bar
     const cap = Math.max(1, r.profile.capacity);
-    const bw = rr * 2.2;
-    const bh = Math.max(4, rr * 0.22);
-    const by = y + rr * 1.35;
+    const bw = rr * 2;
+    const bh = Math.max(3, rr * 0.2);
+    const by = y + rr * 1.15;
     ctx.fillStyle = "#1b2531";
     ctx.fillRect(x - bw / 2, by, bw, bh);
-    ctx.fillStyle = AMBER;
+    ctx.fillStyle = FUEL;
     ctx.fillRect(x - bw / 2, by, bw * Math.min(1, r.fuelHeld / cap), bh);
     if (!small) {
-      ctx.fillStyle = "#c9d3df";
-      ctx.font = `700 ${Math.max(9, rr * 0.5)}px ${FONT}`;
-      ctx.fillText(`${r.profile.teamLabel}`, x, y - rr * 1.45);
-      ctx.fillStyle = "#7d8da2";
-      ctx.font = `700 ${Math.max(8, rr * 0.36)}px ${FONT}`;
-      ctx.fillText(`${shortArch(r.profile.archetype)} · ${r.fuelHeld}/${cap}`, x, by + bh + rr * 0.5);
+      ctx.fillStyle = "#a9b4c2";
+      ctx.font = `600 ${Math.max(9, rr * 0.45)}px ${FONT}`;
+      ctx.fillText(r.id, x, by + bh + rr * 0.5);
     }
   }
 }

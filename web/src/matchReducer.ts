@@ -12,7 +12,7 @@ export interface MatchView {
   state: MatchState | null;
   ticker: TickerRow[];
   thinking: { robotId: string; untilS: number }[];
-  stats: { decisions: number; avgLatencyMs: number; chargedS: number };
+  stats: { decisions: number; avgLatencyMs: number; chargedS: number; medianLatencyMs?: number; fallbacks?: number };
   trails: Record<string, { x: number; y: number }[]>;
   final: { red: number; blue: number } | null;
   error: string | null;

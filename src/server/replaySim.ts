@@ -31,6 +31,8 @@ export class ReplaySim {
   private calls = 0;
   private readonly seen = new Set<string>();
   private ended = false;
+  private fallbacks = 0;
+  private readonly lats: number[] = [];
 
   constructor(events: RunEvent[], opts: { runId: string; isFixture: boolean; speed: number; engineIsStub: boolean }) {
     const start = events.find((e) => e.type === "run_start");
@@ -90,8 +92,10 @@ export class ReplaySim {
         intents[d.robotId] = d.intent;
         dec.push(d);
         this.count += 1;
+        if (d.fallback) this.fallbacks += 1;
         if (!this.seen.has(batch)) {
           this.seen.add(batch);
+          this.lats.push(d.latencyMs ?? 0);
           this.latSum += d.latencyMs ?? 0; // robots answered by one batched request share one latency
           this.calls += 1;
         }
@@ -106,6 +110,8 @@ export class ReplaySim {
         stats: {
           decisions: this.count,
           avgLatencyMs: this.calls ? this.latSum / this.calls : 0,
+          fallbacks: this.fallbacks,
+          ...(this.lats.length ? { medianLatencyMs: [...this.lats].sort((a, b) => a - b)[this.lats.length >> 1]! } : {}),
           chargedS: this.rcfg.realtimeLatencyCharging.enabled ? (this.latSum * this.rcfg.realtimeLatencyCharging.latencyScale) / 1000 : 0,
         },
       },
