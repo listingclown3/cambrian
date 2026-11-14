@@ -1,4 +1,4 @@
-deck numbers, generated 2026-11-14T22:25:28.710Z (git 83ff77ec18e3-dirty)
+deck numbers, generated 2026-11-14T22:34:07.669Z (git be28a2cbea64-dirty)
 format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
 giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 
@@ -9,15 +9,15 @@ giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 2. cost ratio | 19x cheaper | FINAL | headline deepinfra_cost_per_1k_usd / drex_cost_per_1k_usd (results/smoke_latency.json)
 2. Drex $ per 1k decisions | $0.026 | FINAL | drex_cost_per_1k_usd
 2. giant $ per 1k decisions | $0.48 | FINAL | deepinfra_cost_per_1k_usd
-3. mean regret, Drex vs giant (lower is better) | Drex 20.8 ± 12.7 (n 39) vs giant 30.2 ± 13.5 (n 45) | INTERIM (pre-final run; will change) | results/bench_scenarios.json deciders.*.regret
-3. paired difference, Drex minus giant, 95% CI | -10.8 ± 9.8 (n 39) | INTERIM (pre-final run; will change) | bench_scenarios paired_regret.drex_minus_giant
-3. n scenarios | 45 | INTERIM (pre-final run; will change) | bench_scenarios n_scenarios
-3. n families | 15 | INTERIM (pre-final run; will change) | bench_scenarios n_families
+3. mean regret, Drex vs giant (lower is better) | Drex 15.3 ± 3.9 (n 57) vs giant 16.1 ± 4.3 (n 57) | FINAL | results/bench_scenarios.json deciders.*.regret
+3. paired difference, Drex minus giant, 95% CI | -0.8 ± 4.8 (n 57) | FINAL | bench_scenarios paired_regret.drex_minus_giant
+3. n scenarios | 57 | FINAL | bench_scenarios n_scenarios
+3. n families | 18 | FINAL | bench_scenarios n_families
 4. rollout savings % (Drex-guided vs uniform) | 12% | INTERIM (pre-final run; will change) | results/bench_explore.json rollout_savings_pct_drex_vs_uniform
 5. rule calls vs human-reviewed labels (drex-v2.0) | 59 of 60 | FINAL | results/rule_judge.json
 5. NDI scouting fields read | 245 of 248 (0 wrong) on 24 fabricated sheets | FINAL | results/ingest_scouting.json
 5. tower post-up legality result | RISKY: G210 violation probability 0.63 (manual p.59); probability 0.83 that its value depends on inducing opponent fouls; in 10 matches: 0 G420 fouls drawn, 0 points gained | FINAL | results/quirks.json tower_post_up
-6. TITLE VERDICT | BETTER (paired regret difference -10.8 ± 9.8; its 95% CI excludes 0) | INTERIM (pre-final run; will change) | from line 3; use only when it reads FINAL
+6. TITLE VERDICT | ABOUT AS GOOD (paired regret difference -0.8 ± 4.8; its 95% CI includes 0) | FINAL | from line 3; use only when it reads FINAL
 
 [for Q&A, not on the slide]
 real-time sim margin, Drex ALONE (thinking time on the sim clock) | -288.3 ± 150.7 (n 10 seeds); vs scripted reference -203 ± 85.1; fallbacks 27 | FINAL | results/bench_live.json conditions.drex_realtime
@@ -38,11 +38,11 @@ single-call latency p50, Drex vs giant (sequential, clean) | 297 ms vs 701 ms (2
 batch 1 ms per decision, Drex vs giant | 382 ms vs 695 ms (1.8x) | FINAL | bench_batch batch1_ms_per_decision_*
 batch 8 ms per decision, Drex vs giant (stress size) | 99 ms vs 385 ms (3.9x) | FINAL | bench_batch batch8_ms_per_decision_*
 batch 32 ms per decision, Drex vs giant (stress size) | Drex 27 ms; giant NOT RUN | FINAL | bench_batch batch32_ms_per_decision_*
-regret, scripted and random baselines | scripted 23.5 ± 11.2 (n 45); random 31.5 ± 9.2 (n 45) | INTERIM (pre-final run; will change) | bench_scenarios deciders.scripted / random
+regret, scripted and random baselines | scripted 16.8 ± 7.8 (n 29); random 33.9 ± 5.5 (n 57) | FINAL | bench_scenarios deciders.scripted / random
 
 [builtwith: real calls only]
-drex questions | 26,327 | LIVE COUNT (grows until the last run) | usage_drex_questions
+drex questions | 26,384 | LIVE COUNT (grows until the last run) | usage_drex_questions
 intern sessions | 6 | LIVE COUNT | usage_intern_sessions
 ndi docs | 90 | LIVE COUNT | usage_ndi_docs
-deepinfra calls | 10,333 | LIVE COUNT | usage_deepinfra_calls
+deepinfra calls | 10,390 | LIVE COUNT | usage_deepinfra_calls
 keenable pages | 58 | FINAL | keenable_pages

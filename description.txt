@@ -10,9 +10,8 @@ Results (real logged runs):
 - Decision speed at match size (3 robots per call): Drex {{batch3_ms_per_decision_drex}} ms vs DeepInfra {{batch3_ms_per_decision_giant}} ms per decision (7.1x faster). Single question: Drex p50 {{drex_p50_ms}} ms vs {{deepinfra_p50_ms}} ms ({{latency_ratio_deepinfra_over_drex}}x). Giant = Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 - Cost per 1,000 decisions: Drex ${{drex_cost_per_1k_usd}} vs DeepInfra ${{deepinfra_cost_per_1k_usd}}
 - Throughput: {{sim_matches_per_hour_drex}} full simulated matches per hour with Drex deciding vs {{sim_matches_per_hour_deepinfra}} with DeepInfra
-- Decision quality on {{n_scenarios}} sticky scenarios ({{n_families}} families): top-1 Drex {{top1_drex}} vs DeepInfra {{top1_deepinfra}}; context sensitivity {{context_sensitivity_drex}} vs {{context_sensitivity_deepinfra}}
+- Decision quality on {{n_scenarios}} sticky scenarios ({{n_families}} families), scored against a rollout answer key (30 rollouts per option): mean regret Drex 15.3 vs DeepInfra 16.1 points (paired difference -0.8 +/- 4.8: about as good), random 33.9; top-1 on the 13 unambiguous scenarios Drex {{top1_drex}} vs DeepInfra {{top1_deepinfra}}
 - Real-time sim matches (thinking time on the sim clock), Drex proposes and the simulator checks each call with micro-rollouts, 8 paired seeds: margin Drex +123 vs DeepInfra +38 (paired difference +85 +/- 56); a random proposer with the same check scores +68 (Drex minus random +55 +/- 44). Left alone, neither model beats our scripted policy: Drex {{live_margin_drex_realtime}} vs DeepInfra {{live_margin_deepinfra_realtime}} over {{n_live_seeds}} paired seeds
-- Simulation search: Drex-guided rollouts found the best option with {{rollout_savings_pct_drex_vs_uniform}}% fewer simulations than uniform search
 - Strategy Lab: Intern proposed {{lab_proposals_total}} new strategies; {{lab_proposals_beating_baseline}} beat the baseline in simulation
 
 HOW WE USED EACH TOOL

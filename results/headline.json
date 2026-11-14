@@ -1,11 +1,17 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T22:25:26.685Z",
+  "createdTs": "2026-11-14T22:34:05.563Z",
   "isMock": false,
-  "gitCommit": "83ff77ec18e3-dirty",
+  "gitCommit": "be28a2cbea64-dirty",
   "simHash": "547d0ca0d9b67f1b",
   "config": {
     "contributing": [
+      {
+        "file": "results/bench_scenarios.json",
+        "isMock": false,
+        "simHash": "547d0ca0d9b67f1b",
+        "gitCommit": "be28a2cbea64-dirty"
+      },
       {
         "file": "results/bench_live.json",
         "isMock": false,
@@ -39,9 +45,13 @@
     ],
     "simHashesConsistent": false,
     "models": {
-      "drex": null,
+      "drex": [
+        "drex-v2.0"
+      ],
       "drex_latest": null,
-      "giant": null,
+      "giant": [
+        "Qwen/Qwen3.5-397B-A17B"
+      ],
       "giant_reasoning": "off (main comparison; the giant's fastest setting)",
       "live": {
         "scripted_paused": [],
@@ -60,10 +70,6 @@
       }
     },
     "stale_files_not_used": [
-      {
-        "file": "results/bench_scenarios.json",
-        "simHash": "e7daa7a2a621cf3c"
-      },
       {
         "file": "results/bench_explore.json",
         "simHash": "e7daa7a2a621cf3c"
@@ -545,10 +551,93 @@
         "source": "results/smoke_latency.json (sequential, concurrency 1)"
       }
     },
-    "regret_with_ci": {},
-    "paired_regret": null,
-    "degeneracy_gate": null,
-    "answers_source": null,
+    "regret_with_ci": {
+      "drex": {
+        "regret": 15.317,
+        "ci95": 3.898,
+        "n": 57
+      },
+      "deepinfra": {
+        "regret": 16.139,
+        "ci95": 4.303,
+        "n": 57
+      },
+      "scripted": {
+        "regret": 16.768,
+        "ci95": 7.834,
+        "n": 29
+      },
+      "random": {
+        "regret": 33.932,
+        "ci95": 5.535,
+        "n": 57
+      }
+    },
+    "paired_regret": {
+      "drex_minus_giant": {
+        "n": 57,
+        "mean_diff": -0.822,
+        "ci95": 4.767
+      },
+      "drex_minus_scripted": {
+        "n": 29,
+        "mean_diff": -4.243,
+        "ci95": 9.877
+      },
+      "drex_minus_random": {
+        "n": 57,
+        "mean_diff": -18.615,
+        "ci95": 6.176
+      },
+      "giant_minus_scripted": {
+        "n": 29,
+        "mean_diff": -4.091,
+        "ci95": 6.948
+      },
+      "giant_minus_random": {
+        "n": 57,
+        "mean_diff": -17.793,
+        "ci95": 5.562
+      },
+      "scripted_minus_random": {
+        "n": 29,
+        "mean_diff": -11.402,
+        "ci95": 9.309
+      },
+      "drex_latest_minus_giant": null,
+      "drex_anon_minus_drex": null
+    },
+    "degeneracy_gate": {
+      "pass": true,
+      "checks": {
+        "max_best_label_share": {
+          "value": 0.105,
+          "label": "collect:neutral",
+          "limit": "<= 0.35",
+          "pass": true
+        },
+        "flips_changing_best": {
+          "value": 0.872,
+          "n_flips": 39,
+          "limit": ">= 0.30",
+          "pass": true
+        },
+        "scripted_vs_random_regret": {
+          "scripted": 16.768,
+          "n_scripted": 29,
+          "random_expected": 33.932,
+          "limit": "scripted < random",
+          "pass": true
+        }
+      },
+      "distinct_best_labels": 22,
+      "top_vs_second_gap": {
+        "mean": 9.977,
+        "median": 6.1
+      },
+      "n_unambiguous": 13
+    },
+    "answers_source": "fresh calls in this run (prompt version p2-v2-curated10-facts); prompts carried exactly the options scored here",
     "live_paired_vs_scripted": {
       "drex_realtime": {
         "n": 10,
@@ -581,10 +670,10 @@
     "latency": "round trip p50/p95 (request sent to answer parsed, retries included); Drex's own server-side evaluation time is not used",
     "n": {
       "top1_unambiguous_scored": {
-        "drex": null,
-        "deepinfra": null,
-        "scripted": null,
-        "random": null,
+        "drex": 13,
+        "deepinfra": 13,
+        "scripted": 8,
+        "random": 13,
         "drex_anon": null
       },
       "live_conditions": {
@@ -643,7 +732,24 @@
       },
       "rollouts_to_best_n_scenarios": null
     },
-    "fallbacks": {},
+    "fallbacks": {
+      "drex": {
+        "final": 0,
+        "first_pass": 0
+      },
+      "deepinfra": {
+        "final": 0,
+        "first_pass": 0
+      },
+      "scripted": {
+        "final": 0,
+        "first_pass": 0
+      },
+      "random": {
+        "final": 0,
+        "first_pass": 0
+      }
+    },
     "giant_reasoning_on_separate": null,
     "drex_latest_separate": null,
     "not_run": [
@@ -673,36 +779,36 @@
     "batch8_ms_per_decision_giant": 384.52437499999905,
     "batch32_ms_per_decision_drex": 27.07211562500015,
     "batch32_ms_per_decision_giant": null,
-    "top1_drex": null,
-    "top1_deepinfra": null,
+    "top1_drex": 0.385,
+    "top1_deepinfra": 0.231,
     "top1_openai": null,
-    "top1_scripted": null,
-    "top1_random": null,
-    "regret_drex": null,
-    "regret_deepinfra": null,
+    "top1_scripted": 0,
+    "top1_random": 0.19,
+    "regret_drex": 15.317,
+    "regret_deepinfra": 16.139,
     "regret_openai": null,
-    "regret_scripted": null,
-    "regret_random": null,
-    "context_sensitivity_drex": null,
-    "context_sensitivity_deepinfra": null,
+    "regret_scripted": 16.768,
+    "regret_random": 33.932,
+    "context_sensitivity_drex": 0.3333333333333333,
+    "context_sensitivity_deepinfra": 0.6666666666666666,
     "context_sensitivity_openai": null,
     "top1_drex_anonymized": null,
     "rollouts_to_best_drex": null,
     "rollouts_to_best_uniform": null,
     "rollouts_to_best_deepinfra": null,
     "rollout_savings_pct_drex_vs_uniform": null,
-    "n_scenarios": null,
-    "n_families": null,
+    "n_scenarios": 57,
+    "n_families": 18,
     "n_live_seeds": 10,
     "matches_per_sec": 0.666,
     "sim_matches_per_hour_drex": 43.22,
     "sim_matches_per_hour_deepinfra": 26.39,
-    "usage_drex_questions": 26327,
+    "usage_drex_questions": 26384,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,
     "usage_intern_system1_judgments": 136,
-    "usage_deepinfra_calls": 10333,
+    "usage_deepinfra_calls": 10390,
     "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 2,

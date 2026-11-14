@@ -1,18 +1,18 @@
 {
   "experiment": "answerkey",
-  "createdTs": "2026-11-14T21:17:57.499Z",
+  "createdTs": "2026-11-14T22:32:04.301Z",
   "isMock": false,
-  "gitCommit": "66d5652cdf6d-dirty",
-  "simHash": "e7daa7a2a621cf3c",
+  "gitCommit": "be28a2cbea64-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
-    "simHash": "e7daa7a2a621cf3c",
-    "gitCommit": "66d5652cdf6d-dirty",
-    "rollouts": 100,
+    "simHash": "547d0ca0d9b67f1b",
+    "gitCommit": "be28a2cbea64-dirty",
+    "rollouts": 30,
     "horizon": "end",
     "rule": "climb options excluded unless time left <= 35 s (endgame 30 s + 5 s)",
     "rolloutPolicy": "archetype",
     "inFile": "base_scenarios.json",
-    "scenarioSetGeneratedTs": "2026-11-14T20:26:33.243Z",
+    "scenarioSetGeneratedTs": "2026-11-14T21:28:15.218Z",
     "horizonS": 1000,
     "configAnswerKey": {
       "_status": "TUNABLE",
@@ -22,829 +22,1114 @@
     },
     "workers": 11,
     "ambiguity": "paired best-minus-runner-up 95% CI includes 0 (common random numbers)",
-    "seeds": "rollout seed i of scenario s = fnv1a(`${s}:${i}`), shared by all options; scenarios mined from dev-seed matches"
+    "seeds": "rollout seed i of scenario s = fnv1a(`${s}:${i}`), shared by all options; scenarios mined from dev-seed matches",
+    "mergedFrom": [
+      {
+        "file": "results/edge/answerkey.latitude-30.json",
+        "shard": {
+          "index": 1,
+          "of": 1,
+          "scenarioIds": [
+            "contact_while_loaded_1",
+            "contact_while_loaded_1__fuel",
+            "contact_while_loaded_1__opp",
+            "contact_while_loaded_2",
+            "contact_while_loaded_2__fuel",
+            "contact_while_loaded_2__opp",
+            "contact_while_loaded_3",
+            "contact_while_loaded_3__fuel",
+            "contact_while_loaded_3__opp",
+            "defended_1",
+            "defended_1__fuel",
+            "defended_1__opp",
+            "defended_2",
+            "defended_2__fuel",
+            "defended_2__opp",
+            "defended_3",
+            "defended_3__fuel",
+            "defended_3__opp",
+            "endgame_climb_or_cycle_1",
+            "endgame_climb_or_cycle_1__fuel",
+            "endgame_climb_or_cycle_1__opp",
+            "endgame_climb_or_cycle_1__time",
+            "endgame_climb_or_cycle_2",
+            "endgame_climb_or_cycle_2__fuel",
+            "endgame_climb_or_cycle_2__time",
+            "endgame_climb_or_cycle_3",
+            "endgame_climb_or_cycle_3__fuel",
+            "endgame_climb_or_cycle_3__time",
+            "full_far_from_hub_1",
+            "full_far_from_hub_1__hub",
+            "full_far_from_hub_1__fuel",
+            "full_far_from_hub_1__opp",
+            "full_far_from_hub_2",
+            "full_far_from_hub_2__fuel",
+            "full_far_from_hub_2__opp",
+            "full_far_from_hub_3",
+            "full_far_from_hub_3__fuel",
+            "full_far_from_hub_3__opp",
+            "hub_about_to_deactivate_1",
+            "hub_about_to_deactivate_1__fuel",
+            "hub_about_to_deactivate_1__opp",
+            "hub_about_to_deactivate_2",
+            "hub_about_to_deactivate_2__fuel",
+            "hub_about_to_deactivate_3",
+            "hub_about_to_deactivate_3__fuel",
+            "hub_about_to_deactivate_3__opp",
+            "hub_inactive_loaded_1",
+            "hub_inactive_loaded_1__hub",
+            "hub_inactive_loaded_1__fuel",
+            "hub_inactive_loaded_1__opp",
+            "hub_inactive_loaded_2",
+            "hub_inactive_loaded_2__hub",
+            "hub_inactive_loaded_2__fuel",
+            "hub_inactive_loaded_3",
+            "hub_inactive_loaded_3__hub",
+            "hub_inactive_loaded_3__fuel",
+            "hub_inactive_loaded_3__opp"
+          ]
+        },
+        "host": "chris-latitude"
+      }
+    ]
   },
   "rows": [
     {
       "scenarioId": "contact_while_loaded_1",
       "familyId": "fam_contact_while_loaded_1",
       "flip": "",
-      "nOptions": 7,
-      "best": "goto_shot_spot:hub_close",
-      "bestMean": 141.6,
-      "bestCi95": 3.603,
-      "second": "collect:neutral",
-      "secondMean": 128.24,
+      "nOptions": 3,
+      "best": "defend:B2",
+      "bestMean": 76.633,
+      "bestCi95": 10.672,
+      "second": "hold_position",
+      "secondMean": 55.833,
       "pairedGap": {
-        "mean": 13.36,
-        "ci95": 5.026
+        "mean": 20.8,
+        "ci95": 14.424
       },
       "ambiguous": false,
       "ambiguousUnpaired": false,
-      "spread": 105.38
+      "spread": 57.167
     },
     {
       "scenarioId": "contact_while_loaded_1__fuel",
       "familyId": "fam_contact_while_loaded_1",
-      "flip": "the robot holds 0 fuel instead of 24",
-      "nOptions": 7,
-      "best": "load_outpost",
-      "bestMean": 128.86,
-      "bestCi95": 3.952,
-      "second": "goto_shot_spot:hub_close",
-      "secondMean": 125.73,
+      "flip": "the robot holds 0 fuel instead of 8",
+      "nOptions": 5,
+      "best": "hold_position",
+      "bestMean": 69.5,
+      "bestCi95": 9.811,
+      "second": "defend:B3",
+      "secondMean": 47.633,
       "pairedGap": {
-        "mean": 3.13,
-        "ci95": 5.814
+        "mean": 21.867,
+        "ci95": 14.084
       },
-      "ambiguous": true,
-      "ambiguousUnpaired": true,
-      "spread": 94.26
+      "ambiguous": false,
+      "ambiguousUnpaired": false,
+      "spread": 61.1
     },
     {
       "scenarioId": "contact_while_loaded_1__opp",
       "familyId": "fam_contact_while_loaded_1",
-      "flip": "opponent R3 (0.9 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "stage_fuel:hub_close",
-      "bestMean": 94.38,
-      "bestCi95": 4.235,
-      "second": "collect:neutral",
-      "secondMean": 92,
+      "flip": "opponent B2 (1.3 m away) is absent: moved to its own alliance zone",
+      "nOptions": 3,
+      "best": "defend:B1",
+      "bestMean": 93.233,
+      "bestCi95": 10.398,
+      "second": "hold_position",
+      "secondMean": 63.733,
       "pairedGap": {
-        "mean": 2.38,
-        "ci95": 6.266
+        "mean": 29.5,
+        "ci95": 12.05
       },
-      "ambiguous": true,
-      "ambiguousUnpaired": true,
-      "spread": 98.01
+      "ambiguous": false,
+      "ambiguousUnpaired": false,
+      "spread": 58.533
     },
     {
       "scenarioId": "contact_while_loaded_2",
       "familyId": "fam_contact_while_loaded_2",
       "flip": "",
-      "nOptions": 7,
-      "best": "disengage",
-      "bestMean": 62.65,
-      "bestCi95": 3.276,
-      "second": "collect:neutral",
-      "secondMean": 60.08,
+      "nOptions": 10,
+      "best": "escape_spin:our_alliance",
+      "bestMean": 8.433,
+      "bestCi95": 7.863,
+      "second": "align_then_shoot",
+      "secondMean": 2.233,
       "pairedGap": {
-        "mean": 2.57,
-        "ci95": 4.98
+        "mean": 6.2,
+        "ci95": 10.371
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 198.02
+      "spread": 62.267
     },
     {
       "scenarioId": "contact_while_loaded_2__fuel",
       "familyId": "fam_contact_while_loaded_2",
-      "flip": "the robot holds 0 fuel instead of 36",
-      "nOptions": 7,
+      "flip": "the robot holds 0 fuel instead of 20",
+      "nOptions": 10,
       "best": "disengage",
-      "bestMean": 43.17,
-      "bestCi95": 4.941,
-      "second": "escape_spin:neutral",
-      "secondMean": 41.62,
+      "bestMean": -8.167,
+      "bestCi95": 8.279,
+      "second": "escape_spin:our_alliance",
+      "secondMean": -9.267,
       "pairedGap": {
-        "mean": 1.55,
-        "ci95": 5.829
+        "mean": 1.1,
+        "ci95": 11.265
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 160.96
+      "spread": 73.533
     },
     {
       "scenarioId": "contact_while_loaded_2__opp",
       "familyId": "fam_contact_while_loaded_2",
-      "flip": "opponent R2 (0.9 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "collect:neutral",
-      "bestMean": 58.06,
-      "bestCi95": 3.744,
-      "second": "stage_fuel:hub_close",
-      "secondMean": 48.08,
+      "flip": "opponent R3 (0.9 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "align_then_shoot",
+      "bestMean": -8.033,
+      "bestCi95": 8.291,
+      "second": "hold_fire_until_active",
+      "secondMean": -8.333,
       "pairedGap": {
-        "mean": 9.98,
-        "ci95": 5.398
+        "mean": 0.3,
+        "ci95": 11.016
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 174.01
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 115.833
     },
     {
       "scenarioId": "contact_while_loaded_3",
       "familyId": "fam_contact_while_loaded_3",
       "flip": "",
-      "nOptions": 7,
-      "best": "escape_spin:neutral",
-      "bestMean": -1.77,
-      "bestCi95": 5.947,
-      "second": "stage_fuel:hub_close",
-      "secondMean": -15.33,
+      "nOptions": 3,
+      "best": "defend:R1",
+      "bestMean": 11.6,
+      "bestCi95": 14.969,
+      "second": "hold_position",
+      "secondMean": -20.2,
       "pairedGap": {
-        "mean": 13.56,
-        "ci95": 6.893
+        "mean": 31.8,
+        "ci95": 13.81
       },
       "ambiguous": false,
       "ambiguousUnpaired": false,
-      "spread": 107.28
+      "spread": 60.133
     },
     {
       "scenarioId": "contact_while_loaded_3__fuel",
       "familyId": "fam_contact_while_loaded_3",
-      "flip": "the robot holds 0 fuel instead of 45",
-      "nOptions": 7,
-      "best": "escape_spin:neutral",
-      "bestMean": -24.55,
-      "bestCi95": 5.884,
-      "second": "load_outpost",
-      "secondMean": -36.67,
+      "flip": "the robot holds 0 fuel instead of 8",
+      "nOptions": 5,
+      "best": "defend:R1",
+      "bestMean": 25.567,
+      "bestCi95": 13.315,
+      "second": "collect:local",
+      "secondMean": -19.933,
       "pairedGap": {
-        "mean": 12.12,
-        "ci95": 8.177
+        "mean": 45.5,
+        "ci95": 21.272
       },
       "ambiguous": false,
       "ambiguousUnpaired": false,
-      "spread": 72.51
+      "spread": 67.567
     },
     {
       "scenarioId": "contact_while_loaded_3__opp",
       "familyId": "fam_contact_while_loaded_3",
-      "flip": "opponent B1 (2.4 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "align_then_shoot",
-      "bestMean": -38.95,
-      "bestCi95": 4.976,
-      "second": "disengage",
-      "secondMean": -44.7,
+      "flip": "opponent R3 (2.0 m away) is absent: moved to its own alliance zone",
+      "nOptions": 3,
+      "best": "defend:R1",
+      "bestMean": 23.2,
+      "bestCi95": 10.075,
+      "second": "defend:R2",
+      "secondMean": 20.2,
       "pairedGap": {
-        "mean": 5.75,
-        "ci95": 7.184
+        "mean": 3,
+        "ci95": 15.218
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 143.31
+      "spread": 53.033
+    },
+    {
+      "scenarioId": "defended_1",
+      "familyId": "fam_defended_1",
+      "flip": "",
+      "nOptions": 10,
+      "best": "collect:neutral",
+      "bestMean": -28.4,
+      "bestCi95": 13.088,
+      "second": "shoot_on_move:spot=hub_close",
+      "secondMean": -34.5,
+      "pairedGap": {
+        "mean": 6.1,
+        "ci95": 17.68
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 61.9
+    },
+    {
+      "scenarioId": "defended_1__fuel",
+      "familyId": "fam_defended_1",
+      "flip": "the robot holds 0 fuel instead of 8",
+      "nOptions": 7,
+      "best": "collect:neutral",
+      "bestMean": -13.733,
+      "bestCi95": 16.846,
+      "second": "collect:local",
+      "secondMean": -35.267,
+      "pairedGap": {
+        "mean": 21.533,
+        "ci95": 23.537
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 93.333
+    },
+    {
+      "scenarioId": "defended_1__opp",
+      "familyId": "fam_defended_1",
+      "flip": "opponent R2 (1.7 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "shoot_on_move:spot=hub_close",
+      "bestMean": -22.467,
+      "bestCi95": 13.843,
+      "second": "goto_shot_spot:left_wing",
+      "secondMean": -30.133,
+      "pairedGap": {
+        "mean": 7.667,
+        "ci95": 21.071
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 85.667
+    },
+    {
+      "scenarioId": "defended_2",
+      "familyId": "fam_defended_2",
+      "flip": "",
+      "nOptions": 10,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": 298.633,
+      "bestCi95": 17.39,
+      "second": "collect:local",
+      "secondMean": 271.333,
+      "pairedGap": {
+        "mean": 27.3,
+        "ci95": 20.057
+      },
+      "ambiguous": false,
+      "ambiguousUnpaired": true,
+      "spread": 217.533
+    },
+    {
+      "scenarioId": "defended_2__fuel",
+      "familyId": "fam_defended_2",
+      "flip": "the robot holds 0 fuel instead of 11",
+      "nOptions": 9,
+      "best": "disengage",
+      "bestMean": 278.8,
+      "bestCi95": 15.733,
+      "second": "escape_spin:our_alliance",
+      "secondMean": 263.6,
+      "pairedGap": {
+        "mean": 15.2,
+        "ci95": 20.336
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 253.5
+    },
+    {
+      "scenarioId": "defended_2__opp",
+      "familyId": "fam_defended_2",
+      "flip": "opponent R1 (0.9 m away) is absent: moved to its own alliance zone",
+      "nOptions": 9,
+      "best": "collect:local",
+      "bestMean": 285.367,
+      "bestCi95": 17.15,
+      "second": "collect:neutral",
+      "secondMean": 276.367,
+      "pairedGap": {
+        "mean": 9,
+        "ci95": 15.579
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 269.633
+    },
+    {
+      "scenarioId": "defended_3",
+      "familyId": "fam_defended_3",
+      "flip": "",
+      "nOptions": 10,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": 201.5,
+      "bestCi95": 21.759,
+      "second": "dump_unaligned",
+      "secondMean": 192.633,
+      "pairedGap": {
+        "mean": 8.867,
+        "ci95": 28.644
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 221.5
+    },
+    {
+      "scenarioId": "defended_3__fuel",
+      "familyId": "fam_defended_3",
+      "flip": "the robot holds 0 fuel instead of 6",
+      "nOptions": 7,
+      "best": "collect:neutral",
+      "bestMean": 191.033,
+      "bestCi95": 18.223,
+      "second": "collect:local",
+      "secondMean": 188.6,
+      "pairedGap": {
+        "mean": 2.433,
+        "ci95": 26.603
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 210.533
+    },
+    {
+      "scenarioId": "defended_3__opp",
+      "familyId": "fam_defended_3",
+      "flip": "opponent R1 (1.1 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "collect:local",
+      "bestMean": 192.233,
+      "bestCi95": 17.805,
+      "second": "dump_unaligned",
+      "secondMean": 187.433,
+      "pairedGap": {
+        "mean": 4.8,
+        "ci95": 22.474
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 207.167
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1",
       "familyId": "fam_endgame_climb_or_cycle_1",
       "flip": "",
-      "nOptions": 8,
-      "best": "collect:neutral",
-      "bestMean": 17.41,
-      "bestCi95": 2.07,
-      "second": "goto_shot_spot:tower_side",
-      "secondMean": 2.86,
+      "nOptions": 10,
+      "best": "shoot_on_move:spot=left_wing",
+      "bestMean": 73.967,
+      "bestCi95": 8.033,
+      "second": "disengage",
+      "secondMean": 73.167,
       "pairedGap": {
-        "mean": 14.55,
-        "ci95": 2.584
+        "mean": 0.8,
+        "ci95": 14.407
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 32.93
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 90.867
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1__fuel",
       "familyId": "fam_endgame_climb_or_cycle_1",
-      "flip": "the robot holds 0 fuel instead of 26",
-      "nOptions": 7,
-      "best": "collect:neutral",
-      "bestMean": 9.55,
-      "bestCi95": 2.28,
-      "second": "climb:2",
-      "secondMean": -1.08,
+      "flip": "the robot holds 0 fuel instead of 32",
+      "nOptions": 10,
+      "best": "load_outpost",
+      "bestMean": 52.633,
+      "bestCi95": 9.3,
+      "second": "collect:local",
+      "secondMean": 47.767,
       "pairedGap": {
-        "mean": 10.63,
-        "ci95": 2.618
+        "mean": 4.867,
+        "ci95": 14.919
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 42.7
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 27.367
+    },
+    {
+      "scenarioId": "endgame_climb_or_cycle_1__opp",
+      "familyId": "fam_endgame_climb_or_cycle_1",
+      "flip": "opponent R2 (1.5 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "shoot_now",
+      "bestMean": 80.433,
+      "bestCi95": 1.89,
+      "second": "hold_fire_until_active",
+      "secondMean": 80.433,
+      "pairedGap": {
+        "mean": 0,
+        "ci95": 0
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 50.067
     },
     {
       "scenarioId": "endgame_climb_or_cycle_1__time",
       "familyId": "fam_endgame_climb_or_cycle_1",
       "flip": "8 s left in the match instead of 30 s",
-      "nOptions": 8,
-      "best": "collect:neutral",
-      "bestMean": -3.71,
-      "bestCi95": 0.806,
+      "nOptions": 10,
+      "best": "escape_spin:our_alliance",
+      "bestMean": 15.067,
+      "bestCi95": 1.434,
       "second": "shoot_now",
-      "secondMean": -5.71,
+      "secondMean": -10.733,
       "pairedGap": {
-        "mean": 2,
-        "ci95": 0.94
+        "mean": 25.8,
+        "ci95": 1.485
       },
       "ambiguous": false,
       "ambiguousUnpaired": false,
-      "spread": 9.32
+      "spread": 45.333
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2",
       "familyId": "fam_endgame_climb_or_cycle_2",
       "flip": "",
-      "nOptions": 8,
+      "nOptions": 10,
       "best": "align_then_shoot",
-      "bestMean": 24.9,
-      "bestCi95": 1.967,
+      "bestMean": 9.967,
+      "bestCi95": 4.304,
       "second": "hold_fire_until_active",
-      "secondMean": 24.9,
+      "secondMean": 9.967,
       "pairedGap": {
         "mean": 0,
         "ci95": 0
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 30.9
+      "spread": 29.733
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2__fuel",
       "familyId": "fam_endgame_climb_or_cycle_2",
-      "flip": "the robot holds 0 fuel instead of 30",
-      "nOptions": 7,
-      "best": "load_outpost",
-      "bestMean": 29.64,
-      "bestCi95": 1.585,
-      "second": "goto_shot_spot:right_wing",
-      "secondMean": 18.19,
+      "flip": "the robot holds 0 fuel instead of 8",
+      "nOptions": 10,
+      "best": "collect:local",
+      "bestMean": 5.033,
+      "bestCi95": 3.928,
+      "second": "goto_shot_spot:tower_side",
+      "secondMean": -0.167,
       "pairedGap": {
-        "mean": 11.45,
-        "ci95": 2.356
+        "mean": 5.2,
+        "ci95": 5.182
       },
       "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 38.34
+      "ambiguousUnpaired": true,
+      "spread": 26.6
     },
     {
       "scenarioId": "endgame_climb_or_cycle_2__time",
       "familyId": "fam_endgame_climb_or_cycle_2",
       "flip": "8 s left in the match instead of 30 s",
-      "nOptions": 8,
-      "best": "align_then_shoot",
-      "bestMean": 6.13,
-      "bestCi95": 0.802,
-      "second": "hold_fire_until_active",
-      "secondMean": 6.13,
+      "nOptions": 10,
+      "best": "escape_spin:our_alliance",
+      "bestMean": -6.4,
+      "bestCi95": 1.697,
+      "second": "climb:1",
+      "secondMean": -6.4,
       "pairedGap": {
         "mean": 0,
         "ci95": 0
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 25.13
+      "spread": 13.1
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3",
       "familyId": "fam_endgame_climb_or_cycle_3",
       "flip": "",
-      "nOptions": 8,
-      "best": "collect:neutral",
-      "bestMean": 3.56,
-      "bestCi95": 4.438,
-      "second": "goto_shot_spot:right_wing",
-      "secondMean": -3.41,
+      "nOptions": 10,
+      "best": "collect:local",
+      "bestMean": -84.833,
+      "bestCi95": 10.484,
+      "second": "shoot_on_move:spot=tower_side",
+      "secondMean": -85.2,
       "pairedGap": {
-        "mean": 6.97,
-        "ci95": 6.075
+        "mean": 0.367,
+        "ci95": 11.641
       },
-      "ambiguous": false,
+      "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 61.57
+      "spread": 34.633
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3__fuel",
       "familyId": "fam_endgame_climb_or_cycle_3",
-      "flip": "the robot holds 0 fuel instead of 50",
-      "nOptions": 7,
-      "best": "load_outpost",
-      "bestMean": -21.92,
-      "bestCi95": 3.988,
-      "second": "collect:neutral",
-      "secondMean": -25.6,
+      "flip": "the robot holds 0 fuel instead of 22",
+      "nOptions": 9,
+      "best": "collect:local",
+      "bestMean": -97.833,
+      "bestCi95": 11.865,
+      "second": "goto_shot_spot:tower_side",
+      "secondMean": -98.367,
       "pairedGap": {
-        "mean": 3.68,
-        "ci95": 4.682
+        "mean": 0.533,
+        "ci95": 16.734
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 44.69
+      "spread": 55.067
     },
     {
       "scenarioId": "endgame_climb_or_cycle_3__time",
       "familyId": "fam_endgame_climb_or_cycle_3",
       "flip": "8 s left in the match instead of 30 s",
-      "nOptions": 8,
-      "best": "shoot_now",
-      "bestMean": 13.72,
-      "bestCi95": 0.721,
-      "second": "hold_fire_until_active",
-      "secondMean": 13.72,
+      "nOptions": 10,
+      "best": "climb:1",
+      "bestMean": -18.1,
+      "bestCi95": 1.356,
+      "second": "collect:local",
+      "secondMean": -22.267,
       "pairedGap": {
-        "mean": 0,
-        "ci95": 0
+        "mean": 4.167,
+        "ci95": 1.052
       },
-      "ambiguous": true,
-      "ambiguousUnpaired": true,
-      "spread": 26.53
+      "ambiguous": false,
+      "ambiguousUnpaired": false,
+      "spread": 10.933
     },
     {
       "scenarioId": "full_far_from_hub_1",
       "familyId": "fam_full_far_from_hub_1",
       "flip": "",
-      "nOptions": 6,
-      "best": "goto_zone:neutral",
-      "bestMean": -44.47,
-      "bestCi95": 7.61,
-      "second": "stage_fuel:deep_center",
-      "secondMean": -68.83,
+      "nOptions": 3,
+      "best": "defend:B2",
+      "bestMean": 85.933,
+      "bestCi95": 11.428,
+      "second": "hold_position",
+      "secondMean": 62.767,
       "pairedGap": {
-        "mean": 24.36,
-        "ci95": 8.95
+        "mean": 23.167,
+        "ci95": 11.005
       },
       "ambiguous": false,
       "ambiguousUnpaired": false,
-      "spread": 93.93
+      "spread": 48.1
     },
     {
       "scenarioId": "full_far_from_hub_1__hub",
       "familyId": "fam_full_far_from_hub_1",
-      "flip": "our hub is ACTIVE this shift instead of inactive (which alliance's hub is active was swapped; time unchanged)",
-      "nOptions": 6,
-      "best": "stage_fuel:deep_center",
-      "bestMean": -27.82,
-      "bestCi95": 6.515,
-      "second": "goto_zone:our_alliance",
-      "secondMean": -60.64,
+      "flip": "our hub is INACTIVE this shift instead of active (which alliance's hub is active was swapped; time unchanged)",
+      "nOptions": 3,
+      "best": "hold_position",
+      "bestMean": 37.233,
+      "bestCi95": 10.597,
+      "second": "defend:B2",
+      "secondMean": 33,
       "pairedGap": {
-        "mean": 32.82,
-        "ci95": 7.834
+        "mean": 4.233,
+        "ci95": 13.555
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 111.11
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 19.8
     },
     {
       "scenarioId": "full_far_from_hub_1__fuel",
       "familyId": "fam_full_far_from_hub_1",
       "flip": "the robot holds 0 fuel instead of 8",
-      "nOptions": 6,
-      "best": "load_outpost",
-      "bestMean": -82.22,
-      "bestCi95": 3.988,
+      "nOptions": 5,
+      "best": "hold_position",
+      "bestMean": 74.533,
+      "bestCi95": 9.744,
       "second": "defend:B2",
-      "secondMean": -82.47,
+      "secondMean": 68.4,
       "pairedGap": {
-        "mean": 0.25,
-        "ci95": 5.466
+        "mean": 6.133,
+        "ci95": 15.646
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 54.12
+      "spread": 51.5
+    },
+    {
+      "scenarioId": "full_far_from_hub_1__opp",
+      "familyId": "fam_full_far_from_hub_1",
+      "flip": "opponent B3 (3.4 m away) is absent: moved to its own alliance zone",
+      "nOptions": 3,
+      "best": "hold_position",
+      "bestMean": 83.8,
+      "bestCi95": 11.016,
+      "second": "defend:B2",
+      "secondMean": 76.4,
+      "pairedGap": {
+        "mean": 7.4,
+        "ci95": 16.231
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 21.367
     },
     {
       "scenarioId": "full_far_from_hub_2",
       "familyId": "fam_full_far_from_hub_2",
       "flip": "",
-      "nOptions": 7,
-      "best": "defend:R1",
-      "bestMean": 192.44,
-      "bestCi95": 2.6,
-      "second": "stage_fuel:hub_close",
-      "secondMean": 32.66,
+      "nOptions": 3,
+      "best": "defend:B2",
+      "bestMean": -113.4,
+      "bestCi95": 10.736,
+      "second": "defend:B3",
+      "secondMean": -124.8,
       "pairedGap": {
-        "mean": 159.78,
-        "ci95": 4.169
+        "mean": 11.4,
+        "ci95": 21.129
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 210.24
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 53.233
     },
     {
       "scenarioId": "full_far_from_hub_2__fuel",
       "familyId": "fam_full_far_from_hub_2",
-      "flip": "the robot holds 0 fuel instead of 20",
-      "nOptions": 6,
-      "best": "defend:R1",
-      "bestMean": 209.24,
-      "bestCi95": 2.723,
-      "second": "goto_shot_spot:left_wing",
-      "secondMean": 32.83,
+      "flip": "the robot holds 0 fuel instead of 6",
+      "nOptions": 5,
+      "best": "defend:B2",
+      "bestMean": -119.833,
+      "bestCi95": 12.143,
+      "second": "defend:B3",
+      "secondMean": -126.9,
       "pairedGap": {
-        "mean": 176.41,
-        "ci95": 4.883
+        "mean": 7.067,
+        "ci95": 19.116
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 215.57
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 45.133
     },
     {
       "scenarioId": "full_far_from_hub_2__opp",
       "familyId": "fam_full_far_from_hub_2",
-      "flip": "opponent R1 (3.3 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "defend:R3",
-      "bestMean": 45.22,
-      "bestCi95": 3.67,
-      "second": "stage_fuel:hub_close",
-      "secondMean": 34.49,
+      "flip": "opponent B2 (1.1 m away) is absent: moved to its own alliance zone",
+      "nOptions": 3,
+      "best": "defend:B3",
+      "bestMean": -143.833,
+      "bestCi95": 15.868,
+      "second": "hold_position",
+      "secondMean": -163.8,
       "pairedGap": {
-        "mean": 10.73,
-        "ci95": 4.364
+        "mean": 19.967,
+        "ci95": 20.468
       },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 53.85
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 43.3
     },
     {
       "scenarioId": "full_far_from_hub_3",
       "familyId": "fam_full_far_from_hub_3",
       "flip": "",
       "nOptions": 7,
-      "best": "goto_shot_spot:hub_close",
-      "bestMean": -154.96,
-      "bestCi95": 8.2,
-      "second": "goto_zone:neutral",
-      "secondMean": -165.5,
+      "best": "dump_unaligned",
+      "bestMean": -46.233,
+      "bestCi95": 10.704,
+      "second": "hold_fire_until_active",
+      "secondMean": -48.4,
       "pairedGap": {
-        "mean": 10.54,
-        "ci95": 9.953
+        "mean": 2.167,
+        "ci95": 16.169
       },
-      "ambiguous": false,
+      "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 46.98
+      "spread": 75.733
     },
     {
       "scenarioId": "full_far_from_hub_3__fuel",
       "familyId": "fam_full_far_from_hub_3",
-      "flip": "the robot holds 0 fuel instead of 9",
-      "nOptions": 6,
-      "best": "goto_shot_spot:hub_close",
-      "bestMean": -165.53,
-      "bestCi95": 7.755,
-      "second": "goto_zone:neutral",
-      "secondMean": -172.54,
+      "flip": "the robot holds 0 fuel instead of 10",
+      "nOptions": 7,
+      "best": "defend:R1",
+      "bestMean": -28.633,
+      "bestCi95": 12.486,
+      "second": "goto_shot_spot:right_wing",
+      "secondMean": -60.333,
       "pairedGap": {
-        "mean": 7.01,
-        "ci95": 9.054
+        "mean": 31.7,
+        "ci95": 17.926
       },
-      "ambiguous": true,
-      "ambiguousUnpaired": true,
-      "spread": 35.74
+      "ambiguous": false,
+      "ambiguousUnpaired": false,
+      "spread": 89.633
     },
     {
       "scenarioId": "full_far_from_hub_3__opp",
       "familyId": "fam_full_far_from_hub_3",
-      "flip": "opponent B3 (2.4 m away) is absent: moved to its own alliance zone",
+      "flip": "opponent R1 (1.8 m away) is absent: moved to its own alliance zone",
       "nOptions": 7,
-      "best": "stage_fuel:hub_close",
-      "bestMean": -147.53,
-      "bestCi95": 5.582,
+      "best": "defend:R3",
+      "bestMean": -41.1,
+      "bestCi95": 12.436,
       "second": "dump_unaligned",
-      "secondMean": -148.71,
+      "secondMean": -46.5,
       "pairedGap": {
-        "mean": 1.18,
-        "ci95": 9.017
+        "mean": 5.4,
+        "ci95": 15.434
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 35.99
+      "spread": 103.633
     },
     {
       "scenarioId": "hub_about_to_deactivate_1",
       "familyId": "fam_hub_about_to_deactivate_1",
       "flip": "",
-      "nOptions": 6,
-      "best": "goto_zone:our_alliance",
-      "bestMean": -90.11,
-      "bestCi95": 4.196,
-      "second": "defend:B2",
-      "secondMean": -90.52,
+      "nOptions": 10,
+      "best": "escape_spin:our_alliance",
+      "bestMean": -17.333,
+      "bestCi95": 14.226,
+      "second": "shoot_on_move:spot=hub_close",
+      "secondMean": -21.033,
       "pairedGap": {
-        "mean": 0.41,
-        "ci95": 5.62
+        "mean": 3.7,
+        "ci95": 18.91
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 32.22
+      "spread": 41.8
     },
     {
       "scenarioId": "hub_about_to_deactivate_1__fuel",
       "familyId": "fam_hub_about_to_deactivate_1",
-      "flip": "the robot holds 0 fuel instead of 8",
-      "nOptions": 6,
-      "best": "collect:neutral",
-      "bestMean": -79.04,
-      "bestCi95": 4.094,
-      "second": "goto_shot_spot:tower_side",
-      "secondMean": -90.38,
+      "flip": "the robot holds 0 fuel instead of 6",
+      "nOptions": 10,
+      "best": "disengage",
+      "bestMean": -0.033,
+      "bestCi95": 15.368,
+      "second": "escape_reverse:our_alliance",
+      "secondMean": -25.533,
       "pairedGap": {
-        "mean": 11.34,
-        "ci95": 5.286
+        "mean": 25.5,
+        "ci95": 24.293
       },
       "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 46.8
+      "ambiguousUnpaired": true,
+      "spread": 118.2
+    },
+    {
+      "scenarioId": "hub_about_to_deactivate_1__opp",
+      "familyId": "fam_hub_about_to_deactivate_1",
+      "flip": "opponent R2 (0.9 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "shoot_on_move:spot=hub_close",
+      "bestMean": -15.333,
+      "bestCi95": 15.844,
+      "second": "goto_shot_spot:left_wing",
+      "secondMean": -30.3,
+      "pairedGap": {
+        "mean": 14.967,
+        "ci95": 15.113
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 78.467
     },
     {
       "scenarioId": "hub_about_to_deactivate_2",
       "familyId": "fam_hub_about_to_deactivate_2",
       "flip": "",
-      "nOptions": 7,
-      "best": "load_outpost",
-      "bestMean": -16.24,
-      "bestCi95": 3.869,
-      "second": "collect:neutral",
-      "secondMean": -23.08,
+      "nOptions": 10,
+      "best": "collect:neutral",
+      "bestMean": -10.9,
+      "bestCi95": 8.666,
+      "second": "shoot_now",
+      "secondMean": -15.8,
       "pairedGap": {
-        "mean": 6.84,
-        "ci95": 4.306
+        "mean": 4.9,
+        "ci95": 12.928
       },
-      "ambiguous": false,
+      "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 30.28
+      "spread": 60.533
     },
     {
       "scenarioId": "hub_about_to_deactivate_2__fuel",
       "familyId": "fam_hub_about_to_deactivate_2",
-      "flip": "the robot holds 0 fuel instead of 4",
-      "nOptions": 6,
-      "best": "load_outpost",
-      "bestMean": -18.27,
-      "bestCi95": 3.212,
-      "second": "defend:B2",
-      "secondMean": -20.86,
+      "flip": "the robot holds 0 fuel instead of 18",
+      "nOptions": 7,
+      "best": "goto_shot_spot:left_wing",
+      "bestMean": -5.067,
+      "bestCi95": 10.18,
+      "second": "goto_shot_spot:tower_side",
+      "secondMean": -13.333,
       "pairedGap": {
-        "mean": 2.59,
-        "ci95": 4.664
+        "mean": 8.267,
+        "ci95": 11.045
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 45.55
-    },
-    {
-      "scenarioId": "hub_about_to_deactivate_2__opp",
-      "familyId": "fam_hub_about_to_deactivate_2",
-      "flip": "opponent B2 (2.0 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "load_outpost",
-      "bestMean": -8.26,
-      "bestCi95": 3.785,
-      "second": "goto_shot_spot:right_wing",
-      "secondMean": -16.22,
-      "pairedGap": {
-        "mean": 7.96,
-        "ci95": 3.177
-      },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 37.5
+      "spread": 83.533
     },
     {
       "scenarioId": "hub_about_to_deactivate_3",
       "familyId": "fam_hub_about_to_deactivate_3",
       "flip": "",
-      "nOptions": 7,
-      "best": "shoot_now",
-      "bestMean": 6.85,
-      "bestCi95": 5.057,
-      "second": "collect:neutral",
-      "secondMean": 1.53,
+      "nOptions": 10,
+      "best": "escape_spin:our_alliance",
+      "bestMean": 3.1,
+      "bestCi95": 12.879,
+      "second": "collect:local",
+      "secondMean": -6.033,
       "pairedGap": {
-        "mean": 5.32,
-        "ci95": 6.347
+        "mean": 9.133,
+        "ci95": 21.507
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 97.23
+      "spread": 134.367
     },
     {
       "scenarioId": "hub_about_to_deactivate_3__fuel",
       "familyId": "fam_hub_about_to_deactivate_3",
-      "flip": "the robot holds 0 fuel instead of 39",
-      "nOptions": 6,
-      "best": "load_outpost",
-      "bestMean": -19.99,
-      "bestCi95": 5.165,
-      "second": "collect:neutral",
-      "secondMean": -20.78,
+      "flip": "the robot holds 0 fuel instead of 31",
+      "nOptions": 10,
+      "best": "collect:local",
+      "bestMean": -20.3,
+      "bestCi95": 12.458,
+      "second": "goto_shot_spot:right_wing",
+      "secondMean": -22.1,
       "pairedGap": {
-        "mean": 0.79,
-        "ci95": 7.685
+        "mean": 1.8,
+        "ci95": 16.957
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 97.32
+      "spread": 135.267
+    },
+    {
+      "scenarioId": "hub_about_to_deactivate_3__opp",
+      "familyId": "fam_hub_about_to_deactivate_3",
+      "flip": "opponent R3 (0.9 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -18,
+      "bestCi95": 13.866,
+      "second": "goto_shot_spot:hub_close",
+      "secondMean": -30.4,
+      "pairedGap": {
+        "mean": 12.4,
+        "ci95": 21.129
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 116.4
     },
     {
       "scenarioId": "hub_inactive_loaded_1",
       "familyId": "fam_hub_inactive_loaded_1",
       "flip": "",
-      "nOptions": 7,
-      "best": "goto_shot_spot:hub_close",
-      "bestMean": -44.1,
-      "bestCi95": 5.971,
-      "second": "collect:neutral",
-      "secondMean": -71.41,
+      "nOptions": 10,
+      "best": "goto_shot_spot:right_wing",
+      "bestMean": -9.3,
+      "bestCi95": 14.37,
+      "second": "hold_fire_until_active",
+      "secondMean": -31.367,
       "pairedGap": {
-        "mean": 27.31,
-        "ci95": 6.885
+        "mean": 22.067,
+        "ci95": 21.965
       },
       "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 77.59
+      "ambiguousUnpaired": true,
+      "spread": 82.867
     },
     {
       "scenarioId": "hub_inactive_loaded_1__hub",
       "familyId": "fam_hub_inactive_loaded_1",
       "flip": "our hub is ACTIVE this shift instead of inactive (which alliance's hub is active was swapped; time unchanged)",
-      "nOptions": 7,
-      "best": "collect:neutral",
-      "bestMean": 0.32,
-      "bestCi95": 7.972,
-      "second": "goto_shot_spot:hub_close",
-      "secondMean": -4.92,
+      "nOptions": 10,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": 8.667,
+      "bestCi95": 15.891,
+      "second": "goto_shot_spot:right_wing",
+      "secondMean": 6.3,
       "pairedGap": {
-        "mean": 5.24,
-        "ci95": 9.812
+        "mean": 2.367,
+        "ci95": 24.22
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 131.82
+      "spread": 85.633
     },
     {
       "scenarioId": "hub_inactive_loaded_1__fuel",
       "familyId": "fam_hub_inactive_loaded_1",
-      "flip": "the robot holds 0 fuel instead of 24",
-      "nOptions": 6,
+      "flip": "the robot holds 0 fuel instead of 7",
+      "nOptions": 7,
       "best": "collect:neutral",
-      "bestMean": -69.09,
-      "bestCi95": 7.571,
+      "bestMean": -11.867,
+      "bestCi95": 15.064,
       "second": "goto_shot_spot:hub_close",
-      "secondMean": -73.32,
+      "secondMean": -30.333,
       "pairedGap": {
-        "mean": 4.23,
-        "ci95": 11.445
+        "mean": 18.467,
+        "ci95": 19.098
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 35.75
+      "spread": 99.433
     },
     {
       "scenarioId": "hub_inactive_loaded_1__opp",
       "familyId": "fam_hub_inactive_loaded_1",
-      "flip": "opponent B2 (1.1 m away) is absent: moved to its own alliance zone",
-      "nOptions": 7,
-      "best": "collect:neutral",
-      "bestMean": -73.43,
-      "bestCi95": 4.448,
-      "second": "stage_fuel:hub_close",
-      "secondMean": -77.6,
+      "flip": "opponent R2 (3.4 m away) is absent: moved to its own alliance zone",
+      "nOptions": 10,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": -20.867,
+      "bestCi95": 15.656,
+      "second": "dump_unaligned",
+      "secondMean": -24.167,
       "pairedGap": {
-        "mean": 4.17,
-        "ci95": 6.784
+        "mean": 3.3,
+        "ci95": 23.464
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 61.83
+      "spread": 51.867
     },
     {
       "scenarioId": "hub_inactive_loaded_2",
       "familyId": "fam_hub_inactive_loaded_2",
       "flip": "",
-      "nOptions": 7,
-      "best": "dump_unaligned",
-      "bestMean": -28.45,
-      "bestCi95": 3.544,
-      "second": "hold_fire_until_active",
-      "secondMean": -31.53,
+      "nOptions": 8,
+      "best": "goto_shot_spot:tower_side",
+      "bestMean": -9.733,
+      "bestCi95": 9.309,
+      "second": "goto_shot_spot:left_wing",
+      "secondMean": -11,
       "pairedGap": {
-        "mean": 3.08,
-        "ci95": 4.196
+        "mean": 1.267,
+        "ci95": 9.607
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 43.29
+      "spread": 47.433
     },
     {
       "scenarioId": "hub_inactive_loaded_2__hub",
       "familyId": "fam_hub_inactive_loaded_2",
       "flip": "our hub is ACTIVE this shift instead of inactive (which alliance's hub is active was swapped; time unchanged)",
-      "nOptions": 7,
-      "best": "stage_fuel:hub_close",
-      "bestMean": -11.76,
-      "bestCi95": 4.09,
-      "second": "goto_shot_spot:right_wing",
-      "secondMean": -13.03,
+      "nOptions": 8,
+      "best": "hold_fire_until_active",
+      "bestMean": 25.667,
+      "bestCi95": 6.913,
+      "second": "goto_shot_spot:tower_side",
+      "secondMean": 25.3,
       "pairedGap": {
-        "mean": 1.27,
-        "ci95": 4.419
+        "mean": 0.367,
+        "ci95": 11.457
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 47.06
+      "spread": 48.167
     },
     {
       "scenarioId": "hub_inactive_loaded_2__fuel",
       "familyId": "fam_hub_inactive_loaded_2",
-      "flip": "the robot holds 0 fuel instead of 14",
-      "nOptions": 6,
-      "best": "defend:B2",
-      "bestMean": -27.51,
-      "bestCi95": 2.995,
-      "second": "goto_zone:neutral",
-      "secondMean": -41.93,
-      "pairedGap": {
-        "mean": 14.42,
-        "ci95": 4.345
-      },
-      "ambiguous": false,
-      "ambiguousUnpaired": false,
-      "spread": 29.08
-    },
-    {
-      "scenarioId": "hub_inactive_loaded_2__opp",
-      "familyId": "fam_hub_inactive_loaded_2",
-      "flip": "opponent B2 (1.6 m away) is absent: moved to its own alliance zone",
+      "flip": "the robot holds 0 fuel instead of 20",
       "nOptions": 7,
-      "best": "goto_zone:neutral",
-      "bestMean": -20.94,
-      "bestCi95": 3.126,
-      "second": "goto_shot_spot:right_wing",
-      "secondMean": -20.94,
+      "best": "goto_shot_spot:left_wing",
+      "bestMean": -5.4,
+      "bestCi95": 10.303,
+      "second": "collect:neutral",
+      "secondMean": -9.8,
       "pairedGap": {
-        "mean": 0,
-        "ci95": 0
+        "mean": 4.4,
+        "ci95": 12.573
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 43.93
+      "spread": 65.867
     },
     {
       "scenarioId": "hub_inactive_loaded_3",
       "familyId": "fam_hub_inactive_loaded_3",
       "flip": "",
-      "nOptions": 7,
-      "best": "stage_fuel:right_wing",
-      "bestMean": 14.02,
-      "bestCi95": 5.589,
-      "second": "collect:neutral",
-      "secondMean": 6.82,
+      "nOptions": 9,
+      "best": "goto_shot_spot:hub_close",
+      "bestMean": -21.267,
+      "bestCi95": 14.949,
+      "second": "goto_shot_spot:right_wing",
+      "secondMean": -30.6,
       "pairedGap": {
-        "mean": 7.2,
-        "ci95": 7.106
+        "mean": 9.333,
+        "ci95": 20.091
       },
-      "ambiguous": false,
+      "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 127.82
+      "spread": 163.867
     },
     {
       "scenarioId": "hub_inactive_loaded_3__hub",
       "familyId": "fam_hub_inactive_loaded_3",
       "flip": "our hub is ACTIVE this shift instead of inactive (which alliance's hub is active was swapped; time unchanged)",
-      "nOptions": 7,
+      "nOptions": 9,
       "best": "shoot_now",
-      "bestMean": -2.64,
-      "bestCi95": 5.741,
+      "bestMean": 12.5,
+      "bestCi95": 12.882,
       "second": "hold_fire_until_active",
-      "secondMean": -2.64,
+      "secondMean": 12.5,
       "pairedGap": {
         "mean": 0,
         "ci95": 0
       },
       "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 83.47
+      "spread": 150.067
     },
     {
       "scenarioId": "hub_inactive_loaded_3__fuel",
       "familyId": "fam_hub_inactive_loaded_3",
-      "flip": "the robot holds 0 fuel instead of 29",
-      "nOptions": 6,
-      "best": "goto_shot_spot:right_wing",
-      "bestMean": 12.42,
-      "bestCi95": 5.926,
-      "second": "load_outpost",
-      "secondMean": 2.99,
+      "flip": "the robot holds 0 fuel instead of 55",
+      "nOptions": 7,
+      "best": "collect:neutral",
+      "bestMean": -52.667,
+      "bestCi95": 15.206,
+      "second": "collect:local",
+      "secondMean": -52.667,
       "pairedGap": {
-        "mean": 9.43,
-        "ci95": 6.872
+        "mean": 0,
+        "ci95": 0
       },
-      "ambiguous": false,
+      "ambiguous": true,
       "ambiguousUnpaired": true,
-      "spread": 162.01
+      "spread": 142.6
+    },
+    {
+      "scenarioId": "hub_inactive_loaded_3__opp",
+      "familyId": "fam_hub_inactive_loaded_3",
+      "flip": "opponent R2 (2.5 m away) is absent: moved to its own alliance zone",
+      "nOptions": 9,
+      "best": "hold_fire_until_active",
+      "bestMean": -24.5,
+      "bestCi95": 13.673,
+      "second": "shoot_on_move:spot=hub_close",
+      "secondMean": -27.633,
+      "pairedGap": {
+        "mean": 3.133,
+        "ci95": 17.855
+      },
+      "ambiguous": true,
+      "ambiguousUnpaired": true,
+      "spread": 162.767
     }
   ],
   "summary": {
-    "n_scenarios": 45,
-    "n_families": 15,
-    "n_unambiguous": 22,
-    "n_unambiguous_unpaired": 17,
-    "rollouts_total": 30900,
-    "rollouts_per_option": 100,
+    "n_scenarios": 57,
+    "n_families": 18,
+    "n_unambiguous": 13,
+    "n_unambiguous_unpaired": 9,
+    "rollouts_total": 13500,
+    "rollouts_per_option": 30,
     "horizon": "end",
-    "wall_s": 568.3,
-    "rollouts_per_sec": 54.4
+    "wall_s": 331.8,
+    "rollouts_per_sec": 40.7
   }
 }

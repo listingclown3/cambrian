@@ -1,9 +1,9 @@
 {
   "experiment": "usage",
-  "createdTs": "2026-11-14T22:11:22.085Z",
+  "createdTs": "2026-11-14T22:34:02.067Z",
   "isMock": false,
-  "gitCommit": "b46fbfdcbb7a-dirty",
-  "simHash": "73ee0c8a610a44cc",
+  "gitCommit": "be28a2cbea64-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
     "ledger": {
       "_status": "TUNABLE",
@@ -14,13 +14,13 @@
   "rows": [
     {
       "tool": "drex",
-      "calls": 19345,
-      "inputTokens": 19279371,
-      "outputTokens": 7521105,
-      "costUsd": 0.5783811300000008,
-      "latencyMs": 6075913.156200046,
+      "calls": 19413,
+      "inputTokens": 19365626,
+      "outputTokens": 7533009,
+      "costUsd": 0.5809687800000006,
+      "latencyMs": 6097940.432000048,
       "counts": {
-        "questions": 26239
+        "questions": 26384
       },
       "byPurpose": {
         "key_check": 1,
@@ -33,7 +33,7 @@
         "agent_match_failed": 3047,
         "decision_failed": 330,
         "decision": 196,
-        "bench_scenarios": 129,
+        "bench_scenarios": 186,
         "bench_scenarios_failed": 6,
         "bench_live": 9266,
         "bench_live_failed": 1351,
@@ -42,7 +42,7 @@
         "bench_batch_failed": 84,
         "smoke_failed": 4,
         "host_compare": 10,
-        "quirks_legality": 23,
+        "quirks_legality": 34,
         "leak_test_debug": 10
       }
     },
@@ -87,17 +87,17 @@
     },
     {
       "tool": "deepinfra",
-      "calls": 10333,
-      "inputTokens": 13494415,
-      "outputTokens": 252649,
-      "costUsd": 6.614270550469914,
-      "latencyMs": 9709152.845599988,
+      "calls": 10390,
+      "inputTokens": 13548733,
+      "outputTokens": 253466,
+      "costUsd": 6.641164650469917,
+      "latencyMs": 9751019.957799988,
       "counts": {},
       "byPurpose": {
         "key_check": 4,
         "smoke": 72,
         "agent_match": 1881,
-        "bench_scenarios": 58,
+        "bench_scenarios": 115,
         "bench_live": 8012,
         "bench_batch": 296,
         "leak_test_debug": 10
@@ -132,18 +132,18 @@
     }
   ],
   "summary": {
-    "generatedTs": "2026-11-14T22:11:22.085Z",
-    "totalCalls": 29850,
-    "totalCostUsd": 15.208227630470095,
+    "generatedTs": "2026-11-14T22:34:02.067Z",
+    "totalCalls": 29975,
+    "totalCostUsd": 15.237709380470097,
     "byTool": {
       "drex": {
-        "calls": 19345,
-        "inputTokens": 19279371,
-        "outputTokens": 7521105,
-        "costUsd": 0.5783811300000008,
-        "latencyMs": 6075913.156200046,
+        "calls": 19413,
+        "inputTokens": 19365626,
+        "outputTokens": 7533009,
+        "costUsd": 0.5809687800000006,
+        "latencyMs": 6097940.432000048,
         "counts": {
-          "questions": 26239
+          "questions": 26384
         },
         "byPurpose": {
           "key_check": 1,
@@ -156,7 +156,7 @@
           "agent_match_failed": 3047,
           "decision_failed": 330,
           "decision": 196,
-          "bench_scenarios": 129,
+          "bench_scenarios": 186,
           "bench_scenarios_failed": 6,
           "bench_live": 9266,
           "bench_live_failed": 1351,
@@ -165,7 +165,7 @@
           "bench_batch_failed": 84,
           "smoke_failed": 4,
           "host_compare": 10,
-          "quirks_legality": 23,
+          "quirks_legality": 34,
           "leak_test_debug": 10
         }
       },
@@ -207,17 +207,17 @@
         }
       },
       "deepinfra": {
-        "calls": 10333,
-        "inputTokens": 13494415,
-        "outputTokens": 252649,
-        "costUsd": 6.614270550469914,
-        "latencyMs": 9709152.845599988,
+        "calls": 10390,
+        "inputTokens": 13548733,
+        "outputTokens": 253466,
+        "costUsd": 6.641164650469917,
+        "latencyMs": 9751019.957799988,
         "counts": {},
         "byPurpose": {
           "key_check": 4,
           "smoke": 72,
           "agent_match": 1881,
-          "bench_scenarios": 58,
+          "bench_scenarios": 115,
           "bench_live": 8012,
           "bench_batch": 296,
           "leak_test_debug": 10
