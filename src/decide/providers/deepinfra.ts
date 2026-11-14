@@ -24,7 +24,7 @@
 import { costFromConfig } from "../../ledger";
 import type { Answer, Config, DecisionProvider, DecisionRequest, DecisionResponse, ProviderId, Question } from "../../contracts";
 import { fallbackResponse } from "./shared";
-import { HttpError, authHeaders, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
+import { HttpError, authHeaders, estimateCostUsd, limiterFor, recordRealCall, requestJson, retriesFor, spendCapBlock, type ProviderDeps } from "./http";
 
 export interface ChatProviderOptions extends ProviderDeps {
   /** Exact model id to use (skips the model list and preference order). */
@@ -189,7 +189,10 @@ export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cf
     const label = fixedModel ?? announced ?? "unresolved";
     const key = env[p.apiKeyEnv ?? ""];
     if (!p.endpoint || !key) return fallbackResponse(req, id, label, started, `${p.apiKeyEnv ?? `${id} api key`} is not set`);
-    const blocked = spendCapBlock(cfg, id);
+    // Estimate: prompt = state text + instructions + options + ~600 chars of framing; output = a
+    // few tokens, or the full max_tokens budget when thinking.
+    const promptChars = req.stateText.length + req.questions.reduce((s, q) => s + q.instructions.length + (q.options ?? []).reduce((t, o) => t + o.label.length + o.description.length + 4, 0), 0) + 600;
+    const blocked = spendCapBlock(cfg, id, estimateCostUsd(cfg, id, fixedModel ?? announced, promptChars, thinking === "on" ? maxTokens : 50));
     if (blocked) return fallbackResponse(req, id, label, started, blocked);
 
     const messages: { role: string; content: string }[] = [

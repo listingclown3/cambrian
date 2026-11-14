@@ -48,6 +48,7 @@ import {
   type ObservationView,
   type RobotId,
   type RolloutPolicies,
+  type RunEventBody,
   type ScriptedPolicy,
 } from "../contracts";
 import { buildObservationView } from "../engine";
@@ -133,6 +134,41 @@ export interface ControllerSummary {
   dropped: number;
   /** Sum of charged match seconds, per alliance. */
   chargedS: Record<Alliance, number>;
+  /** Exact per-alliance totals for this match (see AllianceTotals). */
+  byAlliance: Record<Alliance, AllianceTotals>;
+  /** Wall-clock milliseconds for the whole match (run() start to end). */
+  wallMs: number;
+  /** Wall-clock milliseconds spent waiting on providers (both alliances' calls overlap, counted once). */
+  providerWaitMs: number;
+  /** wallMs - providerWaitMs: engine, views, prompts and bookkeeping. */
+  simWallMs: number;
+  /** Matches per hour at this match's wall time (3,600,000 / wallMs). */
+  matchesPerHour: number;
+}
+
+/** Exact totals for one alliance's decider in one match. */
+export interface AllianceTotals {
+  /** Controller decisions (provider requests, a captain step counts its sequential calls separately in `calls`). */
+  decisions: number;
+  /** Provider calls (DecisionRequests sent). */
+  calls: number;
+  /** Robot decisions made (intent choices + captain role choices). */
+  robotDecisions: number;
+  /** Robot decisions answered by the fallback policy. */
+  fallbacks: number;
+  /** Calls answered from the offline cache. */
+  cachedCalls: number;
+  /** Sum of provider-measured latency over calls, milliseconds. */
+  latencyMs: number;
+  /** Sum of match seconds charged for latency (0 in paused mode). */
+  chargedS: number;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+  /** Distinct model ids that answered. */
+  models: string[];
+  /** True if any answer was synthetic (mock). */
+  isMock: boolean;
 }
 
 interface Pending {
@@ -154,6 +190,7 @@ export class AgentController {
   private captainBusy: Record<Alliance, boolean> = { red: false, blue: false };
   private calls = 0;
   private ticks = 0;
+  private providerWaitMs = 0;
   readonly decisions: ControllerDecision[] = [];
 
   constructor(private readonly opts: ControllerOptions) {
@@ -296,7 +333,10 @@ export class AgentController {
       if (!agent?.captain || !this.captainDue[alliance] || this.captainBusy[alliance]) continue;
       this.captainDue[alliance] = false;
       const ids = this.state.robots.filter((r) => r.alliance === alliance).map((r) => r.id);
-      this.schedule(await this.captainStep(alliance, agent.provider, ids), intents);
+      const waitStart = performance.now();
+      const captainDecision = await this.captainStep(alliance, agent.provider, ids);
+      this.providerWaitMs += performance.now() - waitStart;
+      this.schedule(captainDecision, intents);
     }
 
     // 3. Robots that need a decision (not already thinking, not just given an intent).
@@ -310,9 +350,11 @@ export class AgentController {
         this.sinceDecision.set(id, []);
       }
     }
+    const waitStart = performance.now();
     const asked = await Promise.all(
       (["blue", "red"] as const).filter((a) => byAlliance[a].length > 0).map((a) => this.intentStep(a, this.opts.agents[a]!, byAlliance[a])),
     );
+    if (asked.length > 0) this.providerWaitMs += performance.now() - waitStart;
     for (const d of asked.flat()) this.schedule(d, intents);
 
     // 4. Step the engine.
@@ -328,7 +370,9 @@ export class AgentController {
 
   /** Play the match to the end. */
   async run(): Promise<ControllerSummary> {
+    const started = performance.now();
     while (!this.finished) await this.tick();
+    const wallMs = performance.now() - started;
     const dropped = this.pending.splice(0);
     for (const p of dropped) this.finalize(p.decision); // appliedAtS stays null
     const zero = (): Record<Alliance, number> => ({ red: 0, blue: 0 });
@@ -340,6 +384,60 @@ export class AgentController {
       chargedS[d.alliance] += d.chargedS;
       fallbacks[d.alliance] += d.choices.filter((c) => c.usedFallbackPolicy).length;
     }
-    return { state: this.state, ticks: this.ticks, decisions: this.decisions, calls, fallbacks, dropped: dropped.length, chargedS };
+    const totals = (a: Alliance): AllianceTotals => {
+      const ds = this.decisions.filter((d) => d.alliance === a);
+      const metas = ds.flatMap((d) => d.metas);
+      const sum = (f: (m: DecisionMeta) => number) => metas.reduce((s, m) => s + f(m), 0);
+      return {
+        decisions: ds.length,
+        calls: metas.length,
+        robotDecisions: ds.reduce((s, d) => s + d.choices.length, 0),
+        fallbacks: fallbacks[a],
+        cachedCalls: metas.filter((m) => m.cached).length,
+        latencyMs: sum((m) => m.latencyMs),
+        chargedS: chargedS[a],
+        inputTokens: sum((m) => m.inputTokens),
+        outputTokens: sum((m) => m.outputTokens),
+        costUsd: sum((m) => m.costUsd),
+        models: [...new Set(metas.map((m) => m.model))],
+        isMock: metas.some((m) => m.isMock),
+      };
+    };
+    return {
+      state: this.state,
+      ticks: this.ticks,
+      decisions: this.decisions,
+      calls,
+      fallbacks,
+      dropped: dropped.length,
+      chargedS,
+      byAlliance: { blue: totals("blue"), red: totals("red") },
+      wallMs,
+      providerWaitMs: this.providerWaitMs,
+      simWallMs: Math.max(0, wallMs - this.providerWaitMs),
+      matchesPerHour: wallMs > 0 ? 3_600_000 / wallMs : Infinity,
+    };
   }
+}
+
+/**
+ * Run-log "decision" lines for one controller decision: one line per robot, carrying exactly the
+ * request that robot's answer came from and that call's meta. isMock is true when the provider
+ * was a mock. Captain decisions log chosenLabel = the role label and intent = null.
+ */
+export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
+  return d.choices.map((c, i) => {
+    const k = d.kind === "captain" ? i : 0;
+    const meta = d.metas[k]!;
+    return {
+      type: "decision" as const,
+      isMock: meta.isMock,
+      robotId: c.robotId,
+      matchTimeS: d.requestedAtS,
+      request: d.requests[k]!,
+      meta,
+      chosenLabel: c.chosenLabel,
+      intent: d.appliedAtS === null ? null : c.intent,
+    };
+  });
 }
