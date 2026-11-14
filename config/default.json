@@ -1393,14 +1393,18 @@
   },
   "triggers": {
     "_status": "TUNABLE",
-    "_note": "Thresholds that turn engine conditions into decision triggers.",
+    "_note": "Thresholds that turn engine conditions into decision triggers, plus the two fairness rules applied identically to every decider (planner, 2026-11-14 13:35): the commitment rule (minCommitS, coalesceS, criticalPinS, watchdogS) and the no-idle rule (maxIdleS).",
     "contactLongS": 2,
     "noProgressS": 1.5,
     "noProgressMinMoveM": 0.2,
-    "watchdogS": 5,
+    "watchdogS": 3,
     "opponentInRangeM": 2,
     "actionTimeoutS": 15,
-    "climbSafetyMarginS": 2
+    "climbSafetyMarginS": 2,
+    "minCommitS": 2,
+    "coalesceS": 0.25,
+    "criticalPinS": 1.5,
+    "maxIdleS": 1
   },
   "microRollouts": {
     "_status": "TUNABLE",
@@ -1428,7 +1432,10 @@
         "concurrency": 8,
         "timeoutMs": 2000,
         "retries": 2,
-        "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 }
+        "sharedRateLimit": {
+          "requestsPerSecond": 4,
+          "maxInFlight": 2
+        }
       },
       "drex_mock": {
         "endpoint": null,

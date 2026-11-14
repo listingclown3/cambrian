@@ -265,6 +265,23 @@ export const TriggerParamsSchema = z.object({
   actionTimeoutS: z.number().positive(),
   /** Spare seconds required on top of travel + climb time before a climb is offered. */
   climbSafetyMarginS: z.number().nonnegative(),
+  /**
+   * COMMITMENT RULE (applies identically to every decider): a robot keeps an intent for at least
+   * this many seconds of sim time before it may be re-asked, unless a critical trigger fires
+   * (pinned longer than criticalPinS, hub shift or hub warning, hopper full or empty, endgame
+   * start, or the action finished, failed or timed out).
+   */
+  minCommitS: z.number().nonnegative().optional(),
+  /** Triggers arriving within this many seconds of each other are one decision moment. */
+  coalesceS: z.number().nonnegative().optional(),
+  /** A pin lasting longer than this many seconds is a critical trigger. */
+  criticalPinS: z.number().nonnegative().optional(),
+  /**
+   * NO-IDLE RULE (applies identically to every decider): no robot may be stationary without an
+   * active intent for longer than this many seconds (pins excepted). A robot waiting for its
+   * decider, or whose action just finished, follows its role continuation in the meantime.
+   */
+  maxIdleS: z.number().positive().optional(),
 });
 export type TriggerParams = z.infer<typeof TriggerParamsSchema>;
 
