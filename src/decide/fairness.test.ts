@@ -107,7 +107,17 @@ describe("no-idle rule", () => {
     const answered = s.decisions.find((d) => d.kind === "intent" && d.choices.some((ch) => ch.robotId === "B1"))!;
     expect(answered.appliedAtS!).toBeCloseTo(T.coalesceS + 3, 6);
     expect(s.byAlliance.blue.robotDecisions).toBe(s.decisions.reduce((n, d) => n + d.choices.length, 0)); // continuations are not decisions
-    expect(s.byAlliance.blue.continuations).toBe(3);
+    // One continuation per waiting robot at maxIdleS; a robot whose continuation itself finishes
+    // before the answer arrives is given another after a further maxIdleS (P1's roleContinuation
+    // can pick a short action such as pass_to). Counted once per hand-out, never as a decision.
+    expect(continuations.filter((x) => Math.abs(x.timeS - T.maxIdleS) < 1e-6).map((x) => x.robotId).sort()).toEqual(["B1", "B2", "B3"]);
+    expect(s.byAlliance.blue.continuations).toBe(continuations.length);
+    for (const id of ["B1", "B2", "B3"]) {
+      const b = s.byRobot[id]!;
+      expect(b.continuations).toBe(continuations.filter((x) => x.robotId === id).length);
+      expect(b.idleS).toBeLessThanOrEqual(b.continuations * T.maxIdleS + 1e-6); // never idle longer than maxIdleS per wait
+      expect(b.idleS + b.continuationS).toBeLessThanOrEqual(5 + 1e-6); // no robot-second counted twice
+    }
     expect(s.byAlliance.blue.interruptedActions).toBe(0); // replacing a continuation is not an interruption
   });
 });
