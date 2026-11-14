@@ -1,7 +1,7 @@
 /**
  * Decision layer entry point (owner: P2): providers, registry, request building.
  */
-export { IMPLEMENTED_PROVIDERS, NETWORK_PROVIDERS, getProvider, getProviderBySpec, parseProviderSpec, providerModel, type ProviderOptions } from "./registry";
+export { IMPLEMENTED_PROVIDERS, NETWORK_PROVIDERS, getProvider, getProviderBySpec, parseProviderSpec, providerLabel, providerModel, providerReasoning, warmupProvider, type ProviderOptions } from "./registry";
 export {
   ACTION_QUESTION_ID,
   actionQuestionId,

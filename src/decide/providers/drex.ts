@@ -21,6 +21,8 @@ import { authHeaders, estimateCostUsd, limiterFor, recordRealCall, requestJson, 
 export interface DrexOptions extends ProviderDeps {
   /** Drex model id to request (default: cfg.providers.byId.drex.model). */
   model?: string;
+  /** Per-request timeout override, milliseconds (default: config timeoutMs). */
+  timeoutMs?: number;
 }
 
 /** The Drex wire body for a request. Exported so tests and tools can inspect it. */
@@ -88,14 +90,15 @@ export function parseDrexAnswer(q: Question, raw: any): Answer | string {
   }
 }
 
-export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider & { readonly model: string } {
+export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider & { readonly model: string; warmup(): Promise<DecisionResponse> } {
   const p = cfg.providers.byId.drex;
   const model = opts.model ?? p.model ?? "drex-v2.0";
   const env = opts.env ?? process.env;
   const limit = limiterFor("drex", p);
 
-  async function call(req: DecisionRequest): Promise<DecisionResponse> {
+  async function call(req: DecisionRequest, enqueuedMs: number): Promise<DecisionResponse> {
     const started = performance.now();
+    const queuedMs = started - enqueuedMs;
     const key = env[p.apiKeyEnv ?? ""];
     if (!p.endpoint || !key) return fallbackResponse(req, "drex", model, started, `${p.apiKeyEnv ?? "drex api key"} is not set`);
     const body = drexBody(model, req);
@@ -104,7 +107,7 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
 
     let json: any;
     try {
-      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs: p.timeoutMs, retries: retriesFor(p, req.mode), deps: opts }));
+      ({ json } = await requestJson(p.endpoint, { headers: authHeaders(p, key), body }, { timeoutMs: opts.timeoutMs ?? p.timeoutMs, retries: retriesFor(p, req.mode), deps: opts, queuedMs }));
     } catch (e) {
       // The request was sent, so it may have been billed: record it (tokens unknown = 0).
       recordRealCall(cfg, "drex", opts, { tool: "drex", model, latencyMs: performance.now() - started, costUsd: 0, counts: { questions: req.questions.length }, purpose: `${opts.purpose ?? "decision"}_failed` });
@@ -149,6 +152,22 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
     model,
     // Latency is measured inside call(), i.e. from when the request is actually sent, not from
     // when it entered the concurrency queue.
-    decide: (req) => limit(() => call(req)),
+    decide: (req) => {
+      const enqueuedMs = performance.now();
+      return limit(() => call(req, enqueuedMs));
+    },
+    /**
+     * One tiny real call before a match, so the TLS connection is open (and kept alive) when
+     * the first in-match decision is made. Measured 2026-11-14: the first call of a process
+     * took over 2 s (cold connection) and timed out. Recorded in the ledger as purpose "warmup".
+     */
+    async warmup(): Promise<DecisionResponse> {
+      return drexProvider(cfg, { ...opts, purpose: "warmup", timeoutMs: Math.max(opts.timeoutMs ?? p.timeoutMs, 10_000) }).decide({
+        stateText: "Warm-up call before a match.",
+        questions: [{ id: "ready", kind: "noul", instructions: "Is this a warm-up call?" }],
+        seed: 0,
+        mode: "live",
+      });
+    },
   };
 }

@@ -15,10 +15,17 @@ export interface DecisionNote {
   latencyMs?: number;
   /** Probability per option label, only when a provider reported them. Never invented. */
   probabilities?: Record<string, number>;
+  /** Provider and model that answered, when a provider was asked. */
+  provider?: string;
+  model?: string;
+  /** True when the scripted fallback policy chose instead of the provider. */
+  fallback?: boolean;
+  /** True when the answer is synthetic (mock provider). */
+  isMock?: boolean;
 }
 
 /** Where the data behind a stream comes from. Anything but "live" must be badged on screen. */
-export type StreamSource = "demo" | "simulated_latency" | "recorded";
+export type StreamSource = "demo" | "simulated_latency" | "recorded" | "provider";
 
 /** Messages the server sends on /ws/demo, /ws/match and /ws/replay. */
 export type ServerMessage =
@@ -37,12 +44,18 @@ export type ServerMessage =
       source?: StreamSource;
       /** Display name of the decider whose alliance is being charged. */
       decider?: string;
+      /** Exact model id of the decider (from the run manifest for replays). */
+      model?: string;
       /** Alliance driven by the decider. */
       deciderAlliance?: "red" | "blue";
       /** Charged decision latency per decision, ms, when latency is simulated. */
       chargedLatencyMs?: number;
       /** Honest one-line description of where latency numbers come from. */
       latencySource?: string;
+      /** Provider-driven streams: "paused" or "realtime" latency charging. */
+      timing?: "paused" | "realtime";
+      /** Provider-driven streams: id of the run being logged to runs/. */
+      loggedRunId?: string;
       /** Run id for recorded replays. */
       runId?: string;
     }
@@ -59,6 +72,11 @@ export type ServerMessage =
       thinking?: { robotId: RobotId; untilS: number }[];
       /** Running totals for the top bar. */
       stats?: { decisions: number; avgLatencyMs: number; chargedS: number };
+    }
+  | {
+      /** The stream could not start or failed; the message is safe to show (never contains secrets). */
+      type: "error";
+      message: string;
     }
   | {
       /** Sent once when the match is over; the socket stays open. */

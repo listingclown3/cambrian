@@ -64,10 +64,12 @@ export class MatchRunner {
     }
     const { events } = this.engine.step(this.state, intents, this.state.rules.physics.dtS);
     this.lastEvents = events;
-    for (const robot of this.state.robots) {
-      const seen = this.sinceDecision.get(robot.id) ?? [];
-      seen.push(...events);
-      this.sinceDecision.set(robot.id, seen.slice(-50));
+    if (events.length > 0) {
+      for (const robot of this.state.robots) {
+        const seen = this.sinceDecision.get(robot.id) ?? [];
+        seen.push(...events);
+        this.sinceDecision.set(robot.id, seen.length > 50 ? seen.slice(-50) : seen);
+      }
     }
     return { state: this.state, events, decisions };
   }

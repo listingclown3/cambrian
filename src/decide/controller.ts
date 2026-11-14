@@ -384,10 +384,13 @@ export class AgentController {
     }
   }
 
-  /** Play the match to the end. */
-  async run(): Promise<ControllerSummary> {
+  /**
+   * Play the match to the end, or until match time `untilS` (tests and short demos). Answers
+   * still outstanding when it stops are counted as dropped.
+   */
+  async run(untilS = Infinity): Promise<ControllerSummary> {
     const started = performance.now();
-    while (!this.finished) await this.tick();
+    while (!this.finished && this.state.timeS < untilS - EPS) await this.tick();
     const wallMs = performance.now() - started;
     const dropped = this.pending.splice(0);
     for (const p of dropped) this.finalize(p.decision); // appliedAtS stays null

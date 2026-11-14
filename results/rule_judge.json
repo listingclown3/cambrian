@@ -1,9 +1,9 @@
 {
   "experiment": "rule_judge",
-  "createdTs": "2026-11-14T20:04:23.888Z",
+  "createdTs": "2026-11-14T20:52:11.109Z",
   "isMock": false,
-  "gitCommit": "9c88e2b74658-dirty",
-  "simHash": "7b72e7413d084948",
+  "gitCommit": "218ce58ef6da-dirty",
+  "simHash": "7160952d70dcba39",
   "config": {
     "model": "drex-v2.0",
     "threshold": 0.5,
@@ -17,7 +17,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9787,
+      "pYes": 0.9016,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -28,7 +28,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0235,
+      "pYes": 0.0254,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -39,7 +39,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9718,
+      "pYes": 0.8119,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -50,7 +50,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0124,
+      "pYes": 0.025,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -61,7 +61,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9728,
+      "pYes": 0.8708,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -72,7 +72,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0157,
+      "pYes": 0.0209,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -83,7 +83,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.8675,
+      "pYes": 0.7156,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -94,7 +94,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0764,
+      "pYes": 0.059,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -105,7 +105,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0336,
+      "pYes": 0.0788,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -116,7 +116,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.8426,
+      "pYes": 0.8516,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -127,7 +127,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0126,
+      "pYes": 0.01,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -138,7 +138,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9536,
+      "pYes": 0.9081,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -149,7 +149,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8563,
+      "pYes": 0.9291,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -160,9 +160,9 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.5585,
-      "judgedViolation": true,
-      "agrees": false,
+      "pYes": 0.2621,
+      "judgedViolation": false,
+      "agrees": true,
       "labelSource": "fabricated_draft"
     },
     {
@@ -171,7 +171,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9163,
+      "pYes": 0.9348,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -182,9 +182,9 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.5071,
-      "judgedViolation": true,
-      "agrees": false,
+      "pYes": 0.3284,
+      "judgedViolation": false,
+      "agrees": true,
       "labelSource": "fabricated_draft"
     },
     {
@@ -193,7 +193,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.2033,
+      "pYes": 0.1428,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -204,7 +204,7 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7819,
+      "pYes": 0.6677,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -215,7 +215,7 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0485,
+      "pYes": 0.0739,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -226,7 +226,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9541,
+      "pYes": 0.9627,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -237,7 +237,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.1148,
+      "pYes": 0.1182,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -248,7 +248,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8574,
+      "pYes": 0.8583,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -259,7 +259,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0219,
+      "pYes": 0.0201,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -270,7 +270,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.7345,
+      "pYes": 0.6638,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -281,7 +281,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0566,
+      "pYes": 0.0284,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -292,7 +292,7 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.914,
+      "pYes": 0.8815,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -303,7 +303,7 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0442,
+      "pYes": 0.0556,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -314,7 +314,7 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.6903,
+      "pYes": 0.6196,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -325,7 +325,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0327,
+      "pYes": 0.0417,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -336,7 +336,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8704,
+      "pYes": 0.8451,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -347,7 +347,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9278,
+      "pYes": 0.9787,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -358,7 +358,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0687,
+      "pYes": 0.0152,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -369,7 +369,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9291,
+      "pYes": 0.9679,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -380,7 +380,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0497,
+      "pYes": 0.0152,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -391,9 +391,9 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.802,
-      "judgedViolation": true,
-      "agrees": false,
+      "pYes": 0.1345,
+      "judgedViolation": false,
+      "agrees": true,
       "labelSource": "fabricated_draft"
     },
     {
@@ -402,7 +402,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7707,
+      "pYes": 0.8046,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -413,7 +413,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0218,
+      "pYes": 0.0153,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -424,7 +424,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8892,
+      "pYes": 0.9541,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -435,7 +435,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9578,
+      "pYes": 0.8253,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -446,7 +446,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9915,
+      "pYes": 0.8874,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -457,7 +457,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0192,
+      "pYes": 0.0424,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -468,7 +468,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.022,
+      "pYes": 0.0307,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -479,7 +479,7 @@
       "rulePage": 67,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0155,
+      "pYes": 0.1437,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -489,9 +489,9 @@
       "ruleId": "G413",
       "rulePage": 67,
       "difficulty": "borderline",
-      "expectedViolation": true,
-      "pYes": 0.9288,
-      "judgedViolation": true,
+      "expectedViolation": false,
+      "pYes": 0.1104,
+      "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
     },
@@ -501,7 +501,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0163,
+      "pYes": 0.0143,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -512,7 +512,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0147,
+      "pYes": 0.015,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -523,7 +523,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0119,
+      "pYes": 0.0153,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -534,7 +534,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8697,
+      "pYes": 0.9312,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -545,7 +545,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.6158,
+      "pYes": 0.5418,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -556,7 +556,7 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7985,
+      "pYes": 0.7978,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -567,9 +567,9 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.1683,
-      "judgedViolation": false,
-      "agrees": true,
+      "pYes": 0.8304,
+      "judgedViolation": true,
+      "agrees": false,
       "labelSource": "fabricated_draft"
     },
     {
@@ -578,7 +578,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.123,
+      "pYes": 0.1689,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -589,7 +589,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9635,
+      "pYes": 0.9339,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -600,7 +600,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9666,
+      "pYes": 0.9391,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -611,7 +611,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0297,
+      "pYes": 0.024,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -622,7 +622,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0277,
+      "pYes": 0.0489,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -633,7 +633,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9585,
+      "pYes": 0.892,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -644,7 +644,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0226,
+      "pYes": 0.0343,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -655,7 +655,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0515,
+      "pYes": 0.0832,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -666,7 +666,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9697,
+      "pYes": 0.948,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -675,17 +675,18 @@
   "summary": {
     "incidents": 60,
     "rules": 7,
-    "agreeWithDraftLabels": 57,
-    "agreementPct": 95,
-    "agreementPctClear": 97.4,
-    "agreementPctBorderline": 90.5,
+    "agreeWithDraftLabels": 59,
+    "agreementPct": 98.3,
+    "agreementPctClear": 100,
+    "agreementPctBorderline": 95.2,
     "drexCalls": 7,
-    "medianLatencyMsPerCall": 255,
+    "medianLatencyMsPerCall": 212,
     "questionsPerCall": 8.6,
     "model": "drex-v2.0",
-    "metricName": "agreement with AI-drafted labels (not yet human-verified)",
+    "metricName": "agreement with labels reviewed against the full TU22 manual (AI-assisted review)",
+    "labels_review": "ai_assisted_full_manual",
     "labels_human_verified": false,
     "labelsConfirmedByHuman": false,
-    "caveat": "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy"
+    "caveat": "labels were reviewed against the full manual with AI assistance; no person is confirmed to have verified them, so this is agreement, not accuracy"
   }
 }

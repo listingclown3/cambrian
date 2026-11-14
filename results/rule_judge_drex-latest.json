@@ -1,9 +1,9 @@
 {
   "experiment": "rule_judge_drex-latest",
-  "createdTs": "2026-11-14T20:04:32.130Z",
+  "createdTs": "2026-11-14T20:52:20.543Z",
   "isMock": false,
-  "gitCommit": "9c88e2b74658-dirty",
-  "simHash": "fd417d50654f36db",
+  "gitCommit": "218ce58ef6da-dirty",
+  "simHash": "7160952d70dcba39",
   "config": {
     "model": "drex-max-v1.1",
     "threshold": 0.5,
@@ -17,7 +17,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9974474335620019,
+      "pYes": 0.9990328381118274,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -28,7 +28,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.001991704773752899,
+      "pYes": 0.0009892531147941465,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -39,7 +39,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9831954690337856,
+      "pYes": 0.9976144083186814,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -50,7 +50,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0011586672480758207,
+      "pYes": 0.0003744615438653495,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -61,7 +61,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9913999674240139,
+      "pYes": 0.9963391675943982,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -72,7 +72,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0016627436063818674,
+      "pYes": 0.0005752528276951894,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -83,7 +83,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9982207871862138,
+      "pYes": 0.9956166336246469,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -94,7 +94,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.00718745983918916,
+      "pYes": 0.0020836300046752367,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -105,7 +105,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.00312671172063503,
+      "pYes": 0.002280375078111657,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -116,7 +116,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9946329098075063,
+      "pYes": 0.9982207862565482,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -127,7 +127,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0012971434854516322,
+      "pYes": 0.0008445889182168818,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -138,7 +138,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9964207046576657,
+      "pYes": 0.9970777109047599,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -149,7 +149,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9968732899040834,
+      "pYes": 0.9941279485406673,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -160,7 +160,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.006719337925942088,
+      "pYes": 0.01075801866169765,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -171,7 +171,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.985936517892701,
+      "pYes": 0.9882358192959189,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -182,7 +182,7 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.07679525476711785,
+      "pYes": 0.02984636118492448,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -193,7 +193,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.022416745450500094,
+      "pYes": 0.06222383050448397,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -204,7 +204,7 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.976570749088041,
+      "pYes": 0.7210086584091187,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -215,7 +215,7 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.005131051178224402,
+      "pYes": 0.009837047041179799,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -226,7 +226,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9938580347511078,
+      "pYes": 0.994127945763106,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -237,7 +237,7 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.006871911882688706,
+      "pYes": 0.010059697122549576,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -248,7 +248,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9921376598843336,
+      "pYes": 0.9945108714553467,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -259,7 +259,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.006005502550660306,
+      "pYes": 0.006719337925942088,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -270,7 +270,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9055647647627123,
+      "pYes": 0.9674210204629121,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -281,7 +281,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.005872048681771409,
+      "pYes": 0.005489131323284573,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -292,7 +292,7 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9738403740122984,
+      "pYes": 0.9901629483480148,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -314,7 +314,7 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.21229054891197238,
+      "pYes": 0.09837334004600853,
       "judgedViolation": false,
       "agrees": false,
       "labelSource": "fabricated_draft"
@@ -325,7 +325,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.002793466739943377,
+      "pYes": 0.002179789717999128,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -336,7 +336,7 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9908020437257876,
+      "pYes": 0.9931280816428529,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -347,7 +347,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9923120543040096,
+      "pYes": 0.9968732882793649,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -358,7 +358,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.00255256759917958,
+      "pYes": 0.0021797885563835735,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -369,7 +369,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9903807228502021,
+      "pYes": 0.9871367795296173,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -380,7 +380,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0016627429090513574,
+      "pYes": 0.001297142322808518,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -391,7 +391,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.26117005165904605,
+      "pYes": 0.10245699301105696,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -402,7 +402,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9263495482906564,
+      "pYes": 0.9232047452328822,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -413,7 +413,7 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.005872054236893987,
+      "pYes": 0.0015538846277970313,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -424,7 +424,7 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9899402973457282,
+      "pYes": 0.9938580319743004,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -435,7 +435,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9973296912474692,
+      "pYes": 0.9882358248181168,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -446,7 +446,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.996170499215825,
+      "pYes": 0.9839263888274785,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -457,7 +457,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0017006947969001598,
+      "pYes": 0.00132676121723459,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -468,7 +468,7 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0026107755569953987,
+      "pYes": 0.0009455632598418398,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -479,7 +479,7 @@
       "rulePage": 67,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.002131167221319311,
+      "pYes": 0.0020836300046752367,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -489,9 +489,9 @@
       "ruleId": "G413",
       "rulePage": 67,
       "difficulty": "borderline",
-      "expectedViolation": true,
-      "pYes": 0.994127945763106,
-      "judgedViolation": true,
+      "expectedViolation": false,
+      "pYes": 0.08345663547515869,
+      "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
     },
@@ -501,7 +501,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0012121916370401464,
+      "pYes": 0.002131167221319311,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -512,7 +512,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.001903826497667451,
+      "pYes": 0.002552566437998008,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -523,7 +523,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0013570548711193313,
+      "pYes": 0.002280373916613098,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -534,7 +534,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9995711645375069,
+      "pYes": 0.9994624467686172,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -545,7 +545,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9970777109047599,
+      "pYes": 0.993429868292367,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -556,7 +556,7 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9970110954284741,
+      "pYes": 0.996170499215825,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -567,7 +567,7 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0022295157865417827,
+      "pYes": 0.003916713514909792,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -578,7 +578,7 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.05026674570243035,
+      "pYes": 0.052469635876687425,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -589,7 +589,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9937184845453066,
+      "pYes": 0.9937184822316255,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -600,7 +600,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9970777120655112,
+      "pYes": 0.9952037817490387,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -611,7 +611,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0011586672480758207,
+      "pYes": 0.0014197308542854275,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -622,7 +622,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0007375389894508991,
+      "pYes": 0.0015893566691355708,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -633,7 +633,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9970110940356657,
+      "pYes": 0.9965783886376831,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -644,7 +644,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0012398721013374054,
+      "pYes": 0.0015893559717537497,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -655,7 +655,7 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.027336445622250478,
+      "pYes": 0.03403452500045923,
       "judgedViolation": false,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -666,7 +666,7 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9977196239926895,
+      "pYes": 0.9963391692182462,
       "judgedViolation": true,
       "agrees": true,
       "labelSource": "fabricated_draft"
@@ -680,12 +680,13 @@
     "agreementPctClear": 100,
     "agreementPctBorderline": 95.2,
     "drexCalls": 7,
-    "medianLatencyMsPerCall": 262,
+    "medianLatencyMsPerCall": 233,
     "questionsPerCall": 8.6,
     "model": "drex-max-v1.1",
-    "metricName": "agreement with AI-drafted labels (not yet human-verified)",
+    "metricName": "agreement with labels reviewed against the full TU22 manual (AI-assisted review)",
+    "labels_review": "ai_assisted_full_manual",
     "labels_human_verified": false,
     "labelsConfirmedByHuman": false,
-    "caveat": "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy"
+    "caveat": "labels were reviewed against the full manual with AI assistance; no person is confirmed to have verified them, so this is agreement, not accuracy"
   }
 }

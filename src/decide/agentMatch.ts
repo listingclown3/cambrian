@@ -17,9 +17,9 @@ import { ENGINE_IS_STUB, engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
 import { AgentController, type AllianceAgent } from "./controller";
-import { getProviderBySpec } from "./registry";
+import { getProviderBySpec, providerReasoning, warmupProvider } from "./registry";
 import { MatchRecorder } from "./recorder";
-import { redact } from "./providers/http";
+import { callStats, redact } from "./providers/http";
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(name);
@@ -40,6 +40,10 @@ const recorder = recordId ? new MatchRecorder(cfg, seed, `${recordId}-seed${seed
 const deciders = (["blue", "red"] as const).filter((a) => agents[a]);
 const manifestProvider = deciders.length === 1 ? specs[deciders[0]!] : deciders.length === 0 ? "scripted" : "mixed";
 
+// Open each provider's connection before the clock starts (the first cold call can exceed the
+// live timeout); warm-up calls are real and recorded in the ledger as purpose "warmup".
+if (!process.argv.includes("--no-warmup")) for (const a of deciders) await warmupProvider(agents[a]!.provider);
+
 const started = performance.now();
 const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, ...(recorder?.hooks() ?? {}) });
 let summary: Awaited<ReturnType<AgentController["run"]>>;
@@ -51,8 +55,15 @@ try {
   throw e;
 }
 if (recorder && recordId) {
-  const model = deciders.length === 2 ? deciders.map((a) => `${a}=${[...new Set(summary.decisions.filter((d) => d.alliance === a).flatMap((d) => d.metas.map((m) => m.model)))].join(",")}`).join(";") : undefined;
-  const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, ...(model ? { model } : {}), status: "ok", durationMs: summary.wallMs, error: null });
+  // Manifest model: the exact model ids that answered, plus the reasoning setting for chat
+  // providers, e.g. "Qwen/Qwen3.5-397B-A17B (reasoning off)"; "blue=...;red=..." when mixed.
+  const label = (a: Alliance) => {
+    const served = [...new Set(summary.decisions.filter((d) => d.alliance === a).flatMap((d) => d.metas.map((m) => m.model)))].join(",") || "none";
+    const r = providerReasoning(agents[a]!.provider);
+    return r === null ? served : `${served} (reasoning ${r})`;
+  };
+  const model = deciders.length === 2 ? deciders.map((a) => `${a}=${label(a)}`).join(";") : deciders.length === 1 ? label(deciders[0]!) : "scripted";
+  const { file, lines } = recorder.write({ runId: recordId, provider: manifestProvider, model, status: "ok", durationMs: summary.wallMs, error: null });
   const bad = lines.filter((l) => !RunEventSchema.safeParse(l).success).length;
   console.log(`recorded ${lines.length} lines (${lines.filter((l) => l.type === "decision").length} decisions) to ${file}; ${bad} lines fail RunEventSchema`);
   if (bad > 0) process.exitCode = 1;
@@ -77,4 +88,21 @@ for (const a of ["blue", "red"] as const) {
   for (const e of errors.slice(0, 5)) console.log(`      error: ${e}`);
 }
 console.log(`wall ${(summary.wallMs / 1000).toFixed(1)} s (provider wait ${(summary.providerWaitMs / 1000).toFixed(1)} s, sim ${(summary.simWallMs / 1000).toFixed(1)} s) = ${summary.matchesPerHour.toFixed(1)} matches/hour`);
+if (process.argv.includes("--diag")) {
+  // Timeout diagnosis: every slow (> 1 s) or failed attempt, plus what the server said about rate limits.
+  const stats = callStats.filter((s) => !s.target.endsWith("/models"));
+  const statuses = new Map<string, number>();
+  for (const s of stats) statuses.set(`${s.target.replace(/^https:\/\/([^/]+).*/, "$1")} ${s.status ?? "none"}`, (statuses.get(`${s.target.replace(/^https:\/\/([^/]+).*/, "$1")} ${s.status ?? "none"}`) ?? 0) + 1);
+  console.log(`diag: ${stats.length} attempts; by host and status: ${[...statuses].map(([k, n]) => `${k} x${n}`).join(", ")}`);
+  console.log(`diag: max in flight ${Math.max(0, ...stats.map((s) => s.inFlight))}, max queued ${Math.max(0, ...stats.map((s) => s.queuedMs)).toFixed(0)} ms`);
+  const headerNames = [...new Set(stats.flatMap((s) => Object.keys(s.rateHeaders)))];
+  console.log(`diag: rate-limit headers seen: ${headerNames.join(", ") || "none"}${headerNames.length ? `; last: ${JSON.stringify(stats.findLast((s) => Object.keys(s.rateHeaders).length)?.rateHeaders)}` : ""}`);
+  const t0 = stats[0]?.startedMs ?? 0;
+  for (const s of stats.filter((x) => x.totalMs > 1000 || x.error)) {
+    const prev = stats.filter((x) => x.startedMs < s.startedMs && x.startedMs > s.startedMs - 60_000).length;
+    console.log(
+      `diag: t=${((s.startedMs - t0) / 1000).toFixed(1)} s status ${s.status ?? "none"} queued ${s.queuedMs.toFixed(0)} ms headers ${s.headersMs?.toFixed(0) ?? "-"} ms total ${s.totalMs.toFixed(0)} ms in flight ${s.inFlight}, ${prev} calls in the previous 60 s${s.error ? `; ${s.error}` : ""}`,
+    );
+  }
+}
 if (summary.dropped > 0) console.log(`${summary.dropped} answer(s) arrived after the match ended and were never applied`);

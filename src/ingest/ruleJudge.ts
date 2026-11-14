@@ -19,7 +19,8 @@ const conduct = JSON.parse(readFileSync(repoPath("data", "rules", "conduct_rules
 const incidentsFile = JSON.parse(readFileSync(repoPath("data", "rules", "incidents.template.json"), "utf8"));
 const incidents: any[] = incidentsFile.incidents;
 const verified = incidentsFile.labels_human_verified === true;
-const metricName = verified ? "accuracy against human-verified labels" : "agreement with AI-drafted labels (not yet human-verified)";
+const labelsReview: string = incidentsFile.labels_review ?? "ai_draft";
+const metricName = verified ? "accuracy vs human-reviewed labels" : labelsReview === "ai_assisted_full_manual" ? "agreement with labels reviewed against the full TU22 manual (AI-assisted review)" : "agreement with AI-drafted labels (not yet human-verified)";
 const rules = new Map<string, any>((conduct.rules as any[]).map((r) => [r.id, r]));
 
 const rows: Record<string, any>[] = [];
@@ -31,7 +32,7 @@ for (const [ruleId, rule] of rules) {
   if (group.length === 0) continue;
   const questions: Record<string, DrexQuestion> = {};
   for (const inc of group) questions[inc.id] = { type: "noul", instructions: `Incident: ${inc.description}\nDoes this incident violate rule ${ruleId} as written?` };
-  const res = await drexAsk(cfg, { state: { rule: { id: rule.id, text: rule.text, violation: rule.violation } }, questions, purpose: "rule_judge", model });
+  const res = await drexAsk(cfg, { state: { rule: { id: rule.id, text: rule.fullText ?? rule.text, violation: rule.violation } }, questions, purpose: "rule_judge", model });
   latencies.push(res.latencyMs);
   perCall.push(group.length);
   usedModel = res.model || usedModel;
@@ -59,9 +60,10 @@ const summary = {
   questionsPerCall: perCall.length ? Math.round((10 * rows.length) / perCall.length) / 10 : 0,
   model: usedModel,
   metricName,
+  labels_review: labelsReview,
   labels_human_verified: verified,
   labelsConfirmedByHuman: verified,
-  caveat: verified ? "labels confirmed by a human" : "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy",
+  caveat: verified ? "labels confirmed by a human" : labelsReview === "ai_assisted_full_manual" ? "labels were reviewed against the full manual with AI assistance; no person is confirmed to have verified them, so this is agreement, not accuracy" : "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy",
 };
 const experiment = model ? `rule_judge_${model.replace(/[^A-Za-z0-9._-]/g, "_")}` : "rule_judge";
 const out = writeResults({ experiment, createdTs: new Date().toISOString(), isMock: false, gitCommit: gitCommit(), simHash: simHash(cfg), config: { model: usedModel, threshold: 0.5, rulesFile: "data/rules/conduct_rules.json", incidentsFile: "data/rules/incidents.template.json" }, rows, summary });
