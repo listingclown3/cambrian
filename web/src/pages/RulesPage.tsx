@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import type { Flags } from "../App";
 import { NOT_RUN, usd, useApi, type UsageSummary } from "../lib";
+import { RobotBadge, useTeams } from "../RobotBadge";
 
 interface Entry {
   value?: unknown;
@@ -11,7 +12,7 @@ interface Entry {
 type ConfigLike = { game: Record<string, Entry>; field: Record<string, Entry | { _status?: string; _note?: string }> };
 interface ConductPayload {
   available: boolean;
-  rules?: { id?: string; text?: string; citation?: { document?: string; page?: number; quote?: string } }[];
+  rules?: { id?: string; topic?: string; text?: string; violation?: string; page?: number; quote?: string; citation?: { document?: string; page?: number; quote?: string } }[];
 }
 interface SourcesPayload {
   available: boolean;
@@ -32,6 +33,7 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
   const conduct = useApi<ConductPayload>("/api/rules/conduct").data;
   const research = useApi<SourcesPayload>("/api/research/sources").data;
   const usage = useApi<UsageSummary>("/api/usage").data;
+  const teams = useTeams();
   useEffect(() => onFlags({ mock: [], recorded: false }), [onFlags]);
 
   const rows = cfg
@@ -84,19 +86,39 @@ export function RulesPage({ onFlags }: { onFlags: (f: Flags) => void }) {
       <div className="card scroll">
         {conduct?.available && conduct.rules && conduct.rules.length > 0 ? (
           <table>
-            <thead><tr><th>Rule</th><th>Text</th><th>Page</th></tr></thead>
+            <thead><tr><th>Rule</th><th>Text and penalty</th><th>Manual page</th></tr></thead>
             <tbody>
               {conduct.rules.map((r, i) => (
                 <tr key={r.id ?? i}>
-                  <td className="mono">{r.id}</td>
-                  <td>{r.text}{r.citation?.quote && <div className="hint">"{r.citation.quote}"</div>}</td>
-                  <td className="mono">{r.citation?.page ? `p.${r.citation.page}` : "-"}</td>
+                  <td className="mono">{r.id}{r.topic && <div className="hint">{r.topic}</div>}</td>
+                  <td>{r.text}{r.violation && <div className="todo" style={{ fontWeight: 600 }}>{r.violation}</div>}</td>
+                  <td className="mono">{(r.page ?? r.citation?.page) ? `p.${r.page ?? r.citation?.page}` : "-"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
           <span className="empty">conduct rules {NOT_RUN} (data/rules/conduct_rules.json is not there yet)</span>
+        )}
+      </div>
+
+      <h2>Robot profiles from real team documents {teams?.available ? `(${teams.teams?.length ?? 0})` : ""}</h2>
+      <div className="card scroll" style={{ maxHeight: "22rem", overflowY: "auto" }}>
+        {teams?.available && teams.teams && teams.teams.length > 0 ? (
+          <table>
+            <thead><tr><th>Team</th><th>Archetype (classified)</th><th>Provenance (hover for sources)</th></tr></thead>
+            <tbody>
+              {teams.teams.map((t) => (
+                <tr key={t.profile.id ?? t.profile.teamLabel}>
+                  <td>{t.profile.teamLabel}</td>
+                  <td>{(t.classifiedArchetype ?? t.profile.archetype ?? "-").replaceAll("_", " ")}</td>
+                  <td><RobotBadge team={t} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <span className="empty">real team profiles {NOT_RUN}</span>
         )}
       </div>
 

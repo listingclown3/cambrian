@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import type { RunEvent } from "../../../src/contracts";
 import type { Flags } from "../App";
-import { NOT_RUN, ms, useApi, usd, type RunListing } from "../lib";
+import { NOT_RUN, ms, signed, useApi, usd, type RunListing } from "../lib";
 
 interface ResultRow {
   name: string;
@@ -50,6 +50,40 @@ function RunColumn({ run }: { run: RunListing }) {
   );
 }
 
+/** results/myrobot.json: margin of the user's robot against each theoretical archetype. Format is tolerated loosely until it is frozen. */
+function MyRobotPanel() {
+  const { data, error } = useApi<{ isMock?: boolean; rows?: Record<string, unknown>[] }>("/api/results/myrobot");
+  const rows = data?.rows ?? [];
+  const num = (r: Record<string, unknown>, ...keys: string[]) => keys.map((k) => r[k]).find((v): v is number => typeof v === "number");
+  return (
+    <>
+      <h2>Your robot vs the theoreticals</h2>
+      <div className="card scroll">
+        {error || rows.length === 0 ? (
+          <span className="empty">your robot against each archetype: {NOT_RUN} (results/myrobot.json)</span>
+        ) : (
+          <table>
+            <thead><tr><th>Opponent archetype</th><th className="num">Margin</th><th className="num">95% CI</th></tr></thead>
+            <tbody>
+              {rows.map((r, i) => {
+                const m = num(r, "meanMargin", "margin", "mean");
+                const ci = num(r, "ci95");
+                return (
+                  <tr key={i}>
+                    <td>{String(r.archetype ?? r.opponent ?? r.label ?? i).replaceAll("_", " ")}</td>
+                    <td className="num mono">{m === undefined ? NOT_RUN : signed(m)}</td>
+                    <td className="num mono">{ci === undefined ? "-" : `± ${ci.toFixed(1)}`}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 export function ComparePage({ runs, onFlags }: { runs: RunListing[]; onFlags: (f: Flags) => void }) {
   const results = useApi<ResultRow[]>("/api/results").data ?? [];
   const [picked, setPicked] = useState<string[]>([]);
@@ -85,6 +119,8 @@ export function ComparePage({ runs, onFlags }: { runs: RunListing[]; onFlags: (f
         </table>
       </div>
       {chosen.length > 0 && <div className={`grid g2`} style={{ marginTop: "1rem" }}>{chosen.map((r) => <RunColumn key={`${r.source}/${r.runId}`} run={r} />)}</div>}
+
+      <MyRobotPanel />
 
       <h2>Results files</h2>
       <div className="card scroll">
