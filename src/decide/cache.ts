@@ -38,9 +38,15 @@ export function cacheKey(providerId: string, model: string, variant: string, req
 }
 
 /** Keep a wrapped provider's model information (model / resolveModel) visible through a wrapper. */
-export function forwardModel(inner: DecisionProvider): { model?: string; resolveModel?: () => Promise<string | null> } {
-  const i = inner as { model?: string; resolveModel?: () => Promise<string | null> };
-  return { ...(i.model !== undefined ? { model: i.model } : {}), ...(i.resolveModel ? { resolveModel: () => i.resolveModel!() } : {}) };
+export function forwardModel(inner: DecisionProvider): { model?: string; resolveModel?: () => Promise<string | null>; reasoning?: string; splitQuestions?: boolean; warmup?: () => Promise<unknown> } {
+  const i = inner as { model?: string; resolveModel?: () => Promise<string | null>; reasoning?: string; splitQuestions?: boolean; warmup?: () => Promise<unknown> };
+  return {
+    ...(i.model !== undefined ? { model: i.model } : {}),
+    ...(i.resolveModel ? { resolveModel: () => i.resolveModel!() } : {}),
+    ...(i.reasoning !== undefined ? { reasoning: i.reasoning } : {}),
+    ...(i.splitQuestions !== undefined ? { splitQuestions: i.splitQuestions } : {}),
+    ...(i.warmup ? { warmup: () => i.warmup!() } : {}),
+  };
 }
 
 export interface CachedProvider extends DecisionProvider {

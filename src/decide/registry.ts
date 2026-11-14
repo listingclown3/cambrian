@@ -91,6 +91,34 @@ export async function providerModel(provider: DecisionProvider, cfg: Config): Pr
   return cfg.providers.byId[provider.id].model ?? provider.id;
 }
 
+/** Reasoning setting of a chat provider ("off" | "on" | "default"); null for providers without one (Drex, local). */
+export function providerReasoning(provider: DecisionProvider): "off" | "on" | "default" | null {
+  const r = (provider as { reasoning?: string }).reasoning;
+  return r === "off" || r === "on" || r === "default" ? r : null;
+}
+
+/**
+ * The model label used in manifests and results: the exact model id, plus " (reasoning off)" /
+ * " (reasoning on)" for chat providers, e.g. "Qwen/Qwen3.5-397B-A17B (reasoning off)".
+ * DecisionMeta.model stays the bare exact id (it keys prices and caches).
+ */
+export async function providerLabel(provider: DecisionProvider, cfg: Config): Promise<string> {
+  const model = await providerModel(provider, cfg);
+  const r = providerReasoning(provider);
+  return r === null ? model : `${model} (reasoning ${r})`;
+}
+
+/** Warm a provider's connection before a match (Drex only; a no-op elsewhere). Never throws. */
+export async function warmupProvider(provider: DecisionProvider): Promise<void> {
+  const w = (provider as { warmup?: () => Promise<unknown> }).warmup;
+  if (!w) return;
+  try {
+    await w();
+  } catch {
+    /* warm-up is best effort */
+  }
+}
+
 /** Flags a spec may carry after "@", in any order: "drex:drex-latest@anon@cache". */
 const SPEC_FLAGS = ["think", "anon", "cache"] as const;
 

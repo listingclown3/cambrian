@@ -53,6 +53,10 @@ export interface ChatProviderOptions extends ProviderDeps {
 export interface ChatDecisionProvider extends DecisionProvider {
   /** Resolve (once) and return the exact model id that will answer, or null if none is usable. */
   resolveModel(): Promise<string | null>;
+  /** Reasoning setting sent with every call ("off" for deepinfra by default). */
+  readonly reasoning: "default" | "off" | "on";
+  /** True when multi-question requests are answered one question per HTTP call. */
+  readonly splitQuestions: boolean;
 }
 
 export const LLM_SYSTEM_PROMPT =
@@ -286,6 +290,8 @@ export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cf
   const split = opts.splitQuestions ?? true;
   return {
     id,
+    reasoning: thinking,
+    splitQuestions: split,
     decide: (req) => (split && req.questions.length > 1 ? decideSplit(req) : limit(() => call(req))),
     async resolveModel() {
       const key = env[p.apiKeyEnv ?? ""];

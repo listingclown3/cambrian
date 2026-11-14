@@ -78,6 +78,34 @@ function retryDelayMs(res: Response | null, attempt: number): number {
   return Math.min(250 * 2 ** attempt, 4_000);
 }
 
+// -- per-attempt diagnostics (in memory, bounded; no request headers are kept) --
+
+/** One HTTP attempt, for latency/timeout diagnosis. */
+export interface CallStat {
+  /** Request origin + path (no query, no headers). */
+  target: string;
+  /** Wall-clock start (performance.now()). */
+  startedMs: number;
+  /** Milliseconds the call waited in the provider's concurrency queue before this attempt (first attempt only). */
+  queuedMs: number;
+  /** Milliseconds until response headers arrived (null on network error/timeout). */
+  headersMs: number | null;
+  /** Milliseconds for the whole attempt, body included. */
+  totalMs: number;
+  /** HTTP status, or null for a network error or timeout. */
+  status: number | null;
+  /** Requests to the same origin in flight when this one started (this one included). */
+  inFlight: number;
+  /** Retry-After-Ms / Retry-After / x-ratelimit-* response headers, when present. */
+  rateHeaders: Record<string, string>;
+  /** Error text (redacted), or null. */
+  error: string | null;
+}
+
+const MAX_STATS = 20_000;
+export const callStats: CallStat[] = [];
+const inFlightByOrigin = new Map<string, number>();
+
 /**
  * POST (or GET when body is undefined) JSON with a per-attempt timeout. Retries only when
  * `retries` > 0. Returns parsed JSON for 2xx; throws HttpError otherwise (message redacted).
@@ -85,20 +113,38 @@ function retryDelayMs(res: Response | null, attempt: number): number {
 export async function requestJson(
   url: string,
   init: { headers: Record<string, string>; body?: unknown },
-  opts: { timeoutMs: number; retries: number; deps: ProviderDeps },
+  opts: { timeoutMs: number; retries: number; deps: ProviderDeps; queuedMs?: number },
 ): Promise<HttpResult> {
   const doFetch = opts.deps.fetch ?? fetch;
+  const u = new URL(url);
+  const target = `${u.origin}${u.pathname}`;
   const sleep = opts.deps.sleep ?? defaultSleep;
   const env = opts.deps.env ?? process.env;
   let lastError: HttpError | null = null;
   for (let attempt = 0; attempt <= opts.retries; attempt++) {
     let res: Response | null = null;
+    const startedMs = performance.now();
+    const inFlight = (inFlightByOrigin.get(u.origin) ?? 0) + 1;
+    inFlightByOrigin.set(u.origin, inFlight);
+    const stat: CallStat = { target, startedMs, queuedMs: attempt === 0 ? (opts.queuedMs ?? 0) : 0, headersMs: null, totalMs: 0, status: null, inFlight, rateHeaders: {}, error: null };
+    const finish = (error: string | null) => {
+      stat.totalMs = performance.now() - startedMs;
+      stat.error = error;
+      inFlightByOrigin.set(u.origin, Math.max(0, (inFlightByOrigin.get(u.origin) ?? 1) - 1));
+      if (callStats.length >= MAX_STATS) callStats.shift();
+      callStats.push(stat);
+    };
     try {
       res = await doFetch(url, {
         method: init.body === undefined ? "GET" : "POST",
         headers: init.headers,
         body: init.body === undefined ? undefined : JSON.stringify(init.body),
         signal: AbortSignal.timeout(opts.timeoutMs),
+      });
+      stat.headersMs = performance.now() - startedMs;
+      stat.status = res.status;
+      res.headers.forEach((value, name) => {
+        if (/^(retry-after|retry-after-ms|x-ratelimit-.*|ratelimit.*)$/i.test(name)) stat.rateHeaders[name] = value;
       });
       const text = await res.text();
       let json: any = null;
@@ -107,9 +153,13 @@ export async function requestJson(
       } catch {
         json = { raw: text.slice(0, 500) };
       }
-      if (res.ok) return { status: res.status, json, attempts: attempt + 1 };
+      if (res.ok) {
+        finish(null);
+        return { status: res.status, json, attempts: attempt + 1 };
+      }
       const detail = JSON.stringify(json?.error ?? json?.detail ?? json ?? "");
       lastError = new HttpError(redact(`http ${res.status} ${detail}`, env), res.status, json);
+      finish(lastError.message);
       if (!RETRYABLE_STATUSES.has(res.status)) throw lastError;
     } catch (e) {
       if (e instanceof HttpError && (e.status === null || !RETRYABLE_STATUSES.has(e.status))) throw e;
@@ -117,6 +167,7 @@ export async function requestJson(
         const name = (e as Error)?.name;
         const msg = name === "TimeoutError" || name === "AbortError" ? `timeout after ${opts.timeoutMs} ms` : String((e as Error)?.message ?? e);
         lastError = new HttpError(redact(`network error: ${msg}`, env), null);
+        finish(lastError.message);
       }
     }
     if (attempt < opts.retries) await sleep(retryDelayMs(res, attempt));

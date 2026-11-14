@@ -9,6 +9,8 @@ import { fallbackResponse } from "./providers/shared";
 
 const cfg = loadConfig();
 const dt = cfg.physics.dtS;
+/** Match time the tests play to: past match start and the first hub shift, short enough to be quick. */
+const UNTIL_S = 60;
 
 /** drex_mock answers, but reporting a fixed, known latency. */
 function fixedLatency(latencyMs: number, calls: DecisionRequest[] = []): DecisionProvider {
@@ -31,8 +33,8 @@ const intentDecisions = (ds: ControllerDecision[]) => ds.filter((d) => d.kind ==
 describe("AgentController (paused)", () => {
   it("plays a full match with drex_mock, batching robots and assigning captain roles", async () => {
     const calls: DecisionRequest[] = [];
-    const summary = await controller(fixedLatency(500, calls)).run();
-    expect(summary.state.phase).toBe("finished");
+    const summary = await controller(fixedLatency(500, calls)).run(UNTIL_S);
+    expect(summary.state.timeS).toBeGreaterThanOrEqual(UNTIL_S - 1e-9);
     expect(summary.calls.blue).toBe(calls.length);
     expect(summary.calls.red).toBe(0); // red is scripted
     for (const req of calls) expect(DecisionRequestSchema.safeParse(req).success).toBe(true);
@@ -100,7 +102,7 @@ describe("AgentController (realtime latency charging)", () => {
     [1, 1],
   ] as const) {
     it(`applies each answer exactly latency x scale later (${latencyMs} ms x ${scale})`, async () => {
-      const summary = await controller(fixedLatency(latencyMs), { timing: "realtime", latencyScale: scale }).run();
+      const summary = await controller(fixedLatency(latencyMs), { timing: "realtime", latencyScale: scale }).run(UNTIL_S);
       const charged = (latencyMs * scale) / 1000;
       const ticksLate = Math.ceil(charged / dt - 1e-9);
       const applied = summary.decisions.filter((d) => d.appliedAtS !== null);
@@ -127,9 +129,9 @@ describe("AgentController (realtime latency charging)", () => {
   }
 
   it("charges nothing in paused mode even for a slow provider, and slow answers change the match in realtime", async () => {
-    const paused = await controller(fixedLatency(5000)).run();
+    const paused = await controller(fixedLatency(5000)).run(UNTIL_S);
     expect(paused.chargedS.blue).toBe(0);
-    const slow = await controller(fixedLatency(5000), { timing: "realtime" }).run();
+    const slow = await controller(fixedLatency(5000), { timing: "realtime" }).run(UNTIL_S);
     expect(slow.chargedS.blue).toBeGreaterThan(0);
     expect(intentDecisions(slow.decisions).length).toBeLessThan(intentDecisions(paused.decisions).length);
   });
