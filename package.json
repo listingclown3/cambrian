@@ -44,6 +44,7 @@
     "ingest:scouting": "tsx src/ingest/scoutingExtract.ts",
     "intern:task": "tsx src/lab/internTask.ts",
     "match": "tsx src/exec/playMatch.ts",
+    "bench:engine": "tsx src/exec/benchEngine.ts",
     "ledger:merge": "node scripts/merge-ledgers.mjs"
   },
   "dependencies": {

@@ -49,7 +49,8 @@ import {
 } from "../contracts";
 import { Rng, seedState } from "../util/rng";
 import { buildFieldLayout } from "./field";
-import { buildObservationView } from "./observe";
+import { isTriggerFor } from "../exec/triggers";
+import { buildObservationView, eventConcerns } from "./observe";
 import { getGrid, resolvePosition, snapTarget, steer, terrainFactor } from "./nav";
 
 const EPS = 1e-9;
@@ -1231,23 +1232,41 @@ function rollout(
   const dtS = state.rules.physics.dtS;
   const endS = Math.min(state.timeS + horizonS, state.rules.matchS);
   let pending: Record<RobotId, Intent | undefined> = { ...overrides };
-  let askAgain = new Set<RobotId>();
+  // Same decision rule as a live match (src/exec/triggers.ts): a robot decides when it is idle or
+  // when an event triggers it, and sees the events since its previous decision.
+  const n = state.robots.length;
+  const since: EngineEvent[][] = state.robots.map(() => []);
+  const triggered = new Uint8Array(n);
 
   while (state.timeS < endS - EPS && state.phase !== "finished") {
-    for (const robot of state.robots) {
+    for (let i = 0; i < n; i++) {
+      const robot = state.robots[i]!;
       if (pending[robot.id] !== undefined) continue;
       if (overridden.has(robot.id)) {
         if (robot.intent !== null) continue; // override still running
         overridden.delete(robot.id);
       }
-      if (robot.intent === null || askAgain.has(robot.id)) {
+      if (robot.intent === null || triggered[i]) {
         const policy = policies.byRobot?.[robot.id] ?? policies.default;
-        pending[robot.id] = policy.decide(buildObservationView(state, robot.id));
+        pending[robot.id] = policy.decide(buildObservationView(state, robot.id, since[i]));
+        since[i] = [];
       }
     }
     const { events } = step(state, pending, dtS);
     pending = {};
-    askAgain = new Set(events.filter((e) => e.kind === "watchdog").map((e) => e.robotId));
+    triggered.fill(0);
+    if (events.length > 0) {
+      for (let i = 0; i < n; i++) {
+        const id = state.robots[i]!.id;
+        const buf = since[i]!;
+        for (const e of events) {
+          if (!eventConcerns(e, id)) continue;
+          buf.push(e);
+          if (isTriggerFor(e, id)) triggered[i] = 1;
+        }
+        if (buf.length > 50) since[i] = buf.slice(-50);
+      }
+    }
   }
 
   const newFouls = state.fouls.slice(startFouls);

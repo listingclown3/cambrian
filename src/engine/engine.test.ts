@@ -3,7 +3,7 @@ import { MatchStateSchema, SnapshotSchema, type EngineEvent, type MatchState } f
 import { MatchRunner, basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
 import { rebuiltEngine as engine } from "./engine";
-import { blockedAt, getGrid, inTrench } from "./nav";
+import { blockedAt, clearNavCaches, getGrid, inTrench } from "./nav";
 import { buildObservationView } from "./observe";
 
 const cfg = loadConfig();
@@ -27,6 +27,15 @@ describe("rebuilt engine", () => {
     };
     expect(run(77)).toBe(run(77));
     expect(run(77)).not.toBe(run(78));
+  });
+
+  it("does not depend on navigation cache state (warm vs cold caches give the same match)", () => {
+    const run = () => JSON.stringify(newRunner(91).runToEnd().state);
+    clearNavCaches();
+    const cold = run();
+    newRunner(92).runToEnd(); // warm the caches with other paths
+    const warm = run();
+    expect(warm).toBe(cold);
   });
 
   it("snapshot/restore is exact after a JSON round trip", () => {
