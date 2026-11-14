@@ -121,6 +121,13 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
           models: [...new Set(metas.map((m) => m.model))],
           isMock: metas.some((m) => m.isMock),
           promptVersion: def.spec ? PROMPT_VERSION : null,
+          totalsBlue: (s as any).byAlliance?.blue ?? null,
+          behaviourBlue: (() => { const out: Record<string, number> = {}; for (const r of robots.filter((x) => x.alliance === "blue")) void r; for (const [id, b] of Object.entries((s as any).byRobot ?? {})) { if (!id.startsWith("B")) continue; for (const [k, v] of Object.entries(b as object)) if (typeof v === "number") out[k] = (out[k] ?? 0) + v; } return out; })(),
+          behaviourRed: (() => { const out: Record<string, number> = {}; for (const [id, b] of Object.entries((s as any).byRobot ?? {})) { if (!id.startsWith("R")) continue; for (const [k, v] of Object.entries(b as object)) if (typeof v === "number") out[k] = (out[k] ?? 0) + v; } return out; })(),
+          fairness: (s as any).fairness ?? null,
+          controllerWallMs: (s as any).wallMs ?? null,
+          providerWaitMs: (s as any).providerWaitMs ?? null,
+          abortedReason: (s as any).abortedReason ?? null,
           scriptedPolicy: scriptedPolicy.id,
           blueIntentsApplied: ce.applied.blue,
           blueRunningActionsReplaced: ce.replaced.blue,
@@ -146,9 +153,17 @@ function stats(rows: any[]) {
 }
 
 function assemble() {
-  const parts = Object.keys(PARTS).map((p) => ({ part: p, file: readJson(`results`, `bench_live_${p}.json`) })).filter((x) => x.file);
-  const rows: any[] = parts.flatMap((p) => p.file.rows);
+  const current = simHash(cfg);
+  const found = Object.keys(PARTS).map((p) => ({ part: p, file: readJson(`results`, `bench_live_${p}.json`) })).filter((x) => x.file);
+  const staleParts = found.filter((p) => p.file.simHash !== current).map((p) => ({ part: p.part, simHash: p.file.simHash }));
+  const parts = found.filter((p) => p.file.simHash === current);
+  const allRows: any[] = parts.flatMap((p) => p.file.rows);
+  // A match whose decider answered mostly by fallback is not that decider's match: excluded and counted.
+  const isExcluded = (r: any) => r.robotDecisions > 0 && r.fallbacks / r.robotDecisions > 0.5;
+  const excluded = allRows.filter(isExcluded).map((r) => ({ decider: r.decider, timing: r.timing, seed: r.seed, fallbacks: r.fallbacks, robotDecisions: r.robotDecisions }));
+  const rows: any[] = allRows.filter((r) => !isExcluded(r));
   const hashes = [...new Set(parts.map((p) => p.file.simHash))];
+  void hashes;
   const group = (decider: string, timing: string) => rows.filter((r) => r.decider === decider && r.timing === timing);
   const conds: Record<string, any> = {};
   for (const [decider, timing] of [["scripted", "paused"], ["drex", "realtime"], ["drex", "paused"], ["deepinfra", "realtime"], ["deepinfra", "paused"]] as const) {
@@ -168,6 +183,10 @@ function assemble() {
       cost_usd_total: round(g.reduce((k, r) => k + r.costUsd, 0), 5),
       models: [...new Set(g.flatMap((r) => r.models))],
       sim_matches_per_hour: decider === "scripted" ? null : round(3600 / mean(wall), 2),
+      matches_per_sec: decider === "scripted" ? round(1 / mean(wall), 3) : null,
+      behaviour_blue_mean_per_match: (() => { const keys = [...new Set(g.flatMap((r) => Object.keys(r.behaviourBlue ?? {})))]; return Object.fromEntries(keys.map((k) => [k, round(mean(g.map((r) => r.behaviourBlue?.[k] ?? 0)), 2)])); })(),
+      blue_running_actions_replaced_mean: round(mean(g.map((r) => r.blueRunningActionsReplaced ?? NaN).filter(Number.isFinite)), 1),
+      fallbacks_per_match: g.map((r) => r.fallbacks),
     };
   }
   // paired differences drex - giant per seed
@@ -211,6 +230,11 @@ function assemble() {
       blue: "decider via AgentController (batched per tick), red: scripted basic_cycle",
       sim_matches_per_hour: "3600 / mean wall seconds per match, matches played one at a time; the decider drives one alliance (3 robots), the other alliance is scripted",
       simHashesConsistent: hashes.length === 1,
+      staleParts,
+      excludedMatches: excluded,
+      exclusionRule: "a match where more than half the decider robot decisions were fallbacks is excluded (listed in excludedMatches)",
+      drexRealtimeOneAtATime: "Drex realtime matches were played one at a time so the shared Drex limiter queue is not charged to the sim clock; Drex paused ran in a second process at the same time (at most 2 Drex matches in flight)",
+      answerKeyRunning: "the answer key (11 rollout workers) ran on the same machine during these matches; wall times include that load",
     },
     rows,
     summary: { conditions: conds, paired_drex_minus_giant: paired, paired_vs_scripted_control: vsScripted, giant_reasoning_on_match_estimate: thinkCalc },

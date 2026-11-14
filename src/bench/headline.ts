@@ -36,13 +36,20 @@ const ingestRules = readJson("results", "ingest_rules.json");
 const contributing: { file: string; isMock: boolean; simHash: string | null; gitCommit: string | null }[] = [];
 /** Read results/<name>.json; returns null (and records it) when it is mock. */
 const seen = new Map<string, any>();
+/** Files whose numbers are compared with each other: they must carry the current sim hash or they do not contribute. */
+const SIM_FILES = new Set(["bench_scenarios", "bench_live", "bench_explore", "answerkey"]);
+const currentSimHash = simHash(cfg);
+const stale: { file: string; simHash: string | null }[] = [];
 function results(name: string): any | null {
   if (seen.has(name)) return seen.get(name);
   const f = readJson("results", `${name}.json`);
-  seen.set(name, f && !f.isMock ? f : null);
-  if (!f) return null;
+  const isStale = !!f && SIM_FILES.has(name) && f.simHash !== currentSimHash;
+  if (isStale) stale.push({ file: `results/${name}.json`, simHash: f.simHash ?? null });
+  const use = f && !f.isMock && !isStale ? f : null;
+  seen.set(name, use);
+  if (!use) return null;
   contributing.push({ file: `results/${name}.json`, isMock: !!f.isMock, simHash: f.simHash ?? null, gitCommit: f.gitCommit ?? null });
-  return f.isMock ? null : f;
+  return use;
 }
 
 const bs = results("bench_scenarios")?.summary;
@@ -91,8 +98,8 @@ const values: Record<string, number | null> = {
   rollout_savings_pct_drex_vs_uniform: numberOrNull(explore?.rollout_savings_pct_drex_vs_uniform),
   n_scenarios: numberOrNull(bs?.n_scenarios),
   n_families: numberOrNull(bs?.n_families),
-  n_live_seeds: live ? numberOrNull(Math.min(...["drex_realtime", "drex_paused", "deepinfra_realtime", "deepinfra_paused"].map((k) => cond(k)?.n ?? Infinity))) : null,
-  matches_per_sec: numberOrNull(matches?.matches_per_sec),
+  n_live_seeds: numberOrNull(live?.paired_drex_minus_giant?.realtime?.n),
+  matches_per_sec: numberOrNull(cond("scripted_paused")?.matches_per_sec),
   sim_matches_per_hour_drex: numberOrNull(cond("drex_paused")?.sim_matches_per_hour),
   sim_matches_per_hour_deepinfra: numberOrNull(cond("deepinfra_paused")?.sim_matches_per_hour),
   lab_proposals_total: numberOrNull(lab?.lab_proposals_total),
@@ -134,6 +141,13 @@ const file = writeResults({
       giant_reasoning: "off (main comparison; the giant's fastest setting)",
       live: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, v.models])),
     },
+    stale_files_not_used: stale,
+    current_sim_hash: currentSimHash,
+    n_live_seeds_meaning: "paired eval seeds in the realtime Drex-vs-giant comparison; each condition has its own n in n.live_conditions",
+    matches_per_sec_source: "1 / mean wall seconds of the scripted-vs-scripted reference matches in bench_live (AgentController, no model calls), same sim hash",
+    live_fallbacks_and_exclusions: { per_condition: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, { total: v.fallbacks_total, per_match: v.fallbacks_per_match }])), excluded_matches: results("bench_live")?.config?.excludedMatches ?? null, rule: results("bench_live")?.config?.exclusionRule ?? null },
+    fairness_counters: { after_rules_eval: Object.fromEntries(Object.entries(live?.conditions ?? {}).map(([k, v]: [string, any]) => [k, { robot_decisions_per_match: v.mean_robot_decisions_per_match, running_actions_replaced_per_match: v.blue_running_actions_replaced_mean, behaviour_blue_mean_per_match: v.behaviour_blue_mean_per_match }])), before_rules_dev: ((): any => { const out: Record<string, unknown> = {}; for (const n of ["bench_live_drex_dev", "bench_live_giant_realtime_dev"]) { const f = readJson("results", n + ".json"); if (f) out[n] = { simHash: f.simHash, note: "rules off, dev seeds, earlier engine", rows: f.rows.map((r: any) => ({ timing: r.timing, seed: r.seed, robotDecisions: r.robotDecisions, replaced: r.blueRunningActionsReplaced, fallbacks: r.fallbacks, top: r.topChosenLabels?.[0] })) }; } return out; })() },
+    batch_table: batch ? { simHash: seen.get("bench_batch")?.simHash ?? null, ms_per_decision: Object.fromEntries([1, 3, 8, 32].map((k) => [k, { drex: batch[`batch${k}_ms_per_decision_drex`] ?? null, giant: batch[`batch${k}_ms_per_decision_giant`] ?? null, drex_latest: batch[`batch${k}_ms_per_decision_drex_latest`] ?? null }])), agreement_with_single: batch.agreement_with_single ?? null, giant_batch8_p50_ms_range: batch.giant_batch8_p50_ms_range ?? null, incomplete_cells: batch.incomplete_cells ?? null } : null,
     speed_headline: batch ? { label: "per decision, one alliance batched (3 questions per call)", batch3_ms_per_decision: { drex: batch.batch3_ms_per_decision_drex ?? null, giant: batch.batch3_ms_per_decision_giant ?? null }, single_question_ms_per_decision: { drex: batch.batch1_ms_per_decision_drex ?? null, giant: batch.batch1_ms_per_decision_giant ?? null }, batch8_stress_ms_per_decision: { drex: batch.batch8_ms_per_decision_drex ?? null, giant: batch.batch8_ms_per_decision_giant ?? null, giant_note: "P2 saw the giant at batch 8 vary between 491 and 1362 ms per decision across runs; report the range" }, ratio_batch3: batch.batch3_ms_per_decision_giant && batch.batch3_ms_per_decision_drex ? Number((batch.batch3_ms_per_decision_giant / batch.batch3_ms_per_decision_drex).toFixed(1)) : null } : null,
     latency_sources: { drex: latOf("drex"), deepinfra: latOf("deepinfra") },
     regret_with_ci: Object.fromEntries(Object.entries(bs?.deciders ?? {}).map(([k, v]: [string, any]) => [k, { regret: v.regret, ci95: v.regret_ci95 ?? null, n: v.n_regret ?? v.n_scored }])),
