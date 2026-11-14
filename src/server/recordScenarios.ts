@@ -14,6 +14,7 @@ import { loadConfig, repoPath } from "../util/config";
 const cfg = loadConfig();
 const N = 40;
 const FOCUS = "B1";
+const label3 = (l: string) => [...l].reduce((a, c) => a + c.charCodeAt(0), 0);
 
 const PRIORITY = ["shoot_now", "align_then_shoot", "hold_fire_until_active", "collect:neutral", "collect:depot", "load_outpost", "goto_shot_spot", "climb", "hold_position", "goto_zone:neutral"];
 function pickOptions<T extends { label: string }>(all: T[]): T[] {
@@ -21,11 +22,12 @@ function pickOptions<T extends { label: string }>(all: T[]): T[] {
   return [...all].sort((a, b) => rank(a.label) - rank(b.label)).slice(0, 7);
 }
 /** Hand-authored illustrative point margins, shaped by hub state and hopper load. NOT a measurement. */
-function authored(label: string, active: boolean, left: number, fuel: number, cap: number): number {
+function authored(label: string, active: boolean, left: number, fuelHeld: number, cap: number): number {
+  const fuel = Math.min(fuelHeld, 8);
   const shoot = label === "shoot_now" || label === "align_then_shoot";
   if (shoot) return fuel === 0 ? -8 : active ? 3 + fuel * 1.4 - (left < 3 && label === "align_then_shoot" ? 6 : 0) : -3;
   if (label === "hold_fire_until_active") return fuel === 0 ? -5 : active ? -2 : 5 + fuel * 0.4;
-  if (label.startsWith("collect") || label === "load_outpost") return fuel >= cap ? -5 : 9 - fuel * 1.3 - (active && fuel > 3 ? 3 : 0);
+  if (label.startsWith("collect") || label === "load_outpost") return fuelHeld >= cap ? -5 : 9 - fuel * 1.3 - (active && fuel > 3 ? 3 : 0);
   if (label.startsWith("goto_shot_spot")) return fuel > 0 && active ? 2 : -1;
   if (label.startsWith("climb")) return -2;
   return -4;
@@ -80,7 +82,8 @@ for (const f of families) {
     const values: AnswerKey["values"] = {};
     for (const o of options) {
       // ILLUSTRATIVE authored value (the stub engine's rollouts are flat); see the fixture note.
-      const mean = authored(o.label, state.hubs.blue.active, state.hubs.blue.timeToShiftS, robot.fuelHeld, robot.profile.capacity);
+      const jitter = ((label3(o.label) % 7) - 3) * 0.7;
+      const mean = jitter + authored(o.label, state.hubs.blue.active, state.hubs.blue.timeToShiftS, robot.fuelHeld, robot.profile.capacity);
       values[o.label] = { mean, ci95: 1.2 + ((o.label.length * 7) % 10) / 6, n: N };
     }
     const ranked = Object.entries(values).sort((a, b) => b[1].mean - a[1].mean);
@@ -93,8 +96,8 @@ for (const f of families) {
     scenarios.push({ id, familyId: f.family.id, flip: v.flip, snapshot: snap, focusRobotId: FOCUS, options, answerKey: { values, best, ambiguous } });
     // ILLUSTRATIVE picks for Drex and the giant (neither was run on these); probabilities are softmax of the authored means.
     const second = ranked[1]![0];
-    const z = Object.values(values).reduce((a, v) => a + Math.exp(v.mean / 4), 0);
-    const probabilities = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, Math.exp(v.mean / 4) / z]));
+    const z = Object.values(values).reduce((a, v) => a + Math.exp(v.mean / 6), 0);
+    const probabilities = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, Math.exp(v.mean / 6) / z]));
     picks[id] = {
       scripted: scriptedLabel ? { label: scriptedLabel } : null,
       random: { label: options[Math.floor(rand() * options.length)]!.label },
@@ -106,7 +109,7 @@ for (const f of families) {
 
 const out = {
   isMock: true,
-  note: "FIXTURE: snapshots come from the stub engine; the answer-key numbers and the Drex and giant picks are hand-authored for illustration. None of it is a measurement.",
+  note: "FIXTURE: snapshots come from the engine in use; the answer-key numbers and the Drex and giant picks are hand-authored for illustration. None of it is a measurement.",
   families: families.map((f) => f.family),
   scenarios,
   picks,

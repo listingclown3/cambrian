@@ -1,14 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { DecisionRequestSchema, IntentSchema, type DecisionProvider, type DecisionRequest, type DecisionResponse } from "../contracts";
+import { DecisionRequestSchema, IntentSchema, RunEventSchema, type DecisionProvider, type DecisionRequest, type DecisionResponse } from "../contracts";
 import { engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
-import { AgentController, type ControllerDecision } from "./controller";
+import { AgentController, decisionRunEvents, type ControllerDecision } from "./controller";
 import { drexMockProvider } from "./providers/drexMock";
 import { fallbackResponse } from "./providers/shared";
 
 const cfg = loadConfig();
 const dt = cfg.physics.dtS;
+/** Match time the tests play to: past match start and the first hub shift, short enough to be quick. */
+const UNTIL_S = 60;
 
 /** drex_mock answers, but reporting a fixed, known latency. */
 function fixedLatency(latencyMs: number, calls: DecisionRequest[] = []): DecisionProvider {
@@ -31,14 +33,25 @@ const intentDecisions = (ds: ControllerDecision[]) => ds.filter((d) => d.kind ==
 describe("AgentController (paused)", () => {
   it("plays a full match with drex_mock, batching robots and assigning captain roles", async () => {
     const calls: DecisionRequest[] = [];
-    const summary = await controller(fixedLatency(500, calls)).run();
-    expect(summary.state.phase).toBe("finished");
+    const summary = await controller(fixedLatency(500, calls)).run(UNTIL_S);
+    expect(summary.state.timeS).toBeGreaterThanOrEqual(UNTIL_S - 1e-9);
     expect(summary.calls.blue).toBe(calls.length);
     expect(summary.calls.red).toBe(0); // red is scripted
     for (const req of calls) expect(DecisionRequestSchema.safeParse(req).success).toBe(true);
 
     const intents = intentDecisions(summary.decisions);
     expect(intents.length).toBeGreaterThan(3);
+    const blue = summary.byAlliance.blue;
+    expect(blue.calls).toBe(calls.length);
+    expect(blue.questions).toBe(calls.reduce((s, r) => s + r.questions.length, 0));
+    expect(blue.httpCalls).toBe(calls.length); // not a splitting provider
+    expect(blue.latencyMs).toBeCloseTo(500 * calls.length, 6);
+    expect(blue.robotDecisions).toBe(summary.decisions.reduce((s, d) => s + d.choices.length, 0));
+    expect(blue).toMatchObject({ isMock: true, models: ["drex-mock"], chargedS: 0, fallbacks: 0, cachedCalls: 0 });
+    expect(summary.byAlliance.red.calls).toBe(0);
+    expect(summary.wallMs).toBeGreaterThan(0);
+    expect(summary.simWallMs + summary.providerWaitMs).toBeCloseTo(summary.wallMs, 6);
+    expect(summary.matchesPerHour).toBeCloseTo(3_600_000 / summary.wallMs, 6);
     // match start: all three idle blue robots in one request
     expect(intents[0]!.requests[0]!.questions).toHaveLength(3);
     for (const d of intents) {
@@ -63,6 +76,12 @@ describe("AgentController (paused)", () => {
       expect(d.choices.every((c) => c.role !== undefined)).toBe(true);
       expect(d.requests[2]!.questions[0]!.instructions).toMatch(/Already assigned: B1 .*, B2 /);
     }
+    // every decision becomes contract-valid run-log lines, one per robot
+    for (const d of summary.decisions.slice(0, 20)) {
+      const lines = decisionRunEvents(d);
+      expect(lines).toHaveLength(d.choices.length);
+      for (const l of lines) expect(RunEventSchema.safeParse({ ...l, ts: "t", runId: "r", seq: 0 }).success).toBe(true);
+    }
     // a role reaches the robot's own question
     expect(intents.some((d) => d.requests[0]!.questions.some((q) => q.instructions.includes("Captain's role for")))).toBe(true);
   });
@@ -85,7 +104,7 @@ describe("AgentController (realtime latency charging)", () => {
     [1, 1],
   ] as const) {
     it(`applies each answer exactly latency x scale later (${latencyMs} ms x ${scale})`, async () => {
-      const summary = await controller(fixedLatency(latencyMs), { timing: "realtime", latencyScale: scale }).run();
+      const summary = await controller(fixedLatency(latencyMs), { timing: "realtime", latencyScale: scale }).run(UNTIL_S);
       const charged = (latencyMs * scale) / 1000;
       const ticksLate = Math.ceil(charged / dt - 1e-9);
       const applied = summary.decisions.filter((d) => d.appliedAtS !== null);
@@ -112,9 +131,9 @@ describe("AgentController (realtime latency charging)", () => {
   }
 
   it("charges nothing in paused mode even for a slow provider, and slow answers change the match in realtime", async () => {
-    const paused = await controller(fixedLatency(5000)).run();
+    const paused = await controller(fixedLatency(5000)).run(UNTIL_S);
     expect(paused.chargedS.blue).toBe(0);
-    const slow = await controller(fixedLatency(5000), { timing: "realtime" }).run();
+    const slow = await controller(fixedLatency(5000), { timing: "realtime" }).run(UNTIL_S);
     expect(slow.chargedS.blue).toBeGreaterThan(0);
     expect(intentDecisions(slow.decisions).length).toBeLessThan(intentDecisions(paused.decisions).length);
   });

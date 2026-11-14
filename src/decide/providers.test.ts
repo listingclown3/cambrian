@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DecisionResponseSchema, type DecisionRequest } from "../contracts";
 import { loadConfig } from "../util/config";
-import { getProviderBySpec, parseProviderSpec } from "./registry";
+import { getProvider, getProviderBySpec, parseProviderSpec, providerLabel, providerModel } from "./registry";
 import { deepinfraProvider, renderLlmPrompt } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
 import { addSpend, redact, resetSpend } from "./providers/http";
@@ -59,6 +59,8 @@ describe("drex provider", () => {
     expect(res.meta.model).toBe("drex-max-v1.1");
     expect(res.meta.costUsd).toBeCloseTo((100 * cfg.pricesPerMTokUsd.byModel["drex-max-v1.1"]!.input!) / 1e6, 12);
     expect(parseProviderSpec("deepinfra:Qwen/Qwen3.8-27B@think")).toEqual({ id: "deepinfra", model: "Qwen/Qwen3.8-27B", thinking: "on" });
+    expect(parseProviderSpec("drex@anon@cache")).toEqual({ id: "drex", anonymize: true, cache: true });
+    expect(() => parseProviderSpec("drex@bogus")).toThrow(/unknown provider spec flag/);
   });
 
   it("flags an answer that is not an offered label instead of passing it on", async () => {
@@ -99,6 +101,14 @@ describe("drex provider", () => {
     const r2 = await drexProvider(cfg, capped).decide(request);
     expect(r2.meta.error).toMatch(/spend cap/);
     expect(capped.requests).toHaveLength(0);
+
+    // stops BEFORE a call would cross the cap, not after
+    resetSpend();
+    addSpend("deepinfra", cfg.spendCapsUsd.perProviderPerRun.deepinfra! - 1e-9);
+    const almost = fakeDeps({});
+    const r3 = await deepinfraProvider(cfg, almost).decide(request);
+    expect(r3.meta.error).toMatch(/would exceed/);
+    expect(almost.requests.filter((r) => r.url.includes("chat"))).toHaveLength(0);
   });
 });
 
@@ -126,6 +136,11 @@ describe("deepinfra provider", () => {
     expect(deps.ledger).toHaveLength(1);
     expect(deps.ledger[0]).toMatchObject({ tool: "deepinfra", costUsd: 0.0005 });
     expect(await provider.resolveModel()).toBe("Qwen/Qwen3.5-397B-A17B");
+    expect(await providerModel(getProvider("deepinfra", cfg, { ...deps, cache: true, anonymize: true }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B");
+    expect(await providerModel(getProvider("drex", cfg, { ...deps, model: "drex-latest" }), cfg)).toBe("drex-latest");
+    expect(await providerLabel(getProvider("deepinfra", cfg, { ...deps, anonymize: true }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B (reasoning off)");
+    expect(await providerLabel(getProvider("deepinfra", cfg, { ...deps, thinking: "on" }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B (reasoning on)");
+    expect(await providerLabel(getProvider("drex", cfg, deps), cfg)).toBe("drex-v2.0");
   });
 
   it("parse-retries once, then falls back, counting every call", async () => {
@@ -171,7 +186,7 @@ describe("deepinfra provider", () => {
 
 describe("redaction", () => {
   it("removes key values and bearer tokens from error text", () => {
-    const env = { NACE_API_KEY: "sk-very-secret-value" };
+    const env = { NACE_API_KEY: "sk-very-secret-value" }; // secret-scan:allow (fake value used to test redaction)
     expect(redact("failed with sk-very-secret-value and Authorization: Bearer abcdefghijkl", env)).toBe("failed with <redacted> and Authorization: Bearer <redacted>");
   });
 });

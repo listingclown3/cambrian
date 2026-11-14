@@ -24,7 +24,7 @@ import {
   fieldZoneOf,
   findLane,
   floorZoneAt,
-  interpTable,
+  isTrench,
   loadedMassKg,
   otherAlliance,
   zoneCenter,
@@ -49,12 +49,18 @@ import {
 } from "../contracts";
 import { Rng, seedState } from "../util/rng";
 import { buildFieldLayout } from "./field";
-import { buildObservationView } from "./observe";
+import { isTriggerFor } from "../exec/triggers";
+import { buildObservationView, eventConcerns } from "./observe";
 import { getGrid, resolvePosition, snapTarget, steer, terrainFactor } from "./nav";
 
 const EPS = 1e-9;
+/** Standard gravity, used only when physics.gravityMps2 is absent (config/default.json sets it). */
+const DEFAULT_GRAVITY = 9.81;
 /** A point target counts as reached once the robot centre is this close, metres (well below any tolerance). */
 const ARRIVE_EXACT_M = 1e-3;
+
+/** Steps during which the shooter stays spun up. */
+const SHOOTING: ReadonlySet<string> = new Set(["shoot_now", "align_then_shoot", "dump_unaligned", "shoot_on_move", "hold_fire_until_active"]);
 
 /** Actions that run until replaced; they never report action_done or action_timeout. */
 const CONTINUOUS: ReadonlySet<string> = new Set(["hold_position", "defend", "block_lane", "screen", "protect_climber", "hold_fire_until_active"]);
@@ -211,10 +217,17 @@ function advanceClock(state: MatchState, dtS: number, rng: Rng, events: EngineEv
   state.phase = now.phase;
   state.shiftIndex = now.shiftIndex;
 
+  const bounds = boundaries(state);
   for (const alliance of ALLIANCES) {
     const hub = state.hubs[alliance];
     hub.active = hubActiveAt(state, alliance, t);
-    const next = boundaries(state).find((b) => b > t + EPS && hubActiveAt(state, alliance, b) !== hub.active);
+    let next: number | undefined;
+    for (const b of bounds) {
+      if (b > t + EPS && hubActiveAt(state, alliance, b) !== hub.active) {
+        next = b;
+        break;
+      }
+    }
     hub.timeToShiftS = Math.max(0, (next ?? state.rules.matchS) - t);
     const warning = hub.active && next !== undefined && hub.timeToShiftS <= state.rules.hubWarningS;
     if (warning && !hub.warning) events.push({ kind: "hub_warning", timeS: t, alliance, secondsToDeactivate: hub.timeToShiftS });
@@ -282,19 +295,29 @@ function sweepTarget(state: MatchState, robot: RobotState, zone: "neutral" | "ou
 }
 
 /** Where this step wants the robot to be. `undefined` = the step does not move the robot; `null` = bad target. */
+function spotPos(state: MatchState, robot: RobotState, id: string): Vec2 | null {
+  for (const s of state.field.shotSpots) if (s.alliance === robot.alliance && s.id === id) return s.pos;
+  return null;
+}
+
+function robotById(state: MatchState, id: RobotId): RobotState | null {
+  for (const r of state.robots) if (r.id === id) return r;
+  return null;
+}
+
+function robotPosById(state: MatchState, id: RobotId): Vec2 | null {
+  const other = robotById(state, id);
+  return other ? { x: other.pose.x, y: other.pose.y } : null;
+}
+
 function resolveTarget(state: MatchState, robot: RobotState, step: IntentStep): Vec2 | null | undefined {
   const field = state.field;
-  const spot = (id: string) => field.shotSpots.find((s) => s.alliance === robot.alliance && s.id === id)?.pos ?? null;
-  const robotPos = (id: RobotId) => {
-    const other = state.robots.find((r) => r.id === id);
-    return other ? { x: other.pose.x, y: other.pose.y } : null;
-  };
   switch (step.action) {
     case "goto_zone":
       return zoneCenter(field, robot.alliance, step.params.zone);
     case "goto_shot_spot":
     case "stage_fuel":
-      return spot(step.params.spotId);
+      return spotPos(state, robot, step.params.spotId);
     case "route_via":
       return crossingTarget(state, robot, step.params.route);
     case "collect":
@@ -307,11 +330,22 @@ function resolveTarget(state: MatchState, robot: RobotState, step: IntentStep): 
         ? sweepTarget(state, robot, step.params.zone)
         : zoneCenter(field, robot.alliance, step.params.zone);
     case "shoot_on_move":
-      return "path" in step.params ? crossingTarget(state, robot, step.params.path) : spot(step.params.spotId);
-    case "defend":
+      return "path" in step.params ? crossingTarget(state, robot, step.params.path) : spotPos(state, robot, step.params.spotId);
+    case "defend": {
+      // Stand in front of the opponent, on the line from it to the hub it scores in.
+      const other = robotById(state, step.params.robotId);
+      if (!other || other.alliance === robot.alliance) return null;
+      return offsetToward(other.pose, field.alliances[other.alliance].hub, contactDistance(state));
+    }
     case "screen":
-    case "protect_climber":
-      return robotPos(step.params.robotId);
+    case "protect_climber": {
+      // Stand between the partner and the closest opponent.
+      const partner = robotById(state, step.params.robotId);
+      if (!partner || partner.alliance !== robot.alliance || partner.id === robot.id) return null;
+      const threat = closestOpponent(state, partner);
+      if (!threat) return { x: partner.pose.x, y: partner.pose.y };
+      return offsetToward(partner.pose, threat.pose, contactDistance(state));
+    }
     case "block_lane": {
       const lane = findLane(field, robot.alliance, step.params.laneId);
       return lane ? { x: (lane.allianceEnd.x + lane.neutralEnd.x) / 2, y: lane.allianceEnd.y } : null;
@@ -323,14 +357,84 @@ function resolveTarget(state: MatchState, robot: RobotState, step: IntentStep): 
     }
     case "escape_spin":
     case "escape_reverse":
-      return offsetToward(robot.pose, zoneCenter(field, robot.alliance, step.params.exitToward), state.rules.pinning.releaseDistanceM);
+      return escapeTarget(state, robot, step.action, zoneCenter(field, robot.alliance, step.params.exitToward));
     case "disengage":
       return offsetToward(robot.pose, zoneCenter(field, robot.alliance, "our_alliance"), state.rules.pinning.releaseDistanceM);
     case "climb":
-      return field.alliances[robot.alliance].tower;
+      return climbSpot(state, robot);
     default:
       return undefined;
   }
+}
+
+/** Centre-to-centre distance at which two robots touch. */
+function contactDistance(state: MatchState): number {
+  return state.rules.physics.robotRadiusM * 2;
+}
+
+function closestOpponent(state: MatchState, robot: RobotState): RobotState | null {
+  let best: RobotState | null = null;
+  let bestD = Infinity;
+  for (const r of state.robots) {
+    if (r.alliance === robot.alliance) continue;
+    const d = dist(r.pose, robot.pose);
+    if (d < bestD) {
+      bestD = d;
+      best = r;
+    }
+  }
+  return best;
+}
+
+/**
+ * Where an escape heads. Reverse: straight away from the robot in contact. Spin: pivot off it,
+ * sideways to the contact line on the side facing the exit. Either way the robot ends one pin
+ * release distance from where it started.
+ */
+function escapeTarget(state: MatchState, robot: RobotState, how: "escape_spin" | "escape_reverse", exit: Vec2): Vec2 {
+  const m = state.rules.pinning.releaseDistanceM;
+  const other = robot.contact.withRobotId ? robotById(state, robot.contact.withRobotId) : null;
+  if (!other) return offsetToward(robot.pose, exit, m);
+  let ax = robot.pose.x - other.pose.x;
+  let ay = robot.pose.y - other.pose.y;
+  const ad = Math.hypot(ax, ay) || 1;
+  ax /= ad;
+  ay /= ad;
+  let ex = exit.x - robot.pose.x;
+  let ey = exit.y - robot.pose.y;
+  const ed = Math.hypot(ex, ey) || 1;
+  ex /= ed;
+  ey /= ed;
+  let dx: number;
+  let dy: number;
+  if (how === "escape_reverse") {
+    dx = ax;
+    dy = ay;
+  } else {
+    // Perpendicular to the contact line, on the exit side, leaning toward the exit.
+    const side = -ay * ex + ax * ey >= 0 ? 1 : -1;
+    dx = -ay * side + ex;
+    dy = ax * side + ey;
+    const dd = Math.hypot(dx, dy) || 1;
+    dx /= dd;
+    dy /= dd;
+  }
+  return { x: robot.pose.x + dx * m, y: robot.pose.y + dy * m };
+}
+
+/**
+ * Each robot climbs at its own spot along the field-facing side of its tower, so three partners
+ * do not fight over one point. Spot index = the robot's number within its alliance (B1, B2, ...).
+ */
+function climbSpot(state: MatchState, robot: RobotState): Vec2 {
+  const field = state.field;
+  const tower = field.alliances[robot.alliance].tower;
+  const r = state.rules.physics.robotRadiusM;
+  const depth = field.elementSizes?.towerDepthM ?? r * 2;
+  const forward = tower.x < field.lengthM / 2 ? 1 : -1;
+  const index = Number(robot.id.slice(1)) || 1;
+  const lateral = (index - 2) * contactDistance(state);
+  return { x: tower.x + forward * (depth / 2 + r), y: tower.y + lateral };
 }
 
 /** Top speed and acceleration for the robot's current load. */
@@ -450,16 +554,66 @@ function addScore(state: MatchState, alliance: Alliance, points: number, source:
   if (points > 0) events.push({ kind: "score", timeS: state.timeS, alliance, points, source, robotId });
 }
 
-/** Fire held fuel at the robot's own hub. Finishes the action when the hopper is empty. */
-function fire(state: MatchState, robot: RobotState, accuracyFactor: number, dtS: number, rng: Rng, events: EngineEvent[]): void {
-  const p = robot.profile;
-  if (p.shooterType === "none" || p.fireRatePerS <= 0) return finish(state, robot, events, "no_shooter");
-  if (robot.fuelHeld <= 0) return finish(state, robot, events, "no_fuel");
+/** Accuracy multiplier from a defender in contact (tall robots are easier to defend against). */
+function defendedFactor(state: MatchState, robot: RobotState): number {
+  const id = robot.contact.withRobotId;
+  if (id === null) return 1;
+  const other = robotById(state, id);
+  if (!other || other.alliance === robot.alliance) return 1;
+  const m = state.rules.shotModel;
+  return robot.profile.heightClass === "tall" ? m.defendedAccuracyFactorTall : m.defendedAccuracyFactorShort;
+}
 
-  const hubDistM = dist(robot.pose, state.field.alliances[robot.alliance].hub);
+function hubDistance(state: MatchState, robot: RobotState): number {
+  return dist(robot.pose, state.field.alliances[robot.alliance].hub);
+}
+
+function inShotRange(state: MatchState, robot: RobotState): boolean {
+  const d = hubDistance(state, robot);
+  return d >= robot.profile.minShotDistanceM && d <= robot.profile.maxShotDistanceM;
+}
+
+/** Piecewise-linear lookup in a sorted table without allocating. */
+function lookup<T>(rows: readonly T[], x: number, key: (r: T) => number, val: (r: T) => number): number {
+  if (rows.length === 0) return 0;
+  if (x <= key(rows[0]!)) return val(rows[0]!);
+  for (let i = 1; i < rows.length; i++) {
+    const b = rows[i]!;
+    if (x <= key(b)) {
+      const a = rows[i - 1]!;
+      const span = key(b) - key(a);
+      const t = span > 0 ? (x - key(a)) / span : 1;
+      return val(a) + (val(b) - val(a)) * t;
+    }
+  }
+  return val(rows[rows.length - 1]!);
+}
+
+function rowDistance(r: { distanceM: number }): number {
+  return r.distanceM;
+}
+function rowSpeed(r: { speedMps: number }): number {
+  return r.speedMps;
+}
+function rowAccuracy(r: { accuracy: number }): number {
+  return r.accuracy;
+}
+
+/** Shoot-on-the-move accuracy multiplier at the robot's current ground speed. */
+function sotmFactor(robot: RobotState): number {
+  return lookup(robot.profile.sotmAccuracyBySpeed, Math.hypot(robot.velocity.vx, robot.velocity.vy), rowSpeed, rowAccuracy);
+}
+
+/**
+ * Fire held fuel at the robot's own hub at fireRatePerS. Misses (and every shot from outside the
+ * shot range) land in the robot's own alliance zone; scored fuel comes back out of the hub.
+ * Returns true when the hopper just emptied. Does not finish the action.
+ */
+function fire(state: MatchState, robot: RobotState, accuracyFactor: number, dtS: number, rng: Rng, events: EngineEvent[]): boolean {
+  const p = robot.profile;
+  const hubDistM = hubDistance(state, robot);
   const inRange = hubDistM >= p.minShotDistanceM && hubDistM <= p.maxShotDistanceM;
-  const table = p.shotAccuracyByDistance.map((row) => ({ x: row.distanceM, y: row.accuracy }));
-  const accuracy = inRange ? interpTable(table, hubDistM) * accuracyFactor : 0;
+  const accuracy = inRange ? lookup(p.shotAccuracyByDistance, hubDistM, rowDistance, rowAccuracy) * accuracyFactor * defendedFactor(state, robot) : 0;
   const hub = state.hubs[robot.alliance];
   const ownZone: FieldZoneId = `${robot.alliance}_alliance`;
 
@@ -481,13 +635,26 @@ function fire(state: MatchState, robot: RobotState, accuracyFactor: number, dtS:
   if (robot.fuelHeld === 0) {
     robot.accum.shot = 0;
     events.push({ kind: "hopper_empty", timeS: state.timeS, robotId: robot.id });
-    finish(state, robot, events);
+    return true;
   }
+  return false;
 }
 
-/** Align to the hub; returns true once aligned. */
-function align(robot: RobotState, dtS: number): boolean {
+/**
+ * Drivetrain aim: rotate the whole robot to face the hub and settle for alignTimeS.
+ * Turret aim: the turret keeps the hub in its sights, so the robot is always aligned.
+ * Returns true once aligned.
+ */
+function align(state: MatchState, robot: RobotState, dtS: number): boolean {
+  if (robot.profile.aimMethod === "turret") {
+    robot.alignment.aligned = true;
+    robot.alignment.remainingS = 0;
+    return true;
+  }
   if (robot.alignment.aligned) return true;
+  if (dtS <= 0) return false;
+  const hub = state.field.alliances[robot.alliance].hub;
+  turnToward(robot, Math.atan2(hub.y - robot.pose.y, hub.x - robot.pose.x), dtS, state.rules.physics.maxTurnRateDegPerS);
   robot.alignment.remainingS = Math.max(0, robot.alignment.remainingS - dtS);
   if (robot.alignment.remainingS <= EPS) {
     robot.alignment.aligned = true;
@@ -496,21 +663,108 @@ function align(robot: RobotState, dtS: number): boolean {
   return robot.alignment.aligned;
 }
 
-/** Take fuel from a floor zone. Finishes when the hopper is full; fails when the source is empty. */
-function intake(state: MatchState, robot: RobotState, zone: FieldZoneId, dtS: number, events: EngineEvent[]): void {
+/** Spin the shooter up; returns true once at speed. */
+function spinUp(robot: RobotState, dtS: number): boolean {
+  if (robot.spinUp.ready) return true;
+  robot.spinUp.remainingS = Math.max(0, robot.spinUp.remainingS - dtS);
+  if (robot.spinUp.remainingS <= EPS) {
+    robot.spinUp.ready = true;
+    robot.spinUp.remainingS = 0;
+  }
+  return robot.spinUp.ready;
+}
+
+/** Let the shooter wind down (during any step that is not about shooting). */
+function spinDown(robot: RobotState): void {
+  robot.spinUp.ready = false;
+  robot.spinUp.remainingS = robot.profile.spinUpS;
+}
+
+type ShotMode = "now" | "align" | "dump" | "move" | "hold";
+
+/**
+ * One tick of a shooting step, by archetype:
+ *   - drum / lanes (drivetrain aim): align first (unless shooting unaligned), then spin up, then fire
+ *   - turret: always aligned, spins up while driving, fires on the move if it can
+ *   - dumper: only scores from right next to the hub; refuses to fire from anywhere else
+ * Finishes the step when the hopper empties.
+ */
+function shootStep(state: MatchState, robot: RobotState, mode: ShotMode, dtS: number, rng: Rng, events: EngineEvent[]): void {
+  const p = robot.profile;
+  if (p.shooterType === "none" || p.fireRatePerS <= 0) return finish(state, robot, events, "no_shooter");
+  if (robot.fuelHeld <= 0) return finish(state, robot, events, "no_fuel");
+  if (mode === "move" && !p.shootOnMove) return finish(state, robot, events, "cannot_shoot_on_move");
+  if (p.shooterType === "dumper" && mode !== "move" && !inShotRange(state, robot)) return finish(state, robot, events, "out_of_range");
+
+  let factor = 1;
+  if (mode === "dump") factor = state.rules.shotModel.dumpUnalignedAccuracyFactor;
+  else if (mode === "move") {
+    align(state, robot, dtS);
+    factor = sotmFactor(robot);
+  } else if (mode === "now") {
+    if (!align(state, robot, 0)) factor = state.rules.shotModel.dumpUnalignedAccuracyFactor;
+  } else if (!align(state, robot, dtS)) {
+    spinDown(robot); // "align, then spin up": the shooter waits for the drivetrain
+    return;
+  }
+  if (!spinUp(robot, dtS)) return;
+  if (mode === "hold" && !state.hubs[robot.alliance].active) return;
+  if (mode === "move" && !inShotRange(state, robot)) return; // keep driving until the hub is in range
+  if (fire(state, robot, factor, dtS, rng, events)) finish(state, robot, events);
+}
+
+/**
+ * Collect-while-shooting turrets (the zero-hopper archetype) fire whatever they pick up as long
+ * as the hub is in range and active, so they score almost as fast as they collect.
+ * Returns true when it is shooting (or spinning up to shoot) this tick.
+ */
+function fireWhileCollecting(state: MatchState, robot: RobotState, dtS: number, rng: Rng, events: EngineEvent[]): boolean {
+  const p = robot.profile;
+  if (!p.canCollectWhileShooting || p.aimMethod !== "turret" || p.shooterType === "none" || p.fireRatePerS <= 0) return false;
+  if (robot.fuelHeld <= 0 || !state.hubs[robot.alliance].active || !inShotRange(state, robot)) return false;
+  align(state, robot, dtS);
+  if (!spinUp(robot, dtS)) return true;
+  fire(state, robot, p.shootOnMove ? sotmFactor(robot) : 1, dtS, rng, events);
+  return true;
+}
+
+/** Index of the fuel pile under the robot (within reach of its intake), or -1. */
+function pileUnder(state: MatchState, robot: RobotState): number {
+  const reach = state.rules.physics.robotRadiusM + state.rules.physics.arriveToleranceM;
+  const piles = state.fuel.piles;
+  for (let i = 0; i < piles.length; i++) if (dist(piles[i]!.pos, robot.pose) <= reach) return i;
+  return -1;
+}
+
+/**
+ * Take fuel from a pile under the robot, else from a floor zone. Finishes when the hopper is full
+ * (unless keepGoing: a collect-while-shooting robot that empties as it fills); fails when the
+ * source is empty.
+ */
+function intake(state: MatchState, robot: RobotState, zone: FieldZoneId, dtS: number, events: EngineEvent[], keepGoing = false): void {
   const p = robot.profile;
   if (p.capacity <= 0 || p.intakeRatePerS <= 0) return finish(state, robot, events, "cannot_collect");
-  if (robot.fuelHeld >= p.capacity) return finish(state, robot, events);
-  if (state.fuel.byZone[zone] <= 0) return finish(state, robot, events, "source_empty");
+  if (robot.fuelHeld >= p.capacity) {
+    if (!keepGoing) finish(state, robot, events);
+    return;
+  }
+  const pile = pileUnder(state, robot);
+  if (pile < 0 && state.fuel.byZone[zone] <= 0) return finish(state, robot, events, "source_empty");
   robot.accum.intake += p.intakeRatePerS * dtS;
-  const taken = Math.min(Math.floor(robot.accum.intake), state.fuel.byZone[zone], p.capacity - robot.fuelHeld);
+  const avail = pile >= 0 ? state.fuel.piles[pile]!.count : state.fuel.byZone[zone];
+  const taken = Math.min(Math.floor(robot.accum.intake), avail, p.capacity - robot.fuelHeld);
   robot.accum.intake -= taken;
   robot.fuelHeld += taken;
-  state.fuel.byZone[zone] -= taken;
+  if (pile >= 0) {
+    state.fuel.piles[pile]!.count -= taken;
+    if (state.fuel.piles[pile]!.count <= 0) state.fuel.piles.splice(pile, 1);
+  } else state.fuel.byZone[zone] -= taken;
   if (robot.fuelHeld >= p.capacity) {
     robot.accum.intake = 0;
-    events.push({ kind: "hopper_full", timeS: state.timeS, robotId: robot.id });
-    finish(state, robot, events);
+    if (!keepGoing) {
+      events.push({ kind: "hopper_full", timeS: state.timeS, robotId: robot.id });
+      finish(state, robot, events);
+    }
   }
 }
 
@@ -593,7 +847,11 @@ function trackProgress(state: MatchState, robot: RobotState, before: Vec2, arriv
   }
 }
 
+/** Set by advanceRobot: true when the robot tried to move this tick and has not arrived. */
+let wantsToMove = false;
+
 function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rng, events: EngineEvent[]): void {
+  wantsToMove = false;
   const step = currentStep(robot);
   if (!step) {
     brake(state, robot, dtS);
@@ -601,19 +859,26 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
   }
   const physics = state.rules.physics;
   const follows = step.action === "defend" || step.action === "screen" || step.action === "protect_climber";
+  if (!SHOOTING.has(step.action) && !(step.action === "collect" && robot.profile.canCollectWhileShooting)) spinDown(robot);
+  if (!robot.profile.fitsUnderTrench) {
+    const route = step.action === "route_via" ? step.params.route : step.action === "shoot_on_move" && "path" in step.params ? step.params.path : null;
+    const trenchLane = step.action === "block_lane" && step.params.laneId.endsWith("_trench");
+    if (trenchLane || (route !== null && isTrench(route))) return finish(state, robot, events, "cannot_fit");
+  }
 
   // Navigation target: fixed at step start, except when following another robot.
   let arrived = true;
   if (robot.navTarget === null || follows) {
     const target = resolveTarget(state, robot, step);
     if (target === null) return finish(state, robot, events, "bad_target");
-    robot.navTarget = target === undefined ? null : follows ? target : snapTarget(getGrid(state.field, physics), target, robot.profile.fitsUnderTrench);
+    robot.navTarget = target === undefined ? null : snapTarget(getGrid(state.field, physics), target, robot.profile.fitsUnderTrench);
   }
   if (robot.navTarget !== null) {
     const route = step.action === "route_via" ? step.params.route : step.action === "shoot_on_move" && "path" in step.params ? step.params.path : null;
     const goal = route ? crossingWaypoint(state, robot, route, robot.navTarget) : robot.navTarget;
     const before = { x: robot.pose.x, y: robot.pose.y };
-    arrived = moveToward(state, robot, goal, dtS, follows ? physics.robotRadiusM * 2 + physics.arriveToleranceM : physics.arriveToleranceM, follows);
+    arrived = moveToward(state, robot, goal, dtS, physics.arriveToleranceM, follows);
+    if (!arrived) wantsToMove = true;
     if (goal !== robot.navTarget) arrived = false;
     trackProgress(state, robot, before, arrived, dtS, events);
     if (lastMoveUnreachable) {
@@ -644,7 +909,8 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
       // Loose floor fuel is picked up as soon as the robot is in the zone; the depot needs arrival.
       const here = floorZoneAt(state.field, robot.pose);
       const zone: FieldZoneId = step.params.source === "neutral" ? "neutral" : step.params.source === "depot" ? `${robot.alliance}_depot` : here;
-      if (step.params.source === "depot" ? arrived : here === zone) intake(state, robot, zone, dtS, events);
+      const firing = fireWhileCollecting(state, robot, dtS, rng, events);
+      if (step.params.source === "depot" ? arrived : here === zone) intake(state, robot, zone, dtS, events, firing);
       break;
     }
     case "load_outpost":
@@ -656,23 +922,21 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
       break;
     }
     case "shoot_now":
-      fire(state, robot, robot.alignment.aligned ? 1 : state.rules.shotModel.dumpUnalignedAccuracyFactor, dtS, rng, events);
+      shootStep(state, robot, "now", dtS, rng, events);
       break;
     case "dump_unaligned":
-      fire(state, robot, state.rules.shotModel.dumpUnalignedAccuracyFactor, dtS, rng, events);
+      shootStep(state, robot, "dump", dtS, rng, events);
       break;
     case "align_then_shoot":
-      if (align(robot, dtS)) fire(state, robot, 1, dtS, rng, events);
+      shootStep(state, robot, "align", dtS, rng, events);
       break;
     case "hold_fire_until_active":
-      if (robot.fuelHeld <= 0) finish(state, robot, events, "no_fuel");
-      else if (state.hubs[robot.alliance].active && align(robot, dtS)) fire(state, robot, 1, dtS, rng, events);
+      shootStep(state, robot, "hold", dtS, rng, events);
       break;
     case "shoot_on_move": {
-      if (!robot.profile.shootOnMove) return finish(state, robot, events, "cannot_shoot_on_move");
-      const speed = Math.hypot(robot.velocity.vx, robot.velocity.vy);
-      const table = robot.profile.sotmAccuracyBySpeed.map((row) => ({ x: row.speedMps, y: row.accuracy }));
-      fire(state, robot, interpTable(table, speed), dtS, rng, events);
+      const wasIntent = robot.intent;
+      shootStep(state, robot, "move", dtS, rng, events);
+      if (robot.intent === wasIntent && currentStep(robot) === step && arrived) finish(state, robot, events); // reached the end of the path
       break;
     }
     case "stage_fuel":
@@ -705,13 +969,29 @@ function advanceRobot(state: MatchState, robot: RobotState, dtS: number, rng: Rn
 
 // ── contact, proximity, watchdog ─────────────────────────────────────────────
 
+/** Traction limit: the most force the robot's wheels can put on the carpet, newtons. */
+function gripForce(state: MatchState, robot: RobotState): number {
+  const p = robot.profile;
+  return p.traction * loadedMassKg(p, robot.fuelHeld) * (state.rules.physics.gravityMps2 ?? DEFAULT_GRAVITY);
+}
+
+/** Force with which the robot drives along (tx, ty) into the robot it touches; 0 when it is not driving into it. */
+function pushingForce(state: MatchState, robot: RobotState, tx: number, ty: number, trying: boolean): number {
+  if (!trying || robot.velocity.vx * tx + robot.velocity.vy * ty <= EPS) return 0;
+  return Math.min(robot.profile.pushForceN, gripForce(state, robot));
+}
+
 /**
- * Robots are solid discs: push overlapping pairs apart, the lighter robot moving more, then slide
- * both out of any field element. Pairs are processed in fixed state order.
+ * Push model. Robots are solid discs. When two overlap, a robot driving into the other pushes
+ * with its drive force (capped by its traction); a robot that is not pushing back resists with
+ * its traction. The pushed robot gives way only by the pusher's excess force, as a fraction of
+ * the push, and the pusher is stopped by the rest: a weak robot cannot shove a strong one that
+ * holds its ground, and two robots pushing head-on move the way of the stronger. Both then slide
+ * out of any field element. Pairs are processed in fixed state order.
  */
-function separateRobots(state: MatchState): void {
+function separateRobots(state: MatchState, trying: Uint8Array): void {
   const robots = state.robots;
-  const touch = state.rules.physics.robotRadiusM * 2;
+  const touch = contactDistance(state);
   const grid = getGrid(state.field, state.rules.physics);
   for (let i = 0; i < robots.length; i++) {
     const a = robots[i]!;
@@ -726,9 +1006,14 @@ function separateRobots(state: MatchState): void {
       const ux = d > EPS ? dx / d : 1;
       const uy = d > EPS ? dy / d : 0;
       const overlap = touch - d;
-      const ma = loadedMassKg(a.profile, a.fuelHeld);
-      const mb = loadedMassKg(b.profile, b.fuelHeld);
-      const shareA = mb / (ma + mb);
+      const pa = pushingForce(state, a, ux, uy, trying[i] === 1);
+      const pb = pushingForce(state, b, -ux, -uy, trying[j] === 1);
+      // Fraction of the overlap that robot a gives up (b gives up the rest).
+      let shareA: number;
+      if (pa > 0 && pb > 0) shareA = pa >= pb ? 1 - (pa - pb) / pa : (pb - pa) / pb;
+      else if (pa > 0) shareA = 1 - Math.max(0, Math.min(1, (pa - gripForce(state, b)) / pa));
+      else if (pb > 0) shareA = Math.max(0, Math.min(1, (pb - gripForce(state, a)) / pb));
+      else shareA = 0.5;
       a.pose.x -= ux * overlap * shareA;
       a.pose.y -= uy * overlap * shareA;
       b.pose.x += ux * overlap * (1 - shareA);
@@ -739,28 +1024,94 @@ function separateRobots(state: MatchState): void {
   }
 }
 
-function pairKey(a: RobotState, b: RobotState): string {
-  return `${a.id}|${b.id}`;
+/** Record a foul by `robot`: points to the other alliance, a FoulRecord and a foul event. */
+function callFoul(state: MatchState, robot: RobotState, clauseId: string, severity: "minor" | "major", events: EngineEvent[]): void {
+  const points = severity === "major" ? state.rules.points.majorFoul : state.rules.points.minorFoul;
+  const victim = state.score[otherAlliance(robot.alliance)];
+  victim.foulPoints += points;
+  victim.total = victim.autoFuel + victim.teleopFuel + victim.autoTower + victim.teleopTower + victim.foulPoints;
+  state.fouls.push({ timeS: state.timeS, clauseId, byRobotId: robot.id, byAlliance: robot.alliance, severity, pointsToOpponent: points });
+  events.push({ kind: "foul", timeS: state.timeS, clauseId, robotId: robot.id, severity, pointsToOpponent: points });
 }
 
-function opponentsInRange(state: MatchState): Set<string> {
-  const near = new Set<string>();
+/**
+ * Pins (rule G418 in config). A robot is pinned while it is trying to move, makes no headway, and
+ * an opponent in contact is driving into it. The count pauses when the pin is broken and ends
+ * only once the pinner is more than the release distance away. `pinned` fires once the pin has
+ * lasted triggers.contactLongS; at pinning.limitS the pinner is called for a foul and the count
+ * restarts.
+ */
+function updatePins(state: MatchState, startX: Float64Array, startY: Float64Array, trying: Uint8Array, dtS: number, events: EngineEvent[]): void {
+  const robots = state.robots;
+  const { noProgressS, noProgressMinMoveM, contactLongS } = state.rules.triggers;
+  const pin = state.rules.pinning;
+  const stuckM = (noProgressMinMoveM / noProgressS) * dtS;
+  for (let i = 0; i < robots.length; i++) {
+    const robot = robots[i]!;
+    const c = robot.contact;
+    const other = c.withRobotId !== null ? robotById(state, c.withRobotId) : null;
+    let pinner: RobotState | null = null;
+    if (other && other.alliance !== robot.alliance && trying[i] === 1) {
+      const moved = Math.hypot(robot.pose.x - startX[i]!, robot.pose.y - startY[i]!);
+      const tx = robot.pose.x - other.pose.x;
+      const ty = robot.pose.y - other.pose.y;
+      const into = other.velocity.vx * tx + other.velocity.vy * ty > EPS || currentStep(other)?.action === "defend";
+      if (moved < stuckM && into) pinner = other;
+    }
+    if (pinner) {
+      if (c.pinnedByRobotId !== pinner.id) {
+        c.pinnedByRobotId = pinner.id;
+        c.pinS = 0;
+      }
+      const before = c.pinS;
+      c.pinS = before + dtS;
+      if (before < contactLongS && c.pinS >= contactLongS) events.push({ kind: "pinned", timeS: state.timeS, robotId: robot.id, seconds: c.pinS });
+      if (c.pinS >= pin.limitS - EPS) {
+        callFoul(state, pinner, pin.clauseId, pin.severity, events);
+        c.pinS = 0;
+      }
+    } else if (c.pinnedByRobotId !== null) {
+      const by = robotById(state, c.pinnedByRobotId);
+      if (!by || dist(by.pose, robot.pose) - contactDistance(state) >= pin.releaseDistanceM) {
+        c.pinnedByRobotId = null;
+        c.pinS = 0;
+      }
+    }
+  }
+}
+
+/** Pairs (i < j, opposing alliances) within opponentInRangeM, as a flat n*n flag array. */
+function opponentsInRange(state: MatchState): Uint8Array {
+  const robots = state.robots;
+  const n = robots.length;
+  const near = new Uint8Array(n * n);
   const range = state.rules.triggers.opponentInRangeM;
-  for (const a of state.robots) {
-    for (const b of state.robots) {
-      if (a.alliance !== b.alliance && a.id < b.id && dist(a.pose, b.pose) <= range) near.add(pairKey(a, b));
+  for (let i = 0; i < n; i++) {
+    const a = robots[i]!;
+    for (let j = i + 1; j < n; j++) {
+      const b = robots[j]!;
+      if (a.alliance !== b.alliance && dist(a.pose, b.pose) <= range) near[i * n + j] = 1;
     }
   }
   return near;
 }
 
-function updateContacts(state: MatchState, dtS: number, wasNear: Set<string>, events: EngineEvent[]): void {
+function updateContacts(state: MatchState, dtS: number, wasNear: Uint8Array, events: EngineEvent[]): void {
   const t = state.timeS;
   const touchM = state.rules.physics.robotRadiusM * 2 + (state.rules.physics.contactMarginM ?? 0);
   const longS = state.rules.triggers.contactLongS;
+  const robots = state.robots;
+  const n = robots.length;
 
-  for (const robot of state.robots) {
-    const other = state.robots.find((o) => o.id !== robot.id && dist(robot.pose, o.pose) <= touchM);
+  for (let i = 0; i < n; i++) {
+    const robot = robots[i]!;
+    let other: RobotState | null = null;
+    for (let j = 0; j < n; j++) {
+      if (j !== i && dist(robot.pose, robots[j]!.pose) <= touchM) {
+        other = robots[j]!;
+        break;
+      }
+    }
     if (!other) {
       robot.contact.withRobotId = null;
       robot.contact.contactS = 0;
@@ -779,11 +1130,11 @@ function updateContacts(state: MatchState, dtS: number, wasNear: Set<string>, ev
   }
 
   const nowNear = opponentsInRange(state);
-  for (const a of state.robots) {
-    for (const b of state.robots) {
-      if (a.alliance === b.alliance || a.id >= b.id) continue;
-      const key = pairKey(a, b);
-      if (nowNear.has(key) && !wasNear.has(key)) {
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      if (nowNear[i * n + j] && !wasNear[i * n + j]) {
+        const a = robots[i]!;
+        const b = robots[j]!;
         const distanceM = dist(a.pose, b.pose);
         events.push({ kind: "opponent_in_range", timeS: t, robotId: a.id, opponentId: b.id, distanceM });
         events.push({ kind: "opponent_in_range", timeS: t, robotId: b.id, opponentId: a.id, distanceM });
@@ -832,10 +1183,21 @@ function step(state: MatchState, intents: Record<RobotId, Intent | undefined>, d
   }
 
   const wasNear = opponentsInRange(state);
-  for (const robot of state.robots) advanceRobot(state, robot, dtS, rng, events);
-  separateRobots(state);
+  const n = state.robots.length;
+  const startX = new Float64Array(n);
+  const startY = new Float64Array(n);
+  const trying = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const robot = state.robots[i]!;
+    startX[i] = robot.pose.x;
+    startY[i] = robot.pose.y;
+    advanceRobot(state, robot, dtS, rng, events);
+    trying[i] = wantsToMove ? 1 : 0;
+  }
+  separateRobots(state, trying);
   advanceClock(state, dtS, rng, events);
   updateContacts(state, dtS, wasNear, events);
+  updatePins(state, startX, startY, trying, dtS, events);
   timers(state, dtS, events);
 
   state.tick += 1;
@@ -876,23 +1238,41 @@ function rollout(
   const dtS = state.rules.physics.dtS;
   const endS = Math.min(state.timeS + horizonS, state.rules.matchS);
   let pending: Record<RobotId, Intent | undefined> = { ...overrides };
-  let askAgain = new Set<RobotId>();
+  // Same decision rule as a live match (src/exec/triggers.ts): a robot decides when it is idle or
+  // when an event triggers it, and sees the events since its previous decision.
+  const n = state.robots.length;
+  const since: EngineEvent[][] = state.robots.map(() => []);
+  const triggered = new Uint8Array(n);
 
   while (state.timeS < endS - EPS && state.phase !== "finished") {
-    for (const robot of state.robots) {
+    for (let i = 0; i < n; i++) {
+      const robot = state.robots[i]!;
       if (pending[robot.id] !== undefined) continue;
       if (overridden.has(robot.id)) {
         if (robot.intent !== null) continue; // override still running
         overridden.delete(robot.id);
       }
-      if (robot.intent === null || askAgain.has(robot.id)) {
+      if (robot.intent === null || triggered[i]) {
         const policy = policies.byRobot?.[robot.id] ?? policies.default;
-        pending[robot.id] = policy.decide(buildObservationView(state, robot.id));
+        pending[robot.id] = policy.decide(buildObservationView(state, robot.id, since[i]));
+        since[i] = [];
       }
     }
     const { events } = step(state, pending, dtS);
     pending = {};
-    askAgain = new Set(events.filter((e) => e.kind === "watchdog").map((e) => e.robotId));
+    triggered.fill(0);
+    if (events.length > 0) {
+      for (let i = 0; i < n; i++) {
+        const id = state.robots[i]!.id;
+        const buf = since[i]!;
+        for (const e of events) {
+          if (!eventConcerns(e, id)) continue;
+          buf.push(e);
+          if (isTriggerFor(e, id)) triggered[i] = 1;
+        }
+        if (buf.length > 50) since[i] = buf.slice(-50);
+      }
+    }
   }
 
   const newFouls = state.fouls.slice(startFouls);

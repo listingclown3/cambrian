@@ -4,7 +4,7 @@
     "url": "https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf",
     "file_name": "2026GameManual.pdf"
   },
-  "generatedTs": "2026-11-14T19:44:37.545Z",
+  "generatedTs": "2026-11-14T20:49:00.641Z",
   "rules": [
     {
       "topic": "pinning an opponent robot",
@@ -12,7 +12,11 @@
       "text": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an opponent ROBOT by contact, either direct or transitive (such as against a FIELD element).",
       "violation": "MINOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.",
       "page": 72,
-      "quote": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an"
+      "quote": "A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an",
+      "fullText": "G418 *There's a 3-count on PINS. A ROBOT may not PIN an opponent's ROBOT for more than 3 seconds. A ROBOT is PINNING if it is preventing the movement of an opponent ROBOT by contact, either direct or transitive (such as against a FIELD element). A PIN count ends once any of the following criteria below are met:\nA. the ROBOTS have separated by at least 72.0in (1.83m) from each other for more than 3 seconds,\nB. either ROBOT has moved 72.0in (1.83m) from where the PIN initiated for more than 3 seconds, or\nC. the PINNING ROBOT gets PINNED.\nFor criteria A, the PIN count pauses once ROBOTS are separated by 72.0in (1.83m) until either the PIN ends or the PINNING ROBOT moves back within 72.0in (1.83m), at which point the PIN count is resumed.\nFor criteria B, the PIN count pauses once either ROBOT has moved 72.0in (1.83m) from where the PIN initiated until the PIN ends or until both ROBOTS move back within 72.0in (1.83m), at which point the PIN count is resumed.\nViolation: MINOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.\nA team’s desired direction of travel is not a consideration when determining if a ROBOT is PINNED.",
+      "exceptions": [],
+      "fullTextPage": 72,
+      "fullTextTruncated": false
     },
     {
       "topic": "damaging or tipping an opponent robot",
@@ -20,7 +24,16 @@
       "text": "A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or transitively via a SCORING ELEMENT CONTROLLED by the ROBOT: A. inside the vertical projection of an opponent’s ROBOT PERIMETER, or B. with the opponent’s BUMPER backing or mounting.",
       "violation": "MAJOR FOUL and YELLOW CARD, or if opponent ROBOT is unable to drive, then MAJOR FOUL and RED CARD",
       "page": 69,
-      "quote": "A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or"
+      "quote": "A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or",
+      "fullText": "G415 *Stay out of other ROBOTS. A ROBOT with BUMPERS completely outside of their ALLIANCE ZONE may not damage or functionally impair an opponent ROBOT by initiating contact, either directly or transitively via a SCORING ELEMENT CONTROLLED by the ROBOT:\nA. inside the vertical projection of an opponent’s ROBOT PERIMETER, or\nB. with the opponent’s BUMPER backing or mounting.\nExceptions to this rule:\nC. Contact between the ROBOT’S BUMPERS or COMPONENTS inside the ROBOT PERIMETER and COMPONENTS inside an opening of an opponent’s BUMPERS or in the space above the BUMPER opening\nD. Damage or functional impairment because of contact with a tipped-over opponent ROBOT\nE. A ROBOT that is not in violation of G403 making contact with an opponent ROBOT during AUTO\nF. Damage that appears to the REFEREE as cosmetic only\nViolation: MAJOR FOUL and YELLOW CARD, or if opponent ROBOT is unable to drive, then MAJOR FOUL and RED CARD.\nFIRST Robotics Competition can be a full-contact competition and may include rigorous game play. While this rule aims to limit severe damage to ROBOTS, teams should design their ROBOTS to be robust.\nExamples for this rule include, but are not limited to:\nA. A ROBOT leaves an arm extended and hits an opponent ROBOT inside their ROBOT PERIMETER in the NEUTRAL ZONE. No damage is seen so no violation is assigned.\nB. A RED ROBOT in their ALLIANCE ZONE hits a BLUE ROBOT inside their ROBOT PERIMETER. As this occurred inside the RED ALLIANCE ZONE, no violation is assigned.\nC. A ROBOT leaves an arm extended, spins around to change course, and unintentionally hits and damages a COMPONENT inside the ROBOT PERIMETER of a nearby opponent ROBOT in the NEUTRAL ZONE. This would result in a MAJOR FOUL + YELLOW CARD.\nD. A ROBOT, in the process of trying to quickly reverse direction, tips up on a single pair of wheels, lands atop an opponent ROBOT in the NEUTRAL ZONE, and damages a COMPONENT inside that opponent’s ROBOT PERIMETER. This would result in a MAJOR FOUL + YELLOW CARD.\nE. Accidentally opening an opponent’s relief valve in the NEUTRAL ZONE such that the opponent’s air pressure drops and they can no longer use their intake. This is seen as functionally impairing the ROBOT so would result in a MAJOR FOUL + YELLOW CARD.\nIn a collision, it’s possible for both ROBOTS to initiate contact.\nThe exception in G415-C effectively means that ROBOTS with BUMPER gaps are at their own risk regarding damaging contact in these areas.",
+      "exceptions": [
+        "C. Contact between the ROBOT’S BUMPERS or COMPONENTS inside the ROBOT PERIMETER and COMPONENTS inside an opening of an opponent’s BUMPERS or in the space above the BUMPER opening",
+        "D. Damage or functional impairment because of contact with a tipped-over opponent ROBOT",
+        "E. A ROBOT that is not in violation of G403 making contact with an opponent ROBOT during AUTO",
+        "F. Damage that appears to the REFEREE as cosmetic only"
+      ],
+      "fullTextPage": 69,
+      "fullTextTruncated": true
     },
     {
       "topic": "contacting an opponent climbing or on the TOWER",
@@ -28,7 +41,11 @@
       "text": "A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30 seconds of the MATCH regardless of who initiates contact.",
       "violation": "MAJOR FOUL and if the opponent ROBOT is off the ground the opponent ROBOT is awarded LEVEL 3 TOWER points.",
       "page": 73,
-      "quote": "A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30"
+      "quote": "A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30",
+      "fullText": "G420 TOWER protection. A ROBOT may not contact, directly or transitively through a SCORING ELEMENT, an opponent ROBOT in contact with an opponent TOWER during the last 30 seconds of the MATCH regardless of who initiates contact.\nViolation: MAJOR FOUL and if the opponent ROBOT is off the ground the opponent ROBOT is awarded LEVEL 3 TOWER points.\nTransitive contact requires that each robot is contacting the same SCORING ELEMENT(S) simultaneously.",
+      "exceptions": [],
+      "fullTextPage": 73,
+      "fullTextTruncated": false
     },
     {
       "topic": "blocking or trapping multiple opponents / shutting down major gameplay",
@@ -36,7 +53,11 @@
       "text": "2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play.",
       "violation": "MAJOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.",
       "page": 72,
-      "quote": "2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play."
+      "quote": "2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play.",
+      "fullText": "G419 *Don't collude with your partners to shut down major parts of game play. 2 or more ROBOTS that appear to a REFEREE to be working together may not isolate or close off any major element of MATCH play.\nViolation: MAJOR FOUL, and for every 3 seconds in which the situation is not corrected, a MAJOR FOUL is assessed.\nExamples of violations of this rule include, but are not limited to:\nA. shutting down access to all SCORING ELEMENTS,\nB. quarantining all opponents to a small area of the FIELD,\nC. preventing access to the opponent’s TOWER,\nD. preventing traversal between field zones by blocking both TRENCHES, and\nE. preventing traversal between field zones by blocking both BUMPS.\nExamples of standard gameplay that are not violations, include, but are not limited to:\nF. A single ROBOT blocking access to a particular area of the FIELD, and\nG. 2 ROBOTS independently collecting SCORING ELEMENTS in front of a BUMP or TRENCH at the same time.",
+      "exceptions": [],
+      "fullTextPage": 72,
+      "fullTextTruncated": false
     },
     {
       "topic": "robots leaving the field or extending beyond a size limit",
@@ -44,7 +65,16 @@
       "text": "A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107.",
       "violation": "MAJOR FOUL",
       "page": 67,
-      "quote": "A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107."
+      "quote": "A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107.",
+      "fullText": "G413 Expansion limits. A ROBOT may not extend beyond any of the horizontal or vertical expansion limits described in R105, R106, and R107.\nExceptions to this rule:\nA. If the over-expansion that violates R105 or R107 is due to visible damage and not used for strategic benefit, no penalty is imposed.\nB. If an expansion that contributes to a violation of R106 is due to visible damage the team may extend a different component in a different direction, and no penalty is imposed.\nC. If the over-expansion is MOMENTARY and is not used for strategic benefit, no penalty is imposed.\nD. If an expansion that contributes to a violation of R106 is due to flex of ROBOT components and is within 1.5in of the ROBOT PERIMETER, the team may extend in a different direction, and no penalty is imposed.\nViolation: MAJOR FOUL. Corrective action (such as removing the offending MECHANISM, and/or re-inspection) may be required before the ROBOT will be allowed to compete in subsequent MATCHES.\nThe intent of the G413-A and G413-B exceptions to this rule are to prevent piling on a punitive response to a ROBOT that's already experienced hardship and not leveraging that hardship for gain.\nExceptions are only given for visible damage, as perceived by a REFEREE. Teams should not assume that REFEREES will give an exception for unobservable damage even if ROBOT function is affected.\nTeams exploiting the exception to part B by designing in something to \"break\" will not be given an exception and will likely also be given a violation of G211.\nExamples related to exceptions A and B include the following:\nA. a physical device on a team's ROBOT, whose purpose is to restrain their TOWER mechanism from extending beyond the 30in (76.2cm) height limit imposed by R107, breaks after a collision with another ROBOT. Provided the ROBOT does not use the now-too-long extension to climb the TOWER, no violation is assigned.\nC. a part of a ROBOT is damaged causing a panel to extend out less than 12in (30.48cm) on one side of the ROBOT. The ROBOT then extends out in another direction to intake FUEL. As visible damage has caused an expansion that contributes to the violation of R106, no penalty is imposed.\nThe intent of the G413-C extension is to prevent violations for inadvertent mechanism flexing and movement for short periods of time during the MATCH not to provide a pathway to intentionally design less-than-MOMENTARY over-extensions.\nExamples related to exception C include the following:",
+      "exceptions": [
+        "A. If the over-expansion that violates R105 or R107 is due to visible damage and not used for strategic benefit, no penalty is imposed.",
+        "B. If an expansion that contributes to a violation of R106 is due to visible damage the team may extend a different component in a different direction, and no penalty is imposed.",
+        "C. If the over-expansion is MOMENTARY and is not used for strategic benefit, no penalty is imposed.",
+        "D. If an expansion that contributes to a violation of R106 is due to flex of ROBOT components and is within 1.5in of the ROBOT PERIMETER, the team may extend in a different direction, and no penalty is imposed."
+      ],
+      "fullTextPage": 67,
+      "fullTextTruncated": true
     },
     {
       "topic": "human player / OUTPOST FUEL feeding rules",
@@ -52,7 +82,11 @@
       "text": "FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways: A. through the CHUTE, B. through the bottom opening in the OUTPOST, or C. thrown over the top of the ALLIANCE WALL from the OUTPOST AREA.",
       "violation": "MAJOR FOUL",
       "page": 74,
-      "quote": "FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways: A. through the CHUTE, B. through the"
+      "quote": "FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways: A. through the CHUTE, B. through the",
+      "fullText": "G425 *SCORING ELEMENT delivery. FUEL may only be introduced to the FIELD by a HUMAN PLAYER or DRIVER in the following ways:\nA. through the CHUTE, B. through the bottom opening in the OUTPOST, or C. thrown over the top of the ALLIANCE WALL from the OUTPOST AREA.\nViolation: MAJOR FOUL.",
+      "exceptions": [],
+      "fullTextPage": 74,
+      "fullTextTruncated": false
     },
     {
       "topic": "intentionally forcing an opponent to break a rule",
@@ -60,7 +94,15 @@
       "text": "A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of FIRST Robotics Competition and not allowed. Rule violations forced in this manner will not result in an assignment of a penalty to the targeted ALLIANCE.",
       "violation": "MAJOR FOUL. YELLOW CARD if REPEATED.",
       "page": 59,
-      "quote": "A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of"
+      "quote": "A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of",
+      "fullText": "G210 *Don't expect to gain by doing others harm. A strategy not consistent with standard gameplay and clearly aimed at forcing the opponent ALLIANCE to violate a rule is not in the spirit of FIRST Robotics Competition and not allowed. Rule violations forced in this manner will not result in an assignment of a penalty to the targeted ALLIANCE.\nViolation: MAJOR FOUL. YELLOW CARD if REPEATED.\nThis rule does not apply for strategies consistent with standard gameplay, for example:\nA. a red ALLIANCE ROBOT attempting to climb their TOWER in the final 30 seconds of the MATCH contacts a blue ALLIANCE ROBOT.\nB. a blue ALLIANCE ROBOT is attempting to play defense on a red ALLIANCE ROBOT attempting to score into the HUB from within their ALLIANCE ZONE and pushes them outside their ALLIANCE ZONE.\nThis rule requires an intentional act with limited or no opportunity for the team being acted on to avoid the penalty such as:\nC. forcing an opponent ROBOT to catch FUEL by pushing them far from (i.e. more than 48.0in (1.22m)) the HUB exit to under the HUB exit to make them violate G408.\nD. a blue ALLIANCE ROBOT, pushing a red ALLIANCE ROBOT far from (i.e. more than 48.0in (1.22m)) the TOWER into another blue ALLIANCE ROBOT which is in contact with the blue TOWER and the REFEREE perceives that the blue ROBOT is deliberately making the red ROBOT violate G420.",
+      "exceptions": [
+        "This rule does not apply for strategies consistent with standard gameplay, for example:",
+        "A. a red ALLIANCE ROBOT attempting to climb their TOWER in the final 30 seconds of the MATCH contacts a blue ALLIANCE ROBOT.",
+        "B. a blue ALLIANCE ROBOT is attempting to play defense on a red ALLIANCE ROBOT attempting to score into the HUB from within their ALLIANCE ZONE and pushes them outside their ALLIANCE ZONE."
+      ],
+      "fullTextPage": 59,
+      "fullTextTruncated": false
     }
   ]
 }

@@ -1,0 +1,26 @@
+STATUS (integrator), updated 1:00 PM. One line per workstream: state | last commit on main | blocker.
+
+engine (p1)            | steps 1-2, speed work and rollout pool merged; 9.9 matches/s; now adding tower post-up spots and rule G420, behaviour final by 1:30 | 60bd97c | each behaviour change invalidates the answer key
+providers (p2)         | all steps + record mode + timeout diagnostics merged; bench:batch committed on its branch, running | f9d35d7 | none
+benchmarks (p3)        | league, matches, 45 scenarios / 15 families merged; first scenario scores merged but NOT usable (see below); recomputing the answer key to match end; bench:live in progress | 6b1b183 | still on the old engine until it merges main (owner has approved the merge)
+ui + server (p4)       | all six pages merged, offline replay of the recorded showcase | 846a3e9 | Quirks panel and Field Sources overlay not requested yet (wait for data)
+strategy lab (p5)      | real Intern run: 5 proposals accepted, simulated on 10 eval seeds, 1 beats the baseline; now legality tags and the quirk hunter | c071d97 | tower post-up comparison waits on the engine
+my robot (p6)          | scripted run for all 9 archetypes merged; Drex-driven subset in progress | 218ce58 | none
+field pack (p7)        | launched 1:00: official field dimensions and element positions with citations, WPILib cross-check | - | CAD needs the owner if sign-in is required
+rules / ingest (main)  | manual rules, 15 real robots, 71 notes, scouting 245/248; rule judge 59/60 on both Drex tiers with rule exceptions included | 3180da4 | labels_human_verified is false until the owner confirms in his own words that he reviewed them
+demo backup            | both showcase runs recorded and valid; UI replays them offline with a RECORDED banner (per the UI agent; not yet seen on screen by the integrator) | runs/ (local) | owner should press P once to confirm
+deck numbers           | pnpm deck ready | ccae20d | waits on usable bench results
+push                   | NOT pushed; the owner will push himself | - | none
+tests on main          | 89 passed with long timeouts at 12:48; default timeouts fail under machine load | 846a3e9 | machine saturated
+
+FIRST BENCHMARK NUMBERS (real calls, but NOT usable as results; old engine, 20 s answer key)
+  top-1 on unambiguous scenarios: drex-v2.0 0/17, drex-latest 2/20, giant 1/20, giant with reasoning on 2/7, scripted 2/20, random 0/20
+  regret: every decider is within noise of random (7.5 to 8.7 points)
+  why: with a 20 s horizon "climb now" is the best option almost everywhere, and no decider picks it. P3 is recomputing to match end and must show the key is not degenerate before scoring.
+  latency in that run: Drex p50 693 ms, p95 7.8 s, 6 fallbacks; giant p50 1157 ms; measured on a saturated machine, so not a clean number (227 ms and 670 ms when quiet)
+  cost per 1,000 decisions: Drex 0.023 USD, giant 0.44 USD (about 19x)
+  Drex-guided exploration needed MORE rollouts than uniform (-34 percent)
+  real-time, one seed: Drex -181, giant -108, scripted -118 (margins against the scripted policy)
+
+DEPTH PUSH (planner, 12:55): A1 tower post-up + G420 -> engine; A2-A4 legality and quirks -> lab agent; B1/B2/B4 field pack -> p7; B3 CAD, B5 overlay, C auto optimizer, item 13 game pack NOT started. Scope-down at 2:15.
+QUIET WINDOW: latency and batch numbers must be re-measured near 2:00 with heavy jobs paused.

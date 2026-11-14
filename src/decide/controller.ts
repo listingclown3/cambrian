@@ -34,6 +34,7 @@
  */
 import {
   getRobot,
+  intentLabel,
   type Alliance,
   type CaptainRole,
   type Config,
@@ -48,6 +49,7 @@ import {
   type ObservationView,
   type RobotId,
   type RolloutPolicies,
+  type RunEventBody,
   type ScriptedPolicy,
 } from "../contracts";
 import { buildObservationView } from "../engine";
@@ -86,6 +88,10 @@ export interface ControllerOptions {
   requestMode?: DecisionRequest["mode"];
   /** Called once per decision record when it is final (applied, or dropped at match end). */
   onDecision?: (d: ControllerDecision) => void;
+  /** Called for every scripted-robot decision (applied on the same tick it is made). */
+  onScriptedDecision?: (d: { robotId: RobotId; timeS: number; policyId: string; view: ObservationView; intent: Intent }) => void;
+  /** Called after every engine step with that step's events and the state after it. */
+  onStep?: (events: EngineEvent[], state: MatchState) => void;
 }
 
 /** One robot's part of a decision. */
@@ -99,6 +105,8 @@ export interface RobotChoice {
   role?: CaptainRole;
   /** True when this robot's intent came from the fallback policy, not the provider. */
   usedFallbackPolicy: boolean;
+  /** The provider's probability per option label for this robot's question (null when it gives none or fell back). */
+  probabilities: Record<string, number> | null;
 }
 
 /** One provider call (or one sequential captain step) and when its answer took effect. */
@@ -133,6 +141,49 @@ export interface ControllerSummary {
   dropped: number;
   /** Sum of charged match seconds, per alliance. */
   chargedS: Record<Alliance, number>;
+  /** Exact per-alliance totals for this match (see AllianceTotals). */
+  byAlliance: Record<Alliance, AllianceTotals>;
+  /** Wall-clock milliseconds for the whole match (run() start to end). */
+  wallMs: number;
+  /** Wall-clock milliseconds spent waiting on providers (both alliances' calls overlap, counted once). */
+  providerWaitMs: number;
+  /** wallMs - providerWaitMs: engine, views, prompts and bookkeeping. */
+  simWallMs: number;
+  /** Matches per hour at this match's wall time (3,600,000 / wallMs). */
+  matchesPerHour: number;
+}
+
+/** Exact totals for one alliance's decider in one match. */
+export interface AllianceTotals {
+  /** Controller decisions (provider requests, a captain step counts its sequential calls separately in `calls`). */
+  decisions: number;
+  /** Provider calls (DecisionRequests sent). */
+  calls: number;
+  /** Questions asked across those requests. */
+  questions: number;
+  /**
+   * HTTP calls those requests needed: one per request for Drex (all robots deciding on one tick
+   * share one call), one per QUESTION for chat providers that split batches (deepinfra default).
+   * Parse-retries are not included here; they are in the usage ledger.
+   */
+  httpCalls: number;
+  /** Robot decisions made (intent choices + captain role choices). */
+  robotDecisions: number;
+  /** Robot decisions answered by the fallback policy. */
+  fallbacks: number;
+  /** Calls answered from the offline cache. */
+  cachedCalls: number;
+  /** Sum of provider-measured latency over calls, milliseconds. */
+  latencyMs: number;
+  /** Sum of match seconds charged for latency (0 in paused mode). */
+  chargedS: number;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+  /** Distinct model ids that answered. */
+  models: string[];
+  /** True if any answer was synthetic (mock). */
+  isMock: boolean;
 }
 
 interface Pending {
@@ -154,6 +205,7 @@ export class AgentController {
   private captainBusy: Record<Alliance, boolean> = { red: false, blue: false };
   private calls = 0;
   private ticks = 0;
+  private providerWaitMs = 0;
   readonly decisions: ControllerDecision[] = [];
 
   constructor(private readonly opts: ControllerOptions) {
@@ -209,10 +261,11 @@ export class AgentController {
       requests.push(req);
       metas.push(res.meta);
       latencyMs += res.meta.latencyMs;
-      const label = res.answers[captainQuestionId(robotId)]?.chosen ?? null;
+      const answer = res.answers[captainQuestionId(robotId)];
+      const label = answer?.chosen ?? null;
       const role = !res.meta.fallbackUsed && label ? roleByLabel.get(label) : undefined;
       if (role) assigned[robotId] = role;
-      choices.push({ robotId, chosenLabel: role ? label : null, intent: null, ...(role ? { role } : {}), usedFallbackPolicy: !role });
+      choices.push({ robotId, chosenLabel: role ? label : null, intent: null, ...(role ? { role } : {}), probabilities: role ? (answer?.probabilities ?? null) : null, usedFallbackPolicy: !role });
     }
     const [chargedS] = this.charge(requestedAtS, latencyMs);
     return { kind: "captain", alliance, requestedAtS, latencyMs, chargedS, appliedAtS: null, requests, metas, choices };
@@ -233,12 +286,15 @@ export class AgentController {
     );
     return results.map(({ group, req, res }) => {
       const choices: RobotChoice[] = group.map((v) => {
-        const label = res.answers[actionQuestionId(v.self.id)]?.chosen ?? null;
+        const answer = res.answers[actionQuestionId(v.self.id)];
+        const label = answer?.chosen ?? null;
         const option = label === null ? undefined : v.options.find((o) => o.label === label);
         if (res.meta.fallbackUsed || !option) {
-          return { robotId: v.self.id, chosenLabel: option ? label : null, intent: this.policyFor(v.self.id).decide(v), usedFallbackPolicy: true };
+          // The label logged is the fallback policy's intent, never the provider's default answer.
+          const intent = this.policyFor(v.self.id).decide(v);
+          return { robotId: v.self.id, chosenLabel: intentLabel(intent), intent, probabilities: null, usedFallbackPolicy: true };
         }
-        return { robotId: v.self.id, chosenLabel: label, intent: option.intent, usedFallbackPolicy: false };
+        return { robotId: v.self.id, chosenLabel: label, intent: option.intent, probabilities: answer?.probabilities ?? null, usedFallbackPolicy: false };
       });
       const [chargedS] = this.charge(requestedAtS, res.meta.latencyMs);
       return { kind: "intent" as const, alliance, requestedAtS, latencyMs: res.meta.latencyMs, chargedS, appliedAtS: null, requests: [req], metas: [res.meta], choices };
@@ -296,7 +352,10 @@ export class AgentController {
       if (!agent?.captain || !this.captainDue[alliance] || this.captainBusy[alliance]) continue;
       this.captainDue[alliance] = false;
       const ids = this.state.robots.filter((r) => r.alliance === alliance).map((r) => r.id);
-      this.schedule(await this.captainStep(alliance, agent.provider, ids), intents);
+      const waitStart = performance.now();
+      const captainDecision = await this.captainStep(alliance, agent.provider, ids);
+      this.providerWaitMs += performance.now() - waitStart;
+      this.schedule(captainDecision, intents);
     }
 
     // 3. Robots that need a decision (not already thinking, not just given an intent).
@@ -306,19 +365,26 @@ export class AgentController {
       const robot = getRobot(this.state, id);
       if (this.opts.agents[robot.alliance]) byAlliance[robot.alliance].push(id);
       else {
-        intents[id] = this.policyFor(id).decide(this.view(id));
+        const view = this.view(id);
+        const policy = this.policyFor(id);
+        const intent = policy.decide(view);
+        intents[id] = intent;
         this.sinceDecision.set(id, []);
+        this.opts.onScriptedDecision?.({ robotId: id, timeS: this.state.timeS, policyId: policy.id, view, intent });
       }
     }
+    const waitStart = performance.now();
     const asked = await Promise.all(
       (["blue", "red"] as const).filter((a) => byAlliance[a].length > 0).map((a) => this.intentStep(a, this.opts.agents[a]!, byAlliance[a])),
     );
+    if (asked.length > 0) this.providerWaitMs += performance.now() - waitStart;
     for (const d of asked.flat()) this.schedule(d, intents);
 
     // 4. Step the engine.
     const { events } = this.opts.engine.step(this.state, intents, this.state.rules.physics.dtS);
     this.ticks += 1;
     this.lastEvents = events;
+    this.opts.onStep?.(events, this.state);
     for (const robot of this.state.robots) {
       const seen = this.sinceDecision.get(robot.id) ?? [];
       seen.push(...events);
@@ -326,9 +392,14 @@ export class AgentController {
     }
   }
 
-  /** Play the match to the end. */
-  async run(): Promise<ControllerSummary> {
-    while (!this.finished) await this.tick();
+  /**
+   * Play the match to the end, or until match time `untilS` (tests and short demos). Answers
+   * still outstanding when it stops are counted as dropped.
+   */
+  async run(untilS = Infinity): Promise<ControllerSummary> {
+    const started = performance.now();
+    while (!this.finished && this.state.timeS < untilS - EPS) await this.tick();
+    const wallMs = performance.now() - started;
     const dropped = this.pending.splice(0);
     for (const p of dropped) this.finalize(p.decision); // appliedAtS stays null
     const zero = (): Record<Alliance, number> => ({ red: 0, blue: 0 });
@@ -340,6 +411,77 @@ export class AgentController {
       chargedS[d.alliance] += d.chargedS;
       fallbacks[d.alliance] += d.choices.filter((c) => c.usedFallbackPolicy).length;
     }
-    return { state: this.state, ticks: this.ticks, decisions: this.decisions, calls, fallbacks, dropped: dropped.length, chargedS };
+    const totals = (a: Alliance): AllianceTotals => {
+      const ds = this.decisions.filter((d) => d.alliance === a);
+      const metas = ds.flatMap((d) => d.metas);
+      const sum = (f: (m: DecisionMeta) => number) => metas.reduce((s, m) => s + f(m), 0);
+      return {
+        decisions: ds.length,
+        calls: metas.length,
+        questions: ds.reduce((s, d) => s + d.requests.reduce((t, r) => t + r.questions.length, 0), 0),
+        httpCalls: (this.opts.agents[a]?.provider as { splitQuestions?: boolean } | undefined)?.splitQuestions
+          ? ds.reduce((s, d) => s + d.requests.reduce((t, r) => t + r.questions.length, 0), 0)
+          : metas.length,
+        robotDecisions: ds.reduce((s, d) => s + d.choices.length, 0),
+        fallbacks: fallbacks[a],
+        cachedCalls: metas.filter((m) => m.cached).length,
+        latencyMs: sum((m) => m.latencyMs),
+        chargedS: chargedS[a],
+        inputTokens: sum((m) => m.inputTokens),
+        outputTokens: sum((m) => m.outputTokens),
+        costUsd: sum((m) => m.costUsd),
+        models: [...new Set(metas.map((m) => m.model))],
+        isMock: metas.some((m) => m.isMock),
+      };
+    };
+    return {
+      state: this.state,
+      ticks: this.ticks,
+      decisions: this.decisions,
+      calls,
+      fallbacks,
+      dropped: dropped.length,
+      chargedS,
+      byAlliance: { blue: totals("blue"), red: totals("red") },
+      wallMs,
+      providerWaitMs: this.providerWaitMs,
+      simWallMs: Math.max(0, wallMs - this.providerWaitMs),
+      matchesPerHour: wallMs > 0 ? 3_600_000 / wallMs : Infinity,
+    };
   }
+}
+
+/**
+ * Run-log "decision" lines for one controller decision: one line per robot, carrying exactly the
+ * request that robot's answer came from and that call's meta. isMock is true when the provider
+ * was a mock. Captain decisions log chosenLabel = the role label and intent = null.
+ *
+ * matchTimeS is the match time the answer was APPLIED (after the charged latency in realtime
+ * timing), so a replay that applies each logged intent at its matchTimeS reproduces the match.
+ * Answers that arrived after the match ended keep matchTimeS = request time and intent = null.
+ *
+ * Extra keys beyond the contract (kept by JSON, stripped by a strict schema parse until the
+ * contract has them): decisionKind, requestedAtS, appliedAtS, chargedS, probabilities, role.
+ */
+export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
+  return d.choices.map((c, i) => {
+    const k = d.kind === "captain" ? i : 0;
+    const meta = d.metas[k]!;
+    return {
+      type: "decision" as const,
+      isMock: meta.isMock,
+      robotId: c.robotId,
+      matchTimeS: d.appliedAtS ?? d.requestedAtS,
+      request: d.requests[k]!,
+      meta,
+      chosenLabel: c.chosenLabel,
+      intent: d.appliedAtS === null ? null : c.intent,
+      decisionKind: d.kind,
+      requestedAtS: d.requestedAtS,
+      appliedAtS: d.appliedAtS,
+      chargedS: d.chargedS,
+      probabilities: c.probabilities,
+      ...(c.role ? { role: c.role } : {}),
+    } as RunEventBody;
+  });
 }
