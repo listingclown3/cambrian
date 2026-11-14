@@ -1,29 +1,11 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T21:31:20.793Z",
+  "createdTs": "2026-11-14T21:48:45.341Z",
   "isMock": false,
-  "gitCommit": "c7df9d15a73f-dirty",
-  "simHash": "e5f65deb13dab9a9",
+  "gitCommit": "458a30cca52b-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
     "contributing": [
-      {
-        "file": "results/bench_scenarios.json",
-        "isMock": false,
-        "simHash": "e7daa7a2a621cf3c",
-        "gitCommit": "037ad7519c33-dirty"
-      },
-      {
-        "file": "results/bench_live.json",
-        "isMock": false,
-        "simHash": "2cc2e7f621722c58",
-        "gitCommit": "66d5652cdf6d-dirty"
-      },
-      {
-        "file": "results/bench_explore.json",
-        "isMock": false,
-        "simHash": "e7daa7a2a621cf3c",
-        "gitCommit": "037ad7519c33-dirty"
-      },
       {
         "file": "results/matches.json",
         "isMock": false,
@@ -33,8 +15,8 @@
       {
         "file": "results/bench_batch.json",
         "isMock": false,
-        "simHash": "d37a761231b8ce93",
-        "gitCommit": "572c6bbf0cfd-dirty"
+        "simHash": "e5f65deb13dab9a9",
+        "gitCommit": "c0a2271fbab1"
       },
       {
         "file": "results/smoke_latency.json",
@@ -51,369 +33,289 @@
     ],
     "simHashesConsistent": false,
     "models": {
-      "drex": [
-        "drex-v2.0"
-      ],
-      "drex_latest": [
-        "drex-max-v1.1"
-      ],
-      "giant": [
-        "Qwen/Qwen3.5-397B-A17B"
-      ],
+      "drex": null,
+      "drex_latest": null,
+      "giant": null,
       "giant_reasoning": "off (main comparison; the giant's fastest setting)",
-      "live": {
-        "scripted_paused": [],
-        "drex_realtime": [
-          "drex-v2.0"
-        ],
-        "drex_paused": [
-          "drex-v2.0"
-        ],
-        "deepinfra_realtime": [
-          "Qwen/Qwen3.5-397B-A17B"
-        ],
-        "deepinfra_paused": [
-          "Qwen/Qwen3.5-397B-A17B"
-        ]
+      "live": {}
+    },
+    "stale_files_not_used": [
+      {
+        "file": "results/bench_scenarios.json",
+        "simHash": "e7daa7a2a621cf3c"
+      },
+      {
+        "file": "results/bench_live.json",
+        "simHash": "2cc2e7f621722c58"
+      },
+      {
+        "file": "results/bench_explore.json",
+        "simHash": "e7daa7a2a621cf3c"
       }
+    ],
+    "current_sim_hash": "547d0ca0d9b67f1b",
+    "n_live_seeds_meaning": "paired eval seeds in the realtime Drex-vs-giant comparison; each condition has its own n in n.live_conditions",
+    "matches_per_sec_source": "1 / mean wall seconds of the scripted-vs-scripted reference matches in bench_live (AgentController, no model calls), same sim hash",
+    "live_fallbacks_and_exclusions": {
+      "per_condition": {},
+      "excluded_matches": null,
+      "rule": null
+    },
+    "fairness_counters": {
+      "after_rules_eval": {},
+      "before_rules_dev": {
+        "bench_live_drex_dev": {
+          "simHash": "007a2b25fa5e3cf0",
+          "note": "rules off, dev seeds, earlier engine",
+          "rows": [
+            {
+              "timing": "paused",
+              "seed": 1001,
+              "robotDecisions": 1372,
+              "replaced": 71,
+              "fallbacks": 2,
+              "top": [
+                "hold_fire_until_active",
+                1001
+              ]
+            },
+            {
+              "timing": "paused",
+              "seed": 1002,
+              "robotDecisions": 470,
+              "replaced": 61,
+              "fallbacks": 3,
+              "top": [
+                "goto_shot_spot:hub_close",
+                144
+              ]
+            },
+            {
+              "timing": "realtime",
+              "seed": 1001,
+              "robotDecisions": 279,
+              "replaced": 43,
+              "fallbacks": 2,
+              "top": [
+                "hold_fire_until_active",
+                74
+              ]
+            },
+            {
+              "timing": "realtime",
+              "seed": 1002,
+              "robotDecisions": 239,
+              "replaced": 37,
+              "fallbacks": 1,
+              "top": [
+                "escape_spin:our_alliance",
+                41
+              ]
+            }
+          ]
+        },
+        "bench_live_giant_realtime_dev": {
+          "simHash": "007a2b25fa5e3cf0",
+          "note": "rules off, dev seeds, earlier engine",
+          "rows": [
+            {
+              "timing": "realtime",
+              "seed": 1001,
+              "robotDecisions": 210,
+              "replaced": 30,
+              "fallbacks": 0,
+              "top": [
+                "hold_fire_until_active",
+                70
+              ]
+            },
+            {
+              "timing": "realtime",
+              "seed": 1002,
+              "robotDecisions": 205,
+              "replaced": 48,
+              "fallbacks": 0,
+              "top": [
+                "hold_fire_until_active",
+                60
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "batch_table": {
+      "simHash": "e5f65deb13dab9a9",
+      "ms_per_decision": {
+        "1": {
+          "drex": 382.0542999999998,
+          "giant": 694.8898999999983,
+          "drex_latest": 334.1427999999996
+        },
+        "3": {
+          "drex": 94.19363333333361,
+          "giant": 670.6732333333324,
+          "drex_latest": 131.47613333333356
+        },
+        "8": {
+          "drex": 99.15911250000045,
+          "giant": 384.52437499999905,
+          "drex_latest": 64.1310999999996
+        },
+        "32": {
+          "drex": 27.07211562500015,
+          "giant": null,
+          "drex_latest": 34.05776250000008
+        }
+      },
+      "agreement_with_single": {
+        "drex": {
+          "1": 1,
+          "3": 1,
+          "8": 1,
+          "32": 1
+        },
+        "drex_latest": {
+          "1": 1,
+          "3": 1,
+          "8": 0.875,
+          "32": 0.34375
+        },
+        "giant": {
+          "1": 1,
+          "3": 1,
+          "8": 0.625,
+          "32": 0.53125
+        }
+      },
+      "giant_batch8_p50_ms_range": [
+        2964.5787999999884,
+        3173.821100000001
+      ],
+      "incomplete_cells": [
+        "giant:32"
+      ]
     },
     "speed_headline": {
       "label": "per decision, one alliance batched (3 questions per call)",
       "batch3_ms_per_decision": {
-        "drex": 67.88526666666682,
-        "giant": 573.4521999999997
+        "drex": 94.19363333333361,
+        "giant": 670.6732333333324
       },
       "single_question_ms_per_decision": {
-        "drex": 332.21230000000014,
-        "giant": 929.2746999999999
+        "drex": 382.0542999999998,
+        "giant": 694.8898999999983
       },
       "batch8_stress_ms_per_decision": {
-        "drex": 40.83751250000023,
-        "giant": 1362.28845,
+        "drex": 99.15911250000045,
+        "giant": 384.52437499999905,
         "giant_note": "P2 saw the giant at batch 8 vary between 491 and 1362 ms per decision across runs; report the range"
       },
-      "ratio_batch3": 8.4
+      "ratio_batch3": 7.1
     },
     "latency_sources": {
-      "drex": null,
-      "deepinfra": null
-    },
-    "regret_with_ci": {
       "drex": {
-        "regret": 20.844,
-        "ci95": 12.653,
-        "n": 39
-      },
-      "drex-latest": {
-        "regret": 19.525,
-        "ci95": 10.642,
-        "n": 45
-      },
-      "drex_anon": {
-        "regret": 20.792,
-        "ci95": 11.176,
-        "n": 45
+        "p50": 297.46969999999783,
+        "p95": 363.34749999999985,
+        "cost": 0.025999,
+        "n": 30,
+        "models": [
+          "drex-v2.0"
+        ],
+        "fallbacks": 0,
+        "source": "results/smoke_latency.json (sequential, concurrency 1)"
       },
       "deepinfra": {
-        "regret": 30.166,
-        "ci95": 13.522,
-        "n": 45
-      },
-      "deepinfra_think": {
-        "regret": 38.383,
-        "ci95": 54.356,
-        "n": 7
-      },
-      "scripted": {
-        "regret": 23.538,
-        "ci95": 11.157,
-        "n": 45
-      },
-      "random": {
-        "regret": 31.523,
-        "ci95": 9.181,
-        "n": 45
+        "p50": 700.6502999999975,
+        "p95": 1314.365099999999,
+        "cost": 0.4845900000000001,
+        "n": 30,
+        "models": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "fallbacks": 0,
+        "source": "results/smoke_latency.json (sequential, concurrency 1)"
       }
     },
-    "paired_regret": {
-      "drex_minus_giant": {
-        "n": 39,
-        "mean_diff": -10.816,
-        "ci95": 9.816
-      },
-      "drex_minus_scripted": {
-        "n": 39,
-        "mean_diff": -2.889,
-        "ci95": 5.764
-      },
-      "drex_minus_random": {
-        "n": 39,
-        "mean_diff": -10.149,
-        "ci95": 5.693
-      },
-      "giant_minus_scripted": {
-        "n": 45,
-        "mean_diff": 6.627,
-        "ci95": 9.2
-      },
-      "giant_minus_random": {
-        "n": 45,
-        "mean_diff": -1.358,
-        "ci95": 7.957
-      },
-      "scripted_minus_random": {
-        "n": 45,
-        "mean_diff": -7.985,
-        "ci95": 5.949
-      },
-      "drex_latest_minus_giant": {
-        "n": 45,
-        "mean_diff": -10.641,
-        "ci95": 9.4
-      },
-      "drex_anon_minus_drex": {
-        "n": 39,
-        "mean_diff": 0,
-        "ci95": 0
-      }
-    },
-    "degeneracy_gate": {
-      "pass": true,
-      "checks": {
-        "max_best_label_share": {
-          "value": 0.2,
-          "label": "collect:neutral",
-          "limit": "<= 0.35",
-          "pass": true
-        },
-        "flips_changing_best": {
-          "value": 0.7,
-          "n_flips": 30,
-          "limit": ">= 0.30",
-          "pass": true
-        },
-        "scripted_vs_random_regret": {
-          "scripted": 23.538,
-          "n_scripted": 45,
-          "random_expected": 31.523,
-          "limit": "scripted < random",
-          "pass": true
-        }
-      },
-      "distinct_best_labels": 17,
-      "top_vs_second_gap": {
-        "mean": 14.408,
-        "median": 5.75
-      },
-      "n_unambiguous": 22
-    },
-    "answers_source": "answers recorded in the first run (12:33 PM, results/bench_scenarios.json at commit 2c3bdc7, old engine), before the climb-exclusion rule: in non-endgame scenarios the prompt also listed one climb option that is not in the scored set (a pick of it is counted in excluded_picks, not scored). No retry pass existed then, so first-pass fallbacks = final fallbacks. Token counts were not saved (mean_input_tokens null). The snapshots the deciders saw are the scenario snapshots; only the answer key is recomputed on the current engine.",
-    "live_paired_vs_scripted": {
-      "drex_realtime": {
-        "n": 5,
-        "mean_uplift_vs_scripted": -161.2,
-        "ci95": 116.97
-      },
-      "drex_paused": {
-        "n": 4,
-        "mean_uplift_vs_scripted": -142.25,
-        "ci95": 139.38
-      },
-      "deepinfra_realtime": {
-        "n": 10,
-        "mean_uplift_vs_scripted": -24.8,
-        "ci95": 60.91
-      },
-      "deepinfra_paused": {
-        "n": 5,
-        "mean_uplift_vs_scripted": 47.2,
-        "ci95": 299.43
-      }
-    },
-    "live_wall_ms_per_robot_decision": {
-      "scripted_paused": null,
-      "drex_realtime": 283.6,
-      "drex_paused": 284.8,
-      "deepinfra_realtime": 759.9,
-      "deepinfra_paused": 768.9
-    },
+    "regret_with_ci": {},
+    "paired_regret": null,
+    "degeneracy_gate": null,
+    "answers_source": null,
+    "live_paired_vs_scripted": null,
+    "live_wall_ms_per_robot_decision": {},
     "latency": "round trip p50/p95 (request sent to answer parsed, retries included); Drex's own server-side evaluation time is not used",
     "n": {
       "top1_unambiguous_scored": {
-        "drex": 20,
-        "deepinfra": 22,
-        "scripted": 22,
-        "random": 22,
-        "drex_anon": 22
+        "drex": null,
+        "deepinfra": null,
+        "scripted": null,
+        "random": null,
+        "drex_anon": null
       },
-      "live_conditions": {
-        "scripted_paused": {
-          "n": 10,
-          "mean_margin": -3.3,
-          "ci95": 107.57,
-          "fallbacks": 0,
-          "robot_decisions_per_match": 0,
-          "wall_s_per_match": 2.33
-        },
-        "drex_realtime": {
-          "n": 5,
-          "mean_margin": -75.8,
-          "ci95": 201.98,
-          "fallbacks": 5,
-          "robot_decisions_per_match": 275.8,
-          "wall_s_per_match": 78.21
-        },
-        "drex_paused": {
-          "n": 4,
-          "mean_margin": -68,
-          "ci95": 251.85,
-          "fallbacks": 47,
-          "robot_decisions_per_match": 708.8,
-          "wall_s_per_match": 201.84
-        },
-        "deepinfra_realtime": {
-          "n": 10,
-          "mean_margin": -28.1,
-          "ci95": 113.18,
-          "fallbacks": 0,
-          "robot_decisions_per_match": 145.2,
-          "wall_s_per_match": 110.34
-        },
-        "deepinfra_paused": {
-          "n": 5,
-          "mean_margin": 132.6,
-          "ci95": 301.57,
-          "fallbacks": 0,
-          "robot_decisions_per_match": 274.6,
-          "wall_s_per_match": 211.13
-        }
-      },
-      "live_paired_drex_minus_giant": {
-        "realtime": {
-          "n": 5,
-          "mean_drex_minus_giant": -152,
-          "ci95": 200.44
-        },
-        "paused": {
-          "n": 4,
-          "mean_drex_minus_giant": -228.75,
-          "ci95": 393.49
-        }
-      },
-      "rollouts_to_best_n_scenarios": 20
+      "live_conditions": {},
+      "live_paired_drex_minus_giant": null,
+      "rollouts_to_best_n_scenarios": null
     },
-    "fallbacks": {
-      "drex": {
-        "final": 6,
-        "first_pass": 6
-      },
-      "drex-latest": {
-        "final": 0,
-        "first_pass": 0
-      },
-      "drex_anon": {
-        "final": 0,
-        "first_pass": 0
-      },
-      "deepinfra": {
-        "final": 0,
-        "first_pass": 0
-      },
-      "deepinfra_think": {
-        "final": 1,
-        "first_pass": 1
-      },
-      "scripted": {
-        "final": 0,
-        "first_pass": 0
-      },
-      "random": {
-        "final": 0,
-        "first_pass": 0
-      }
-    },
-    "giant_reasoning_on_separate": {
-      "label": "giant with reasoning on (n = 8)",
-      "models": [
-        "Qwen/Qwen3.5-397B-A17B"
-      ],
-      "top1": 0.25,
-      "n_unambiguous_scored": 4,
-      "regret": 38.383,
-      "p50_ms": 90922.1,
-      "p95_ms": 135218.2,
-      "cost_per_1k_usd": 16.02596,
-      "fallbacks": 1,
-      "match_estimate_calculation": {
-        "note": "CALCULATION, not a measurement: mean requests per paused giant match x the measured reasoning-on p50 round-trip latency from bench_scenarios (each request's per-robot calls run concurrently, so one request costs about one call's latency)",
-        "requests_per_match": 237.2,
-        "think_p50_ms": 90922.1,
-        "estimated_wall_s_per_match": 21567
-      }
-    },
-    "drex_latest_separate": {
-      "top1": 0.227,
-      "regret": 19.525,
-      "p50_ms": 480.5,
-      "cost_per_1k_usd": 0.02488
-    },
+    "fallbacks": {},
+    "giant_reasoning_on_separate": null,
+    "drex_latest_separate": null,
     "not_run": [
       "openai baseline (cut)"
     ]
   },
   "rows": [],
   "summary": {
-    "live_margin_drex_realtime": -75.8,
-    "live_margin_deepinfra_realtime": -28.1,
-    "live_margin_drex_paused": -68,
-    "live_margin_deepinfra_paused": 132.6,
-    "drex_p50_ms": null,
-    "drex_p95_ms": null,
-    "deepinfra_p50_ms": null,
+    "live_margin_drex_realtime": null,
+    "live_margin_deepinfra_realtime": null,
+    "live_margin_drex_paused": null,
+    "live_margin_deepinfra_paused": null,
+    "drex_p50_ms": 297.46969999999783,
+    "drex_p95_ms": 363.34749999999985,
+    "deepinfra_p50_ms": 700.6502999999975,
     "openai_p50_ms": null,
-    "latency_ratio_deepinfra_over_drex": null,
+    "latency_ratio_deepinfra_over_drex": 2.36,
     "latency_ratio_openai_over_drex": null,
-    "drex_cost_per_1k_usd": null,
-    "deepinfra_cost_per_1k_usd": null,
+    "drex_cost_per_1k_usd": 0.025999,
+    "deepinfra_cost_per_1k_usd": 0.4845900000000001,
     "openai_cost_per_1k_usd": null,
-    "batch1_ms_per_decision_drex": 332.21230000000014,
-    "batch1_ms_per_decision_giant": 929.2746999999999,
-    "batch3_ms_per_decision_drex": 67.88526666666682,
-    "batch3_ms_per_decision_giant": 573.4521999999997,
-    "batch8_ms_per_decision_drex": 40.83751250000023,
-    "batch8_ms_per_decision_giant": 1362.28845,
-    "batch32_ms_per_decision_drex": null,
+    "batch1_ms_per_decision_drex": 382.0542999999998,
+    "batch1_ms_per_decision_giant": 694.8898999999983,
+    "batch3_ms_per_decision_drex": 94.19363333333361,
+    "batch3_ms_per_decision_giant": 670.6732333333324,
+    "batch8_ms_per_decision_drex": 99.15911250000045,
+    "batch8_ms_per_decision_giant": 384.52437499999905,
+    "batch32_ms_per_decision_drex": 27.07211562500015,
     "batch32_ms_per_decision_giant": null,
-    "top1_drex": 0.1,
-    "top1_deepinfra": 0.045,
+    "top1_drex": null,
+    "top1_deepinfra": null,
     "top1_openai": null,
-    "top1_scripted": 0.136,
-    "top1_random": 0.147,
-    "regret_drex": 20.844,
-    "regret_deepinfra": 30.166,
+    "top1_scripted": null,
+    "top1_random": null,
+    "regret_drex": null,
+    "regret_deepinfra": null,
     "regret_openai": null,
-    "regret_scripted": 23.538,
-    "regret_random": 31.523,
-    "context_sensitivity_drex": 0.5,
-    "context_sensitivity_deepinfra": 0.14285714285714285,
+    "regret_scripted": null,
+    "regret_random": null,
+    "context_sensitivity_drex": null,
+    "context_sensitivity_deepinfra": null,
     "context_sensitivity_openai": null,
-    "top1_drex_anonymized": 0.136,
-    "rollouts_to_best_drex": 172.5,
-    "rollouts_to_best_uniform": 196.3,
-    "rollouts_to_best_deepinfra": 221.3,
-    "rollout_savings_pct_drex_vs_uniform": 12.1,
-    "n_scenarios": 45,
-    "n_families": 15,
-    "n_live_seeds": 4,
-    "matches_per_sec": 2.668,
-    "sim_matches_per_hour_drex": 17.84,
-    "sim_matches_per_hour_deepinfra": 17.05,
-    "usage_drex_questions": 19068,
+    "top1_drex_anonymized": null,
+    "rollouts_to_best_drex": null,
+    "rollouts_to_best_uniform": null,
+    "rollouts_to_best_deepinfra": null,
+    "rollout_savings_pct_drex_vs_uniform": null,
+    "n_scenarios": null,
+    "n_families": null,
+    "n_live_seeds": null,
+    "matches_per_sec": null,
+    "sim_matches_per_hour_drex": null,
+    "sim_matches_per_hour_deepinfra": null,
+    "usage_drex_questions": 19253,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,
     "usage_intern_system1_judgments": 136,
-    "usage_deepinfra_calls": 4006,
+    "usage_deepinfra_calls": 4164,
     "usage_keenable_requests": 76,
     "lab_proposals_total": 5,
     "lab_proposals_beating_baseline": 2,

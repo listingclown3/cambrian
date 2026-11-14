@@ -113,7 +113,10 @@ const post = quirks && !quirks.isMock ? quirks.rows?.find((r) => r.id === "tower
 blank(
   "tower post-up",
   post && post.legality
-    ? `tested the tower post-up; Drex flagged it ${post.legality} under G210 (its value depends on inducing opponent fouls, p = ${fix(post.reliesOnOpponentFouls ?? NaN, 2)}); in ${post.value?.n ?? "?"} matches it drew ${post.value?.g420FoulsOnOpponents ?? "?"} G420 fouls and added ${fix(post.value?.marginDiff ?? NaN, 1)} points`
+    ? (() => {
+        const g210 = (post.rules ?? []).find((r) => r.id === "G210");
+        return `tested the tower post-up; Drex flagged it ${post.legality}: G210 violation probability ${g210 ? fix(g210.pViolation ?? NaN, 2) : "?"}${g210?.page ? ` (manual p.${g210.page})` : ""}, and probability ${fix(post.reliesOnOpponentFouls ?? NaN, 2)} that its value depends on inducing opponent fouls; in ${post.value?.n ?? "?"} matches it drew ${post.value?.g420FoulsOnOpponents ?? "?"} G420 fouls and added ${fix(post.value?.marginDiff ?? NaN, 1)} points`;
+      })()
     : null,
   "results/quirks.json row tower_post_up",
 );
