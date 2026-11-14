@@ -1,4 +1,4 @@
-deck numbers, generated 2026-11-14T22:14:21.516Z (git 12a377737496)
+deck numbers, generated 2026-11-14T22:16:02.330Z (git 5bb31cc8fceb-dirty)
 format: blank | value | FINAL or INTERIM | source. NOT RUN = delete that line from the deck. Nothing here is estimated.
 giant label everywhere: Qwen/Qwen3.5-397B-A17B via DeepInfra, reasoning off
 

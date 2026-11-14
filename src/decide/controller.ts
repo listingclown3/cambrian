@@ -294,7 +294,7 @@ export interface CheckOptions {
   mode: "rollouts";
   /** Rollouts per candidate (default config.microRollouts.count). */
   count?: number;
-  /** Horizon, seconds (default config.microRollouts.checkHorizonS, else CHECK_HORIZON_DEFAULT_S). */
+  /** Horizon, seconds (default CHECK_HORIZON_DEFAULT_S; the key is deliberately not in the config contract so the simulator hash is the frozen-engine hash). */
   horizonS?: number;
 }
 

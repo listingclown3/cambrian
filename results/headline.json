@@ -1,11 +1,17 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T22:14:19.564Z",
+  "createdTs": "2026-11-14T22:16:00.743Z",
   "isMock": false,
-  "gitCommit": "12a377737496",
-  "simHash": "73ee0c8a610a44cc",
+  "gitCommit": "5bb31cc8fceb-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
     "contributing": [
+      {
+        "file": "results/bench_live.json",
+        "isMock": false,
+        "simHash": "547d0ca0d9b67f1b",
+        "gitCommit": "a0f337c00a62-dirty"
+      },
       {
         "file": "results/matches.json",
         "isMock": false,
@@ -37,7 +43,21 @@
       "drex_latest": null,
       "giant": null,
       "giant_reasoning": "off (main comparison; the giant's fastest setting)",
-      "live": {}
+      "live": {
+        "scripted_paused": [],
+        "drex_realtime": [
+          "drex-v2.0"
+        ],
+        "drex_paused": [
+          "drex-v2.0"
+        ],
+        "deepinfra_realtime": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ],
+        "deepinfra_paused": [
+          "Qwen/Qwen3.5-397B-A17B"
+        ]
+      }
     },
     "stale_files_not_used": [
       {
@@ -45,24 +65,167 @@
         "simHash": "e7daa7a2a621cf3c"
       },
       {
-        "file": "results/bench_live.json",
-        "simHash": "547d0ca0d9b67f1b"
-      },
-      {
         "file": "results/bench_explore.json",
         "simHash": "e7daa7a2a621cf3c"
       }
     ],
-    "current_sim_hash": "73ee0c8a610a44cc",
+    "current_sim_hash": "547d0ca0d9b67f1b",
     "n_live_seeds_meaning": "paired eval seeds in the realtime Drex-vs-giant comparison; each condition has its own n in n.live_conditions",
     "matches_per_sec_source": "1 / mean wall seconds of the scripted-vs-scripted reference matches in bench_live (AgentController, no model calls), same sim hash",
     "live_fallbacks_and_exclusions": {
-      "per_condition": {},
-      "excluded_matches": null,
-      "rule": null
+      "per_condition": {
+        "scripted_paused": {
+          "total": 0,
+          "per_match": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "drex_realtime": {
+          "total": 27,
+          "per_match": [
+            9,
+            7,
+            5,
+            0,
+            3,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        "drex_paused": {
+          "total": 29,
+          "per_match": [
+            5,
+            2,
+            3,
+            6,
+            3,
+            1,
+            7,
+            2,
+            0,
+            0
+          ]
+        },
+        "deepinfra_realtime": {
+          "total": 0,
+          "per_match": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "deepinfra_paused": {
+          "total": 0,
+          "per_match": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "excluded_matches": [],
+      "rule": "a match where more than half the decider robot decisions were fallbacks is excluded (listed in excludedMatches)"
     },
     "fairness_counters": {
-      "after_rules_eval": {},
+      "after_rules_eval": {
+        "scripted_paused": {
+          "robot_decisions_per_match": 0,
+          "running_actions_replaced_per_match": 87.9,
+          "behaviour_blue_mean_per_match": {
+            "decisions": 205.9,
+            "fastFails": 7.5,
+            "cooledDown": 7.5,
+            "interruptedActions": 134.8,
+            "completedCycles": 7.7,
+            "idleS": 15.38,
+            "continuationS": 0,
+            "continuations": 0
+          }
+        },
+        "drex_realtime": {
+          "robot_decisions_per_match": 177.4,
+          "running_actions_replaced_per_match": 50.5,
+          "behaviour_blue_mean_per_match": {
+            "decisions": 176.7,
+            "fastFails": 18,
+            "cooledDown": 18,
+            "interruptedActions": 80.2,
+            "completedCycles": 1.8,
+            "idleS": 65.47,
+            "continuationS": 9.61,
+            "continuations": 18.5
+          }
+        },
+        "drex_paused": {
+          "robot_decisions_per_match": 233.9,
+          "running_actions_replaced_per_match": 49.1,
+          "behaviour_blue_mean_per_match": {
+            "decisions": 233.9,
+            "fastFails": 27.1,
+            "cooledDown": 27.1,
+            "interruptedActions": 108.4,
+            "completedCycles": 1.2,
+            "idleS": 27.17,
+            "continuationS": 0,
+            "continuations": 0
+          }
+        },
+        "deepinfra_realtime": {
+          "robot_decisions_per_match": 156.7,
+          "running_actions_replaced_per_match": 54.5,
+          "behaviour_blue_mean_per_match": {
+            "decisions": 155.8,
+            "fastFails": 14.7,
+            "cooledDown": 14.7,
+            "interruptedActions": 81.1,
+            "completedCycles": 2,
+            "idleS": 64.35,
+            "continuationS": 10.29,
+            "continuations": 30.9
+          }
+        },
+        "deepinfra_paused": {
+          "robot_decisions_per_match": 217.8,
+          "running_actions_replaced_per_match": 49,
+          "behaviour_blue_mean_per_match": {
+            "decisions": 217.8,
+            "fastFails": 17.8,
+            "cooledDown": 17.8,
+            "interruptedActions": 123.6,
+            "completedCycles": 1.3,
+            "idleS": 20.8,
+            "continuationS": 0,
+            "continuations": 0
+          }
+        }
+      },
       "before_rules_dev": {
         "bench_live_drex_dev": {
           "simHash": "007a2b25fa5e3cf0",
@@ -199,7 +362,7 @@
     "live_check": {
       "note": "DECIDER PROPOSES, SIMULATOR CHECKS mode (off by default; run by the integrator). Never merged with the decider-alone live_margin_* numbers.",
       "simHash": "73ee0c8a610a44cc",
-      "sameSimHash": true,
+      "sameSimHash": false,
       "gitCommit": "b46fbfdcbb7a",
       "conditions": {
         "drex_check_realtime": {
@@ -386,8 +549,35 @@
     "paired_regret": null,
     "degeneracy_gate": null,
     "answers_source": null,
-    "live_paired_vs_scripted": null,
-    "live_wall_ms_per_robot_decision": {},
+    "live_paired_vs_scripted": {
+      "drex_realtime": {
+        "n": 10,
+        "mean_uplift_vs_scripted": -203,
+        "ci95": 85.1
+      },
+      "drex_paused": {
+        "n": 10,
+        "mean_uplift_vs_scripted": -241.9,
+        "ci95": 99.31
+      },
+      "deepinfra_realtime": {
+        "n": 10,
+        "mean_uplift_vs_scripted": -141.3,
+        "ci95": 129.51
+      },
+      "deepinfra_paused": {
+        "n": 10,
+        "mean_uplift_vs_scripted": -176.8,
+        "ci95": 91.9
+      }
+    },
+    "live_wall_ms_per_robot_decision": {
+      "scripted_paused": null,
+      "drex_realtime": 410.5,
+      "drex_paused": 356.1,
+      "deepinfra_realtime": 591.4,
+      "deepinfra_paused": 626.4
+    },
     "latency": "round trip p50/p95 (request sent to answer parsed, retries included); Drex's own server-side evaluation time is not used",
     "n": {
       "top1_unambiguous_scored": {
@@ -397,8 +587,60 @@
         "random": null,
         "drex_anon": null
       },
-      "live_conditions": {},
-      "live_paired_drex_minus_giant": null,
+      "live_conditions": {
+        "scripted_paused": {
+          "n": 10,
+          "mean_margin": -85.3,
+          "ci95": 174.27,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 0,
+          "wall_s_per_match": 1.5
+        },
+        "drex_realtime": {
+          "n": 10,
+          "mean_margin": -288.3,
+          "ci95": 150.74,
+          "fallbacks": 27,
+          "robot_decisions_per_match": 177.4,
+          "wall_s_per_match": 72.83
+        },
+        "drex_paused": {
+          "n": 10,
+          "mean_margin": -327.2,
+          "ci95": 148.72,
+          "fallbacks": 29,
+          "robot_decisions_per_match": 233.9,
+          "wall_s_per_match": 83.3
+        },
+        "deepinfra_realtime": {
+          "n": 10,
+          "mean_margin": -226.6,
+          "ci95": 151,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 156.7,
+          "wall_s_per_match": 92.67
+        },
+        "deepinfra_paused": {
+          "n": 10,
+          "mean_margin": -262.1,
+          "ci95": 147.66,
+          "fallbacks": 0,
+          "robot_decisions_per_match": 217.8,
+          "wall_s_per_match": 136.44
+        }
+      },
+      "live_paired_drex_minus_giant": {
+        "realtime": {
+          "n": 10,
+          "mean_drex_minus_giant": -61.7,
+          "ci95": 71.59
+        },
+        "paused": {
+          "n": 10,
+          "mean_drex_minus_giant": -65.1,
+          "ci95": 30.91
+        }
+      },
       "rollouts_to_best_n_scenarios": null
     },
     "fallbacks": {},
@@ -410,10 +652,10 @@
   },
   "rows": [],
   "summary": {
-    "live_margin_drex_realtime": null,
-    "live_margin_deepinfra_realtime": null,
-    "live_margin_drex_paused": null,
-    "live_margin_deepinfra_paused": null,
+    "live_margin_drex_realtime": -288.3,
+    "live_margin_deepinfra_realtime": -226.6,
+    "live_margin_drex_paused": -327.2,
+    "live_margin_deepinfra_paused": -262.1,
     "drex_p50_ms": 297.46969999999783,
     "drex_p95_ms": 363.34749999999985,
     "deepinfra_p50_ms": 700.6502999999975,
@@ -451,10 +693,10 @@
     "rollout_savings_pct_drex_vs_uniform": null,
     "n_scenarios": null,
     "n_families": null,
-    "n_live_seeds": null,
-    "matches_per_sec": null,
-    "sim_matches_per_hour_drex": null,
-    "sim_matches_per_hour_deepinfra": null,
+    "n_live_seeds": 10,
+    "matches_per_sec": 0.666,
+    "sim_matches_per_hour_drex": 43.22,
+    "sim_matches_per_hour_deepinfra": 26.39,
     "usage_drex_questions": 26239,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,

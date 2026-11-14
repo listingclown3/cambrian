@@ -22,7 +22,8 @@
     "seedSet": "eval",
     "fairnessRules": "commitment, no-idle and anti-loop rules on, identical for every decider",
     "control": "random = uniform random proposer with the same check",
-    "complete": true
+    "complete": true,
+    "simHashNote": "Run at git 3ee3405 (simHash 73ee0c8a610a44cc). That tree differs from the frozen-engine tree (simHash 547d0ca0d9b67f1b) only by one optional, unset config-schema key (microRollouts.checkHorizonS) in src/contracts/config.ts, removed afterwards; engine, exec and config values are identical (git diff p3 3ee3405 -- src/engine src/exec config is empty)."
   },
   "rows": [
     {

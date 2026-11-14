@@ -355,8 +355,6 @@ export const ConfigSchema = z.strictObject({
     count: z.number().int().positive(),
     /** Rollout horizon, seconds. */
     horizonS: z.number().positive(),
-    /** Horizon of the "decider proposes, simulator checks" mode (AgentController check), seconds. */
-    checkHorizonS: z.number().positive().optional(),
   }),
   /** Long rollouts that define the answer key for scenarios. */
   answerKey: z.strictObject({
