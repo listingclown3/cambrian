@@ -1,0 +1,33 @@
+deck numbers, generated 2026-11-14T20:21:18.032Z
+source: results/headline.json (git 8898c8b543a5-dirty, simHash 2cc2e7f621722c58), all_real: not set
+format: deck blank | value | source key(s). NOT RUN means the experiment did not run: delete that line from the deck.
+
+[cover]
+none
+
+[results]
+latency ratio (x faster) | NOT RUN | -
+drex p50 ms | NOT RUN | -
+giant p50 ms | NOT RUN | -
+cost ratio (x cheaper) | NOT RUN | -
+drex $ per 1k decisions | NOT RUN | -
+giant $ per 1k decisions | NOT RUN | -
+top-1 drex vs giant | NOT RUN | -
+n scenarios | NOT RUN | -
+n families | NOT RUN | -
+sim matches per hour drex vs giant | NOT RUN | -
+real-time sim margin drex vs giant | NOT RUN | -
+rollout savings % | NOT RUN | -
+
+[builtwith]
+drex questions | 1,690 | usage_drex_questions
+intern sessions | 4 | usage_intern_sessions
+ndi docs | 89 | usage_ndi_docs
+deepinfra calls | 299 | usage_deepinfra_calls
+keenable pages | 58 | keenable_pages
+
+[plus]
+rule judge (drex-v2.0): agreement with AI-drafted labels (not yet human-verified) | 57/60 (95%) | results/rule_judge.json summary
+rule judge (drex-latest): agreement with AI-drafted labels (not yet human-verified) | 59/60 (98.3%) | results/rule_judge_drex-latest.json summary
+NOTE: the rule-judge labels are NOT marked human-verified, so the deck must not call this accuracy vs human-reviewed labels.
+NDI scouting extraction | 245 of 248 stated fields recovered, 0 wrong, on 24 fabricated sheets (98.8%) | results/ingest_scouting.json summary
