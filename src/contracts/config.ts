@@ -179,6 +179,18 @@ export const ProviderConfigSchema = z.strictObject({
   timeoutMs: z.number().int().positive(),
   /** Retries after the first attempt (offline mode only). */
   retries: z.number().int().nonnegative(),
+  /**
+   * Machine-wide pacing shared by EVERY process on this computer that calls the provider
+   * (a lock-file limiter under cache/ratelimit/<provider>/). Optional; omitted = no shared pacing.
+   */
+  sharedRateLimit: z
+    .strictObject({
+      /** Request starts per second across all processes. */
+      requestsPerSecond: z.number().positive(),
+      /** Requests in flight at once across all processes. */
+      maxInFlight: z.number().int().positive(),
+    })
+    .optional(),
   /** URL that lists the provider's available models, when the model is chosen at startup. */
   modelsEndpoint: z.string().optional(),
   /**

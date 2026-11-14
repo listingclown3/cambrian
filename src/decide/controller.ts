@@ -92,6 +92,8 @@ export interface ControllerOptions {
   onScriptedDecision?: (d: { robotId: RobotId; timeS: number; policyId: string; view: ObservationView; intent: Intent }) => void;
   /** Called after every engine step with that step's events and the state after it. */
   onStep?: (events: EngineEvent[], state: MatchState) => void;
+  /** Checked before every tick; return a reason to stop the match early (e.g. provider blocked). */
+  shouldStop?: () => string | null;
 }
 
 /** One robot's part of a decision. */
@@ -151,6 +153,8 @@ export interface ControllerSummary {
   simWallMs: number;
   /** Matches per hour at this match's wall time (3,600,000 / wallMs). */
   matchesPerHour: number;
+  /** Why the match stopped early (shouldStop), or null when it ran to the end / untilS. */
+  abortedReason: string | null;
 }
 
 /** Exact totals for one alliance's decider in one match. */
@@ -398,7 +402,12 @@ export class AgentController {
    */
   async run(untilS = Infinity): Promise<ControllerSummary> {
     const started = performance.now();
-    while (!this.finished && this.state.timeS < untilS - EPS) await this.tick();
+    let abortedReason: string | null = null;
+    while (!this.finished && this.state.timeS < untilS - EPS) {
+      abortedReason = this.opts.shouldStop?.() ?? null;
+      if (abortedReason) break;
+      await this.tick();
+    }
     const wallMs = performance.now() - started;
     const dropped = this.pending.splice(0);
     for (const p of dropped) this.finalize(p.decision); // appliedAtS stays null
@@ -447,6 +456,7 @@ export class AgentController {
       providerWaitMs: this.providerWaitMs,
       simWallMs: Math.max(0, wallMs - this.providerWaitMs),
       matchesPerHour: wallMs > 0 ? 3_600_000 / wallMs : Infinity,
+      abortedReason,
     };
   }
 }

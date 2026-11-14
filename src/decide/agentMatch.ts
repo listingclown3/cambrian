@@ -19,7 +19,7 @@ import { loadConfig } from "../util/config";
 import { AgentController, type AllianceAgent } from "./controller";
 import { getProviderBySpec, providerReasoning, warmupProvider } from "./registry";
 import { MatchRecorder } from "./recorder";
-import { callStats, redact } from "./providers/http";
+import { BLOCKED_BY_CHECKPOINT, callStats, redact } from "./providers/http";
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(name);
@@ -45,7 +45,14 @@ const manifestProvider = deciders.length === 1 ? specs[deciders[0]!] : deciders.
 if (!process.argv.includes("--no-warmup")) for (const a of deciders) await warmupProvider(agents[a]!.provider);
 
 const started = performance.now();
-const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, ...(recorder?.hooks() ?? {}) });
+// Stop (rather than record a match of fallbacks) as soon as a provider is behind a bot-protection checkpoint.
+let checkpoint: string | null = null;
+const hooks = recorder?.hooks() ?? {};
+const onDecision = (d: Parameters<NonNullable<typeof hooks.onDecision>>[0]) => {
+  for (const m of d.metas) if (!checkpoint && (m.error ?? "").includes(BLOCKED_BY_CHECKPOINT)) checkpoint = m.error;
+  hooks.onDecision?.(d);
+};
+const controller = new AgentController({ engine, cfg, seed, robots: demoRobots(cfg), agents, scripted: { default: basicCyclePolicy }, timing, ...hooks, onDecision, shouldStop: () => checkpoint });
 let summary: Awaited<ReturnType<AgentController["run"]>>;
 try {
   summary = await controller.run();
@@ -53,6 +60,11 @@ try {
   const msg = redact(String((e as Error)?.message ?? e));
   if (recorder && recordId) recorder.write({ runId: recordId, provider: manifestProvider, status: "error", durationMs: performance.now() - started, error: msg });
   throw e;
+}
+if (summary.abortedReason) {
+  console.error(`STOPPED at match time ${summary.state.timeS.toFixed(1)} s: ${summary.abortedReason}`);
+  if (recorder && recordId) recorder.write({ runId: recordId, provider: manifestProvider, status: "error", durationMs: summary.wallMs, error: `stopped: ${summary.abortedReason}` });
+  process.exit(2);
 }
 if (recorder && recordId) {
   // Manifest model: the exact model ids that answered, plus the reasoning setting for chat

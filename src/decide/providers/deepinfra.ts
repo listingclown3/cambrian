@@ -225,7 +225,7 @@ export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cf
       } catch (e) {
         lastError = `${model}: ${(e as Error).message}`;
         // The request was sent, so it may have been billed: record it (tokens unknown = 0).
-        recordRealCall(cfg, id, opts, { tool: id, model, latencyMs: performance.now() - callStarted, costUsd: 0, purpose: `${opts.purpose ?? "decision"}_failed` });
+        if (!(e instanceof HttpError && !e.sent)) recordRealCall(cfg, id, opts, { tool: id, model, latencyMs: performance.now() - callStarted, costUsd: 0, purpose: `${opts.purpose ?? "decision"}_failed` });
         if (!fixedModel && isAccessError(e)) {
           dropped.add(model);
           continue;
