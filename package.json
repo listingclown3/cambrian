@@ -28,6 +28,7 @@
     "answerkey": "tsx src/bench/answerkey.ts",
     "bench:scenarios": "tsx src/bench/benchScenarios.ts",
     "bench:explore": "tsx src/bench/benchExplore.ts",
+    "bench:myrobot": "tsx src/bench/benchMyRobot.ts",
     "bench:live": "tsx src/bench/benchLive.ts",
     "lab": "tsx src/lab/lab.ts",
     "headline": "tsx src/bench/headline.ts",
