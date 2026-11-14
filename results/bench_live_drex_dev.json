@@ -1,0 +1,304 @@
+{
+  "experiment": "bench_live_drex_dev",
+  "createdTs": "2026-11-14T21:31:37.886Z",
+  "isMock": false,
+  "gitCommit": "600111501076",
+  "simHash": "007a2b25fa5e3cf0",
+  "config": {
+    "part": "drex",
+    "spec": "drex",
+    "reasoning": null,
+    "seeds": {
+      "dev": [],
+      "eval": [
+        1001,
+        1002
+      ]
+    },
+    "parallel": 2,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 1001,
+      "blue": [
+        "fab_25",
+        "fab_37",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_24",
+        "fab_45",
+        "frc_254"
+      ],
+      "scoreBlue": 336,
+      "scoreRed": 423,
+      "margin": -87,
+      "requests": 1303,
+      "providerCalls": 1303,
+      "robotDecisions": 1372,
+      "fallbacks": 2,
+      "fallbackMetas": 2,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 513.79,
+      "latencyP50Ms": 295.2,
+      "latencyP95Ms": 856.7,
+      "costUsd": 0.03375,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 1372,
+      "blueRunningActionsReplaced": 71,
+      "redRunningActionsReplaced": 73,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)",
+        "drex drex-v2.0: network error: timeout after 2000 ms"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          1001
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          79
+        ],
+        [
+          "collect:local",
+          79
+        ],
+        [
+          "shoot_now",
+          71
+        ],
+        [
+          "collect:neutral",
+          34
+        ],
+        [
+          "escape_spin:our_alliance",
+          29
+        ]
+      ]
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 1002,
+      "blue": [
+        "fab_48",
+        "frc_254",
+        "frc_2056"
+      ],
+      "red": [
+        "fab_36",
+        "fab_45",
+        "fab_32"
+      ],
+      "scoreBlue": 198,
+      "scoreRed": 368,
+      "margin": -170,
+      "requests": 418,
+      "providerCalls": 418,
+      "robotDecisions": 470,
+      "fallbacks": 3,
+      "fallbackMetas": 3,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 242.1,
+      "latencyP50Ms": 455.7,
+      "latencyP95Ms": 1334.6,
+      "costUsd": 0.011723,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 470,
+      "blueRunningActionsReplaced": 61,
+      "redRunningActionsReplaced": 90,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)",
+        "drex drex-v2.0: network error: timeout after 2000 ms"
+      ],
+      "topChosenLabels": [
+        [
+          "goto_shot_spot:hub_close",
+          144
+        ],
+        [
+          "escape_spin:our_alliance",
+          66
+        ],
+        [
+          "hold_fire_until_active",
+          61
+        ],
+        [
+          "shoot_on_move:spot=tower_post_right",
+          53
+        ],
+        [
+          "shoot_now",
+          36
+        ],
+        [
+          "collect:local",
+          26
+        ]
+      ]
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 1001,
+      "blue": [
+        "fab_25",
+        "fab_37",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_24",
+        "fab_45",
+        "frc_254"
+      ],
+      "scoreBlue": 360,
+      "scoreRed": 422,
+      "margin": -62,
+      "requests": 251,
+      "providerCalls": 251,
+      "robotDecisions": 279,
+      "fallbacks": 2,
+      "fallbackMetas": 1,
+      "dropped": 0,
+      "chargedS": 132.528,
+      "wallS": 137.21,
+      "latencyP50Ms": 459.7,
+      "latencyP95Ms": 1085.1,
+      "costUsd": 0.006732,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 279,
+      "blueRunningActionsReplaced": 43,
+      "redRunningActionsReplaced": 78,
+      "fallbackErrors": [
+        "drex drex-v2.0: network error: timeout after 2000 ms"
+      ],
+      "topChosenLabels": [
+        [
+          "hold_fire_until_active",
+          74
+        ],
+        [
+          "collect:local",
+          44
+        ],
+        [
+          "shoot_now",
+          42
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          38
+        ],
+        [
+          "escape_spin:our_alliance",
+          37
+        ],
+        [
+          "collect:neutral",
+          20
+        ]
+      ]
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 1002,
+      "blue": [
+        "fab_48",
+        "frc_254",
+        "frc_2056"
+      ],
+      "red": [
+        "fab_36",
+        "fab_45",
+        "fab_32"
+      ],
+      "scoreBlue": 202,
+      "scoreRed": 355,
+      "margin": -153,
+      "requests": 221,
+      "providerCalls": 221,
+      "robotDecisions": 239,
+      "fallbacks": 1,
+      "fallbackMetas": 1,
+      "dropped": 0,
+      "chargedS": 130.026,
+      "wallS": 134.35,
+      "latencyP50Ms": 503.5,
+      "latencyP95Ms": 1418.7,
+      "costUsd": 0.005992,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false,
+      "promptVersion": "p2-v2-curated10-facts",
+      "scriptedPolicy": "archetype",
+      "blueIntentsApplied": 239,
+      "blueRunningActionsReplaced": 37,
+      "redRunningActionsReplaced": 87,
+      "fallbackErrors": [
+        "drex drex-v2.0: rate_limited_locally: no shared Drex slot within 2000 ms (request not sent)"
+      ],
+      "topChosenLabels": [
+        [
+          "escape_spin:our_alliance",
+          41
+        ],
+        [
+          "goto_shot_spot:hub_close",
+          37
+        ],
+        [
+          "hold_fire_until_active",
+          36
+        ],
+        [
+          "shoot_now",
+          27
+        ],
+        [
+          "shoot_on_move:spot=tower_post_right",
+          23
+        ],
+        [
+          "disengage",
+          19
+        ]
+      ]
+    }
+  ],
+  "summary": {}
+}
