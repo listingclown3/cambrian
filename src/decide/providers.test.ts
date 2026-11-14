@@ -171,7 +171,7 @@ describe("deepinfra provider", () => {
 
 describe("redaction", () => {
   it("removes key values and bearer tokens from error text", () => {
-    const env = { NACE_API_KEY: "sk-very-secret-value" };
+    const env = { NACE_API_KEY: "sk-very-secret-value" }; // secret-scan:allow (fake value used to test redaction)
     expect(redact("failed with sk-very-secret-value and Authorization: Bearer abcdefghijkl", env)).toBe("failed with <redacted> and Authorization: Bearer <redacted>");
   });
 });

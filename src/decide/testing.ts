@@ -68,7 +68,7 @@ export function fakeDeps(answers: FakeAnswers, opts: FakeOptions = {}): FakeDeps
   return {
     fetch: fakeFetch as typeof fetch,
     record: (_cfg, input) => ledger.push(input),
-    env: { NACE_API_KEY: "test-nace-key-0000", DEEPINFRA_API_KEY: "test-deepinfra-key-0000" },
+    env: { NACE_API_KEY: "test-nace-key-0000", DEEPINFRA_API_KEY: "test-deepinfra-key-0000" }, // secret-scan:allow (fake test values)
     sleep: async () => {},
     requests,
     ledger,
