@@ -1,0 +1,115 @@
+{
+  "generatedTs": "2026-11-14T21:29:43.513Z",
+  "source": "Intern rule-scan session, validated; not edited by hand",
+  "session": {
+    "model": "deepinfra/Qwen/Qwen3.8-27B",
+    "turns": 9,
+    "system1Judgments": 26,
+    "durationS": 512.657,
+    "ok": true,
+    "reason": "completed",
+    "rejected": []
+  },
+  "proposals": [
+    {
+      "id": "endgame_dump_and_climb",
+      "title": "Dump the hopper in the endgame, then climb level 1",
+      "kind": "option_variant",
+      "rationale": "In the final 30 seconds every hub is active no matter what the shift schedule says, so fuel that would be worth 0 points against our inactive hub can be dumped for real points and the robot still has time for a level 1 climb.",
+      "sourceUrls": [
+        "https://buttebuiltbots.org/games/rebuilt"
+      ],
+      "situation": "Seconds left in the match is 30 or less, our robot holds 3 or more fuel, and our robot is in the neutral zone or the our_alliance zone.",
+      "intent": {
+        "action": "shoot_now",
+        "params": {},
+        "then": {
+          "action": "climb",
+          "params": {
+            "level": 1
+          }
+        }
+      },
+      "role": {
+        "role": "scorer"
+      }
+    },
+    {
+      "id": "warning_window_dump",
+      "title": "Fire during the 3-second hub deactivation warning",
+      "kind": "strategy_family",
+      "rationale": "Fuel dumped into an inactive hub is worth 0 points and the deactivation warning only runs 3 seconds before the shift flip, so the warning window is the last guaranteed moment to convert held fuel into points.",
+      "sourceUrls": [
+        "https://github.com/frc6908/2026-Robot"
+      ],
+      "situation": "Our hub is active, seconds until the hub shift change is 3 or less, our robot holds 4 or more fuel, and our robot is in the our_alliance zone or the neutral zone.",
+      "intent": {
+        "action": "shoot_now",
+        "params": {}
+      },
+      "role": {
+        "role": "scorer"
+      }
+    },
+    {
+      "id": "protected_tower_climb",
+      "title": "Protected level 3 climb in the final 30 seconds",
+      "kind": "strategy_family",
+      "rationale": "During the final 30 seconds a robot touching its tower is protected from contact by G420, so a dedicated climber at the tower can commit to level 3 with no defender able to touch it without a major foul.",
+      "sourceUrls": [
+        "https://firstinspires.org/hubfs/web/program/frc/first-age-frc-rebuilt-gamepostcard.pdf"
+      ],
+      "situation": "Seconds left in the match is 30 or less, our robot holds 0 fuel, our robot is in the tower zone, and our robot is not in contact with another robot.",
+      "intent": {
+        "action": "climb",
+        "params": {
+          "level": 3
+        }
+      },
+      "role": {
+        "role": "climber"
+      }
+    },
+    {
+      "id": "pin_burst_defense",
+      "title": "Pin-burst defense: disengage before 3 seconds, then score",
+      "kind": "option_variant",
+      "rationale": "G418 caps a pin at 3 seconds before a minor foul and ends the pin once the robots separate, so short contact bursts with a break in between let a defender harass a loaded scorer repeatedly without fouling.",
+      "sourceUrls": [
+        "https://chiefdelphi.com/t/rapid-react-defense/407127"
+      ],
+      "situation": "Our robot is in contact with the opposing scorer (R1) in the neutral zone, our hub is active, and our robot holds 2 or more fuel.",
+      "intent": {
+        "action": "disengage",
+        "params": {},
+        "then": {
+          "action": "goto_shot_spot",
+          "params": {
+            "spotId": "hub_close"
+          }
+        }
+      },
+      "role": {
+        "role": "defender",
+        "target": "R1"
+      }
+    },
+    {
+      "id": "outpost_inactive_store",
+      "title": "Bank held fuel at the outpost during inactive shifts",
+      "kind": "strategy_family",
+      "rationale": "Scoring into an inactive hub earns 0 points, but an outpost holds 24 fuel that a human player can feed back through the chute, so banking loaded fuel at the outpost keeps it scoring-ready through the inactive shift.",
+      "sourceUrls": [
+        "https://github.com/wave-2826/ScoutingPASS/blob/main/2026"
+      ],
+      "situation": "Our hub is inactive, seconds until the hub shift change is 12 or more, our robot holds 3 or more fuel, and our robot is in the neutral zone or the outpost zone.",
+      "intent": {
+        "action": "load_outpost",
+        "params": {}
+      },
+      "role": {
+        "role": "feeder"
+      }
+    }
+  ]
+}

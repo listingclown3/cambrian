@@ -98,6 +98,13 @@ export async function runQuirks(cfg: Config, ask: Ask = limitedAsk): Promise<voi
   const lab = JSON.parse(readFileSync(repoPath("results", "lab.json"), "utf8")) as { rows: Record<string, any>[] };
   const rules = (JSON.parse(readFileSync(repoPath("data", "rules", "conduct_rules.json"), "utf8")) as { rules: ConductRule[] }).rules;
   const entries: { id: string; description: string }[] = proposals.map((p) => ({ id: p.id, description: `${p.title}. Play: ${describeIntent(p.intent)} Use when: ${p.situation}` }));
+  let scan: Proposal[] = [];
+  try {
+    scan = (JSON.parse(readFileSync(repoPath("data", "lab", "rule_scan.json"), "utf8")) as { proposals: Proposal[] }).proposals;
+  } catch {
+    /* no rule scan was run */
+  }
+  for (const p of scan) entries.push({ id: p.id, description: `${p.title}. Play: ${describeIntent(p.intent)} Use when: ${p.situation}` });
   entries.push({ id: "tower_post_up", description: "Endgame tower post-up: in the last 30 seconds, with fuel held, drive to a shot spot right next to our own tower (tower_post_left or tower_post_right) and shoot from there instead of a normal shot spot. An opponent that contacts us while it is touching its own tower is called for a major foul under G420." });
   const { out: verdicts, errors } = await judgeLegality(cfg, entries, rules, ask);
 
@@ -137,16 +144,22 @@ export async function runQuirks(cfg: Config, ask: Ask = limitedAsk): Promise<voi
     reliesOnOpponentFouls: tv.reliesOnOpponentFouls,
     notes: `Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. ${terr ? `Legality NOT JUDGED: Drex unreachable (${terr}).` : ""}`,
   });
-  rows.push({
-    id: "intern_rule_scan",
-    title: "Intern rule-scan quirk candidates",
-    source: "intern_rule_scan",
-    value: { marginDiff: null, ci95: null, n: null, reason: "not run: generalisation session not performed" },
-    legality: null,
-    rules: [],
-    reliesOnOpponentFouls: null,
-    notes: "",
-  });
+  if (scan.length === 0)
+    rows.push({ id: "intern_rule_scan", title: "Intern rule-scan quirk candidates", source: "intern_rule_scan", value: { marginDiff: null, ci95: null, n: null, reason: "not run: no rule scan output" }, legality: null, rules: [], reliesOnOpponentFouls: null, notes: "" });
+  for (const p of scan) {
+    const v = verdicts[p.id]!;
+    const err = errors[p.id];
+    rows.push({
+      id: p.id,
+      title: p.title,
+      source: "intern_rule_scan",
+      value: { marginDiff: null, ci95: null, n: null, reason: "not simulated: no deterministic predicate written for this Intern-proposed situation" },
+      legality: err ? null : tagLegality(v.rules.map((r) => r.pViolation), v.reliesOnOpponentFouls),
+      rules: v.rules,
+      reliesOnOpponentFouls: v.reliesOnOpponentFouls,
+      notes: `Situation: ${p.situation} Rationale: ${p.rationale} ${err ? `Legality NOT JUDGED: Drex unreachable (${err}).` : ""}`.trim(),
+    });
+  }
 
   const count = (t: Legality) => rows.filter((r) => r.legality === t).length;
   writeResults({
