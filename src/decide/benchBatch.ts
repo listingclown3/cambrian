@@ -29,6 +29,8 @@ import { writeResults } from "../util/runLog";
 import { buildBatchActionRequest, buildCaptainRequest } from "./ask";
 import { parseLlmAnswers, type ChatDecisionProvider } from "./providers/deepinfra";
 import { BLOCKED_BY_CHECKPOINT, callStats } from "./providers/http";
+import { PROMPT_VERSION } from "./options";
+import { runEnvironment } from "./runEnv";
 import { getProvider, providerReasoning, warmupProvider } from "./registry";
 import { renderSelfText, renderSharedStateText } from "./stateText";
 
@@ -41,6 +43,10 @@ const n = Number(arg("--n", "10"));
 const nGiant32 = Number(arg("--n32-giant", String(n)));
 const seed = Number(arg("--seed", String(cfg.seeds.dev[0] ?? 1001)));
 const atS = Number(arg("--at", "35"));
+// Live play offers curated options with fact-rich descriptions (options.ts); --full-options
+// offers each robot's full masked list with plain descriptions instead.
+const fullOptions = process.argv.includes("--full-options");
+const optionMode = fullOptions ? "full_masked" : "curated10_facts";
 const SIZES = [1, 3, 8, 32] as const;
 const SIZE_KIND: Record<number, string> = { 1: "realistic (one robot)", 3: "realistic (one alliance of three)", 8: "stress", 32: "stress" };
 
@@ -54,7 +60,7 @@ const stateText = renderSharedStateText(views);
 
 // -- the question pool, in the order batches take from it --
 
-const actionQs = buildBatchActionRequest(views, 0, "live").questions; // next_action_B1..B3
+const actionQs = buildBatchActionRequest(views, 0, "live", {}, fullOptions ? {} : { rules: runner.state.rules }).questions; // next_action_B1..B3
 const captainQs = blue.map((id) => buildCaptainRequest(views, id, {}, 0, "live").questions[0]!);
 // Follow-up questions: "robot X will do <first option> now; which follow-up after it?", with the
 // follow-ups ALLOWED_PAIRS and the robot's masked options allow. Round-robin over robots.
@@ -134,9 +140,11 @@ const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.l
 const isCheckpoint = (res: DecisionResponse) => (res.meta.error ?? "").includes(BLOCKED_BY_CHECKPOINT);
 
 const previous = merge && existsSync(repoPath("results", "bench_batch.json")) ? JSON.parse(readFileSync(repoPath("results", "bench_batch.json"), "utf8")) : null;
-const rows: Record<string, unknown>[] = previous ? previous.rows.filter((r: any) => !only.has(r.decider) && !/Security Checkpoint|blocked_by_checkpoint/.test(String(r.error ?? ""))) : [];
+// Only merge cells measured with the same option mode and prompt version (older files: full_masked, no version).
+const sameMode = (x: any) => (x.optionMode ?? "full_masked") === optionMode && (fullOptions || x.promptVersion === PROMPT_VERSION);
+const rows: Record<string, unknown>[] = previous ? previous.rows.filter((r: any) => !only.has(r.decider) && sameMode(r) && !/Security Checkpoint|blocked_by_checkpoint/.test(String(r.error ?? ""))) : [];
 const cells: Record<string, any> = {};
-if (previous) for (const [k, c] of Object.entries<any>(previous.summary.cells ?? {})) if (!only.has(c.decider)) cells[k] = { ...c, complete: c.complete ?? (c.okCalls === c.n && c.fallbacks === 0) };
+if (previous) for (const [k, c] of Object.entries<any>(previous.summary.cells ?? {})) if (!only.has(c.decider) && sameMode(c)) cells[k] = { ...c, complete: c.complete ?? (c.okCalls === c.n && c.fallbacks === 0) };
 const agreement: Record<string, Record<number, number | null>> = {};
 if (previous) for (const [k, a] of Object.entries<any>(previous.summary.agreement_with_single ?? {})) if (!only.has(k)) agreement[k] = a;
 const firstAnswers = new Map<string, DecisionResponse>(); // `${decider}:${size}` -> first good batched response
@@ -194,6 +202,8 @@ for (const size of SIZES) {
         validAnswerFraction: vf,
         httpAttempts: attempts.length,
         httpHeadersMs: attempts.map((a) => a.headersMs),
+        promptVersion: PROMPT_VERSION,
+        optionMode,
       });
     }
     const p50 = pct(lat, 0.5);
@@ -206,6 +216,8 @@ for (const size of SIZES) {
       okCalls: lat.length,
       fallbacks,
       complete: lat.length === calls && fallbacks === 0,
+      optionMode,
+      promptVersion: PROMPT_VERSION,
       blockedByCheckpoint: blockedDeciders.has(d.key) && lat.length < calls,
       p50Ms: p50,
       p95Ms: pct(lat, 0.95),
@@ -295,6 +307,9 @@ const file = writeResults({
     construction,
     prices: cfg.pricesPerMTokUsd,
     lastRun: { deciders: deciders.map((d) => d.key), merged: merge },
+    optionMode,
+    promptVersion: PROMPT_VERSION,
+    environment: runEnvironment(),
   },
   rows,
   summary,
