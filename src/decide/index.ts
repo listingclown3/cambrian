@@ -16,7 +16,7 @@ export {
   roleLabel,
 } from "./ask";
 export { renderSelfText, renderSharedStateText, renderStateText } from "./stateText";
-export { AgentController, decisionRunEvents, type AllianceAgent, type AllianceTotals, type ControllerDecision, type ControllerOptions, type ControllerSummary, type RobotChoice, type TimingMode } from "./controller";
+export { AgentController, decisionRunEvents, type AllianceAgent, type AllianceTotals, type FairnessParams, type RobotBehaviour, type ControllerDecision, type ControllerOptions, type ControllerSummary, type RobotChoice, type TimingMode } from "./controller";
 export { drexMockProvider, DREX_MOCK_MODEL } from "./providers/drexMock";
 export { randomProvider, scriptedProvider } from "./providers/baselines";
 export { defaultAnswer, fallbackResponse, localMeta } from "./providers/shared";

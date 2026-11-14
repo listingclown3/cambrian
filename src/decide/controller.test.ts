@@ -89,7 +89,7 @@ describe("AgentController (paused)", () => {
   it("drives the robot with the fallback policy when the provider fails, and says so", async () => {
     const failing: DecisionProvider = { id: "drex", decide: async (req) => fallbackResponse(req, "drex", "drex-v2.0", performance.now(), "boom") };
     const c = controller(failing, { agents: { blue: { provider: failing } } });
-    for (let i = 0; i < 5; i++) await c.tick();
+    for (let i = 0; i < 10; i++) await c.tick();
     const first = intentDecisions(c.decisions)[0]!;
     expect(first.metas[0]!.fallbackUsed).toBe(true);
     expect(first.choices.every((ch) => ch.usedFallbackPolicy && ch.intent !== null)).toBe(true);
