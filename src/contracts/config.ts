@@ -191,6 +191,31 @@ export const ProviderConfigSchema = z.strictObject({
       maxInFlight: z.number().int().positive(),
     })
     .optional(),
+  /**
+   * Alternative official hosts serving the same models (drex: "deepinfra" = DeepInfra's
+   * Decisions API). Selected per provider instance; numbers from different hosts are never mixed.
+   */
+  hosts: z
+    .record(
+      z.string(),
+      z.strictObject({
+        /** Full URL requests are sent to. */
+        endpoint: z.string(),
+        /** Auth header name. */
+        authHeader: z.string(),
+        /** Prefix before the key (e.g. "Bearer"), or null. */
+        authScheme: z.string().nullable(),
+        /** Env var holding this host's API key. */
+        apiKeyEnv: z.string(),
+        /** Our model id -> this host's model id (e.g. "drex-v2.0" -> "nace-ai/drex-v2.0"). */
+        models: z.record(z.string(), z.string()),
+        /** Per-request timeout on this host, milliseconds (default: the provider's timeoutMs). */
+        timeoutMs: z.number().int().positive().optional(),
+        /** Machine-wide pacing for this host (its own bucket). */
+        sharedRateLimit: z.strictObject({ requestsPerSecond: z.number().positive(), maxInFlight: z.number().int().positive() }).optional(),
+      }),
+    )
+    .optional(),
   /** URL that lists the provider's available models, when the model is chosen at startup. */
   modelsEndpoint: z.string().optional(),
   /**

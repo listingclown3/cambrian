@@ -1432,9 +1432,16 @@
         "concurrency": 8,
         "timeoutMs": 2000,
         "retries": 2,
-        "sharedRateLimit": {
-          "requestsPerSecond": 4,
-          "maxInFlight": 2
+        "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 },
+        "hosts": {
+          "deepinfra": {
+            "endpoint": "https://api.deepinfra.com/v1/decisions",
+            "authHeader": "Authorization",
+            "authScheme": "Bearer",
+            "apiKeyEnv": "DEEPINFRA_API_KEY",
+            "models": { "drex-v2.0": "nace-ai/drex-v2.0", "drex-latest": "nace-ai/drex-max", "drex-max-v1.1": "nace-ai/drex-max" },
+            "sharedRateLimit": { "requestsPerSecond": 4, "maxInFlight": 2 }
+          }
         }
       },
       "drex_mock": {
@@ -1556,6 +1563,14 @@
       },
       "drex-max-v1.1": {
         "input": 0.03,
+        "output": 0
+      },
+      "nace-ai/drex-v2.0": {
+        "input": 0.06,
+        "output": 0
+      },
+      "nace-ai/drex-max": {
+        "input": 0.12,
         "output": 0
       },
       "Qwen/Qwen3.5-397B-A17B": {

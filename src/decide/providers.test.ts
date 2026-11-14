@@ -56,6 +56,28 @@ describe("drex provider", () => {
     expect(deps.ledger[0]).toMatchObject({ tool: "drex", model: "drex-v2.0", inputTokens: 100, counts: { questions: 3 } });
   });
 
+  it("can be served by the DeepInfra host, labelled with the host everywhere", async () => {
+    const deps = fakeDeps({ pick: "b" });
+    const p = getProviderBySpec("drex@di", cfg, deps);
+    const res = await p.decide(request);
+    expect(deps.requests[0]!.url).toBe("https://api.deepinfra.com/v1/decisions");
+    expect(deps.requests[0]!.body.model).toBe("nace-ai/drex-v2.0");
+    expect(res.answers.pick!.chosen).toBe("b");
+    expect(res.meta.model).toBe("nace-ai/drex-v2.0 @deepinfra");
+    expect(res.meta.costUsd).toBeCloseTo((100 * cfg.pricesPerMTokUsd.byModel["nace-ai/drex-v2.0"]!.input!) / 1e6, 12);
+    expect(deps.ledger[0]).toMatchObject({ tool: "drex", model: "nace-ai/drex-v2.0 @deepinfra" });
+    expect(await providerLabel(p, cfg)).toBe("drex-v2.0 @deepinfra");
+    expect(parseProviderSpec("drex:drex-latest@di")).toEqual({ id: "drex", model: "drex-latest", host: "deepinfra" });
+    const latest = fakeDeps({ pick: "a" });
+    await getProviderBySpec("drex:drex-latest@di", cfg, latest).decide(request);
+    expect(latest.requests[0]!.body.model).toBe("nace-ai/drex-max");
+    // without the DeepInfra key the host falls back, never touching the console key
+    const noKey = { ...fakeDeps({}), env: { NACE_API_KEY: "test-nace-key-0000" } }; // secret-scan:allow (fake test value)
+    const r2 = await getProviderBySpec("drex@di", cfg, noKey).decide(request);
+    expect(r2.meta.error).toMatch(/DEEPINFRA_API_KEY is not set/);
+    expect(noKey.requests).toHaveLength(0);
+  });
+
   it("selects a second model tier and reports the model actually served", async () => {
     const deps = fakeDeps({ pick: "a" });
     const res = await getProviderBySpec("drex:drex-latest", cfg, deps).decide(request);
