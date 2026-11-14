@@ -1,7 +1,7 @@
 /**
  * Decision layer entry point (owner: P2): providers, registry, request building.
  */
-export { IMPLEMENTED_PROVIDERS, NETWORK_PROVIDERS, getProvider, getProviderBySpec, parseProviderSpec, type ProviderOptions } from "./registry";
+export { IMPLEMENTED_PROVIDERS, NETWORK_PROVIDERS, getProvider, getProviderBySpec, parseProviderSpec, providerModel, type ProviderOptions } from "./registry";
 export {
   ACTION_QUESTION_ID,
   actionQuestionId,
@@ -16,7 +16,7 @@ export {
   roleLabel,
 } from "./ask";
 export { renderSelfText, renderSharedStateText, renderStateText } from "./stateText";
-export { AgentController, type AllianceAgent, type ControllerDecision, type ControllerOptions, type ControllerSummary, type RobotChoice, type TimingMode } from "./controller";
+export { AgentController, decisionRunEvents, type AllianceAgent, type ControllerDecision, type ControllerOptions, type ControllerSummary, type RobotChoice, type TimingMode } from "./controller";
 export { drexMockProvider, DREX_MOCK_MODEL } from "./providers/drexMock";
 export { randomProvider, scriptedProvider } from "./providers/baselines";
 export { defaultAnswer, fallbackResponse, localMeta } from "./providers/shared";

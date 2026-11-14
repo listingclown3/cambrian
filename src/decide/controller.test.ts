@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { DecisionRequestSchema, IntentSchema, type DecisionProvider, type DecisionRequest, type DecisionResponse } from "../contracts";
+import { DecisionRequestSchema, IntentSchema, RunEventSchema, type DecisionProvider, type DecisionRequest, type DecisionResponse } from "../contracts";
 import { engine } from "../engine";
 import { basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
-import { AgentController, type ControllerDecision } from "./controller";
+import { AgentController, decisionRunEvents, type ControllerDecision } from "./controller";
 import { drexMockProvider } from "./providers/drexMock";
 import { fallbackResponse } from "./providers/shared";
 
@@ -62,6 +62,12 @@ describe("AgentController (paused)", () => {
       expect(d.requests).toHaveLength(3); // sequential: one question per robot
       expect(d.choices.every((c) => c.role !== undefined)).toBe(true);
       expect(d.requests[2]!.questions[0]!.instructions).toMatch(/Already assigned: B1 .*, B2 /);
+    }
+    // every decision becomes contract-valid run-log lines, one per robot
+    for (const d of summary.decisions.slice(0, 20)) {
+      const lines = decisionRunEvents(d);
+      expect(lines).toHaveLength(d.choices.length);
+      for (const l of lines) expect(RunEventSchema.safeParse({ ...l, ts: "t", runId: "r", seq: 0 }).success).toBe(true);
     }
     // a role reaches the robot's own question
     expect(intents.some((d) => d.requests[0]!.questions.some((q) => q.instructions.includes("Captain's role for")))).toBe(true);

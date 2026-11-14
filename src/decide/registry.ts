@@ -13,7 +13,7 @@ import { ProviderIdSchema, type Config, type DecisionProvider, type ProviderId }
 import { randomProvider, scriptedProvider } from "./providers/baselines";
 import { chatProvider, deepinfraProvider, type ChatDecisionProvider, type ChatProviderOptions } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
-import { drexMockProvider } from "./providers/drexMock";
+import { DREX_MOCK_MODEL, drexMockProvider } from "./providers/drexMock";
 import { notImplementedProvider } from "./providers/notImplemented";
 import { anonymizedProvider } from "./anonymize";
 import { cachedProvider } from "./cache";
@@ -77,6 +77,18 @@ export function getProvider(id: ProviderId, cfg: Config, opts?: ProviderOptions)
   let provider = byId.get(id);
   if (!provider) byId.set(id, (provider = build(id, cfg, {})));
   return provider;
+}
+
+/**
+ * The exact model id a provider will use, for run manifests: the resolved DeepInfra id, the
+ * requested Drex model, or a fixed name for local providers.
+ */
+export async function providerModel(provider: DecisionProvider, cfg: Config): Promise<string> {
+  const p = provider as { model?: string; resolveModel?: () => Promise<string | null> };
+  if (p.resolveModel) return (await p.resolveModel()) ?? "unresolved";
+  if (p.model) return p.model;
+  if (provider.id === "drex_mock") return DREX_MOCK_MODEL;
+  return cfg.providers.byId[provider.id].model ?? provider.id;
 }
 
 /**

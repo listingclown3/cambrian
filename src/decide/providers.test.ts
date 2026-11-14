@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DecisionResponseSchema, type DecisionRequest } from "../contracts";
 import { loadConfig } from "../util/config";
-import { getProviderBySpec, parseProviderSpec } from "./registry";
+import { getProvider, getProviderBySpec, parseProviderSpec, providerModel } from "./registry";
 import { deepinfraProvider, renderLlmPrompt } from "./providers/deepinfra";
 import { drexProvider } from "./providers/drex";
 import { addSpend, redact, resetSpend } from "./providers/http";
@@ -126,6 +126,8 @@ describe("deepinfra provider", () => {
     expect(deps.ledger).toHaveLength(1);
     expect(deps.ledger[0]).toMatchObject({ tool: "deepinfra", costUsd: 0.0005 });
     expect(await provider.resolveModel()).toBe("Qwen/Qwen3.5-397B-A17B");
+    expect(await providerModel(getProvider("deepinfra", cfg, { ...deps, cache: true, anonymize: true }), cfg)).toBe("Qwen/Qwen3.5-397B-A17B");
+    expect(await providerModel(getProvider("drex", cfg, { ...deps, model: "drex-latest" }), cfg)).toBe("drex-latest");
   });
 
   it("parse-retries once, then falls back, counting every call", async () => {

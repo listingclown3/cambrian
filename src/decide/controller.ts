@@ -48,6 +48,7 @@ import {
   type ObservationView,
   type RobotId,
   type RolloutPolicies,
+  type RunEventBody,
   type ScriptedPolicy,
 } from "../contracts";
 import { buildObservationView } from "../engine";
@@ -342,4 +343,26 @@ export class AgentController {
     }
     return { state: this.state, ticks: this.ticks, decisions: this.decisions, calls, fallbacks, dropped: dropped.length, chargedS };
   }
+}
+
+/**
+ * Run-log "decision" lines for one controller decision: one line per robot, carrying exactly the
+ * request that robot's answer came from and that call's meta. isMock is true when the provider
+ * was a mock. Captain decisions log chosenLabel = the role label and intent = null.
+ */
+export function decisionRunEvents(d: ControllerDecision): RunEventBody[] {
+  return d.choices.map((c, i) => {
+    const k = d.kind === "captain" ? i : 0;
+    const meta = d.metas[k]!;
+    return {
+      type: "decision" as const,
+      isMock: meta.isMock,
+      robotId: c.robotId,
+      matchTimeS: d.requestedAtS,
+      request: d.requests[k]!,
+      meta,
+      chosenLabel: c.chosenLabel,
+      intent: d.appliedAtS === null ? null : c.intent,
+    };
+  });
 }

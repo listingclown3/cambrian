@@ -8,6 +8,7 @@
  * their original order, so the ablation changes nothing but the label strings.
  */
 import type { Answer, DecisionProvider, DecisionRequest, DecisionResponse } from "../contracts";
+import { forwardModel } from "./cache";
 
 /** Per question: neutral id -> original label. */
 export type LabelMap = Record<string, Record<string, string>>;
@@ -52,6 +53,7 @@ export function deanonymizeResponse(res: DecisionResponse, map: LabelMap): Decis
 /** Wrap a provider so every request it sees has neutral labels; answers come back in original labels. */
 export function anonymizedProvider(inner: DecisionProvider): DecisionProvider {
   return {
+    ...forwardModel(inner),
     id: inner.id,
     async decide(req) {
       const { request, map } = anonymizeRequest(req);

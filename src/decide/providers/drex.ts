@@ -88,7 +88,7 @@ export function parseDrexAnswer(q: Question, raw: any): Answer | string {
   }
 }
 
-export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider {
+export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvider & { readonly model: string } {
   const p = cfg.providers.byId.drex;
   const model = opts.model ?? p.model ?? "drex-v2.0";
   const env = opts.env ?? process.env;
@@ -144,6 +144,8 @@ export function drexProvider(cfg: Config, opts: DrexOptions = {}): DecisionProvi
 
   return {
     id: "drex",
+    /** The model id requested (the served id, e.g. drex-max-v1.1 for drex-latest, is in meta.model). */
+    model,
     // Latency is measured inside call(), i.e. from when the request is actually sent, not from
     // when it entered the concurrency queue.
     decide: (req) => limit(() => call(req)),

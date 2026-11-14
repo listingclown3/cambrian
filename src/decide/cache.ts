@@ -37,6 +37,12 @@ export function cacheKey(providerId: string, model: string, variant: string, req
     .digest("hex");
 }
 
+/** Keep a wrapped provider's model information (model / resolveModel) visible through a wrapper. */
+export function forwardModel(inner: DecisionProvider): { model?: string; resolveModel?: () => Promise<string | null> } {
+  const i = inner as { model?: string; resolveModel?: () => Promise<string | null> };
+  return { ...(i.model !== undefined ? { model: i.model } : {}), ...(i.resolveModel ? { resolveModel: () => i.resolveModel!() } : {}) };
+}
+
 export interface CachedProvider extends DecisionProvider {
   /** Hits and misses so far. */
   readonly stats: { hits: number; misses: number; stored: number };
@@ -49,6 +55,7 @@ export function cachedProvider(inner: DecisionProvider, opts: CacheOptions): Cac
   const modelKey = async () => (typeof opts.model === "string" ? opts.model : ((await opts.model()) ?? "unresolved"));
 
   return {
+    ...forwardModel(inner),
     id: inner.id,
     stats,
     async decide(req: DecisionRequest): Promise<DecisionResponse> {
