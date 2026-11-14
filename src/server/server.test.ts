@@ -1,3 +1,4 @@
+import { ENGINE_IS_STUB } from "../engine";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { HEADLINE_KEYS, MatchStateSchema } from "../contracts";
@@ -19,7 +20,7 @@ describe("server", () => {
   it("reports health", async () => {
     const res = await app.inject({ method: "GET", url: "/api/health" });
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toMatchObject({ ok: true, engineIsStub: true });
+    expect(res.json()).toMatchObject({ ok: true, engineIsStub: ENGINE_IS_STUB });
   });
 
   it("serves a headline with exactly the contract keys", async () => {
@@ -31,7 +32,8 @@ describe("server", () => {
   it("lists providers and whether they are implemented", async () => {
     const providers = (await app.inject({ method: "GET", url: "/api/providers" })).json() as { id: string; implemented: boolean }[];
     expect(providers.find((p) => p.id === "drex_mock")?.implemented).toBe(true);
-    expect(providers.find((p) => p.id === "drex")?.implemented).toBe(false);
+    expect(providers.find((p) => p.id === "drex")?.implemented).toBe(true);
+    expect(providers.find((p) => p.id === "deepinfra")?.implemented).toBe(true);
   });
 
   it("serves usage totals for every tool", async () => {
@@ -67,7 +69,7 @@ describe("server", () => {
       }, 20);
     });
     socket.terminate();
-    expect(messages[0]).toMatchObject({ type: "hello", engineIsStub: true, isMock: true, seed: 5, speed: 20 });
+    expect(messages[0]).toMatchObject({ type: "hello", engineIsStub: ENGINE_IS_STUB, isMock: true, seed: 5, speed: 20 });
     const tick = messages.find((m) => m.type === "tick");
     expect(tick?.type === "tick" && MatchStateSchema.safeParse(tick.state).success).toBe(true);
   });
