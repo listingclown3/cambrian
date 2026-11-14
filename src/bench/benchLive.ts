@@ -53,7 +53,8 @@ const arg = (name: string, dflt: string) => {
 const cfg = loadConfig();
 const PARTS: Record<string, { spec: string | null; timings: TimingMode[]; decider: string }> = {
   scripted: { spec: null, timings: ["paused"], decider: "scripted" },
-  drex: { spec: "drex", timings: ["realtime", "paused"], decider: "drex" },
+  drex_realtime: { spec: "drex", timings: ["realtime"], decider: "drex" },
+  drex_paused: { spec: "drex", timings: ["paused"], decider: "drex" },
   giant_realtime: { spec: "deepinfra", timings: ["realtime"], decider: "deepinfra" },
   giant_paused: { spec: "deepinfra", timings: ["paused"], decider: "deepinfra" },
 };
@@ -68,9 +69,26 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
   const previous: any = start > 0 ? readJson("results", `bench_live_${part}${arg("seeds", "eval") === "dev" ? "_dev" : ""}.json`) : null;
   const limit = pLimit(parallel);
   const rows: Record<string, unknown>[] = [];
-  const jobs = def.timings.flatMap((timing) =>
+  const timings = arg("timing", "") ? def.timings.filter((t) => t === arg("timing", "")) : def.timings;
+  let aborted: string | null = null;
+  const flush = () => {
+    const all = [...rows, ...(previous ? previous.rows.filter((r: any) => !seeds.includes(r.seed) || !timings.includes(r.timing)) : [])];
+    all.sort((a, b) => String(a.timing).localeCompare(String(b.timing)) || (a.seed as number) - (b.seed as number));
+    writeResults({
+      experiment: `bench_live_${part}${seedSet === cfg.seeds.dev ? "_dev" : ""}`,
+      createdTs: new Date().toISOString(),
+      isMock: ENGINE_IS_STUB || all.some((r) => r.isMock),
+      gitCommit: gitCommit(),
+      simHash: simHash(cfg),
+      config: { part, spec: def.spec, reasoning: def.decider === "deepinfra" ? "off" : null, seeds: { dev: seedSet === cfg.seeds.dev ? [...new Set(all.map((r) => r.seed as number))].sort() : [], eval: seedSet === cfg.seeds.eval ? [...new Set(all.map((r) => r.seed as number))].sort() : [] }, parallel, timings, realtimeLatencyCharging: cfg.realtimeLatencyCharging, lineup: `drawLineup(league, live:<seed>): blue = decider, red = scripted ${scriptedPolicy.id}`, promptVersion: PROMPT_VERSION, aborted, note: "written after every match; a match not in rows did not finish" },
+      rows: all,
+      summary: {},
+    });
+  };
+  const jobs = timings.flatMap((timing) =>
     seeds.map((seed) =>
       limit(async () => {
+        if (aborted) return;
         const robots = drawLineup(league, `live:${seed}`, { blue: def.spec ?? scriptedPolicy.id, red: scriptedPolicy.id });
         const agents: Partial<Record<Alliance, AllianceAgent>> = def.spec ? { blue: { provider: getProviderBySpec(def.spec, cfg, { purpose: "bench_live" }) } } : {};
         const t0 = performance.now();
@@ -111,23 +129,15 @@ async function playPart(part: string, n: number, parallel: number, start = 0) {
           topChosenLabels: Object.entries(s.decisions.flatMap((d) => d.choices.map((c) => c.chosenLabel ?? "(none)")).reduce<Record<string, number>>((acc, l) => ((acc[l] = (acc[l] ?? 0) + 1), acc), {})).sort((a, b) => b[1] - a[1]).slice(0, 6),
         };
         rows.push(row);
+        if (def.spec && row.robotDecisions > 0 && row.fallbacks / row.robotDecisions > 0.5) aborted = `stopped after seed ${seed} ${timing}: ${row.fallbacks}/${row.robotDecisions} decisions were fallbacks (${row.fallbackErrors[0] ?? ""})`;
+        flush();
         console.log(`[bench:live] ${part} ${timing} seed ${seed}: margin ${row.margin} (${row.scoreBlue}-${row.scoreRed}), ${row.robotDecisions} robot decisions in ${row.requests} requests, ${row.fallbacks} fallbacks, charged ${row.chargedS} s, wall ${row.wallS} s, $${row.costUsd}`);
       }),
     ),
   );
   await Promise.all(jobs);
-  if (previous) rows.push(...previous.rows.filter((r: any) => !seeds.includes(r.seed)));
-  rows.sort((a, b) => String(a.timing).localeCompare(String(b.timing)) || (a.seed as number) - (b.seed as number));
-  writeResults({
-    experiment: `bench_live_${part}${seedSet === cfg.seeds.dev ? "_dev" : ""}`,
-    createdTs: new Date().toISOString(),
-    isMock: ENGINE_IS_STUB || rows.some((r) => r.isMock),
-    gitCommit: gitCommit(),
-    simHash: simHash(cfg),
-    config: { part, spec: def.spec, reasoning: def.decider === "deepinfra" ? "off" : null, seeds: { dev: [], eval: [...new Set(rows.map((r) => r.seed as number))].sort() }, parallel, realtimeLatencyCharging: cfg.realtimeLatencyCharging, lineup: "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle" },
-    rows,
-    summary: {},
-  });
+  flush();
+  if (aborted) console.log(`[bench:live] ${aborted}`);
 }
 
 function stats(rows: any[]) {
@@ -210,4 +220,4 @@ function assemble() {
 }
 
 if (process.argv.includes("--assemble")) assemble();
-else await playPart(arg("part", "drex"), Number(arg("n", "5")), Number(arg("parallel", "1")), Number(arg("start", "0")));
+else await playPart(arg("part", "drex_realtime"), Number(arg("n", "5")), Number(arg("parallel", "1")), Number(arg("start", "0")));
