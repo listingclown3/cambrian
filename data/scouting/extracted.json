@@ -1,0 +1,1704 @@
+{
+  "generatedTs": "2026-11-14T20:17:16.456Z",
+  "note": "Sheets are fabricated; see truth.json",
+  "sheets": [
+    {
+      "sheetId": "s01",
+      "file": "s01.csv",
+      "values": {
+        "teamNumber": 20001,
+        "shooterType": "drum",
+        "lanes": 2,
+        "shootOnMove": false,
+        "fireRatePerS": 9.8,
+        "intakeWidth": "narrow",
+        "speedEmptyMps": 4.633,
+        "massEmptyKg": 54.9,
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 1.3
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s01",
+          "quote": "Team | team 20001",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s01",
+          "quote": "Shtr | drum",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s01",
+          "quote": "Ln | 2",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s01",
+          "quote": "SOTM | must stop to shoot",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s01",
+          "quote": "Rate | 9.8 shots/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s01",
+          "quote": "Intake | narrow",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s01",
+          "quote": "Spd | 15.2 feet per second",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s01",
+          "quote": "Wt | 54.9 kg",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s01",
+          "quote": "Trench | fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s01",
+          "quote": "Clmb | 2 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s01",
+          "quote": "Pass | 1.3 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s02",
+      "file": "s02.md",
+      "values": {
+        "teamNumber": 20002,
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "fireRatePerS": 4,
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.999,
+        "massEmptyKg": 60,
+        "climbLevel": 1,
+        "passRangeM": 1.6
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s02",
+          "quote": "Pit notes — team 20002",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s02",
+          "quote": "Shooter: turret",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s02",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s02",
+          "quote": "Shoot on move: Y",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s02",
+          "quote": "Fire rate: 4.0 shots/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s02",
+          "quote": "Drivetrain: swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s02",
+          "quote": "Top speed (empty): 16.4 ft/s",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s02",
+          "quote": "Weight (empty): 60.0 kg",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s02",
+          "quote": "Climb: 1 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s02",
+          "quote": "Pass range: 1.6 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s03",
+      "file": "s03.txt",
+      "values": {
+        "teamNumber": 20003,
+        "shooterType": "lanes",
+        "lanes": 3,
+        "capacity": 48,
+        "fireRatePerS": 5.2,
+        "intakeWidth": "wide",
+        "speedEmptyMps": 4.542,
+        "massEmptyKg": 60.6,
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 2.4
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s03",
+          "quote": "pit notes for Team 20003",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s03",
+          "quote": "shooter: 3 lane shooter.",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s03",
+          "quote": "shooter: 3 lane shooter. lane count is 3.",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s03",
+          "quote": "hopper holds 48 balls.",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s03",
+          "quote": "oh wait — actually 5.2/s.",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s03",
+          "quote": "intake wide.",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s03",
+          "quote": "top speed 14.9 ft/s empty.",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s03",
+          "quote": "weighs 133.6 lb empty.",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s03",
+          "quote": "fits under trench.",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s03",
+          "quote": "climb mid (2).",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s03",
+          "quote": "pass range is 2.4 m.",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s04",
+      "file": "s04.html",
+      "values": {
+        "teamNumber": 20004,
+        "shooterType": "lanes",
+        "lanes": 2,
+        "shootOnMove": false,
+        "intakeWidth": "wide",
+        "massEmptyKg": 63.4,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "passRangeM": 2.5
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s04",
+          "quote": "Team #20004",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s04",
+          "quote": "Shooter | lanes",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s04",
+          "quote": "Lanes | 2",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s04",
+          "quote": "Shoot on move N",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s04",
+          "quote": "Intake | wide",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s04",
+          "quote": "Weight (empty) | 63.4 kg",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s04",
+          "quote": "Height | tall",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s04",
+          "quote": "Trench fit too tall for the trench",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s04",
+          "quote": "Pass range | 2.5 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s05",
+      "file": "s05.csv",
+      "values": {
+        "teamNumber": 20005,
+        "shooterType": "dumper",
+        "shootOnMove": false,
+        "capacity": 33,
+        "fireRatePerS": 10.2,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.8,
+        "massEmptyKg": 60.917,
+        "heightClass": "short",
+        "climbLevel": 1,
+        "passRangeM": 1.036
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s05",
+          "quote": "Team | team 20005",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s05",
+          "quote": "Shtr | low dumper",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s05",
+          "quote": "SOTM | N",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s05",
+          "quote": "Cap (balls) | capacity 33",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s05",
+          "quote": "Rate | 10.2 shots/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s05",
+          "quote": "Intake | wide",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s05",
+          "quote": "Dtrn | swerve drive",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s05",
+          "quote": "Spd | 4.8 m/s",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s05",
+          "quote": "Wt | 134.3 lbs",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s05",
+          "quote": "Ht | short",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s05",
+          "quote": "Clmb | 1 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s05",
+          "quote": "Pass | 3.4 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s06",
+      "file": "s06.md",
+      "values": {
+        "teamNumber": 20006,
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 8,
+        "fireRatePerS": 4.9,
+        "drivetrain": "swerve",
+        "massEmptyKg": 50.9,
+        "heightClass": "short",
+        "passRangeM": 0.305
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s06",
+          "quote": "Pit notes — Team #20006",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s06",
+          "quote": "Shooter: turreted shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s06",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s06",
+          "quote": "Shoot on move: Y",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s06",
+          "quote": "Hopper: holds 8 balls",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s06",
+          "quote": "Fire rate: 4.9/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s06",
+          "quote": "Drivetrain: swerve",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s06",
+          "quote": "Weight (empty): 50.9 kg",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s06",
+          "quote": "Height: short",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s06",
+          "quote": "Pass range: 1.0 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s07",
+      "file": "s07.txt",
+      "values": {
+        "teamNumber": 20007,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 34,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.663,
+        "massEmptyKg": 53.8,
+        "heightClass": "short",
+        "fitsUnderTrench": false,
+        "passRangeM": 9
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s07",
+          "quote": "pit notes for Team #20007",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s07",
+          "quote": "shooter: lanes",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s07",
+          "quote": "lane count is 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s07",
+          "quote": "does not shoot on the move",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s07",
+          "quote": "hopper holds 34 balls",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s07",
+          "quote": "intake narrow",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s07",
+          "quote": "drive: swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s07",
+          "quote": "top speed 15.3 ft/s empty",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s07",
+          "quote": "weighs 53.8 kg empty",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s07",
+          "quote": "it's short",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s07",
+          "quote": "does not fit under trench",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s07",
+          "quote": "pass range is 9.0 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s08",
+      "file": "s08.html",
+      "values": {
+        "teamNumber": 20008,
+        "shooterType": "none",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 9,
+        "fireRatePerS": 0,
+        "intakeWidth": "narrow",
+        "drivetrain": "tank",
+        "speedEmptyMps": 3.658,
+        "massEmptyKg": 65.816,
+        "fitsUnderTrench": true,
+        "climbLevel": 0
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s08",
+          "quote": "Team | Team #20008",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s08",
+          "quote": "Shooter no shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s08",
+          "quote": "Lanes | 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s08",
+          "quote": "Shoot on move N",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s08",
+          "quote": "Hopper | carries 9 balls",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s08",
+          "quote": "Fire rate | 0.0 shots/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s08",
+          "quote": "Intake | narrow intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s08",
+          "quote": "Drivetrain | 6 wheel tank",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s08",
+          "quote": "Note | update: actually 12.0 fps",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s08",
+          "quote": "Weight (empty) | 145.1 lbs",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s08",
+          "quote": "Trench fit fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s08",
+          "quote": "Climb no climb",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s09",
+      "file": "s09.csv",
+      "values": {
+        "teamNumber": 20009,
+        "shooterType": "lanes",
+        "shootOnMove": false,
+        "fireRatePerS": 2.7,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "massEmptyKg": 57.107,
+        "fitsUnderTrench": false,
+        "climbLevel": 1
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s09",
+          "quote": "Team #20009",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s09",
+          "quote": "lanes",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s09",
+          "quote": "no",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s09",
+          "quote": "2.7/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s09",
+          "quote": "narrow intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s09",
+          "quote": "MK4i swerve",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s09",
+          "quote": "125.9 lbs",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s09",
+          "quote": "no",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s09",
+          "quote": "low (1)",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s10",
+      "file": "s10.md",
+      "values": {
+        "teamNumber": 20010,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.511,
+        "massEmptyKg": 53.206,
+        "heightClass": "short",
+        "fitsUnderTrench": false,
+        "climbLevel": 1,
+        "passRangeM": 2.56
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s10",
+          "quote": "Pit notes — Team #20010",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s10",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s10",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s10",
+          "quote": "Intake: wide intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s10",
+          "quote": "Drivetrain: swerve drive",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s10",
+          "quote": "Top speed (empty): 14.8 ft/s",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s10",
+          "quote": "Weight (empty): 117.3 lbs",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s10",
+          "quote": "Height: short",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s10",
+          "quote": "Trench fit: too tall for the trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s10",
+          "quote": "Climb: low (1)",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s10",
+          "quote": "Pass range: 8.4 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s11",
+      "file": "s11.txt",
+      "values": {
+        "teamNumber": 20011,
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "fireRatePerS": 5.3,
+        "speedEmptyMps": 4.877,
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 3
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s11",
+          "quote": "pit notes for team 20011",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s11",
+          "quote": "shooter: turreted shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s11",
+          "quote": "lane count is 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s11",
+          "quote": "shoots on the move, SOTM yes",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s11",
+          "quote": "fire rate 5.3 shots/s",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s11",
+          "quote": "top speed 16.0 fps empty",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s11",
+          "quote": "fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s11",
+          "quote": "climb 2 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s11",
+          "quote": "it passes 3.0 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s12",
+      "file": "s12.html",
+      "values": {
+        "teamNumber": 20012,
+        "shooterType": "lanes",
+        "lanes": 2,
+        "shootOnMove": false,
+        "fireRatePerS": 6.5,
+        "intakeWidth": "wide",
+        "massEmptyKg": 58.287,
+        "fitsUnderTrench": false,
+        "passRangeM": 2
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s12",
+          "quote": "Team | Team 20012",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s12",
+          "quote": "Shooter 2 lane shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s12",
+          "quote": "Lanes | 2",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s12",
+          "quote": "Shoot on move must stop to shoot",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s12",
+          "quote": "Fire rate | 6.5/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s12",
+          "quote": "Intake | wide",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s12",
+          "quote": "Weight (empty) | 128.5 lbs",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s12",
+          "quote": "Trench fit N",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s12",
+          "quote": "Pass range | 2.0 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s13",
+      "file": "s13.csv",
+      "values": {
+        "teamNumber": 20013,
+        "shootOnMove": false,
+        "capacity": 81,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.389,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "passRangeM": 1.006
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s13",
+          "quote": "Team | team 20013",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s13",
+          "quote": "SOTM | must stop to shoot",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s13",
+          "quote": "Cap (balls) | capacity 81",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s13",
+          "quote": "Intake | wide",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s13",
+          "quote": "Dtrn | swerve drive",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s13",
+          "quote": "Spd | 14.4 feet per second",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s13",
+          "quote": "Ht | tall",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s13",
+          "quote": "Trench | no",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s13",
+          "quote": "Pass | passes 3.3 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s14",
+      "file": "s14.md",
+      "values": {
+        "teamNumber": 20014,
+        "shooterType": "dumper",
+        "lanes": 3,
+        "capacity": 49,
+        "fireRatePerS": 9,
+        "drivetrain": "swerve",
+        "massEmptyKg": 61.19,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s14",
+          "quote": "Pit notes — team 20014",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s14",
+          "quote": "Shooter: low dumper",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s14",
+          "quote": "Lanes: 3",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s14",
+          "quote": "Hopper: capacity 49",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s14",
+          "quote": "Fire rate: 9.0/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s14",
+          "quote": "Drivetrain: swerve",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s14",
+          "quote": "Weight (empty): 134.9 lbs",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s14",
+          "quote": "Height: short",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s14",
+          "quote": "Trench fit: Y",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s14",
+          "quote": "Climb: low (1)",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s15",
+      "file": "s15.txt",
+      "values": {
+        "teamNumber": 20015,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": true,
+        "fireRatePerS": 6.4,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.7,
+        "massEmptyKg": 50.4,
+        "fitsUnderTrench": true,
+        "passRangeM": 0.5
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s15",
+          "quote": "pit notes for Team 20015",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s15",
+          "quote": "lane count is 1",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s15",
+          "quote": "lane count is 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s15",
+          "quote": "shoots on the move",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s15",
+          "quote": "oh wait — actually 6.4/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s15",
+          "quote": "intake wide intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s15",
+          "quote": "drive: MK4i swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s15",
+          "quote": "top speed 4.7 m/s empty",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s15",
+          "quote": "weighs 50.4 kg empty",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s15",
+          "quote": "fits under trench",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s15",
+          "quote": "pass range is 0.5 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s16",
+      "file": "s16.html",
+      "values": {
+        "teamNumber": 20016,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "fireRatePerS": 2.7,
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.115,
+        "massEmptyKg": 54.3,
+        "fitsUnderTrench": true,
+        "climbLevel": 2,
+        "passRangeM": 6.492
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s16",
+          "quote": "Team | Team #20016",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s16",
+          "quote": "Shooter 1 lane shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s16",
+          "quote": "Lanes | 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s16",
+          "quote": "Shoot on move no",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s16",
+          "quote": "update: actually 2.7 shots/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s16",
+          "quote": "Drivetrain | MK4i swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s16",
+          "quote": "Top speed (empty) | 13.5 feet per second",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s16",
+          "quote": "Weight (empty) | 54.3 kg",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s16",
+          "quote": "Trench fit Y",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s16",
+          "quote": "Climb | 2 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s16",
+          "quote": "Pass range | 21.3 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s17",
+      "file": "s17.csv",
+      "values": {
+        "teamNumber": 20017,
+        "shooterType": "none",
+        "lanes": 1,
+        "capacity": 1,
+        "fireRatePerS": 0,
+        "intakeWidth": "narrow",
+        "speedEmptyMps": 4.298,
+        "heightClass": "tall"
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s17",
+          "quote": "Team | team 20017",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s17",
+          "quote": "Shtr | no shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s17",
+          "quote": "Ln | 1",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s17",
+          "quote": "Cap (balls) | capacity 1",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s17",
+          "quote": "Rate | 0.0 shots/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s17",
+          "quote": "Intake | narrow",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s17",
+          "quote": "Spd | 14.1 ft/s",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s17",
+          "quote": "Ht | tall",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s18",
+      "file": "s18.md",
+      "values": {
+        "teamNumber": 20018,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "capacity": 8,
+        "intakeWidth": "narrow",
+        "drivetrain": "tank",
+        "massEmptyKg": 52.798,
+        "fitsUnderTrench": true,
+        "climbLevel": 0
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s18",
+          "quote": "Pit notes — Team 20018",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s18",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s18",
+          "quote": "Lanes: 1",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s18",
+          "quote": "Hopper: carries 8 balls",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s18",
+          "quote": "Intake: narrow",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s18",
+          "quote": "Drivetrain: WCD",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s18",
+          "quote": "Weight (empty): 116.4 lb",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s18",
+          "quote": "Trench fit: fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s18",
+          "quote": "Climb: none",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s19",
+      "file": "s19.txt",
+      "values": {
+        "teamNumber": 20019,
+        "shooterType": "drum",
+        "lanes": 2,
+        "shootOnMove": false,
+        "capacity": 51,
+        "intakeWidth": "wide",
+        "speedEmptyMps": 4.481,
+        "massEmptyKg": 59.9,
+        "fitsUnderTrench": false
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s19",
+          "quote": "pit notes for team 20019",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s19",
+          "quote": "shooter: drum",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s19",
+          "quote": "lane count is 2",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s19",
+          "quote": "does not shoot on the move",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s19",
+          "quote": "oh wait — actually carries 51 balls",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s19",
+          "quote": "intake wide",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s19",
+          "quote": "top speed 14.7 fps empty",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s19",
+          "quote": "weighs 59.9 kg empty",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s19",
+          "quote": "does not fit under trench",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s20",
+      "file": "s20.html",
+      "values": {
+        "teamNumber": 20020,
+        "shooterType": "turret",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 58,
+        "intakeWidth": "wide",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.816,
+        "massEmptyKg": 52.3,
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s20",
+          "quote": "Team | Team 20020",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s20",
+          "quote": "Shooter | turret",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s20",
+          "quote": "Lanes | 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s20",
+          "quote": "Shoot on move yes",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s20",
+          "quote": "Hopper | capacity 58",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s20",
+          "quote": "Intake | wide intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s20",
+          "quote": "Drivetrain | swerve drive",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s20",
+          "quote": "Top speed (empty) | 15.8 ft/s",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s20",
+          "quote": "Weight (empty) | 52.3 kg",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s20",
+          "quote": "Trench fit fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s20",
+          "quote": "Climb | 1 of 3",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s20",
+          "quote": "Pass range | passes 0.0 m",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s21",
+      "file": "s21.csv",
+      "values": {
+        "teamNumber": 20021,
+        "shooterType": "lanes",
+        "lanes": 3,
+        "shootOnMove": false,
+        "fireRatePerS": 6.3,
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.359,
+        "massEmptyKg": 51.9,
+        "heightClass": "tall",
+        "fitsUnderTrench": false,
+        "climbLevel": 1
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s21",
+          "quote": "Team #20021",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s21",
+          "quote": "3 lane shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s21",
+          "quote": "3 lane shooter",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s21",
+          "quote": "no",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s21",
+          "quote": "6.3/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s21",
+          "quote": "swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s21",
+          "quote": "14.3 feet per second",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s21",
+          "quote": "51.9 kg",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s21",
+          "quote": "tall",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s21",
+          "quote": "no",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s21",
+          "quote": "low (1)",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s22",
+      "file": "s22.md",
+      "values": {
+        "teamNumber": 20022,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": false,
+        "capacity": 103,
+        "fireRatePerS": 5.2,
+        "drivetrain": "swerve",
+        "massEmptyKg": 65,
+        "fitsUnderTrench": false,
+        "climbLevel": 2
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s22",
+          "quote": "Pit notes — Team #20022",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s22",
+          "quote": "Shooter: lane shooter",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s22",
+          "quote": "Shooter: lane shooter",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s22",
+          "quote": "Shoot on move: no",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s22",
+          "quote": "update: actually carries 103 balls",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s22",
+          "quote": "Fire rate: 5.2/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s22",
+          "quote": "Drivetrain: swerve drive",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s22",
+          "quote": "Weight (empty): 143.3 lbs",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s22",
+          "quote": "Trench fit: does not fit under the trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s22",
+          "quote": "Climb: mid (2)",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s23",
+      "file": "s23.txt",
+      "values": {
+        "teamNumber": 20023,
+        "shooterType": "lanes",
+        "lanes": 4,
+        "shootOnMove": false,
+        "capacity": 38,
+        "fireRatePerS": 9.6,
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.023,
+        "massEmptyKg": 56.608,
+        "heightClass": "short",
+        "fitsUnderTrench": true,
+        "climbLevel": 1,
+        "passRangeM": 0.305
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s23",
+          "quote": "pit notes for Team #20023",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s23",
+          "quote": "lane count is 4",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s23",
+          "quote": "lane count is 4",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s23",
+          "quote": "has to stop to shoot",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s23",
+          "quote": "hopper capacity 38",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s23",
+          "quote": "fire rate 9.6 shots/s",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s23",
+          "quote": "drive: MK4i swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s23",
+          "quote": "top speed 13.2 ft/s empty",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s23",
+          "quote": "weighs 124.8 lbs empty",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s23",
+          "quote": "it's short",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s23",
+          "quote": "fits under trench",
+          "parser": "ndi"
+        },
+        "climbLevel": {
+          "source": "scouting:s23",
+          "quote": "climb low (1)",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s23",
+          "quote": "pass range is 1.0 ft",
+          "parser": "ndi"
+        }
+      }
+    },
+    {
+      "sheetId": "s24",
+      "file": "s24.html",
+      "values": {
+        "teamNumber": 20024,
+        "shooterType": "lanes",
+        "lanes": 1,
+        "shootOnMove": true,
+        "capacity": 9,
+        "fireRatePerS": 5.7,
+        "intakeWidth": "narrow",
+        "drivetrain": "swerve",
+        "speedEmptyMps": 4.938,
+        "massEmptyKg": 46.221,
+        "heightClass": "tall",
+        "fitsUnderTrench": true,
+        "passRangeM": 2.1
+      },
+      "provenance": {
+        "teamNumber": {
+          "source": "scouting:s24",
+          "quote": "Team | Team 20024",
+          "parser": "ndi"
+        },
+        "shooterType": {
+          "source": "scouting:s24",
+          "quote": "Lanes | 1",
+          "parser": "ndi"
+        },
+        "lanes": {
+          "source": "scouting:s24",
+          "quote": "Lanes | 1",
+          "parser": "ndi"
+        },
+        "shootOnMove": {
+          "source": "scouting:s24",
+          "quote": "Shoot on move yes",
+          "parser": "ndi"
+        },
+        "capacity": {
+          "source": "scouting:s24",
+          "quote": "Hopper | carries 9 balls",
+          "parser": "ndi"
+        },
+        "fireRatePerS": {
+          "source": "scouting:s24",
+          "quote": "Fire rate | 5.7/s",
+          "parser": "ndi"
+        },
+        "intakeWidth": {
+          "source": "scouting:s24",
+          "quote": "Intake | narrow intake",
+          "parser": "ndi"
+        },
+        "drivetrain": {
+          "source": "scouting:s24",
+          "quote": "Drivetrain | MK4i swerve",
+          "parser": "ndi"
+        },
+        "speedEmptyMps": {
+          "source": "scouting:s24",
+          "quote": "Top speed (empty) | 16.2 ft/s",
+          "parser": "ndi"
+        },
+        "massEmptyKg": {
+          "source": "scouting:s24",
+          "quote": "Weight (empty) | 101.9 lb",
+          "parser": "ndi"
+        },
+        "heightClass": {
+          "source": "scouting:s24",
+          "quote": "Height | tall",
+          "parser": "ndi"
+        },
+        "fitsUnderTrench": {
+          "source": "scouting:s24",
+          "quote": "Trench fit yes",
+          "parser": "ndi"
+        },
+        "passRangeM": {
+          "source": "scouting:s24",
+          "quote": "Pass range | 2.1 m",
+          "parser": "ndi"
+        }
+      }
+    }
+  ]
+}
