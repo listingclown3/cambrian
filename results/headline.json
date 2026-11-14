@@ -1,8 +1,8 @@
 {
   "experiment": "headline",
-  "createdTs": "2026-11-14T22:16:00.743Z",
+  "createdTs": "2026-11-14T22:25:26.685Z",
   "isMock": false,
-  "gitCommit": "5bb31cc8fceb-dirty",
+  "gitCommit": "83ff77ec18e3-dirty",
   "simHash": "547d0ca0d9b67f1b",
   "config": {
     "contributing": [
@@ -33,8 +33,8 @@
       {
         "file": "results/lab.json",
         "isMock": false,
-        "simHash": "007a2b25fa5e3cf0",
-        "gitCommit": "4f00def1ca00-dirty"
+        "simHash": "547d0ca0d9b67f1b",
+        "gitCommit": "83ff77ec18e3-dirty"
       }
     ],
     "simHashesConsistent": false,
@@ -697,7 +697,7 @@
     "matches_per_sec": 0.666,
     "sim_matches_per_hour_drex": 43.22,
     "sim_matches_per_hour_deepinfra": 26.39,
-    "usage_drex_questions": 26239,
+    "usage_drex_questions": 26327,
     "usage_ndi_docs": 90,
     "usage_ndi_pages": 773,
     "usage_intern_sessions": 6,

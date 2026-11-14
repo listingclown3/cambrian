@@ -38,7 +38,7 @@
       },
       "predicateSummary": "matchRemainingS <= 30 AND both hubs active AND fuelHeld >= 6 AND own alliance zone AND no contact",
       "simulated": false,
-      "simulationNote": "the intent never fired in 10 matches (predicate true 3 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
     },
     {
       "id": "inactive_shift_depot_gather",
@@ -62,7 +62,7 @@
       },
       "predicateSummary": "our hub inactive AND timeToShiftS >= 5 AND fuelHeld <= 2 AND within 1.5 m of own depot (the depot is a point, so 'in the depot zone' is read as that radius) AND no contact",
       "simulated": false,
-      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      "simulationNote": "the intent never fired in 10 matches (predicate true 1 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
     },
     {
       "id": "trench_shoot_on_move_refill",

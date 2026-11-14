@@ -1,9 +1,9 @@
 {
   "experiment": "quirks",
-  "createdTs": "2026-11-14T21:30:09.517Z",
+  "createdTs": "2026-11-14T22:25:13.985Z",
   "isMock": false,
-  "gitCommit": "8649c29c9ccb-dirty",
-  "simHash": "007a2b25fa5e3cf0",
+  "gitCommit": "83ff77ec18e3-dirty",
+  "simHash": "547d0ca0d9b67f1b",
   "config": {
     "drex": "drex-latest",
     "rules": [
@@ -25,7 +25,7 @@
         "marginDiff": null,
         "ci95": null,
         "n": null,
-        "reason": "the intent never fired in 10 matches (predicate true 3 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
       },
       "legality": "LEGAL",
       "rules": [
@@ -76,7 +76,7 @@
         "marginDiff": null,
         "ci95": null,
         "n": null,
-        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+        "reason": "the intent never fired in 10 matches (predicate true 1 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
       },
       "legality": "LEGAL",
       "rules": [
@@ -124,10 +124,10 @@
       "title": "Score on the move through the left trench, then pick up local fuel",
       "source": "lab_proposal",
       "value": {
-        "marginDiff": 84.8,
-        "ci95": 14.040605690638845,
+        "marginDiff": 141.3,
+        "ci95": 48.56608761224235,
         "n": 10,
-        "firesPerMatch": 15.6
+        "firesPerMatch": 22
       },
       "legality": "LEGAL",
       "rules": [
@@ -175,10 +175,10 @@
       "title": "Spin out of the pin, then shadow-defend the opposing scorer",
       "source": "lab_proposal",
       "value": {
-        "marginDiff": 58.7,
-        "ci95": 24.01948629675497,
+        "marginDiff": 66.2,
+        "ci95": 36.74974651558837,
         "n": 10,
-        "firesPerMatch": 8.8
+        "firesPerMatch": 8.3
       },
       "legality": "LEGAL",
       "rules": [
@@ -280,7 +280,7 @@
         "marginDiff": 0,
         "ci95": 0,
         "n": 10,
-        "firesTotal": 40,
+        "firesTotal": 50,
         "g420FoulsOnOpponents": 0,
         "g420FoulsOnUs": 0,
         "spotId": "tower_post_left,tower_post_right",
