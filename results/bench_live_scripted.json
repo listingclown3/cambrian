@@ -1,0 +1,358 @@
+{
+  "experiment": "bench_live_scripted",
+  "createdTs": "2026-11-14T20:51:31.420Z",
+  "isMock": false,
+  "gitCommit": "2c3bdc75edac-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "part": "scripted",
+    "spec": null,
+    "reasoning": null,
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008,
+        9009,
+        9010
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle"
+  },
+  "rows": [
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 257,
+      "scoreRed": 268,
+      "margin": -11,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.29,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 200,
+      "scoreRed": 330,
+      "margin": -130,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.19,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 487,
+      "scoreRed": 195,
+      "margin": 292,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.12,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 391,
+      "scoreRed": 245,
+      "margin": 146,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 1.15,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 347,
+      "scoreRed": 217,
+      "margin": 130,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 1.74,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9006,
+      "blue": [
+        "fab_37",
+        "fab_18",
+        "fab_48"
+      ],
+      "red": [
+        "frc_10219",
+        "fab_45",
+        "frc_6800"
+      ],
+      "scoreBlue": 176,
+      "scoreRed": 246,
+      "margin": -70,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 1.93,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9007,
+      "blue": [
+        "frc_1757",
+        "fab_46",
+        "fab_31"
+      ],
+      "red": [
+        "fab_27",
+        "fab_28",
+        "fab_20"
+      ],
+      "scoreBlue": 165,
+      "scoreRed": 348,
+      "margin": -183,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.79,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9008,
+      "blue": [
+        "fab_29",
+        "fab_34",
+        "fab_11"
+      ],
+      "red": [
+        "frc_1729",
+        "fab_38",
+        "fab_30"
+      ],
+      "scoreBlue": 249,
+      "scoreRed": 263,
+      "margin": -14,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.76,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9009,
+      "blue": [
+        "frc_2056",
+        "fab_03",
+        "fab_24"
+      ],
+      "red": [
+        "fab_28",
+        "frc_1729",
+        "fab_30"
+      ],
+      "scoreBlue": 197,
+      "scoreRed": 348,
+      "margin": -151,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 0.76,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    },
+    {
+      "part": "scripted",
+      "decider": "scripted",
+      "timing": "paused",
+      "seed": 9010,
+      "blue": [
+        "fab_05",
+        "fab_45",
+        "fab_35"
+      ],
+      "red": [
+        "fab_17",
+        "frc_1690",
+        "frc_4322"
+      ],
+      "scoreBlue": 162,
+      "scoreRed": 204,
+      "margin": -42,
+      "requests": 0,
+      "providerCalls": 0,
+      "robotDecisions": 0,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 15.62,
+      "latencyP50Ms": null,
+      "latencyP95Ms": null,
+      "costUsd": 0,
+      "models": [],
+      "isMock": false
+    }
+  ],
+  "summary": {}
+}

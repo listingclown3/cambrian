@@ -1,0 +1,891 @@
+{
+  "experiment": "matches",
+  "createdTs": "2026-11-14T20:23:24.264Z",
+  "isMock": false,
+  "gitCommit": "7238aec37b2e-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "seeds": {
+      "dev": [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007,
+        1008,
+        1009,
+        1010
+      ],
+      "eval": []
+    },
+    "perSeed": 4,
+    "policy": "basic_cycle",
+    "league": "data/league/league.json",
+    "runPrefix": "matches-20261114T202026Z-b147"
+  },
+  "rows": [
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1001-m0",
+      "seed": 1001,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1001-m0/events.jsonl",
+      "blue": [
+        "fab_40",
+        "fab_11",
+        "frc_2056"
+      ],
+      "red": [
+        "fab_47",
+        "fab_14",
+        "fab_25"
+      ],
+      "scoreBlue": 270,
+      "scoreRed": 318,
+      "decisions": 293,
+      "fouls": 0,
+      "simMs": 1551.7
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1001-m1",
+      "seed": 1001,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1001-m1/events.jsonl",
+      "blue": [
+        "fab_19",
+        "frc_1757",
+        "fab_33"
+      ],
+      "red": [
+        "fab_22",
+        "fab_04",
+        "fab_36"
+      ],
+      "scoreBlue": 328,
+      "scoreRed": 198,
+      "decisions": 278,
+      "fouls": 0,
+      "simMs": 2894.3
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1001-m2",
+      "seed": 1001,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1001-m2/events.jsonl",
+      "blue": [
+        "fab_40",
+        "fab_01",
+        "fab_20"
+      ],
+      "red": [
+        "fab_37",
+        "fab_10",
+        "fab_38"
+      ],
+      "scoreBlue": 204,
+      "scoreRed": 282,
+      "decisions": 330,
+      "fouls": 0,
+      "simMs": 4735.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1001-m3",
+      "seed": 1001,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1001-m3/events.jsonl",
+      "blue": [
+        "fab_23",
+        "frc_2990",
+        "fab_48"
+      ],
+      "red": [
+        "fab_06",
+        "fab_11",
+        "frc_8324"
+      ],
+      "scoreBlue": 236,
+      "scoreRed": 272,
+      "decisions": 280,
+      "fouls": 0,
+      "simMs": 1470.2
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1002-m0",
+      "seed": 1002,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1002-m0/events.jsonl",
+      "blue": [
+        "frc_2056",
+        "fab_26",
+        "fab_02"
+      ],
+      "red": [
+        "frc_2856",
+        "fab_43",
+        "fab_05"
+      ],
+      "scoreBlue": 207,
+      "scoreRed": 350,
+      "decisions": 308,
+      "fouls": 0,
+      "simMs": 2149.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1002-m1",
+      "seed": 1002,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1002-m1/events.jsonl",
+      "blue": [
+        "fab_30",
+        "frc_6391",
+        "fab_16"
+      ],
+      "red": [
+        "fab_32",
+        "fab_06",
+        "fab_35"
+      ],
+      "scoreBlue": 229,
+      "scoreRed": 243,
+      "decisions": 282,
+      "fouls": 0,
+      "simMs": 1761.1
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1002-m2",
+      "seed": 1002,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1002-m2/events.jsonl",
+      "blue": [
+        "fab_20",
+        "fab_19",
+        "fab_36"
+      ],
+      "red": [
+        "fab_43",
+        "fab_09",
+        "fab_30"
+      ],
+      "scoreBlue": 194,
+      "scoreRed": 440,
+      "decisions": 314,
+      "fouls": 0,
+      "simMs": 453.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1002-m3",
+      "seed": 1002,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1002-m3/events.jsonl",
+      "blue": [
+        "frc_6800",
+        "fab_26",
+        "fab_40"
+      ],
+      "red": [
+        "fab_31",
+        "fab_32",
+        "frc_8324"
+      ],
+      "scoreBlue": 253,
+      "scoreRed": 283,
+      "decisions": 356,
+      "fouls": 0,
+      "simMs": 634.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1003-m0",
+      "seed": 1003,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1003-m0/events.jsonl",
+      "blue": [
+        "fab_05",
+        "fab_08",
+        "fab_24"
+      ],
+      "red": [
+        "fab_20",
+        "frc_8324",
+        "frc_1690"
+      ],
+      "scoreBlue": 118,
+      "scoreRed": 284,
+      "decisions": 348,
+      "fouls": 0,
+      "simMs": 536.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1003-m1",
+      "seed": 1003,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1003-m1/events.jsonl",
+      "blue": [
+        "fab_04",
+        "fab_40",
+        "fab_13"
+      ],
+      "red": [
+        "fab_33",
+        "fab_05",
+        "fab_12"
+      ],
+      "scoreBlue": 206,
+      "scoreRed": 229,
+      "decisions": 310,
+      "fouls": 0,
+      "simMs": 1351
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1003-m2",
+      "seed": 1003,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1003-m2/events.jsonl",
+      "blue": [
+        "fab_01",
+        "fab_32",
+        "fab_18"
+      ],
+      "red": [
+        "fab_46",
+        "fab_34",
+        "fab_38"
+      ],
+      "scoreBlue": 235,
+      "scoreRed": 137,
+      "decisions": 271,
+      "fouls": 0,
+      "simMs": 820.9
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1003-m3",
+      "seed": 1003,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1003-m3/events.jsonl",
+      "blue": [
+        "fab_18",
+        "fab_37",
+        "frc_2990"
+      ],
+      "red": [
+        "fab_36",
+        "fab_16",
+        "fab_24"
+      ],
+      "scoreBlue": 293,
+      "scoreRed": 197,
+      "decisions": 260,
+      "fouls": 0,
+      "simMs": 452.2
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1004-m0",
+      "seed": 1004,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1004-m0/events.jsonl",
+      "blue": [
+        "fab_12",
+        "fab_35",
+        "frc_6391"
+      ],
+      "red": [
+        "fab_46",
+        "fab_24",
+        "fab_02"
+      ],
+      "scoreBlue": 395,
+      "scoreRed": 171,
+      "decisions": 273,
+      "fouls": 0,
+      "simMs": 326.7
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1004-m1",
+      "seed": 1004,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1004-m1/events.jsonl",
+      "blue": [
+        "fab_45",
+        "fab_06",
+        "fab_17"
+      ],
+      "red": [
+        "frc_6908",
+        "fab_08",
+        "fab_22"
+      ],
+      "scoreBlue": 264,
+      "scoreRed": 263,
+      "decisions": 296,
+      "fouls": 0,
+      "simMs": 694.9
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1004-m2",
+      "seed": 1004,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1004-m2/events.jsonl",
+      "blue": [
+        "frc_2990",
+        "frc_8324",
+        "fab_40"
+      ],
+      "red": [
+        "frc_1690",
+        "fab_20",
+        "fab_39"
+      ],
+      "scoreBlue": 360,
+      "scoreRed": 256,
+      "decisions": 363,
+      "fouls": 0,
+      "simMs": 416.7
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1004-m3",
+      "seed": 1004,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1004-m3/events.jsonl",
+      "blue": [
+        "fab_32",
+        "fab_17",
+        "frc_1690"
+      ],
+      "red": [
+        "fab_23",
+        "fab_38",
+        "fab_06"
+      ],
+      "scoreBlue": 185,
+      "scoreRed": 238,
+      "decisions": 293,
+      "fouls": 0,
+      "simMs": 252.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1005-m0",
+      "seed": 1005,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1005-m0/events.jsonl",
+      "blue": [
+        "fab_34",
+        "frc_1729",
+        "fab_13"
+      ],
+      "red": [
+        "fab_35",
+        "fab_09",
+        "fab_21"
+      ],
+      "scoreBlue": 247,
+      "scoreRed": 315,
+      "decisions": 292,
+      "fouls": 0,
+      "simMs": 782.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1005-m1",
+      "seed": 1005,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1005-m1/events.jsonl",
+      "blue": [
+        "fab_28",
+        "frc_6901",
+        "fab_37"
+      ],
+      "red": [
+        "fab_17",
+        "fab_18",
+        "fab_34"
+      ],
+      "scoreBlue": 266,
+      "scoreRed": 71,
+      "decisions": 307,
+      "fouls": 0,
+      "simMs": 1026
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1005-m2",
+      "seed": 1005,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1005-m2/events.jsonl",
+      "blue": [
+        "fab_26",
+        "fab_04",
+        "fab_33"
+      ],
+      "red": [
+        "frc_10219",
+        "fab_03",
+        "fab_47"
+      ],
+      "scoreBlue": 263,
+      "scoreRed": 431,
+      "decisions": 302,
+      "fouls": 0,
+      "simMs": 881.2
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1005-m3",
+      "seed": 1005,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1005-m3/events.jsonl",
+      "blue": [
+        "fab_23",
+        "fab_40",
+        "fab_18"
+      ],
+      "red": [
+        "fab_29",
+        "fab_48",
+        "fab_43"
+      ],
+      "scoreBlue": 171,
+      "scoreRed": 319,
+      "decisions": 286,
+      "fouls": 0,
+      "simMs": 803.8
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1006-m0",
+      "seed": 1006,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1006-m0/events.jsonl",
+      "blue": [
+        "fab_24",
+        "fab_30",
+        "fab_18"
+      ],
+      "red": [
+        "fab_27",
+        "frc_6800",
+        "frc_8324"
+      ],
+      "scoreBlue": 173,
+      "scoreRed": 483,
+      "decisions": 367,
+      "fouls": 0,
+      "simMs": 1866.7
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1006-m1",
+      "seed": 1006,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1006-m1/events.jsonl",
+      "blue": [
+        "fab_47",
+        "fab_26",
+        "fab_22"
+      ],
+      "red": [
+        "fab_25",
+        "fab_28",
+        "fab_07"
+      ],
+      "scoreBlue": 539,
+      "scoreRed": 315,
+      "decisions": 335,
+      "fouls": 0,
+      "simMs": 1465.3
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1006-m2",
+      "seed": 1006,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1006-m2/events.jsonl",
+      "blue": [
+        "fab_06",
+        "fab_12",
+        "fab_35"
+      ],
+      "red": [
+        "fab_21",
+        "fab_33",
+        "frc_6391"
+      ],
+      "scoreBlue": 385,
+      "scoreRed": 339,
+      "decisions": 313,
+      "fouls": 0,
+      "simMs": 1159.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1006-m3",
+      "seed": 1006,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1006-m3/events.jsonl",
+      "blue": [
+        "fab_09",
+        "frc_2056",
+        "fab_39"
+      ],
+      "red": [
+        "fab_47",
+        "frc_254",
+        "fab_17"
+      ],
+      "scoreBlue": 217,
+      "scoreRed": 296,
+      "decisions": 295,
+      "fouls": 0,
+      "simMs": 741.1
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1007-m0",
+      "seed": 1007,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1007-m0/events.jsonl",
+      "blue": [
+        "fab_22",
+        "frc_6800",
+        "fab_35"
+      ],
+      "red": [
+        "fab_42",
+        "fab_39",
+        "fab_44"
+      ],
+      "scoreBlue": 219,
+      "scoreRed": 400,
+      "decisions": 366,
+      "fouls": 0,
+      "simMs": 436.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1007-m1",
+      "seed": 1007,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1007-m1/events.jsonl",
+      "blue": [
+        "frc_254",
+        "fab_35",
+        "fab_01"
+      ],
+      "red": [
+        "frc_2856",
+        "fab_45",
+        "fab_21"
+      ],
+      "scoreBlue": 255,
+      "scoreRed": 368,
+      "decisions": 329,
+      "fouls": 0,
+      "simMs": 635.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1007-m2",
+      "seed": 1007,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1007-m2/events.jsonl",
+      "blue": [
+        "frc_1757",
+        "fab_02",
+        "fab_14"
+      ],
+      "red": [
+        "fab_03",
+        "frc_2990",
+        "fab_41"
+      ],
+      "scoreBlue": 266,
+      "scoreRed": 329,
+      "decisions": 264,
+      "fouls": 0,
+      "simMs": 706.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1007-m3",
+      "seed": 1007,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1007-m3/events.jsonl",
+      "blue": [
+        "frc_2856",
+        "frc_10219",
+        "fab_01"
+      ],
+      "red": [
+        "fab_17",
+        "fab_15",
+        "frc_254"
+      ],
+      "scoreBlue": 362,
+      "scoreRed": 170,
+      "decisions": 287,
+      "fouls": 0,
+      "simMs": 438.3
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1008-m0",
+      "seed": 1008,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1008-m0/events.jsonl",
+      "blue": [
+        "fab_37",
+        "fab_28",
+        "frc_4322"
+      ],
+      "red": [
+        "fab_31",
+        "fab_10",
+        "fab_24"
+      ],
+      "scoreBlue": 357,
+      "scoreRed": 192,
+      "decisions": 322,
+      "fouls": 0,
+      "simMs": 277.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1008-m1",
+      "seed": 1008,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1008-m1/events.jsonl",
+      "blue": [
+        "fab_25",
+        "fab_26",
+        "fab_45"
+      ],
+      "red": [
+        "fab_17",
+        "fab_08",
+        "frc_2702"
+      ],
+      "scoreBlue": 458,
+      "scoreRed": 262,
+      "decisions": 271,
+      "fouls": 0,
+      "simMs": 301.9
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1008-m2",
+      "seed": 1008,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1008-m2/events.jsonl",
+      "blue": [
+        "fab_10",
+        "fab_09",
+        "frc_6901"
+      ],
+      "red": [
+        "frc_2056",
+        "fab_18",
+        "fab_40"
+      ],
+      "scoreBlue": 403,
+      "scoreRed": 163,
+      "decisions": 309,
+      "fouls": 0,
+      "simMs": 233
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1008-m3",
+      "seed": 1008,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1008-m3/events.jsonl",
+      "blue": [
+        "fab_35",
+        "frc_2056",
+        "fab_21"
+      ],
+      "red": [
+        "frc_4322",
+        "fab_24",
+        "fab_02"
+      ],
+      "scoreBlue": 225,
+      "scoreRed": 300,
+      "decisions": 275,
+      "fouls": 0,
+      "simMs": 252.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1009-m0",
+      "seed": 1009,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1009-m0/events.jsonl",
+      "blue": [
+        "fab_44",
+        "fab_22",
+        "frc_6391"
+      ],
+      "red": [
+        "fab_42",
+        "frc_8324",
+        "fab_34"
+      ],
+      "scoreBlue": 328,
+      "scoreRed": 325,
+      "decisions": 292,
+      "fouls": 0,
+      "simMs": 629.4
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1009-m1",
+      "seed": 1009,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1009-m1/events.jsonl",
+      "blue": [
+        "fab_36",
+        "frc_254",
+        "fab_41"
+      ],
+      "red": [
+        "fab_48",
+        "fab_44",
+        "fab_30"
+      ],
+      "scoreBlue": 232,
+      "scoreRed": 317,
+      "decisions": 275,
+      "fouls": 0,
+      "simMs": 271
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1009-m2",
+      "seed": 1009,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1009-m2/events.jsonl",
+      "blue": [
+        "fab_07",
+        "fab_33",
+        "fab_29"
+      ],
+      "red": [
+        "fab_15",
+        "frc_6901",
+        "fab_45"
+      ],
+      "scoreBlue": 230,
+      "scoreRed": 164,
+      "decisions": 305,
+      "fouls": 0,
+      "simMs": 289.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1009-m3",
+      "seed": 1009,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1009-m3/events.jsonl",
+      "blue": [
+        "fab_18",
+        "fab_30",
+        "fab_48"
+      ],
+      "red": [
+        "fab_08",
+        "fab_23",
+        "fab_13"
+      ],
+      "scoreBlue": 248,
+      "scoreRed": 130,
+      "decisions": 285,
+      "fouls": 0,
+      "simMs": 201.3
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1010-m0",
+      "seed": 1010,
+      "lineupIndex": 0,
+      "log": "runs/matches-20261114T202026Z-b147-s1010-m0/events.jsonl",
+      "blue": [
+        "fab_26",
+        "fab_46",
+        "fab_09"
+      ],
+      "red": [
+        "fab_23",
+        "frc_1757",
+        "fab_37"
+      ],
+      "scoreBlue": 268,
+      "scoreRed": 287,
+      "decisions": 266,
+      "fouls": 0,
+      "simMs": 306.2
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1010-m1",
+      "seed": 1010,
+      "lineupIndex": 1,
+      "log": "runs/matches-20261114T202026Z-b147-s1010-m1/events.jsonl",
+      "blue": [
+        "fab_06",
+        "fab_10",
+        "fab_09"
+      ],
+      "red": [
+        "fab_44",
+        "fab_18",
+        "fab_42"
+      ],
+      "scoreBlue": 328,
+      "scoreRed": 290,
+      "decisions": 308,
+      "fouls": 0,
+      "simMs": 209.5
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1010-m2",
+      "seed": 1010,
+      "lineupIndex": 2,
+      "log": "runs/matches-20261114T202026Z-b147-s1010-m2/events.jsonl",
+      "blue": [
+        "frc_2702",
+        "fab_28",
+        "fab_24"
+      ],
+      "red": [
+        "fab_31",
+        "fab_05",
+        "frc_1757"
+      ],
+      "scoreBlue": 333,
+      "scoreRed": 192,
+      "decisions": 340,
+      "fouls": 0,
+      "simMs": 120
+    },
+    {
+      "matchId": "matches-20261114T202026Z-b147-s1010-m3",
+      "seed": 1010,
+      "lineupIndex": 3,
+      "log": "runs/matches-20261114T202026Z-b147-s1010-m3/events.jsonl",
+      "blue": [
+        "fab_04",
+        "fab_46",
+        "fab_35"
+      ],
+      "red": [
+        "fab_02",
+        "fab_33",
+        "fab_37"
+      ],
+      "scoreBlue": 62,
+      "scoreRed": 301,
+      "decisions": 256,
+      "fouls": 0,
+      "simMs": 87.3
+    }
+  ],
+  "summary": {
+    "n_matches": 40,
+    "seeds": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009,
+      1010
+    ],
+    "matches_per_sec": 1.155,
+    "matches_per_sec_note": "engine + scripted policy time only, single process, one core; log writing excluded",
+    "mean_decisions_per_match": 302.6,
+    "mean_score_blue": 270.3,
+    "mean_score_red": 273,
+    "engine_is_stub": false
+  }
+}

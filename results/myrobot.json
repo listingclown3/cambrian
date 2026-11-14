@@ -1,0 +1,896 @@
+{
+  "experiment": "myrobot",
+  "createdTs": "2026-11-14T20:59:51.677Z",
+  "isMock": false,
+  "gitCommit": "7df7ba1dce88-dirty",
+  "simHash": "b9508e9c7510f637",
+  "config": {
+    "game": {
+      "autoS": {
+        "value": 20,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.15, extracted with NDI (data/rules/rules.json)"
+      },
+      "teleopS": {
+        "value": 140,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.15, extracted with NDI (data/rules/rules.json)"
+      },
+      "fuelPointsActiveHub": {
+        "value": 1,
+        "status": "VERIFIED",
+        "source": "official cheat sheet (per planner brief)"
+      },
+      "fuelPointsInactiveHub": {
+        "value": 0,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
+      },
+      "towerTeleopPoints": {
+        "value": [
+          10,
+          20,
+          30
+        ],
+        "status": "VERIFIED",
+        "source": "official cheat sheet (per planner brief); levels 2 and 3 confirmed by 2026 FRC Game Manual (version TU22) p.47, extracted with NDI (data/rules/rules.json)"
+      },
+      "towerAutoL1Points": {
+        "value": 15,
+        "status": "VERIFIED",
+        "source": "official cheat sheet (per planner brief)"
+      },
+      "minorFoulPoints": {
+        "value": 5,
+        "status": "VERIFIED",
+        "source": "official cheat sheet (per planner brief)"
+      },
+      "majorFoulPoints": {
+        "value": 15,
+        "status": "VERIFIED",
+        "source": "official cheat sheet (per planner brief)"
+      },
+      "maxPreloadFuel": {
+        "value": 8,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.43, extracted with NDI (data/rules/rules.json)"
+      },
+      "hubDeactivationWarningS": {
+        "value": 3,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.24, extracted with NDI (data/rules/rules.json)"
+      },
+      "allHubsActiveAtEnd": {
+        "value": true,
+        "status": "VERIFIED",
+        "source": "official source (per planner brief)"
+      },
+      "fuelMassKg": {
+        "value": 0.23,
+        "status": "EXTERNAL_SOURCE",
+        "source": "EXTERNAL, not from the manual (NDI did not find it there): Wikipedia, Rebuilt (FIRST), gives the FUEL weight as about 0.5 pounds (about 0.23 kg); https://en.wikipedia.org/wiki/Rebuilt_(FIRST), fetched 2026-11-14"
+      },
+      "hubShiftSchedule": {
+        "value": {
+          "transitionS": 10,
+          "shiftS": 25,
+          "numShifts": 4,
+          "autoWinnerInactiveFirst": true
+        },
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json); transitionS is what remains of the 140 s teleop (p.15) after four 25 s shifts and the 30 s end game"
+      },
+      "endgameS": {
+        "value": 30,
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.44, extracted with NDI (data/rules/rules.json)"
+      },
+      "pinning": {
+        "value": {
+          "limitS": 3,
+          "releaseDistanceM": 1.83,
+          "severity": "minor",
+          "clauseId": "G418"
+        },
+        "status": "VERIFIED",
+        "source": "2026 FRC Game Manual (version TU22) p.72, extracted with NDI (data/rules/rules.json)"
+      },
+      "fuelStart": {
+        "value": {
+          "neutral": 360,
+          "depotEach": 24,
+          "outpostEach": 24
+        },
+        "status": "TODO_VERIFY_AGAINST_MANUAL",
+        "source": "depotEach and outpostEach: 2026 FRC Game Manual (version TU22) p.43, extracted with NDI (data/rules/rules.json). neutral is NOT stated directly: it is the manual's 504 total FUEL (p.43) minus both depots, both outposts and six 8-FUEL preloads; confirm how preloads are sourced"
+      }
+    },
+    "seedsEval": [
+      9001,
+      9002,
+      9003,
+      9004,
+      9005,
+      9006,
+      9007,
+      9008,
+      9009,
+      9010,
+      9011,
+      9012,
+      9013,
+      9014,
+      9015,
+      9016,
+      9017,
+      9018,
+      9019,
+      9020,
+      9021,
+      9022,
+      9023,
+      9024,
+      9025,
+      9026,
+      9027,
+      9028,
+      9029,
+      9030
+    ],
+    "robot": {
+      "id": "my_robot",
+      "teamLabel": "My Robot (example)",
+      "archetype": "multilane_fixed",
+      "shooterType": "lanes",
+      "lanes": 2,
+      "aimMethod": "drivetrain",
+      "fireRatePerS": 5,
+      "spinUpS": 0.6,
+      "hoodAdjustS": 0.3,
+      "alignTimeS": 0.8,
+      "turretSlewDegPerS": 0,
+      "shootOnMove": false,
+      "sotmAccuracyBySpeed": [
+        {
+          "speedMps": 0,
+          "accuracy": 1
+        },
+        {
+          "speedMps": 0.5,
+          "accuracy": 0
+        }
+      ],
+      "shotAccuracyByDistance": [
+        {
+          "distanceM": 1,
+          "accuracy": 0.9
+        },
+        {
+          "distanceM": 2.5,
+          "accuracy": 0.8
+        },
+        {
+          "distanceM": 4,
+          "accuracy": 0.6
+        },
+        {
+          "distanceM": 6,
+          "accuracy": 0.3
+        }
+      ],
+      "minShotDistanceM": 1,
+      "maxShotDistanceM": 4.5,
+      "capacity": 45,
+      "intakeRatePerS": 7,
+      "intakeWidth": "wide",
+      "canCollectWhileShooting": false,
+      "canIntakeOverBump": false,
+      "speedEmptyMps": 4.4,
+      "speedFullMps": 4,
+      "accelEmpty": 7.5,
+      "accelFull": 6.2,
+      "massEmptyKg": 56,
+      "fuelMassKg": 0.23,
+      "traction": 1.1,
+      "drivetrain": "swerve",
+      "pushForceN": 550,
+      "heightClass": "short",
+      "fitsUnderTrench": true,
+      "passRangeM": 2,
+      "passRatePerS": 2,
+      "climbLevel": 2,
+      "climbTimeS": 7
+    }
+  },
+  "rows": [
+    {
+      "archetype": "drum_fixed",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 60.63,
+      "ci95": 30.58,
+      "wins": 7,
+      "losses": 1,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        93,
+        88,
+        61,
+        -31,
+        30,
+        93,
+        98,
+        53
+      ],
+      "myFuelPointsMean": 91.75,
+      "myClimbLevelMean": 1.88,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 74.38,
+        "teleopFuel": 204.5,
+        "autoTower": 0,
+        "teleopTower": 56.25,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 335.13
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 100.38,
+        "teleopFuel": 141.63,
+        "autoTower": 0,
+        "teleopTower": 32.5,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 274.5
+      }
+    },
+    {
+      "archetype": "turret_sotm",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 57.75,
+      "ci95": 58.11,
+      "wins": 5,
+      "losses": 3,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        -69,
+        105,
+        -30,
+        124,
+        155,
+        96,
+        -20,
+        101
+      ],
+      "myFuelPointsMean": 89.38,
+      "myClimbLevelMean": 1.75,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 69.38,
+        "teleopFuel": 200.25,
+        "autoTower": 0,
+        "teleopTower": 55,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 324.63
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 79,
+        "teleopFuel": 152.88,
+        "autoTower": 0,
+        "teleopTower": 35,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 266.88
+      }
+    },
+    {
+      "archetype": "multilane_fixed",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 1.13,
+      "ci95": 40.07,
+      "wins": 3,
+      "losses": 5,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        -66,
+        -34,
+        81,
+        72,
+        52,
+        -23,
+        -48,
+        -25
+      ],
+      "myFuelPointsMean": 84.63,
+      "myClimbLevelMean": 1.63,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 76,
+        "teleopFuel": 192.25,
+        "autoTower": 0,
+        "teleopTower": 46.25,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 314.5
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 72.5,
+        "teleopFuel": 198.38,
+        "autoTower": 0,
+        "teleopTower": 42.5,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 313.38
+      }
+    },
+    {
+      "archetype": "big_hopper_hauler",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 5.75,
+      "ci95": 23.67,
+      "wins": 5,
+      "losses": 3,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        -23,
+        46,
+        -29,
+        46,
+        -43,
+        16,
+        26,
+        7
+      ],
+      "myFuelPointsMean": 71,
+      "myClimbLevelMean": 1.75,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 78.25,
+        "teleopFuel": 142.63,
+        "autoTower": 0,
+        "teleopTower": 55,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 275.88
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 58.63,
+        "teleopFuel": 170.25,
+        "autoTower": 0,
+        "teleopTower": 41.25,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 270.13
+      }
+    },
+    {
+      "archetype": "dumper",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 422.75,
+      "ci95": 7.69,
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        417,
+        405,
+        439,
+        426,
+        412,
+        427,
+        423,
+        433
+      ],
+      "myFuelPointsMean": 122.38,
+      "myClimbLevelMean": 2,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 68.38,
+        "teleopFuel": 329.25,
+        "autoTower": 0,
+        "teleopTower": 60,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 457.63
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 14.88,
+        "teleopFuel": 0,
+        "autoTower": 0,
+        "teleopTower": 20,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 34.88
+      }
+    },
+    {
+      "archetype": "zero_hopper_turret",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 136.25,
+      "ci95": 22.92,
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        121,
+        147,
+        123,
+        101,
+        98,
+        157,
+        199,
+        144
+      ],
+      "myFuelPointsMean": 102.25,
+      "myClimbLevelMean": 2,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 76.75,
+        "teleopFuel": 226,
+        "autoTower": 0,
+        "teleopTower": 60,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 362.75
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 100.88,
+        "teleopFuel": 105.63,
+        "autoTower": 0,
+        "teleopTower": 20,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 226.5
+      }
+    },
+    {
+      "archetype": "feeder_passer",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 172.5,
+      "ci95": 28.84,
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        218,
+        190,
+        217,
+        185,
+        124,
+        181,
+        101,
+        164
+      ],
+      "myFuelPointsMean": 79.63,
+      "myClimbLevelMean": 1.63,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 75.25,
+        "teleopFuel": 186.25,
+        "autoTower": 0,
+        "teleopTower": 48.75,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 310.25
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 22,
+        "teleopFuel": 83.25,
+        "autoTower": 0,
+        "teleopTower": 32.5,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 137.75
+      }
+    },
+    {
+      "archetype": "defender",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 459.75,
+      "ci95": 6.77,
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        462,
+        459,
+        460,
+        473,
+        443,
+        472,
+        454,
+        455
+      ],
+      "myFuelPointsMean": 135.75,
+      "myClimbLevelMean": 2,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 69.38,
+        "teleopFuel": 340.38,
+        "autoTower": 0,
+        "teleopTower": 60,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 469.75
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 0,
+        "teleopFuel": 0,
+        "autoTower": 0,
+        "teleopTower": 10,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 10
+      }
+    },
+    {
+      "archetype": "starter_bot",
+      "decider": "scripted",
+      "n": 8,
+      "meanMargin": 352.75,
+      "ci95": 8.97,
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "seeds": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005,
+        9006,
+        9007,
+        9008
+      ],
+      "marginsBySeed": [
+        354,
+        376,
+        349,
+        365,
+        344,
+        356,
+        338,
+        340
+      ],
+      "myFuelPointsMean": 130.88,
+      "myClimbLevelMean": 2,
+      "myFoulsMean": 0,
+      "blueMeanBreakdown": {
+        "autoFuel": 66.75,
+        "teleopFuel": 330.75,
+        "autoTower": 0,
+        "teleopTower": 60,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 457.5
+      },
+      "redMeanBreakdown": {
+        "autoFuel": 25.5,
+        "teleopFuel": 69.25,
+        "autoTower": 0,
+        "teleopTower": 10,
+        "foulPoints": 0,
+        "fuelInInactiveHub": 0,
+        "total": 104.75
+      }
+    }
+  ],
+  "summary": {
+    "robotLabel": "My Robot (example)",
+    "partners": "Blue partners are the same for every archetype: two midpoint multilane_fixed robots (partner_1, partner_2). Only the red opponents change.",
+    "decider": [
+      "scripted",
+      "drex"
+    ],
+    "hardestArchetypes": [
+      "multilane_fixed",
+      "big_hopper_hauler"
+    ],
+    "easiestArchetypes": [
+      "defender",
+      "dumper"
+    ],
+    "rankingBasis": "decider scripted",
+    "stickyMoments": [
+      {
+        "label": "Seconds per match in contact with another robot",
+        "value": 87.49,
+        "matches": 16
+      },
+      {
+        "label": "Seconds per match pinned by an opponent",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "Seconds per match with a full hopper while own hub was inactive",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "Fuel per match shot into an inactive hub (worth 0)",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "Seconds per match, last 30 s, holding fuel and not scoring (per-tick count)",
+        "value": 30.05,
+        "matches": 16
+      },
+      {
+        "label": "action_failed events per match",
+        "value": 5.75,
+        "matches": 16
+      },
+      {
+        "label": "no_progress events per match",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "path_blocked events per match",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "Fraction of matches where the climb completed (ended above level 0)",
+        "value": 0.88,
+        "matches": 16
+      },
+      {
+        "label": "Fouls committed per match",
+        "value": 0,
+        "matches": 16
+      },
+      {
+        "label": "action_failed reason \"source_empty\" per match",
+        "value": 5.75,
+        "matches": 16
+      }
+    ],
+    "stickyBasis": "matches vs multilane_fixed and big_hopper_hauler, decider scripted, n=16",
+    "drexMatches": 0,
+    "scriptedMatches": 72,
+    "byDecider": {
+      "scripted": {
+        "decider": "scripted",
+        "seeds": [
+          9001,
+          9002,
+          9003,
+          9004,
+          9005,
+          9006,
+          9007,
+          9008
+        ],
+        "matches": 72,
+        "wallS": 153.8,
+        "matchesPerSecond": 0.468,
+        "ranking": [
+          {
+            "archetype": "multilane_fixed",
+            "meanMargin": 1.13
+          },
+          {
+            "archetype": "big_hopper_hauler",
+            "meanMargin": 5.75
+          },
+          {
+            "archetype": "turret_sotm",
+            "meanMargin": 57.75
+          },
+          {
+            "archetype": "drum_fixed",
+            "meanMargin": 60.63
+          },
+          {
+            "archetype": "zero_hopper_turret",
+            "meanMargin": 136.25
+          },
+          {
+            "archetype": "feeder_passer",
+            "meanMargin": 172.5
+          },
+          {
+            "archetype": "starter_bot",
+            "meanMargin": 352.75
+          },
+          {
+            "archetype": "dumper",
+            "meanMargin": 422.75
+          },
+          {
+            "archetype": "defender",
+            "meanMargin": 459.75
+          }
+        ],
+        "hardestArchetypes": [
+          "multilane_fixed",
+          "big_hopper_hauler"
+        ],
+        "easiestArchetypes": [
+          "defender",
+          "dumper"
+        ],
+        "stickyMoments": [
+          {
+            "label": "Seconds per match in contact with another robot",
+            "value": 87.49,
+            "matches": 16
+          },
+          {
+            "label": "Seconds per match pinned by an opponent",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "Seconds per match with a full hopper while own hub was inactive",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "Fuel per match shot into an inactive hub (worth 0)",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "Seconds per match, last 30 s, holding fuel and not scoring (per-tick count)",
+            "value": 30.05,
+            "matches": 16
+          },
+          {
+            "label": "action_failed events per match",
+            "value": 5.75,
+            "matches": 16
+          },
+          {
+            "label": "no_progress events per match",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "path_blocked events per match",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "Fraction of matches where the climb completed (ended above level 0)",
+            "value": 0.88,
+            "matches": 16
+          },
+          {
+            "label": "Fouls committed per match",
+            "value": 0,
+            "matches": 16
+          },
+          {
+            "label": "action_failed reason \"source_empty\" per match",
+            "value": 5.75,
+            "matches": 16
+          }
+        ],
+        "stickyBasis": "matches vs multilane_fixed and big_hopper_hauler, decider scripted, n=16",
+        "costUsd": 0,
+        "fallbacks": 0,
+        "providerCalls": 0
+      },
+      "drex": {
+        "decider": "drex",
+        "seeds": [],
+        "matches": 0,
+        "attempted": 1,
+        "discardedForFallbacks": 1,
+        "fallbackRule": "matches with more than 10 percent of robot decisions answered by the scripted fallback are discarded",
+        "wallS": 5.1,
+        "matchesPerSecond": 0,
+        "ranking": [],
+        "hardestArchetypes": [],
+        "easiestArchetypes": [],
+        "stickyMoments": [],
+        "stickyBasis": "matches vs , decider drex, n=0",
+        "costUsd": 0,
+        "fallbacks": 298,
+        "providerCalls": 215
+      }
+    },
+    "drexNote": "No valid Drex-driven match is in this file. Drex calls were refused with HTTP 403 (Vercel Security Checkpoint) during the later runs, so every robot decision fell back to the scripted policy and those matches were discarded, not reported. Earlier in the session one solo Drex-driven match (drum_fixed, seed 9001) ran for 297.7 s wall, 1202 provider calls, 29 fallbacks, $0.0499, margin -61; its row was not kept because the run that followed overwrote the Drex entry. Run `pnpm bench:myrobot -- --decider drex` when the endpoint is reachable.",
+    "simplifications": [
+      "Opponents are archetype midpoint robots from the config templates (profileFromTemplate with uniform 0.5); they are identical for every seed, so seeds vary only the engine randomness and start state, not the opponents.",
+      "Blue partners are two midpoint multilane_fixed robots in every match.",
+      "Scripted decider: every robot on both alliances uses the basic_cycle scripted policy. Drex decider: Drex drives all six robots through AgentController, paused timing, no captain step.",
+      "95 percent CI is mean +/- 1.96 * sd / sqrt(n) with the normal approximation; null when n < 2. Small n makes it optimistic.",
+      "Sticky-moment numbers are per-tick counts at dtS for robot B1 averaged over the matches against the two hardest archetypes (hardest = lowest mean margin under the ranked decider). Holding fuel in the last 30 s without scoring counts ticks with fuel held and no fuel-score event for B1 on that tick, so gaps between shots inside a burst count too.",
+      "Fuel shot into an inactive hub is score events with 0 points attributed to B1. Climb completed means B1 ended the match at climb level above 0.",
+      "Archetype fields in this repo's config are fabricated ranges (see config archetypes._status), so margins describe the simulator, not real robots."
+    ]
+  }
+}

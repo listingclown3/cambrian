@@ -1,0 +1,353 @@
+{
+  "experiment": "quirks",
+  "createdTs": "2026-11-14T21:20:34.056Z",
+  "isMock": false,
+  "gitCommit": "4f00def1ca00-dirty",
+  "simHash": "007a2b25fa5e3cf0",
+  "config": {
+    "drex": "drex-latest",
+    "rules": [
+      "G418",
+      "G415",
+      "G420",
+      "G419",
+      "G413",
+      "G425",
+      "G210"
+    ]
+  },
+  "rows": [
+    {
+      "id": "endgame_dump_full_hopper_climb3",
+      "title": "Endgame: dump the full hopper, then climb level 3",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 3 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.0036608324056018153
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.012029919370005748
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.020068955081162514
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.003345384911922913
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.02051839718623171
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.011249980648281466
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.0022295157865417827
+        }
+      ],
+      "reliesOnOpponentFouls": 0.0019917036119183468,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
+    },
+    {
+      "id": "inactive_shift_depot_gather",
+      "title": "Gather depot fuel during our inactive shift, then wait on trigger",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.0049053384219544865
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.010758009448664008
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.01315345572241739
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.009837051651985257
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.017182142861007846
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.01877774382134127
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.002922287934488769
+        }
+      ],
+      "reliesOnOpponentFouls": 0.005489131323284573,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
+    },
+    {
+      "id": "trench_shoot_on_move_refill",
+      "title": "Score on the move through the left trench, then pick up local fuel",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": 84.8,
+        "ci95": 14.040605690638845,
+        "n": 10,
+        "firesPerMatch": 15.6
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.005247753060828087
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.012579302719338499
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.01075801405518085
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.010758009448664008
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.022917532738432427
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.01315345572241739
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.0036608342614280654
+        }
+      ],
+      "reliesOnOpponentFouls": 0.003916713514909792,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
+    },
+    {
+      "id": "spin_out_then_shadow_defend",
+      "title": "Spin out of the pin, then shadow-defend the opposing scorer",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": 58.7,
+        "ci95": 24.01948629675497,
+        "n": 10,
+        "firesPerMatch": 8.8
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.1975624323980913
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.094435280229764
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.09063903582219619
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.05026676693062361
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.01796256764205223
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.0279439975974112
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.026741728366186587
+        }
+      ],
+      "reliesOnOpponentFouls": 0.019629173783127146,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
+    },
+    {
+      "id": "late_climb_level2_not_cycle",
+      "title": "In the final 30 seconds, climb level 2 instead of another cycle",
+      "source": "lab_proposal",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+      },
+      "legality": "LEGAL",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.0032708491701344132
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.00687191511991791
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.0112499861733526
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.0037442197559009105
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.026159625987701603
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.007027929147096714
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.003916713514909792
+        }
+      ],
+      "reliesOnOpponentFouls": 0.002922289095240005,
+      "notes": "Drex noul probabilities of violating each extracted conduct rule (7 rules, manual pages in rules[].page)."
+    },
+    {
+      "id": "tower_post_up",
+      "title": "Endgame tower post-up shooting spot vs a normal shot spot",
+      "source": "tower_post_up",
+      "value": {
+        "marginDiff": 0,
+        "ci95": 0,
+        "n": 10,
+        "firesTotal": 40,
+        "g420FoulsOnOpponents": 0,
+        "g420FoulsOnUs": 0,
+        "spotId": "tower_post_left,tower_post_right",
+        "controlSpotId": "nearest normal spot offered"
+      },
+      "legality": "RISKY",
+      "rules": [
+        {
+          "id": "G418",
+          "page": 72,
+          "pViolation": 0.05963720993018426
+        },
+        {
+          "id": "G415",
+          "page": 69,
+          "pViolation": 0.026159625987701603
+        },
+        {
+          "id": "G420",
+          "page": 73,
+          "pViolation": 0.1110765006794222
+        },
+        {
+          "id": "G419",
+          "page": 72,
+          "pViolation": 0.03713591341471801
+        },
+        {
+          "id": "G413",
+          "page": 67,
+          "pViolation": 0.014704353080195867
+        },
+        {
+          "id": "G425",
+          "page": 74,
+          "pViolation": 0.016435075734947725
+        },
+        {
+          "id": "G210",
+          "page": 59,
+          "pViolation": 0.6324065516116187
+        }
+      ],
+      "reliesOnOpponentFouls": 0.8295512693852943,
+      "notes": "Paired eval-seed matches in endgame, post-up spot vs normal spot; G420 fouls counted from state.fouls. "
+    },
+    {
+      "id": "intern_rule_scan",
+      "title": "Intern rule-scan quirk candidates",
+      "source": "intern_rule_scan",
+      "value": {
+        "marginDiff": null,
+        "ci95": null,
+        "n": null,
+        "reason": "not run: generalisation session not performed"
+      },
+      "legality": null,
+      "rules": [],
+      "reliesOnOpponentFouls": null,
+      "notes": ""
+    }
+  ],
+  "summary": {
+    "LEGAL": 5,
+    "RISKY": 1,
+    "ILLEGAL": 0,
+    "entriesJudged": 6,
+    "simulated": 3
+  }
+}

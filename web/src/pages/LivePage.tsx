@@ -2,7 +2,8 @@
 import { useEffect, useMemo } from "react";
 import type { MatchState } from "../../../src/contracts";
 import { FieldCanvas } from "../FieldCanvas";
-import { ms, robotName, signed, type Health, type RunListing } from "../lib";
+import { RobotBadge, findTeam, useTeams } from "../RobotBadge";
+import { giantLabel, ms, robotName, signed, type Health, type ProviderRow, type RunListing } from "../lib";
 import { useMatch, type MatchView, type TickerRow } from "../useMatch";
 import type { Flags } from "../App";
 
@@ -77,6 +78,7 @@ function DecisionCard({ d, accent }: { d: TickerRow; accent?: string }) {
         <span>{d.timeS.toFixed(1)}s</span>
         {chosenP !== undefined && <span>p {chosenP.toFixed(2)}</span>}
         {d.latencyMs !== undefined && <span>{ms(d.latencyMs)}</span>}
+        {d.fallback && <span className="todo">FALLBACK POLICY</span>}
       </div>
       {top && (
         <div className="bars">
@@ -99,11 +101,22 @@ function Pills({ m }: { m: MatchView }) {
   return (
     <>
       {h.source === "recorded" && <span className="pill rec">RECORDED</span>}
+      {h.source === "provider" && <span className="pill live">LIVE PROVIDER · {h.timing === "realtime" ? "REAL-TIME CLOCK" : "PAUSED CLOCK"}</span>}
       {h.source === "simulated_latency" && <span className="pill mock">SIMULATED LATENCY</span>}
       {h.engineIsStub && <span className="pill mock">STUB ENGINE</span>}
+      {m.status === "error" && m.error && <span className="pill rec">{m.error}</span>}
       {h.isMock && <span className="pill mock">MOCK</span>}
     </>
   );
+}
+
+/** Exact model id (from the stream or the latest decision) plus the giant's reasoning setting. Simulated lanes name no model. */
+function ModelPill({ m, giant }: { m: MatchView; giant: boolean }) {
+  const h = m.hello;
+  if (!h || h.source === "simulated_latency") return h ? <span className="pill mono">no model called</span> : null;
+  const model = h.model ?? m.ticker.find((t) => t.model)?.model ?? null;
+  if (!giant) return model ? <span className="pill mono">{model}</span> : null;
+  return <span className="pill mono">{giantLabel(model)}</span>;
 }
 
 function margin(m: MatchView): number | null {
@@ -111,73 +124,98 @@ function margin(m: MatchView): number | null {
   return m.state.score.blue.total - m.state.score.red.total;
 }
 
-export function LivePage({ launch, view, health, runs, onFlags }: { launch: Launch; view: "single" | "split"; health: Health | null; runs: RunListing[]; onFlags: (f: Flags) => void }) {
+export function LivePage({ launch, view, health, runs, providers, onFlags }: { launch: Launch; view: "single" | "split"; health: Health | null; runs: RunListing[]; providers: ProviderRow[]; onFlags: (f: Flags) => void }) {
   const a = useMatch();
   const b = useMatch();
   const { start: startA, stop: stopA } = a;
   const { start: startB, stop: stopB } = b;
 
+  const ready = (id: string) => providers.some((p) => p.id === id && p.implemented && p.keyPresent);
+  const drexReal = ready("drex");
+  const giantReal = ready("deepinfra");
+  const providersLoaded = providers.length > 0;
+  /** The recorded showcase pair (same seed, Drex and the giant, real-time clock) played by P. */
+  const recDrex = runs.find((r) => r.source === "runs" && r.runId === "recorded-showcase-drex");
+  const recGiant = runs.find((r) => r.source === "runs" && r.runId === "recorded-showcase-giant");
+  const replayPair = launch.mode === "replay" && Boolean(recDrex && recGiant);
+  const drexUrl = (seed: number) => (drexReal ? `/ws/agents?provider=drex&seed=${seed}&timing=realtime&speed=4` : `/ws/match?seed=${seed}&speed=4&decider=Drex&latencyMs=${DREX_MS}`);
+  const giantUrl = (seed: number) => (giantReal ? `/ws/agents?provider=deepinfra&seed=${seed}&timing=realtime&speed=4` : `/ws/match?seed=${seed}&speed=4&decider=Giant&latencyMs=${GIANT_MS}`);
+
   useEffect(() => {
+    if (!providersLoaded) return;
     if (launch.mode === "replay") {
-      const run = runs.find((r) => r.source === "runs") ?? runs[0];
-      stopB();
-      if (run) startA(`/ws/replay?source=${run.source}&run=${encodeURIComponent(run.runId)}&speed=6`);
-      else stopA();
+      const url = (r: RunListing) => `/ws/replay?source=${r.source}&run=${encodeURIComponent(r.runId)}&speed=6`;
+      if (recDrex && recGiant) {
+        startA(url(recDrex));
+        startB(url(recGiant));
+      } else {
+        // one recorded showcase run, else any real run, else the bundled fixture (badged RECORDED + MOCK)
+        const run = recDrex ?? recGiant ?? runs.find((r) => r.source === "runs") ?? runs[0];
+        stopB();
+        if (run) startA(url(run));
+        else stopA();
+      }
     } else if (view === "split") {
-      startA(`/ws/match?seed=${DEMO_SEED}&speed=4&decider=Drex&latencyMs=${DREX_MS}`);
-      startB(`/ws/match?seed=${DEMO_SEED}&speed=4&decider=Giant&latencyMs=${GIANT_MS}`);
+      startA(drexUrl(DEMO_SEED));
+      startB(giantUrl(DEMO_SEED));
     } else {
       stopB();
-      startA(`/ws/match?seed=${DEMO_SEED + launch.n}&speed=4&decider=Drex&latencyMs=${DREX_MS}`);
+      startA(drexUrl(DEMO_SEED + launch.n));
     }
     // restart only when the launch token or the view changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [launch.n, launch.mode, view, runs.length]);
+  }, [launch.n, launch.mode, view, runs.length, providersLoaded, Boolean(recDrex), Boolean(recGiant)]);
 
   const recorded = a.hello?.source === "recorded";
+  const splitShown = replayPair || (launch.mode === "live" && view === "split");
   useEffect(() => {
     const reasons: string[] = [];
-    if (health?.engineIsStub || a.hello?.engineIsStub) reasons.push("engine is the STUB");
-    if (a.hello?.source === "simulated_latency") reasons.push("decision latency is SIMULATED (scripted policy, no provider called)");
-    if (a.hello?.isMock && !recorded) reasons.push("demo match, not a provider-driven result");
-    if (recorded && a.hello?.isMock) reasons.push("recorded fixture (stub engine, scripted controller)");
+    const hs = [a.hello, splitShown ? b.hello : null];
+    if (health?.engineIsStub || hs.some((h) => h?.engineIsStub)) reasons.push("engine is the STUB");
+    if (hs.some((h) => h?.source === "simulated_latency")) reasons.push("a lane's decision latency is SIMULATED (scripted policy, no provider called)");
+    if (hs.some((h) => h?.isMock && h.source !== "recorded" && h.source !== "simulated_latency")) reasons.push("mock provider");
+    if (recorded && a.hello?.isMock) reasons.push("recorded fixture (scripted controller, not a provider result)");
     onFlags({ mock: reasons, recorded });
-  }, [health?.engineIsStub, a.hello, recorded, onFlags]);
+  }, [health?.engineIsStub, a.hello, b.hello, splitShown, recorded, onFlags]);
 
-  const decider = recorded ? (a.hello?.decider ?? "recorded") : "Drex";
+  const rawDecider = a.hello?.decider ?? "Drex";
+  const decider = rawDecider === "drex" ? "Drex" : rawDecider === "deepinfra" ? "The giant" : rawDecider;
+  const simulated = a.hello?.source === "simulated_latency" || b.hello?.source === "simulated_latency";
 
-  if (view === "split" && !recorded) {
+  if (splitShown) {
+    const bothDone = a.status === "finished" && b.status === "finished";
     const ma = margin(a);
     const mb = margin(b);
     return (
       <div>
         <div className="card versus">
           <div className="drex">
-            <div className="cap">Drex margin</div>
+            <div className="cap">{bothDone ? "FINAL · " : ""}Drex margin</div>
             <div className="big acc">{ma === null ? "-" : signed(ma, 0)}</div>
             <div className="cap">clock lost to thinking {a.stats.chargedS.toFixed(1)} s</div>
           </div>
           <div>
-            <div className="cap">same seed · same field · same scripted policy</div>
+            <div className="cap">{replayPair ? "RECORDED · same seed · same field · same scripted opponent" : "same seed · same field · same scripted opponent"}</div>
             <div className="big delta">{ma !== null && mb !== null ? `Δ ${signed(ma - mb, 0)}` : "-"}</div>
-            <div className="cap">margin gained by thinking {ms(GIANT_MS)} faster per decision (simulated)</div>
+            <div className="cap">{replayPair ? "margin difference with each decider's real recorded latency charged to the match clock" : simulated ? `margin difference with ${ms(GIANT_MS)} vs ${ms(DREX_MS)} charged per decision (simulated latency)` : "margin difference with measured latency charged to the match clock"}</div>
           </div>
           <div className="giant">
-            <div className="cap">Giant margin</div>
+            <div className="cap">{bothDone ? "FINAL · " : ""}Giant margin</div>
             <div className="big acc">{mb === null ? "-" : signed(mb, 0)}</div>
             <div className="cap">clock lost to thinking {b.stats.chargedS.toFixed(1)} s</div>
           </div>
         </div>
         <div className="split">
-          {([["Drex", a, "drex", DREX_MS], ["The giant", b, "giant", GIANT_MS]] as const).map(([name, m, cls, lat]) => (
+          {([["Drex", a, "drex"], ["The giant", b, "giant"]] as const).map(([name, m, cls]) => (
             <div key={name} className={`lane ${cls}`}>
               <div className="topbar" style={{ marginBottom: 0 }}>
                 <div className="decider"><i />{name}</div>
                 <Pills m={m} />
+                <ModelPill m={m} giant={cls === "giant"} />
               </div>
               <div className="mini">
                 <div className="stat"><span>decisions</span><b>{m.stats.decisions}</b></div>
-                <div className="stat"><span>charged latency</span><b>{ms(lat)}</b></div>
+                <div className="stat"><span>{m.hello?.source === "simulated_latency" ? "charged latency (simulated)" : "avg latency"}</span><b>{m.hello?.source === "simulated_latency" ? ms(m.hello.chargedLatencyMs ?? 0) : m.stats.decisions ? ms(m.stats.avgLatencyMs) : "-"}</b></div>
                 <div className="stat"><span>thinking now</span><b>{m.thinking.length}</b></div>
               </div>
               <Scoreboard state={m.state} final={m.final} />
@@ -185,7 +223,7 @@ export function LivePage({ launch, view, health, runs, onFlags }: { launch: Laun
               <HubTimers state={m.state} />
               <div className="tickline mono">
                 {m.ticker.slice(0, 4).map((d) => (
-                  <div key={d.n}>{d.timeS.toFixed(0).padStart(3)}s {robotName(d.robotId)} → {d.label} · {ms(d.latencyMs ?? 0)}</div>
+                  <div key={d.n}>{d.timeS.toFixed(0).padStart(3)}s {robotName(d.robotId)} → {d.label} · {ms(d.latencyMs ?? 0)}{d.fallback ? " · FALLBACK" : ""}</div>
                 ))}
               </div>
             </div>
@@ -195,10 +233,11 @@ export function LivePage({ launch, view, health, runs, onFlags }: { launch: Laun
     );
   }
 
-  return <SingleView m={a} decider={decider} recorded={recorded} accent={decider === "Drex" ? "drex" : "giant"} />;
+  return <SingleView m={a} decider={decider} recorded={recorded} accent={decider === "Drex" ? "drex" : decider === "The giant" ? "giant" : ""} />;
 }
 
 function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: string; accent: string; recorded: boolean }) {
+  const teams = useTeams();
   const status = useMemo(() => (m.status === "connecting" ? "connecting…" : m.status === "error" ? "server not reachable" : m.status), [m.status]);
   return (
     <div className={`live ${accent}`}>
@@ -210,6 +249,7 @@ function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: s
           <div className="stat"><span>clock lost to thinking</span><b>{m.stats.chargedS.toFixed(1)} s</b></div>
           <div className="stat"><span>seed</span><b>{m.hello?.seed ?? "-"}</b></div>
           <Pills m={m} />
+          <ModelPill m={m} giant={decider === "The giant"} />
           {m.status !== "running" && <span className="pill">{status}</span>}
           {recorded && m.hello?.runId && <span className="hint">run {m.hello.runId}</span>}
         </div>
@@ -220,8 +260,18 @@ function SingleView({ m, decider, accent, recorded }: { m: MatchView; decider: s
       <div className="rail">
         <h3>Decisions · newest first</h3>
         <div className="ticker">
-          {m.ticker.slice(0, 9).map((d) => <DecisionCard key={d.n} d={d} />)}
+          {m.ticker.slice(0, 6).map((d) => <DecisionCard key={d.n} d={d} />)}
           {m.ticker.length === 0 && <div className="empty">no decisions yet</div>}
+        </div>
+        <h3>Robots</h3>
+        <div className="robots">
+          {m.state?.robots.map((r) => (
+            <div className="rrow" key={r.id}>
+              <span className={`id ${r.alliance}`}>{r.id}</span>
+              <span className="nm">{r.profile.teamLabel}<small>{r.profile.archetype.replaceAll("_", " ")} · {r.alliance.toUpperCase()} · fuel {r.fuelHeld}/{r.profile.capacity}</small></span>
+              <RobotBadge team={findTeam(teams, { id: r.profile.id, teamLabel: r.profile.teamLabel })} />
+            </div>
+          ))}
         </div>
       </div>
     </div>

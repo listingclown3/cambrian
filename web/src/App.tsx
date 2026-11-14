@@ -4,7 +4,7 @@
  * inside the simulator.
  */
 import { useCallback, useEffect, useState } from "react";
-import { useApi, type Health, type RunListing } from "./lib";
+import { useApi, type Health, type ProviderRow, type RunListing } from "./lib";
 import { ComparePage } from "./pages/ComparePage";
 import { HeadlinePage } from "./pages/HeadlinePage";
 import { LivePage, type Launch } from "./pages/LivePage";
@@ -29,12 +29,13 @@ const PAGES = [
 type PageId = (typeof PAGES)[number]["id"];
 
 export function App() {
-  const [page, setPage] = useState<PageId>("live");
-  const [view, setView] = useState<"single" | "split">("single");
+  const [page, setPage] = useState<PageId>(() => PAGES.find((p) => location.hash.slice(1).split(",").includes(p.id))?.id ?? "live");
+  const [view, setView] = useState<"single" | "split">(() => (location.hash.includes("split") ? "split" : "single"));
   const [launch, setLaunch] = useState<Launch>({ mode: "live", n: 0 });
   const [flags, setFlags] = useState<Record<string, Flags>>({});
   const health = useApi<Health>("/api/health").data;
   const runs = useApi<RunListing[]>("/api/runs").data ?? [];
+  const providers = useApi<ProviderRow[]>("/api/providers").data ?? [];
 
   const reportLive = useCallback((f: Flags) => setFlags((prev) => (JSON.stringify(prev.live) === JSON.stringify(f) ? prev : { ...prev, live: f })), []);
   const reportHeadline = useCallback((f: Flags) => setFlags((prev) => (JSON.stringify(prev.headline) === JSON.stringify(f) ? prev : { ...prev, headline: f })), []);
@@ -83,7 +84,7 @@ export function App() {
         </div>
       )}
       <main>
-        {page === "live" && <LivePage launch={launch} view={view} health={health} runs={runs} onFlags={reportLive} />}
+        {page === "live" && <LivePage launch={launch} view={view} health={health} runs={runs} providers={providers} onFlags={reportLive} />}
         {page === "headline" && <HeadlinePage onFlags={reportHeadline} />}
         {page === "scenarios" && <ScenarioPage health={health} onFlags={reportScenarios} />}
         {page === "race" && <RacePage health={health} onFlags={reportRace} />}

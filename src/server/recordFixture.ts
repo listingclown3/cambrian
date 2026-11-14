@@ -1,5 +1,5 @@
 /**
- * Writes src/server/fixtures/showcase_fixture/events.jsonl (owner: P4): one match on the STUB
+ * Writes src/server/fixtures/showcase_fixture/events.jsonl (owner: P4): one match on the engine in use
  * engine with the scripted basic_cycle controller, logged in the run-log format. Everything in it
  * is isMock = true. `pnpm record:fixture` regenerates it; the replay endpoint re-simulates the
  * match from the seed and the logged intents.

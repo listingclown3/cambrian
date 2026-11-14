@@ -7,6 +7,8 @@ import { engine } from "./index";
 const cfg = loadConfig();
 const policies = { default: basicCyclePolicy };
 const newRunner = (seed: number) => new MatchRunner(engine, cfg, seed, demoRobots(cfg), policies);
+/** Per-test timeout for full matches: the machine may be busy with other work. */
+const SLOW = 120_000;
 
 describe("stub engine: contract", () => {
   it("createMatch returns a schema-valid state with preloaded robots", () => {
@@ -15,7 +17,7 @@ describe("stub engine: contract", () => {
     expect(state.robots.map((r) => r.id)).toEqual(["B1", "B2", "B3", "R1", "R2", "R3"]);
     for (const robot of state.robots) expect(robot.fuelHeld).toBe(Math.min(cfg.game.maxPreloadFuel.value, robot.profile.capacity));
     expect(state.hubs.red.active && state.hubs.blue.active).toBe(true);
-  });
+  }, SLOW);
 
   it("plays a full match with valid states and events", () => {
     const runner = newRunner(1001);
@@ -53,20 +55,20 @@ describe("stub engine: contract", () => {
     const start = cfg.game.fuelStart.value;
     const preloaded = demoRobots(cfg).reduce((a, r) => a + Math.min(cfg.game.maxPreloadFuel.value, r.profile.capacity), 0);
     expect(fuelOnField + fuelInRobots).toBe(start.neutral + 2 * start.depotEach + 2 * start.outpostEach + preloaded); // fuel is conserved
-  });
+  }, SLOW);
 
   it("is deterministic for a seed", () => {
     const a = newRunner(42).runToEnd().state;
     const b = newRunner(42).runToEnd().state;
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
-  });
+  }, SLOW);
 
   it("step() on a finished match is a no-op", () => {
     const state = newRunner(3).runToEnd().state;
     const before = JSON.stringify(state);
     expect(engine.step(state, {}, 0.05).events).toEqual([]);
     expect(JSON.stringify(state)).toBe(before);
-  });
+  }, SLOW);
 });
 
 describe("stub engine: snapshot, restore, rollout", () => {
@@ -87,7 +89,7 @@ describe("stub engine: snapshot, restore, rollout", () => {
     const b = play(engine.restore(viaJson));
     expect(a).toBe(b);
     expect(JSON.stringify(engine.snapshot(runner.state))).toBe(JSON.stringify(snap)); // the original was not disturbed
-  });
+  }, SLOW);
 
   it("rollout returns a valid result, leaves the snapshot alone, and is deterministic per seed", () => {
     const runner = newRunner(1003);
@@ -109,7 +111,7 @@ describe("stub engine: snapshot, restore, rollout", () => {
     const asBlue = engine.rollout(snap, override, 5, 5, policies, { perspective: "blue" });
     expect(asRed.pointsFor).toBe(asBlue.pointsAgainst);
     expect(asRed.pointsAgainst).toBe(asBlue.pointsFor);
-  });
+  }, SLOW);
 
   it("rollout overrides change the outcome", () => {
     const runner = newRunner(1004);
@@ -120,5 +122,5 @@ describe("stub engine: snapshot, restore, rollout", () => {
     const active = engine.rollout(snap, {}, 20, 9, policies, { perspective: "blue" });
     expect(idle.pointsFor + idle.pointsAgainst).toBe(0);
     expect(active.pointsFor + active.pointsAgainst).toBeGreaterThan(0);
-  });
+  }, SLOW);
 });

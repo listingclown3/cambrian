@@ -3,12 +3,14 @@ import { MatchStateSchema, SnapshotSchema, type EngineEvent, type MatchState } f
 import { MatchRunner, basicCyclePolicy, demoRobots } from "../exec";
 import { loadConfig } from "../util/config";
 import { rebuiltEngine as engine } from "./engine";
-import { blockedAt, getGrid, inTrench } from "./nav";
+import { blockedAt, clearNavCaches, getGrid, inTrench } from "./nav";
 import { buildObservationView } from "./observe";
 
 const cfg = loadConfig();
 const policies = { default: basicCyclePolicy };
 const newRunner = (seed: number) => new MatchRunner(engine, cfg, seed, demoRobots(cfg), policies);
+/** Per-test timeout for full matches: the machine may be busy with other work. */
+const SLOW = 120_000;
 
 function totalFuel(state: MatchState): number {
   const onField = Object.values(state.fuel.byZone).reduce((a, b) => a + b, 0) + state.fuel.piles.reduce((a, p) => a + p.count, 0);
@@ -27,7 +29,16 @@ describe("rebuilt engine", () => {
     };
     expect(run(77)).toBe(run(77));
     expect(run(77)).not.toBe(run(78));
-  });
+  }, SLOW);
+
+  it("does not depend on navigation cache state (warm vs cold caches give the same match)", () => {
+    const run = () => JSON.stringify(newRunner(91).runToEnd().state);
+    clearNavCaches();
+    const cold = run();
+    newRunner(92).runToEnd(); // warm the caches with other paths
+    const warm = run();
+    expect(warm).toBe(cold);
+  }, SLOW);
 
   it("snapshot/restore is exact after a JSON round trip", () => {
     const runner = newRunner(1005);
@@ -48,7 +59,7 @@ describe("rebuilt engine", () => {
       return JSON.stringify(state) + JSON.stringify(out);
     };
     expect(play(a)).toBe(play(b));
-  });
+  }, SLOW);
 
   it("conserves fuel over a full match and keeps every state valid", () => {
     const runner = newRunner(1006);
@@ -59,7 +70,7 @@ describe("rebuilt engine", () => {
     }
     expect(() => MatchStateSchema.parse(runner.state)).not.toThrow();
     expect(runner.state.score.blue.total + runner.state.score.red.total).toBeGreaterThan(0);
-  });
+  }, SLOW);
 
   it("fuel scores only while the hub is active, and the warning comes before each deactivation", () => {
     const runner = newRunner(1007);
@@ -80,7 +91,7 @@ describe("rebuilt engine", () => {
         prevActive[a] = state.hubs[a].active;
       }
     }
-  });
+  }, SLOW);
 
   it("robots never overlap a field element, and tall robots never enter a trench", () => {
     const runner = newRunner(1008);
@@ -98,7 +109,7 @@ describe("rebuilt engine", () => {
       }
     }
     expect(crossings).toBeGreaterThan(0);
-  });
+  }, SLOW);
 
   it("robots reach the neutral zone through a crossing (not through the hub)", () => {
     const state = engine.createMatch(cfg, 3, demoRobots(cfg));

@@ -1,0 +1,355 @@
+{
+  "experiment": "bench_live_drex",
+  "createdTs": "2026-11-14T20:57:36.042Z",
+  "isMock": false,
+  "gitCommit": "2c3bdc75edac-dirty",
+  "simHash": "2cc2e7f621722c58",
+  "config": {
+    "part": "drex",
+    "spec": "drex",
+    "reasoning": null,
+    "seeds": {
+      "dev": [],
+      "eval": [
+        9001,
+        9002,
+        9003,
+        9004,
+        9005
+      ]
+    },
+    "parallel": 1,
+    "realtimeLatencyCharging": {
+      "_status": "TUNABLE",
+      "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",
+      "enabled": true,
+      "latencyScale": 1
+    },
+    "lineup": "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle",
+    "discarded": {
+      "reason": "every Drex call returned http 403 (Vercel Security Checkpoint on console.nace.ai), so every decision was a scripted fallback; these matches are not Drex matches and were removed",
+      "seeds": [
+        "9005 paused",
+        "9006 paused",
+        "9007 paused",
+        "9008 paused",
+        "9009 paused",
+        "9010 paused",
+        "9006 realtime",
+        "9007 realtime",
+        "9008 realtime",
+        "9009 realtime",
+        "9010 realtime"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 247,
+      "scoreRed": 369,
+      "margin": -122,
+      "requests": 1045,
+      "providerCalls": 1045,
+      "robotDecisions": 1104,
+      "fallbacks": 4,
+      "fallbackMetas": 3,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 321.31,
+      "latencyP50Ms": 227.3,
+      "latencyP95Ms": 510,
+      "costUsd": 0.041637,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 147,
+      "scoreRed": 340,
+      "margin": -193,
+      "requests": 419,
+      "providerCalls": 419,
+      "robotDecisions": 474,
+      "fallbacks": 3,
+      "fallbackMetas": 3,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 171.96,
+      "latencyP50Ms": 268.1,
+      "latencyP95Ms": 617.9,
+      "costUsd": 0.018813,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 369,
+      "scoreRed": 205,
+      "margin": 164,
+      "requests": 859,
+      "providerCalls": 859,
+      "robotDecisions": 916,
+      "fallbacks": 5,
+      "fallbackMetas": 5,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 249.39,
+      "latencyP50Ms": 223.1,
+      "latencyP95Ms": 442.5,
+      "costUsd": 0.040519,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "paused",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 242,
+      "scoreRed": 363,
+      "margin": -121,
+      "requests": 296,
+      "providerCalls": 296,
+      "robotDecisions": 341,
+      "fallbacks": 35,
+      "fallbackMetas": 27,
+      "dropped": 0,
+      "chargedS": 0,
+      "wallS": 64.71,
+      "latencyP50Ms": 209.5,
+      "latencyP95Ms": 395,
+      "costUsd": 0.014322,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9001,
+      "blue": [
+        "frc_1729",
+        "fab_47",
+        "frc_1757"
+      ],
+      "red": [
+        "frc_6901",
+        "frc_10219",
+        "fab_10"
+      ],
+      "scoreBlue": 196,
+      "scoreRed": 377,
+      "margin": -181,
+      "requests": 281,
+      "providerCalls": 281,
+      "robotDecisions": 318,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 65.823,
+      "wallS": 77.85,
+      "latencyP50Ms": 217.8,
+      "latencyP95Ms": 420.4,
+      "costUsd": 0.01306,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9002,
+      "blue": [
+        "frc_6908",
+        "fab_30",
+        "fab_08"
+      ],
+      "red": [
+        "fab_18",
+        "frc_6800",
+        "fab_21"
+      ],
+      "scoreBlue": 159,
+      "scoreRed": 357,
+      "margin": -198,
+      "requests": 219,
+      "providerCalls": 219,
+      "robotDecisions": 257,
+      "fallbacks": 0,
+      "fallbackMetas": 0,
+      "dropped": 0,
+      "chargedS": 47.122,
+      "wallS": 51.16,
+      "latencyP50Ms": 205.5,
+      "latencyP95Ms": 336.4,
+      "costUsd": 0.010462,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9003,
+      "blue": [
+        "fab_25",
+        "frc_2990",
+        "fab_27"
+      ],
+      "red": [
+        "fab_01",
+        "frc_4322",
+        "fab_14"
+      ],
+      "scoreBlue": 373,
+      "scoreRed": 189,
+      "margin": 184,
+      "requests": 234,
+      "providerCalls": 234,
+      "robotDecisions": 269,
+      "fallbacks": 1,
+      "fallbackMetas": 1,
+      "dropped": 1,
+      "chargedS": 65.466,
+      "wallS": 76.25,
+      "latencyP50Ms": 237.3,
+      "latencyP95Ms": 424.9,
+      "costUsd": 0.011876,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9004,
+      "blue": [
+        "fab_19",
+        "fab_40",
+        "fab_37"
+      ],
+      "red": [
+        "fab_02",
+        "fab_12",
+        "frc_1690"
+      ],
+      "scoreBlue": 200,
+      "scoreRed": 369,
+      "margin": -169,
+      "requests": 259,
+      "providerCalls": 259,
+      "robotDecisions": 289,
+      "fallbacks": 2,
+      "fallbackMetas": 2,
+      "dropped": 0,
+      "chargedS": 84.499,
+      "wallS": 107.32,
+      "latencyP50Ms": 254.3,
+      "latencyP95Ms": 610,
+      "costUsd": 0.013563,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    },
+    {
+      "part": "drex",
+      "decider": "drex",
+      "timing": "realtime",
+      "seed": 9005,
+      "blue": [
+        "frc_6901",
+        "fab_02",
+        "frc_6800"
+      ],
+      "red": [
+        "fab_38",
+        "fab_28",
+        "fab_24"
+      ],
+      "scoreBlue": 214,
+      "scoreRed": 229,
+      "margin": -15,
+      "requests": 204,
+      "providerCalls": 204,
+      "robotDecisions": 246,
+      "fallbacks": 2,
+      "fallbackMetas": 2,
+      "dropped": 1,
+      "chargedS": 65.382,
+      "wallS": 78.49,
+      "latencyP50Ms": 267,
+      "latencyP95Ms": 551.8,
+      "costUsd": 0.010134,
+      "models": [
+        "drex-v2.0"
+      ],
+      "isMock": false
+    }
+  ],
+  "summary": {}
+}

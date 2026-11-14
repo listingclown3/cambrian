@@ -1,0 +1,143 @@
+{
+  "generatedTs": "2026-11-14T20:45:40.551Z",
+  "source": "Intern session(s), validated with parseProposals; not edited by hand",
+  "sessions": [
+    {
+      "purpose": "strategy_lab",
+      "model": "deepinfra/Qwen/Qwen3.8-27B",
+      "system1Model": "drex-latest",
+      "turns": 6,
+      "system1Judgments": 12,
+      "durationS": 222,
+      "ok": true,
+      "reason": "completed",
+      "accepted": 5,
+      "rejected": []
+    }
+  ],
+  "proposals": [
+    {
+      "id": "endgame_dump_full_hopper_climb3",
+      "title": "Endgame: dump the full hopper, then climb level 3",
+      "kind": "strategy_family",
+      "rationale": "In the final 30 seconds both hubs score, so converting a 6+ fuel hopper into hub points and then climbing level 3 for 30 tower points beats one more collection cycle in the same window.",
+      "sourceUrls": [
+        "https://github.com/frc6908/2026-Robot",
+        "https://learnfrc.com/blog/frc-games-by-year"
+      ],
+      "situation": "Match has 30 seconds or fewer remaining (endgame, both hubs active), 6 or more fuel held, robot in the our_alliance zone, not in contact with an opposing robot.",
+      "intent": {
+        "action": "shoot_now",
+        "params": {},
+        "then": {
+          "action": "climb",
+          "params": {
+            "level": 3
+          }
+        }
+      },
+      "predicateSummary": "matchRemainingS <= 30 AND both hubs active AND fuelHeld >= 6 AND own alliance zone AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 3 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+    },
+    {
+      "id": "inactive_shift_depot_gather",
+      "title": "Gather depot fuel during our inactive shift, then wait on trigger",
+      "kind": "option_variant",
+      "rationale": "Fuel scored in an inactive hub is worth 0 points, so the best use of our inactive shift is refilling the hopper at a depot and holding ready to fire the moment our hub becomes active.",
+      "sourceUrls": [
+        "https://github.com/wave-2826/ScoutingPASS/blob/main/2026",
+        "https://firstinspires.org/hubfs/web/program/frc/first-age-frc-rebuilt-gamepostcard.pdf"
+      ],
+      "situation": "Our hub is inactive, at least 5 seconds until the hub shift change, 2 or fewer fuel held, robot in the depot zone, not in contact with any robot.",
+      "intent": {
+        "action": "collect",
+        "params": {
+          "source": "depot"
+        },
+        "then": {
+          "action": "hold_fire_until_active",
+          "params": {}
+        }
+      },
+      "predicateSummary": "our hub inactive AND timeToShiftS >= 5 AND fuelHeld <= 2 AND within 1.5 m of own depot (the depot is a point, so 'in the depot zone' is read as that radius) AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+    },
+    {
+      "id": "trench_shoot_on_move_refill",
+      "title": "Score on the move through the left trench, then pick up local fuel",
+      "kind": "option_variant",
+      "rationale": "The protected trench run is a defender-proof lane that shortens cycle times, so shooting on the move through the left trench and immediately refilling from local fuel sustains our scoring rate during the active shift.",
+      "sourceUrls": [
+        "https://chiefdelphi.com/t/frc-7407-wired-boars-2026-build-thread-open-alliance/507852/14",
+        "https://ragnarokrobotics.org/2026-game.html"
+      ],
+      "situation": "Our hub is active, at least 10 seconds until the hub shift change, 4 or more fuel held, robot in the our_alliance or neutral zone, not in contact with any robot.",
+      "intent": {
+        "action": "shoot_on_move",
+        "params": {
+          "path": "left_trench"
+        },
+        "then": {
+          "action": "collect",
+          "params": {
+            "source": "local"
+          }
+        }
+      },
+      "predicateSummary": "our hub active AND timeToShiftS >= 10 AND fuelHeld >= 4 AND in own alliance zone or neutral zone AND no contact",
+      "simulated": true,
+      "simulationNote": ""
+    },
+    {
+      "id": "spin_out_then_shadow_defend",
+      "title": "Spin out of the pin, then shadow-defend the opposing scorer",
+      "kind": "strategy_family",
+      "rationale": "A pin past 3 seconds is a foul, so breaking contact with an escape spin and immediately defending the opposing scorer protects our hub without ever holding the pin.",
+      "sourceUrls": [
+        "https://chiefdelphi.com/t/rapid-react-defense/407127"
+      ],
+      "situation": "Robot is in contact with the opposing robot R1 for 2 or more seconds, our hub is active, at least 15 seconds until the hub shift change, 3 or more fuel held.",
+      "intent": {
+        "action": "escape_spin",
+        "params": {
+          "exitToward": "neutral"
+        },
+        "then": {
+          "action": "defend",
+          "params": {
+            "robotId": "R1"
+          }
+        }
+      },
+      "role": {
+        "role": "defender",
+        "target": "R1"
+      },
+      "predicateSummary": "in contact with an opposing robot for >= 2 s (the id 'R1' in the text is a placeholder: read as whichever opponent is in contact, and the defend step targets that robot) AND our hub active AND timeToShiftS >= 15 AND fuelHeld >= 3",
+      "simulated": true,
+      "simulationNote": ""
+    },
+    {
+      "id": "late_climb_level2_not_cycle",
+      "title": "In the final 30 seconds, climb level 2 instead of another cycle",
+      "kind": "strategy_family",
+      "rationale": "Tower points usually beat one more collect-and-score cycle in the same window, and stopping at level 2 avoids the risk of climbing higher than the ranking point requires.",
+      "sourceUrls": [
+        "https://learnfrc.com/blog/frc-games-by-year",
+        "https://chiefdelphi.com/t/share-your-best-rapid-react-matches/405036"
+      ],
+      "situation": "Match has 30 seconds or fewer remaining, 2 or fewer fuel held, robot in the our_alliance zone, not in contact with any robot, at least 10 seconds from the match end to complete the climb.",
+      "intent": {
+        "action": "climb",
+        "params": {
+          "level": 2
+        }
+      },
+      "predicateSummary": "10 <= matchRemainingS <= 30 AND fuelHeld <= 2 AND own alliance zone AND no contact",
+      "simulated": false,
+      "simulationNote": "the intent never fired in 10 matches (predicate true 0 times, but the intent was not among the masked options, or the predicate was never true): NOT TESTED"
+    }
+  ]
+}

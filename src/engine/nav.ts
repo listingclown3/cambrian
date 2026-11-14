@@ -58,6 +58,8 @@ export interface NavGrid {
   trenchCost: number;
   /** Cached distance-to-goal fields, keyed by goalCell * 2 + (fits ? 1 : 0). */
   fields: Map<number, Float32Array>;
+  /** Memoised steering decisions, keyed by (from cell, target cell, fits). */
+  steerCache: Map<number, number>;
 }
 
 const byObject = new WeakMap<FieldLayout, NavGrid>();
@@ -111,6 +113,18 @@ function buildGeometry(field: FieldLayout) {
   return { solidRaw, bumpRects, trenchRects };
 }
 
+/**
+ * Drop every cached grid, flow field and steering decision. Results never depend on the caches;
+ * tests call this to prove it.
+ */
+export function clearNavCaches(): void {
+  for (const grid of byKey.values()) {
+    grid.fields.clear();
+    grid.steerCache.clear();
+  }
+  byKey.clear();
+}
+
 /** The navigation grid for a field (built once per distinct layout and physics). */
 export function getGrid(field: FieldLayout, physics: PhysicsParams): NavGrid {
   const hit = byObject.get(field);
@@ -162,6 +176,7 @@ function buildGrid(field: FieldLayout, physics: PhysicsParams): NavGrid {
     bumpCost: 1 / physics.bumpSpeedFactor,
     trenchCost: 1 / physics.trenchSpeedFactor,
     fields: new Map(),
+    steerCache: new Map(),
   };
 }
 
@@ -453,25 +468,57 @@ export interface Steer {
  * clear, otherwise toward the farthest visible cell along the cached flow field.
  */
 export function steer(grid: NavGrid, from: Vec2, target: Vec2, fits: boolean): Steer {
-  const direct = Math.hypot(target.x - from.x, target.y - from.y);
-  if (lineOfSight(grid, from, target, fits)) return { waypoint: target, remainingM: direct };
-  const d = distanceField(grid, cellOf(grid, target), fits);
-  let c = cellOf(grid, from);
+  const fc = cellOf(grid, from);
+  const tc = cellOf(grid, target);
+  const key = (fc * grid.kind.length + tc) * 2 + (fits ? 1 : 0);
+  let plan = grid.steerCache.get(key);
+  if (plan === undefined) {
+    plan = planStep(grid, fc, tc, fits);
+    if (grid.steerCache.size >= MAX_STEER_ENTRIES) grid.steerCache.clear();
+    grid.steerCache.set(key, plan);
+  }
+  if (plan === DIRECT) return { waypoint: target, remainingM: Math.hypot(target.x - from.x, target.y - from.y) };
+  if (plan === UNREACHABLE) return { waypoint: target, remainingM: Infinity };
+  const d = distanceField(grid, tc, fits);
+  // At the goal's (free stand-in) cell already: the target itself is a legal point, so go straight at it.
+  if (d[plan] === 0) return { waypoint: target, remainingM: Math.hypot(target.x - from.x, target.y - from.y) };
+  const waypoint = cellCenter(grid, plan);
+  return { waypoint, remainingM: d[plan]! + Math.hypot(waypoint.x - from.x, waypoint.y - from.y) };
+}
+
+const DIRECT = -1;
+const UNREACHABLE = -2;
+/** Steering memo size per grid; cleared wholesale when full (entries are pure, so this is safe). */
+const MAX_STEER_ENTRIES = 400_000;
+
+/**
+ * The steering decision for a (robot cell, target cell) pair, computed from cell centres so it
+ * can be memoised: DIRECT when the target is in plain view, otherwise the farthest cell along the
+ * flow field that is in plain view, or UNREACHABLE.
+ */
+function planStep(grid: NavGrid, fc: number, tc: number, fits: boolean): number {
+  // Only cell indices go in: the result must not depend on which exact points first asked,
+  // or a warm cache would steer differently from a cold one (and break determinism).
+  const from = cellCenter(grid, fc);
+  const to = cellCenter(grid, tc);
+  if (passable(grid, fc, fits) && lineOfSight(grid, from, to, fits)) return DIRECT;
+  const d = distanceField(grid, tc, fits);
+  let c = fc;
   if (!passable(grid, c, fits) || d[c] === Infinity) {
     const f = nearestFreeCell(grid, c, fits);
-    if (f < 0 || d[f] === Infinity) return { waypoint: target, remainingM: Infinity };
+    if (f < 0 || d[f] === Infinity) return UNREACHABLE;
+    if (f !== c) return f; // off the grid's free space (pushed by another robot): get back onto it first
     c = f;
   }
-  let waypoint = cellCenter(grid, c);
+  let waypoint = c;
   let cur = c;
   for (let i = 0; i < LOOKAHEAD_CELLS; i++) {
     const nb = downhill(grid, d, cur, fits);
     if (nb < 0) break;
     cur = nb;
-    const p = cellCenter(grid, cur);
-    if (i === 0 || lineOfSight(grid, from, p, fits)) waypoint = p;
+    if (i === 0 || lineOfSight(grid, from, cellCenter(grid, cur), fits)) waypoint = cur;
     else break;
   }
-  const start = cellCenter(grid, c);
-  return { waypoint, remainingM: d[c]! + Math.hypot(start.x - from.x, start.y - from.y) };
+  if (waypoint === tc) return DIRECT;
+  return waypoint;
 }

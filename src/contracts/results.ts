@@ -70,6 +70,27 @@ export const HeadlineSchema = z.strictObject({
   /** OpenAI cost per 1,000 decisions, US dollars. */
   openai_cost_per_1k_usd: metric,
 
+  // ── 2b. batched decisions: N questions about one state answered in ONE call ──
+  // Milliseconds of call time per decision (total call time / N), median over calls. Sizes 1 and
+  // 3 are how the sim decides (one robot, one alliance); 8 and 32 are stress sizes.
+  // "giant" = the DeepInfra model with reasoning off, returning all N answers in one JSON.
+  /** Drex (drex-v2.0), 1 question per call. */
+  batch1_ms_per_decision_drex: metric,
+  /** The giant, 1 question per call. */
+  batch1_ms_per_decision_giant: metric,
+  /** Drex, 3 questions per call. */
+  batch3_ms_per_decision_drex: metric,
+  /** The giant, 3 questions per call. */
+  batch3_ms_per_decision_giant: metric,
+  /** Drex, 8 questions per call. */
+  batch8_ms_per_decision_drex: metric,
+  /** The giant, 8 questions per call. */
+  batch8_ms_per_decision_giant: metric,
+  /** Drex, 32 questions per call. */
+  batch32_ms_per_decision_drex: metric,
+  /** The giant, 32 questions per call. */
+  batch32_ms_per_decision_giant: metric,
+
   // ── 3. decision quality against the answer key ────────────────────────────
   /** Fraction of unambiguous scenarios where Drex chose the answer-key best option. */
   top1_drex: metric,

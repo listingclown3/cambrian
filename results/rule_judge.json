@@ -1,9 +1,9 @@
 {
   "experiment": "rule_judge",
-  "createdTs": "2026-11-14T20:04:23.888Z",
+  "createdTs": "2026-11-14T20:52:11.109Z",
   "isMock": false,
-  "gitCommit": "9c88e2b74658-dirty",
-  "simHash": "7b72e7413d084948",
+  "gitCommit": "218ce58ef6da-dirty",
+  "simHash": "7160952d70dcba39",
   "config": {
     "model": "drex-v2.0",
     "threshold": 0.5,
@@ -17,10 +17,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9787,
+      "pYes": 0.9016,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_02",
@@ -28,10 +28,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0235,
+      "pYes": 0.0254,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_03",
@@ -39,10 +39,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9718,
+      "pYes": 0.8119,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_04",
@@ -50,10 +50,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0124,
+      "pYes": 0.025,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_05",
@@ -61,10 +61,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9728,
+      "pYes": 0.8708,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_06",
@@ -72,10 +72,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0157,
+      "pYes": 0.0209,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_07",
@@ -83,10 +83,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.8675,
+      "pYes": 0.7156,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_08",
@@ -94,10 +94,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0764,
+      "pYes": 0.059,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_09",
@@ -105,10 +105,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0336,
+      "pYes": 0.0788,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_10",
@@ -116,10 +116,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.8426,
+      "pYes": 0.8516,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_11",
@@ -127,10 +127,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0126,
+      "pYes": 0.01,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_12",
@@ -138,10 +138,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9536,
+      "pYes": 0.9081,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_13",
@@ -149,10 +149,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8563,
+      "pYes": 0.9291,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_14",
@@ -160,10 +160,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.5585,
-      "judgedViolation": true,
-      "agrees": false,
-      "labelSource": "fabricated_draft"
+      "pYes": 0.2621,
+      "judgedViolation": false,
+      "agrees": true,
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_15",
@@ -171,10 +171,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9163,
+      "pYes": 0.9348,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_16",
@@ -182,10 +182,10 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.5071,
-      "judgedViolation": true,
-      "agrees": false,
-      "labelSource": "fabricated_draft"
+      "pYes": 0.3284,
+      "judgedViolation": false,
+      "agrees": true,
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_17",
@@ -193,10 +193,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.2033,
+      "pYes": 0.1428,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_18",
@@ -204,10 +204,10 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7819,
+      "pYes": 0.6677,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_19",
@@ -215,10 +215,10 @@
       "rulePage": 69,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0485,
+      "pYes": 0.0739,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_20",
@@ -226,10 +226,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9541,
+      "pYes": 0.9627,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_21",
@@ -237,10 +237,10 @@
       "rulePage": 69,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.1148,
+      "pYes": 0.1182,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_22",
@@ -248,10 +248,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8574,
+      "pYes": 0.8583,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_23",
@@ -259,10 +259,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0219,
+      "pYes": 0.0201,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_24",
@@ -270,10 +270,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.7345,
+      "pYes": 0.6638,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_25",
@@ -281,10 +281,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0566,
+      "pYes": 0.0284,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_26",
@@ -292,10 +292,10 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.914,
+      "pYes": 0.8815,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_27",
@@ -303,10 +303,10 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0442,
+      "pYes": 0.0556,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_28",
@@ -314,10 +314,10 @@
       "rulePage": 73,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.6903,
+      "pYes": 0.6196,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_29",
@@ -325,10 +325,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0327,
+      "pYes": 0.0417,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_30",
@@ -336,10 +336,10 @@
       "rulePage": 73,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8704,
+      "pYes": 0.8451,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_31",
@@ -347,10 +347,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9278,
+      "pYes": 0.9787,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_32",
@@ -358,10 +358,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0687,
+      "pYes": 0.0152,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_33",
@@ -369,10 +369,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9291,
+      "pYes": 0.9679,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_34",
@@ -380,10 +380,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0497,
+      "pYes": 0.0152,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_35",
@@ -391,10 +391,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.802,
-      "judgedViolation": true,
-      "agrees": false,
-      "labelSource": "fabricated_draft"
+      "pYes": 0.1345,
+      "judgedViolation": false,
+      "agrees": true,
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_36",
@@ -402,10 +402,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7707,
+      "pYes": 0.8046,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_37",
@@ -413,10 +413,10 @@
       "rulePage": 72,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0218,
+      "pYes": 0.0153,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_38",
@@ -424,10 +424,10 @@
       "rulePage": 72,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8892,
+      "pYes": 0.9541,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_39",
@@ -435,10 +435,10 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9578,
+      "pYes": 0.8253,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_40",
@@ -446,10 +446,10 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9915,
+      "pYes": 0.8874,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_41",
@@ -457,10 +457,10 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0192,
+      "pYes": 0.0424,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_42",
@@ -468,10 +468,10 @@
       "rulePage": 67,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.022,
+      "pYes": 0.0307,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_43",
@@ -479,21 +479,21 @@
       "rulePage": 67,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0155,
+      "pYes": 0.1437,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_44",
       "ruleId": "G413",
       "rulePage": 67,
       "difficulty": "borderline",
-      "expectedViolation": true,
-      "pYes": 0.9288,
-      "judgedViolation": true,
+      "expectedViolation": false,
+      "pYes": 0.1104,
+      "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_45",
@@ -501,10 +501,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0163,
+      "pYes": 0.0143,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_46",
@@ -512,10 +512,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0147,
+      "pYes": 0.015,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_47",
@@ -523,10 +523,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0119,
+      "pYes": 0.0153,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_48",
@@ -534,10 +534,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.8697,
+      "pYes": 0.9312,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_49",
@@ -545,10 +545,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.6158,
+      "pYes": 0.5418,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_50",
@@ -556,10 +556,10 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.7985,
+      "pYes": 0.7978,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_51",
@@ -567,10 +567,10 @@
       "rulePage": 74,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.1683,
-      "judgedViolation": false,
-      "agrees": true,
-      "labelSource": "fabricated_draft"
+      "pYes": 0.8304,
+      "judgedViolation": true,
+      "agrees": false,
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_52",
@@ -578,10 +578,10 @@
       "rulePage": 74,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.123,
+      "pYes": 0.1689,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_53",
@@ -589,10 +589,10 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9635,
+      "pYes": 0.9339,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_54",
@@ -600,10 +600,10 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9666,
+      "pYes": 0.9391,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_55",
@@ -611,10 +611,10 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0297,
+      "pYes": 0.024,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_56",
@@ -622,10 +622,10 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0277,
+      "pYes": 0.0489,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_57",
@@ -633,10 +633,10 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": true,
-      "pYes": 0.9585,
+      "pYes": 0.892,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_58",
@@ -644,10 +644,10 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": false,
-      "pYes": 0.0226,
+      "pYes": 0.0343,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_59",
@@ -655,10 +655,10 @@
       "rulePage": 59,
       "difficulty": "borderline",
       "expectedViolation": false,
-      "pYes": 0.0515,
+      "pYes": 0.0832,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_60",
@@ -666,26 +666,27 @@
       "rulePage": 59,
       "difficulty": "clear",
       "expectedViolation": true,
-      "pYes": 0.9697,
+      "pYes": 0.948,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     }
   ],
   "summary": {
     "incidents": 60,
     "rules": 7,
-    "agreeWithDraftLabels": 57,
-    "agreementPct": 95,
-    "agreementPctClear": 97.4,
-    "agreementPctBorderline": 90.5,
+    "agreeWithDraftLabels": 59,
+    "agreementPct": 98.3,
+    "agreementPctClear": 100,
+    "agreementPctBorderline": 95.2,
     "drexCalls": 7,
-    "medianLatencyMsPerCall": 255,
+    "medianLatencyMsPerCall": 212,
     "questionsPerCall": 8.6,
     "model": "drex-v2.0",
-    "metricName": "agreement with AI-drafted labels (not yet human-verified)",
-    "labels_human_verified": false,
-    "labelsConfirmedByHuman": false,
-    "caveat": "labels are an unconfirmed AI draft; this is agreement with draft labels, not accuracy"
+    "metricName": "accuracy vs human-reviewed labels",
+    "labels_review": "human",
+    "labels_human_verified": true,
+    "labelsConfirmedByHuman": true,
+    "caveat": "Incidents are fabricated test cases; labels were reviewed by a person. Label status updated after the owner's confirmation; the Drex answers are from the run recorded in createdTs and were not re-asked."
   }
 }

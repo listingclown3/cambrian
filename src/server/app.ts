@@ -16,6 +16,7 @@ import { MatchRunner, basicCyclePolicy, demoRobots, type RunnerDecision } from "
 import { readUsage, summarizeUsage } from "../ledger";
 import { listUnverified, repoPath } from "../util/config";
 import { gitCommit, simHash } from "../util/provenance";
+import { streamAgentMatch } from "./agentMatch";
 import { ChargedMatch } from "./chargedMatch";
 import type { DecisionNote, ServerMessage } from "./protocol";
 import { listRuns, readRunEvents, runFile } from "./runs";
@@ -127,6 +128,21 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     return JSON.parse(readFileSync(repoPath("results", name + ".json"), "utf8"));
   });
 
+  // Which model the giant is: the first-choice id (the exact id used is logged in each run's manifest) and its reasoning mode.
+  app.get("/api/giant", async () => {
+    const p = cfg.providers.byId.deepinfra;
+    return { fixedModel: p.model, firstChoice: p.modelPreference?.[0] ?? null, reasoning: "off" };
+  });
+
+  // Static data files for the Rules & Sources page and robot provenance badges. Missing file = { available: false }.
+  const dataFile = (rel: string[], empty: object) => async () => {
+    const file = repoPath(...rel);
+    return existsSync(file) ? { available: true, ...(JSON.parse(readFileSync(file, "utf8")) as object) } : { available: false, ...empty };
+  };
+  app.get("/api/rules/conduct", dataFile(["data", "rules", "conduct_rules.json"], { rules: [] }));
+  app.get("/api/research/sources", dataFile(["data", "research", "sources.json"], { sources: [] }));
+  app.get("/api/league/teams", dataFile(["data", "league", "teams_from_docs.json"], { teams: [] }));
+
   // Scenario explorer data: real results/scenarios.json when it exists, else the bundled FIXTURE.
   app.get("/api/scenarios", async () => {
     const real = repoPath("results", "scenarios.json");
@@ -162,6 +178,27 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     pump(socket, match, speed, cfg.physics.dtS, send);
   });
 
+  // Provider-driven match: Drex or the giant decides for one alliance (real calls, logged to runs/).
+  // Query: ?provider=drex|deepinfra&seed=&timing=realtime|paused&speed=&log=0|1
+  app.get("/ws/agents", { websocket: true }, (socket, req) => {
+    const q = req.query as { provider?: string; seed?: string; timing?: string; speed?: string; log?: string };
+    const send = (m: ServerMessage) => socket.readyState === socket.OPEN && socket.send(JSON.stringify(m));
+    if (q.provider !== "drex" && q.provider !== "deepinfra") return void send({ type: "error", message: "provider must be drex or deepinfra" });
+    const stop = streamAgentMatch(
+      cfg,
+      {
+        provider: q.provider,
+        seed: Number.parseInt(q.seed ?? "", 10) || (cfg.seeds.dev[0] ?? 1),
+        timing: q.timing === "paused" ? "paused" : "realtime",
+        speed: Math.min(40, Math.max(1, Number.parseInt(q.speed ?? "", 10) || 4)),
+        alliance: cfg.server.demoDrexAlliance,
+        log: q.log !== "0",
+      },
+      send,
+    );
+    socket.on("close", stop);
+  });
+
   // Replays a recorded run by re-simulating its seed and applying the logged intents. Query: ?source=&run=&speed=
   app.get("/ws/replay", { websocket: true }, (socket, req) => {
     const q = req.query as { source?: string; run?: string; speed?: string };
@@ -173,33 +210,55 @@ export async function buildApp(cfg: Config): Promise<FastifyInstance> {
     const start = events.find((e) => e.type === "run_start");
     if (!start || start.type !== "run_start") return void socket.close(1008, "run has no run_start");
     const seed = start.manifest.seeds.eval[0] ?? start.manifest.seeds.dev[0] ?? 1;
+    // Logged matchTimeS is the sim time the intent was APPLIED (latency already charged). Replay is fully offline:
+    // it re-simulates from the seed with the run's own config and applies the logged intents; no provider is called.
+    const rcfg = start.manifest.config;
     const speed = Math.min(40, Math.max(1, Number.parseInt(q.speed ?? "", 10) || 6));
-    const decisions: DecisionNote[] = events.flatMap((e) =>
+    const decisions = events.flatMap((e) =>
       e.type === "decision" && e.intent
-        ? [{ robotId: e.robotId, timeS: e.matchTimeS, intent: e.intent, label: e.chosenLabel ?? stepLabel(e.intent), latencyMs: e.meta.latencyMs }]
+        ? [{ robotId: e.robotId, timeS: e.matchTimeS, intent: e.intent, label: e.chosenLabel ?? stepLabel(e.intent), latencyMs: e.meta.latencyMs, fallback: e.meta.fallbackUsed, provider: e.meta.provider, model: e.meta.model, isMock: e.meta.isMock, batch: `${e.matchTimeS}|${e.meta.latencyMs}|${e.request.seed}` }]
         : [],
     );
-    const state = engine.createMatch(cfg, seed, demoRobots(cfg));
+    decisions.sort((a, b) => a.timeS - b.timeS);
+    const state = engine.createMatch(rcfg, seed, demoRobots(rcfg));
     let next = 0;
     let latSum = 0;
     let count = 0;
-    send({ type: "hello", engineIsStub: ENGINE_IS_STUB, isMock: start.manifest.isMock || source === "fixture", seed, speed, source: "recorded", decider: start.manifest.provider, runId: q.run });
+    let calls = 0;
+    const seenBatches = new Set<string>();
+    send({
+      type: "hello",
+      engineIsStub: ENGINE_IS_STUB,
+      isMock: start.manifest.isMock || source === "fixture",
+      seed,
+      speed,
+      source: "recorded",
+      decider: start.manifest.provider,
+      deciderAlliance: rcfg.server.demoDrexAlliance,
+      ...(start.manifest.model ? { model: start.manifest.model } : {}),
+      timing: rcfg.realtimeLatencyCharging.enabled ? "realtime" : "paused",
+      runId: q.run,
+    });
     const timer = setInterval(() => {
       const ev: EngineEvent[] = [];
       const dec: DecisionNote[] = [];
-      const ticks = Math.max(1, Math.round((speed * 50) / 1000 / cfg.physics.dtS));
+      const ticks = Math.max(1, Math.round((speed * 50) / 1000 / rcfg.physics.dtS));
       for (let i = 0; i < ticks && state.phase !== "finished"; i++) {
         const intents: Record<string, DecisionNote["intent"]> = {};
         while (next < decisions.length && decisions[next]!.timeS <= state.timeS + 1e-9) {
-          const d = decisions[next++]!;
+          const { batch, ...d } = decisions[next++]!;
           intents[d.robotId] = d.intent;
           dec.push(d);
-          latSum += d.latencyMs ?? 0;
           count += 1;
+          if (!seenBatches.has(batch)) {
+            seenBatches.add(batch);
+            latSum += d.latencyMs ?? 0; // robots answered by one batched request share one latency
+            calls += 1;
+          }
         }
-        ev.push(...engine.step(state, intents, cfg.physics.dtS).events);
+        ev.push(...engine.step(state, intents, rcfg.physics.dtS).events);
       }
-      send({ type: "tick", state, events: ev, decisions: dec, stats: { decisions: count, avgLatencyMs: count ? latSum / count : 0, chargedS: latSum / 1000 } });
+      send({ type: "tick", state, events: ev, decisions: dec, stats: { decisions: count, avgLatencyMs: calls ? latSum / calls : 0, chargedS: rcfg.realtimeLatencyCharging.enabled ? (latSum * rcfg.realtimeLatencyCharging.latencyScale) / 1000 : 0 } });
       if (state.phase === "finished") {
         clearInterval(timer);
         send({ type: "end", score: { red: state.score.red.total, blue: state.score.blue.total } });

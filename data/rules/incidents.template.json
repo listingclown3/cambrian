@@ -1,72 +1,487 @@
 {
-  "note": "These incidents are FABRICATED for testing. The expectedViolation labels are a draft written by an AI from the extracted rule text (data/rules/conduct_rules.json) and MUST be confirmed by a human who knows the rules before any accuracy number is reported.",
-  "labels_human_verified": false,
+  "note": "These 60 incidents are FABRICATED test cases. Their violation labels were first drafted by an AI from the extracted rule text and were then reviewed by a person against the TU22 game manual (confirmed by the project owner on 2026-11-14; an AI summarized that review). One label changed in review: inc_44, under G413 exception C (manual p.67).",
+  "labels_review": "human",
+  "labels_human_verified": true,
   "incidents": [
-    { "id": "inc_01", "description": "A robot drives an opponent into the field wall and holds it there, preventing it from moving, for 8 seconds before the match ends that period. The pinned robot cannot move at all during that time.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_02", "description": "A robot pushes an opponent against the wall for about 1 second, then the opponent drives away freely.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_03", "description": "A defender holds an opponent robot against the TOWER structure so it cannot move for 5 seconds before the referee calls it.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_04", "description": "Two robots are in a pushing match in the middle of the field. Both robots keep moving back and forth, and neither is ever prevented from moving, for 10 seconds.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_05", "description": "A robot traps an opponent in a corner by contact so that it cannot move, and keeps the contact for 6 seconds.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_06", "description": "A robot holds an opponent against a field element, preventing its movement, for 2.5 seconds, then releases it.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_07", "description": "A robot prevents an opponent from moving by contact against the wall for 3.4 seconds before backing off.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_08", "description": "A robot pins an opponent against the wall for exactly 3 seconds and then releases it.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_09", "description": "A robot presses an opponent against a field element for 4 seconds, but the opponent keeps slowly sliding along the element the whole time and is never prevented from moving.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_10", "description": "A robot pushes an opponent into a second opponent, so the first opponent is stuck between the other robot and the wall and cannot move for 5 seconds.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_11", "description": "A robot drives alongside an opponent and stays close for 15 seconds without ever touching it.", "ruleId": "G418", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_12", "description": "A robot pins an opponent for 7 seconds. The referee gives a warning and the pinning robot does not release for another 6 seconds.", "ruleId": "G418", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-
-    { "id": "inc_13", "description": "Well outside its own ALLIANCE ZONE, a robot rams the side of an opponent. Its bumpers hit the opponent's frame inside the opponent's perimeter and break the opponent's drivetrain so it can no longer drive.", "ruleId": "G415", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_14", "description": "Outside its alliance zone, a robot bumps an opponent bumper-to-bumper. Neither robot is damaged and both keep driving normally.", "ruleId": "G415", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_15", "description": "A robot with bumpers fully outside its alliance zone drives its arm into the opponent's bumper mounting and the mounting bracket snaps, so the bumper hangs off.", "ruleId": "G415", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_16", "description": "A robot drives into an opponent hard enough to tip it onto its side. The contact was on the opponent's bumper and the opponent's frame was not damaged, and the opponent was able to recover and keep driving.", "ruleId": "G415", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_17", "description": "A robot launches a held FUEL by hand-feeding it into its shooter, and the FUEL accidentally bounces off an opponent's bumper. No damage occurs.", "ruleId": "G415", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_18", "description": "A robot in the middle of the field extends an intake into the space above an opponent's frame perimeter and crushes the opponent's shooter, making it unable to shoot.", "ruleId": "G415", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_19", "description": "A robot that is partly inside its own ALLIANCE ZONE, with its bumpers not completely outside it, collides with an opponent that is entering the zone and damages the opponent's arm.", "ruleId": "G415", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_20", "description": "A robot fully outside its alliance zone drives into an opponent that is stopped, hits inside the opponent's robot perimeter, and the opponent's electronics board cracks so the opponent cannot move for the rest of the match.", "ruleId": "G415", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_21", "description": "An opponent drives into a robot first at high speed. Both robots' bumpers meet, and the defending robot is only pushed backwards without any damage.", "ruleId": "G415", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-
-    { "id": "inc_22", "description": "With 20 seconds left in the match, an opponent robot is climbing its TOWER. A robot from the other alliance drives into it, and the climbing robot is jolted.", "ruleId": "G420", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_23", "description": "With 90 seconds left in the match, a robot bumps into an opponent robot that is touching its TOWER while hanging around the base.", "ruleId": "G420", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_24", "description": "With 10 seconds left, an opponent robot that is in contact with its TOWER drives into a robot of the other alliance, and the opponent started the contact.", "ruleId": "G420", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_25", "description": "With 45 seconds left in the match, a robot pushes an opponent that is hanging on its TOWER level.", "ruleId": "G420", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_26", "description": "With 29 seconds left in the match, a robot touches an opponent that is in contact with its TOWER.", "ruleId": "G420", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_27", "description": "With 31 seconds left in the match, a robot touches an opponent that is in contact with its TOWER.", "ruleId": "G420", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_28", "description": "With 15 seconds left in the match, a robot throws a FUEL that bounces off an opponent robot that is in contact with its TOWER.", "ruleId": "G420", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_29", "description": "With 12 seconds left in the match, an opponent robot is driving across the field and has no contact with its TOWER. A robot from the other alliance bumps it.", "ruleId": "G420", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_30", "description": "With 5 seconds left, a robot pushes another robot of an opponent alliance, which is touching its own TOWER, off the TOWER.", "ruleId": "G420", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-
-    { "id": "inc_31", "description": "Two robots of the same alliance park side by side across the only lane to the opponent's scoring area and hold position for 20 seconds, so that no opposing robot can get through.", "ruleId": "G419", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_32", "description": "One robot sits in the NEUTRAL ZONE for a while, and the opponents drive around it with plenty of space.", "ruleId": "G419", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_33", "description": "Three robots of one alliance coordinate to seal off every FUEL source of the opponents' side so that no opposing robot can collect any FUEL.", "ruleId": "G419", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_34", "description": "Two robots of one alliance end up near each other in the middle of the field while chasing the same FUEL. They are not coordinating and the opponents can still reach every area.", "ruleId": "G419", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_35", "description": "Two allied robots appear to be working together to block one of two paths to the opposing scoring area for about 10 seconds, while opponents keep using the other path.", "ruleId": "G419", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_36", "description": "Two allied robots appear to the referee to be working together and close off the only access to a major element of play, but only for a very brief moment of about 1 second.", "ruleId": "G419", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_37", "description": "A single robot blocks one opponent in a corner. Its alliance partner is on the other side of the field scoring.", "ruleId": "G419", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_38", "description": "Two allied robots work together and seal the only entrance to the opposing alliance's loading area, and keep it sealed for 12 seconds.", "ruleId": "G419", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-
-    { "id": "inc_39", "description": "A robot raises a mechanism 10 inches beyond the vertical expansion limit during the match.", "ruleId": "G413", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_40", "description": "A robot extends an arm well past the horizontal expansion limit, a clearly visible amount farther than the legal extension, to reach a FUEL.", "ruleId": "G413", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_41", "description": "A robot extends its intake within the horizontal and vertical expansion limits to pick up FUEL.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_42", "description": "A robot stays in its starting configuration and drives around the field the entire match without extending anything.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_43", "description": "A robot's arm swings up during the match, and from the stands it looks like it might go above the vertical limit, but the referee measures it at just inside the limit.", "ruleId": "G413", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_44", "description": "A robot's climbing hook extends sideways beyond the horizontal expansion limit for about a second before it retracts.", "ruleId": "G413", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-
-    { "id": "inc_45", "description": "A human player throws FUEL into the FIELD through the CHUTE.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_46", "description": "A human player tosses FUEL over the top of the ALLIANCE WALL from the OUTPOST AREA.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_47", "description": "A human player places FUEL through the bottom opening in the OUTPOST.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_48", "description": "A human player climbs onto the barrier and drops FUEL into the FIELD from a spot that is neither the CHUTE, the OUTPOST opening, nor over the ALLIANCE WALL from the OUTPOST AREA.", "ruleId": "G425", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_49", "description": "A DRIVER reaches over the side of the field and rolls a FUEL onto the carpet from the audience side of the field.", "ruleId": "G425", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_50", "description": "A human player throws FUEL over the top of the ALLIANCE WALL, but is standing outside the OUTPOST AREA, in the alliance station beside it.", "ruleId": "G425", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_51", "description": "A DRIVER, not a human player, feeds a FUEL through the bottom opening in the OUTPOST.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_52", "description": "A human player hands a FUEL through the CHUTE, and it falls onto the field. Separately a robot picked up another FUEL from the floor and scored it.", "ruleId": "G425", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-
-    { "id": "inc_53", "description": "A team parks a robot against the opposing alliance's only FUEL path, clearly with the goal of making the opponents use a rule-breaking route, which is not consistent with standard gameplay, and tries to force them to violate a rule.", "ruleId": "G210", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_54", "description": "A robot positions itself exactly where an opponent has to cross a barrier, so that the opponent has only the option of a prohibited move. The behavior is clearly aimed at forcing the opposing alliance to violate a rule.", "ruleId": "G210", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_55", "description": "A robot plays strong defense by staying between the opponent and its scoring location, which is standard gameplay. The opponent decides on its own to take a foul-prone route and breaks a rule.", "ruleId": "G210", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_56", "description": "A robot drives normally to score FUEL and the opponent crashes into it by accident while turning, which causes the opponent to break a rule.", "ruleId": "G210", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_57", "description": "A driver announces to teammates that they will 'make the other team break a rule', and then drives repeatedly in a way unrelated to scoring or defense to force the opposing alliance into a violation.", "ruleId": "G210", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_58", "description": "A robot defends in a normal way and an opponent ends up with a minor foul because of its own driver's mistake.", "ruleId": "G210", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "clear" },
-    { "id": "inc_59", "description": "A robot blocks a lane in a way that is a bit unusual but also could plausibly be a normal defensive choice, and an opponent robot then breaks a rule trying to get around it. It is not clear whether the aim was to force a violation.", "ruleId": "G210", "expectedViolation": false, "labelSource": "fabricated_draft", "difficulty": "borderline" },
-    { "id": "inc_60", "description": "Two allied robots set up a strategy that is not consistent with standard gameplay and is clearly aimed at forcing the opposing alliance to break a rule, and they repeat it three times.", "ruleId": "G210", "expectedViolation": true, "labelSource": "fabricated_draft", "difficulty": "clear" }
+    {
+      "id": "inc_01",
+      "description": "A robot drives an opponent into the field wall and holds it there, preventing it from moving, for 8 seconds before the match ends that period. The pinned robot cannot move at all during that time.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_02",
+      "description": "A robot pushes an opponent against the wall for about 1 second, then the opponent drives away freely.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_03",
+      "description": "A defender holds an opponent robot against the TOWER structure so it cannot move for 5 seconds before the referee calls it.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_04",
+      "description": "Two robots are in a pushing match in the middle of the field. Both robots keep moving back and forth, and neither is ever prevented from moving, for 10 seconds.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_05",
+      "description": "A robot traps an opponent in a corner by contact so that it cannot move, and keeps the contact for 6 seconds.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_06",
+      "description": "A robot holds an opponent against a field element, preventing its movement, for 2.5 seconds, then releases it.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_07",
+      "description": "A robot prevents an opponent from moving by contact against the wall for 3.4 seconds before backing off.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_08",
+      "description": "A robot pins an opponent against the wall for exactly 3 seconds and then releases it.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_09",
+      "description": "A robot presses an opponent against a field element for 4 seconds, but the opponent keeps slowly sliding along the element the whole time and is never prevented from moving.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_10",
+      "description": "A robot pushes an opponent into a second opponent, so the first opponent is stuck between the other robot and the wall and cannot move for 5 seconds.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_11",
+      "description": "A robot drives alongside an opponent and stays close for 15 seconds without ever touching it.",
+      "ruleId": "G418",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_12",
+      "description": "A robot pins an opponent for 7 seconds. The referee gives a warning and the pinning robot does not release for another 6 seconds.",
+      "ruleId": "G418",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_13",
+      "description": "Well outside its own ALLIANCE ZONE, a robot rams the side of an opponent. Its bumpers hit the opponent's frame inside the opponent's perimeter and break the opponent's drivetrain so it can no longer drive.",
+      "ruleId": "G415",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_14",
+      "description": "Outside its alliance zone, a robot bumps an opponent bumper-to-bumper. Neither robot is damaged and both keep driving normally.",
+      "ruleId": "G415",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_15",
+      "description": "A robot with bumpers fully outside its alliance zone drives its arm into the opponent's bumper mounting and the mounting bracket snaps, so the bumper hangs off.",
+      "ruleId": "G415",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_16",
+      "description": "A robot drives into an opponent hard enough to tip it onto its side. The contact was on the opponent's bumper and the opponent's frame was not damaged, and the opponent was able to recover and keep driving.",
+      "ruleId": "G415",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_17",
+      "description": "A robot launches a held FUEL by hand-feeding it into its shooter, and the FUEL accidentally bounces off an opponent's bumper. No damage occurs.",
+      "ruleId": "G415",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_18",
+      "description": "A robot in the middle of the field extends an intake into the space above an opponent's frame perimeter and crushes the opponent's shooter, making it unable to shoot.",
+      "ruleId": "G415",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_19",
+      "description": "A robot that is partly inside its own ALLIANCE ZONE, with its bumpers not completely outside it, collides with an opponent that is entering the zone and damages the opponent's arm.",
+      "ruleId": "G415",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_20",
+      "description": "A robot fully outside its alliance zone drives into an opponent that is stopped, hits inside the opponent's robot perimeter, and the opponent's electronics board cracks so the opponent cannot move for the rest of the match.",
+      "ruleId": "G415",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_21",
+      "description": "An opponent drives into a robot first at high speed. Both robots' bumpers meet, and the defending robot is only pushed backwards without any damage.",
+      "ruleId": "G415",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_22",
+      "description": "With 20 seconds left in the match, an opponent robot is climbing its TOWER. A robot from the other alliance drives into it, and the climbing robot is jolted.",
+      "ruleId": "G420",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_23",
+      "description": "With 90 seconds left in the match, a robot bumps into an opponent robot that is touching its TOWER while hanging around the base.",
+      "ruleId": "G420",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_24",
+      "description": "With 10 seconds left, an opponent robot that is in contact with its TOWER drives into a robot of the other alliance, and the opponent started the contact.",
+      "ruleId": "G420",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_25",
+      "description": "With 45 seconds left in the match, a robot pushes an opponent that is hanging on its TOWER level.",
+      "ruleId": "G420",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_26",
+      "description": "With 29 seconds left in the match, a robot touches an opponent that is in contact with its TOWER.",
+      "ruleId": "G420",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_27",
+      "description": "With 31 seconds left in the match, a robot touches an opponent that is in contact with its TOWER.",
+      "ruleId": "G420",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_28",
+      "description": "With 15 seconds left in the match, a robot throws a FUEL that bounces off an opponent robot that is in contact with its TOWER.",
+      "ruleId": "G420",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_29",
+      "description": "With 12 seconds left in the match, an opponent robot is driving across the field and has no contact with its TOWER. A robot from the other alliance bumps it.",
+      "ruleId": "G420",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_30",
+      "description": "With 5 seconds left, a robot pushes another robot of an opponent alliance, which is touching its own TOWER, off the TOWER.",
+      "ruleId": "G420",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_31",
+      "description": "Two robots of the same alliance park side by side across the only lane to the opponent's scoring area and hold position for 20 seconds, so that no opposing robot can get through.",
+      "ruleId": "G419",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_32",
+      "description": "One robot sits in the NEUTRAL ZONE for a while, and the opponents drive around it with plenty of space.",
+      "ruleId": "G419",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_33",
+      "description": "Three robots of one alliance coordinate to seal off every FUEL source of the opponents' side so that no opposing robot can collect any FUEL.",
+      "ruleId": "G419",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_34",
+      "description": "Two robots of one alliance end up near each other in the middle of the field while chasing the same FUEL. They are not coordinating and the opponents can still reach every area.",
+      "ruleId": "G419",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_35",
+      "description": "Two allied robots appear to be working together to block one of two paths to the opposing scoring area for about 10 seconds, while opponents keep using the other path.",
+      "ruleId": "G419",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_36",
+      "description": "Two allied robots appear to the referee to be working together and close off the only access to a major element of play, but only for a very brief moment of about 1 second.",
+      "ruleId": "G419",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_37",
+      "description": "A single robot blocks one opponent in a corner. Its alliance partner is on the other side of the field scoring.",
+      "ruleId": "G419",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_38",
+      "description": "Two allied robots work together and seal the only entrance to the opposing alliance's loading area, and keep it sealed for 12 seconds.",
+      "ruleId": "G419",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_39",
+      "description": "A robot raises a mechanism 10 inches beyond the vertical expansion limit during the match.",
+      "ruleId": "G413",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_40",
+      "description": "A robot extends an arm well past the horizontal expansion limit, a clearly visible amount farther than the legal extension, to reach a FUEL.",
+      "ruleId": "G413",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_41",
+      "description": "A robot extends its intake within the horizontal and vertical expansion limits to pick up FUEL.",
+      "ruleId": "G413",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_42",
+      "description": "A robot stays in its starting configuration and drives around the field the entire match without extending anything.",
+      "ruleId": "G413",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_43",
+      "description": "A robot's arm swings up during the match, and from the stands it looks like it might go above the vertical limit, but the referee measures it at just inside the limit.",
+      "ruleId": "G413",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_44",
+      "description": "A robot's climbing hook extends sideways beyond the horizontal expansion limit for about a second before it retracts.",
+      "ruleId": "G413",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_45",
+      "description": "A human player throws FUEL into the FIELD through the CHUTE.",
+      "ruleId": "G425",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_46",
+      "description": "A human player tosses FUEL over the top of the ALLIANCE WALL from the OUTPOST AREA.",
+      "ruleId": "G425",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_47",
+      "description": "A human player places FUEL through the bottom opening in the OUTPOST.",
+      "ruleId": "G425",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_48",
+      "description": "A human player climbs onto the barrier and drops FUEL into the FIELD from a spot that is neither the CHUTE, the OUTPOST opening, nor over the ALLIANCE WALL from the OUTPOST AREA.",
+      "ruleId": "G425",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_49",
+      "description": "A DRIVER reaches over the side of the field and rolls a FUEL onto the carpet from the audience side of the field.",
+      "ruleId": "G425",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_50",
+      "description": "A human player throws FUEL over the top of the ALLIANCE WALL, but is standing outside the OUTPOST AREA, in the alliance station beside it.",
+      "ruleId": "G425",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_51",
+      "description": "A DRIVER, not a human player, feeds a FUEL through the bottom opening in the OUTPOST.",
+      "ruleId": "G425",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_52",
+      "description": "A human player hands a FUEL through the CHUTE, and it falls onto the field. Separately a robot picked up another FUEL from the floor and scored it.",
+      "ruleId": "G425",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_53",
+      "description": "A team parks a robot against the opposing alliance's only FUEL path, clearly with the goal of making the opponents use a rule-breaking route, which is not consistent with standard gameplay, and tries to force them to violate a rule.",
+      "ruleId": "G210",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_54",
+      "description": "A robot positions itself exactly where an opponent has to cross a barrier, so that the opponent has only the option of a prohibited move. The behavior is clearly aimed at forcing the opposing alliance to violate a rule.",
+      "ruleId": "G210",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_55",
+      "description": "A robot plays strong defense by staying between the opponent and its scoring location, which is standard gameplay. The opponent decides on its own to take a foul-prone route and breaks a rule.",
+      "ruleId": "G210",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_56",
+      "description": "A robot drives normally to score FUEL and the opponent crashes into it by accident while turning, which causes the opponent to break a rule.",
+      "ruleId": "G210",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_57",
+      "description": "A driver announces to teammates that they will 'make the other team break a rule', and then drives repeatedly in a way unrelated to scoring or defense to force the opposing alliance into a violation.",
+      "ruleId": "G210",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_58",
+      "description": "A robot defends in a normal way and an opponent ends up with a minor foul because of its own driver's mistake.",
+      "ruleId": "G210",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    },
+    {
+      "id": "inc_59",
+      "description": "A robot blocks a lane in a way that is a bit unusual but also could plausibly be a normal defensive choice, and an opponent robot then breaks a rule trying to get around it. It is not clear whether the aim was to force a violation.",
+      "ruleId": "G210",
+      "expectedViolation": false,
+      "labelSource": "fabricated_draft",
+      "difficulty": "borderline"
+    },
+    {
+      "id": "inc_60",
+      "description": "Two allied robots set up a strategy that is not consistent with standard gameplay and is clearly aimed at forcing the opposing alliance to break a rule, and they repeat it three times.",
+      "ruleId": "G210",
+      "expectedViolation": true,
+      "labelSource": "fabricated_draft",
+      "difficulty": "clear"
+    }
   ]
 }
