@@ -1,9 +1,9 @@
 {
   "experiment": "usage",
-  "createdTs": "2026-11-14T20:21:11.940Z",
+  "createdTs": "2026-11-14T20:52:09.330Z",
   "isMock": false,
-  "gitCommit": "8898c8b543a5-dirty",
-  "simHash": "2cc2e7f621722c58",
+  "gitCommit": "218ce58ef6da-dirty",
+  "simHash": "7160952d70dcba39",
   "config": {
     "ledger": {
       "_status": "TUNABLE",
@@ -14,13 +14,13 @@
   "rows": [
     {
       "tool": "drex",
-      "calls": 1077,
-      "inputTokens": 2007582,
-      "outputTokens": 1089600,
-      "costUsd": 0.06022745999999998,
-      "latencyMs": 307149.2845000005,
+      "calls": 6084,
+      "inputTokens": 9608378,
+      "outputTokens": 4638840,
+      "costUsd": 0.2882513400000016,
+      "latencyMs": 1820013.335300006,
       "counts": {
-        "questions": 1690
+        "questions": 7470
       },
       "byPurpose": {
         "key_check": 1,
@@ -29,60 +29,71 @@
         "archetype_classification": 36,
         "rule_judge": 42,
         "smoke": 81,
-        "agent_match": 870,
-        "agent_match_failed": 7,
+        "agent_match": 2437,
+        "agent_match_failed": 10,
         "decision_failed": 1,
-        "decision": 14
+        "decision": 42,
+        "bench_scenarios": 129,
+        "bench_scenarios_failed": 6,
+        "bench_live": 3245,
+        "bench_live_failed": 11,
+        "warmup": 2,
+        "bench_batch": 16
       }
     },
     {
       "tool": "ndi",
-      "calls": 89,
+      "calls": 90,
       "inputTokens": 0,
       "outputTokens": 0,
-      "costUsd": 7.25249999999998,
-      "latencyMs": 631630.9836000004,
+      "costUsd": 7.8334999999999795,
+      "latencyMs": 651515.4381000004,
       "counts": {
-        "docs": 89,
-        "pages": 607
+        "docs": 90,
+        "pages": 773
       },
       "byPurpose": {
         "rules_extract": 1,
         "probe": 1,
         "conduct_rules_extract": 1,
         "scouting_extract": 27,
-        "page_extract": 59
+        "page_extract": 59,
+        "manual_parse": 1
       }
     },
     {
       "tool": "intern",
-      "calls": 4,
-      "inputTokens": 387045,
-      "outputTokens": 17035,
-      "costUsd": 0.04979797999999999,
-      "latencyMs": 1223187,
+      "calls": 5,
+      "inputTokens": 506247,
+      "outputTokens": 27102,
+      "costUsd": 0.09078533,
+      "latencyMs": 1445167,
       "counts": {
-        "sessions": 4,
-        "system1Judgments": 98,
-        "turns": 36
+        "sessions": 5,
+        "system1Judgments": 110,
+        "turns": 42
       },
       "byPurpose": {
         "trial": 2,
-        "coding_scouting_generator": 2
+        "coding_scouting_generator": 2,
+        "strategy_lab": 1
       }
     },
     {
       "tool": "deepinfra",
-      "calls": 299,
-      "inputTokens": 472385,
-      "outputTokens": 7957,
-      "costUsd": 0.23644425000000013,
-      "latencyMs": 264461.03159999993,
+      "calls": 2175,
+      "inputTokens": 3485235,
+      "outputTokens": 82014,
+      "costUsd": 1.8129404700031642,
+      "latencyMs": 2400643.6645999965,
       "counts": {},
       "byPurpose": {
         "key_check": 1,
         "smoke": 42,
-        "agent_match": 256
+        "agent_match": 418,
+        "bench_scenarios": 58,
+        "bench_live": 1650,
+        "bench_batch": 6
       }
     },
     {
@@ -114,18 +125,18 @@
     }
   ],
   "summary": {
-    "generatedTs": "2026-11-14T20:21:11.940Z",
-    "totalCalls": 1542,
-    "totalCostUsd": 7.598969690000005,
+    "generatedTs": "2026-11-14T20:52:09.330Z",
+    "totalCalls": 8427,
+    "totalCostUsd": 10.02547714000317,
     "byTool": {
       "drex": {
-        "calls": 1077,
-        "inputTokens": 2007582,
-        "outputTokens": 1089600,
-        "costUsd": 0.06022745999999998,
-        "latencyMs": 307149.2845000005,
+        "calls": 6084,
+        "inputTokens": 9608378,
+        "outputTokens": 4638840,
+        "costUsd": 0.2882513400000016,
+        "latencyMs": 1820013.335300006,
         "counts": {
-          "questions": 1690
+          "questions": 7470
         },
         "byPurpose": {
           "key_check": 1,
@@ -134,57 +145,68 @@
           "archetype_classification": 36,
           "rule_judge": 42,
           "smoke": 81,
-          "agent_match": 870,
-          "agent_match_failed": 7,
+          "agent_match": 2437,
+          "agent_match_failed": 10,
           "decision_failed": 1,
-          "decision": 14
+          "decision": 42,
+          "bench_scenarios": 129,
+          "bench_scenarios_failed": 6,
+          "bench_live": 3245,
+          "bench_live_failed": 11,
+          "warmup": 2,
+          "bench_batch": 16
         }
       },
       "ndi": {
-        "calls": 89,
+        "calls": 90,
         "inputTokens": 0,
         "outputTokens": 0,
-        "costUsd": 7.25249999999998,
-        "latencyMs": 631630.9836000004,
+        "costUsd": 7.8334999999999795,
+        "latencyMs": 651515.4381000004,
         "counts": {
-          "docs": 89,
-          "pages": 607
+          "docs": 90,
+          "pages": 773
         },
         "byPurpose": {
           "rules_extract": 1,
           "probe": 1,
           "conduct_rules_extract": 1,
           "scouting_extract": 27,
-          "page_extract": 59
+          "page_extract": 59,
+          "manual_parse": 1
         }
       },
       "intern": {
-        "calls": 4,
-        "inputTokens": 387045,
-        "outputTokens": 17035,
-        "costUsd": 0.04979797999999999,
-        "latencyMs": 1223187,
+        "calls": 5,
+        "inputTokens": 506247,
+        "outputTokens": 27102,
+        "costUsd": 0.09078533,
+        "latencyMs": 1445167,
         "counts": {
-          "sessions": 4,
-          "system1Judgments": 98,
-          "turns": 36
+          "sessions": 5,
+          "system1Judgments": 110,
+          "turns": 42
         },
         "byPurpose": {
           "trial": 2,
-          "coding_scouting_generator": 2
+          "coding_scouting_generator": 2,
+          "strategy_lab": 1
         }
       },
       "deepinfra": {
-        "calls": 299,
-        "inputTokens": 472385,
-        "outputTokens": 7957,
-        "costUsd": 0.23644425000000013,
-        "latencyMs": 264461.03159999993,
+        "calls": 2175,
+        "inputTokens": 3485235,
+        "outputTokens": 82014,
+        "costUsd": 1.8129404700031642,
+        "latencyMs": 2400643.6645999965,
         "counts": {},
         "byPurpose": {
           "key_check": 1,
           "smoke": 42,
-          "agent_match": 256
+          "agent_match": 418,
+          "bench_scenarios": 58,
+          "bench_live": 1650,
+          "bench_batch": 6
         }
       },
       "keenable": {
