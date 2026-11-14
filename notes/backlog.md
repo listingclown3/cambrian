@@ -24,6 +24,18 @@ Things that are known to be open. Check each off, or cut the claim that depends 
       in an active hub, tower level 1 points, foul points). Running NDI Ground on them would
       raise `ndi_rules_verified_pct` above 68%.
 
+## Data quality to review
+
+- [ ] **Incident labels.** The 60 rule-judge incidents are fabricated and their labels are an AI
+      draft. A human must confirm them (start with inc_14, inc_16, inc_35, inc_28) before the
+      write-up says "accuracy"; until then it is "agreement with draft labels".
+- [ ] **Archetype skew.** Drex classified 11 of the 15 real robots as turret_sotm, and two
+      classifications are low confidence (254 at 0.41, 6901 at 0.33). Check a few by hand.
+- [ ] **Strategy notes.** Some of the 71 notes come from 2020 and 2022 game pages, and a few
+      describe robot features rather than match strategy. Skim before feeding them to the lab.
+- [ ] **Real-team profiles are mostly assumptions.** Each has 3 to 10 fields read from a page;
+      every other field is the archetype template value. Say so wherever they are shown.
+
 ## Description (description.txt)
 
 - [ ] Run `pnpm headline && pnpm describe`; every `{{placeholder}}` it lists as not measured
