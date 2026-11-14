@@ -44,7 +44,8 @@
     "ingest:scouting": "tsx src/ingest/scoutingExtract.ts",
     "intern:task": "tsx src/lab/internTask.ts",
     "match": "tsx src/exec/playMatch.ts",
-    "ledger:merge": "node scripts/merge-ledgers.mjs"
+    "ledger:merge": "node scripts/merge-ledgers.mjs",
+    "deck": "node scripts/deck-numbers.mjs"
   },
   "dependencies": {
     "@duckdb/node-api": "2.0.0-r.1",
