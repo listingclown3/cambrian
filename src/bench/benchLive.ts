@@ -44,11 +44,13 @@ const PARTS: Record<string, { spec: string | null; timings: TimingMode[]; decide
   giant_paused: { spec: "deepinfra", timings: ["paused"], decider: "deepinfra" },
 };
 
-async function playPart(part: string, n: number, parallel: number) {
+async function playPart(part: string, n: number, parallel: number, start = 0) {
   const def = PARTS[part];
   if (!def) throw new Error(`unknown part ${part}; known: ${Object.keys(PARTS).join(", ")}`);
   const league = loadLeague();
-  const seeds = cfg.seeds.eval.slice(0, n);
+  // --start k: play eval seeds k..n-1 only and keep the rows already recorded for the other seeds
+  const seeds = cfg.seeds.eval.slice(start, n);
+  const previous: any = start > 0 ? readJson("results", `bench_live_${part}.json`) : null;
   const limit = pLimit(parallel);
   const rows: Record<string, unknown>[] = [];
   const jobs = def.timings.flatMap((timing) =>
@@ -84,6 +86,7 @@ async function playPart(part: string, n: number, parallel: number) {
           costUsd: round(metas.reduce((k, m) => k + m.costUsd, 0), 6),
           models: [...new Set(metas.map((m) => m.model))],
           isMock: metas.some((m) => m.isMock),
+          topChosenLabels: Object.entries(s.decisions.flatMap((d) => d.choices.map((c) => c.chosenLabel ?? "(none)")).reduce<Record<string, number>>((acc, l) => ((acc[l] = (acc[l] ?? 0) + 1), acc), {})).sort((a, b) => b[1] - a[1]).slice(0, 6),
         };
         rows.push(row);
         console.log(`[bench:live] ${part} ${timing} seed ${seed}: margin ${row.margin} (${row.scoreBlue}-${row.scoreRed}), ${row.robotDecisions} robot decisions in ${row.requests} requests, ${row.fallbacks} fallbacks, charged ${row.chargedS} s, wall ${row.wallS} s, $${row.costUsd}`);
@@ -91,6 +94,7 @@ async function playPart(part: string, n: number, parallel: number) {
     ),
   );
   await Promise.all(jobs);
+  if (previous) rows.push(...previous.rows.filter((r: any) => !seeds.includes(r.seed)));
   rows.sort((a, b) => String(a.timing).localeCompare(String(b.timing)) || (a.seed as number) - (b.seed as number));
   writeResults({
     experiment: `bench_live_${part}`,
@@ -98,7 +102,7 @@ async function playPart(part: string, n: number, parallel: number) {
     isMock: ENGINE_IS_STUB || rows.some((r) => r.isMock),
     gitCommit: gitCommit(),
     simHash: simHash(cfg),
-    config: { part, spec: def.spec, reasoning: def.decider === "deepinfra" ? "off" : null, seeds: { dev: [], eval: seeds }, parallel, realtimeLatencyCharging: cfg.realtimeLatencyCharging, lineup: "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle" },
+    config: { part, spec: def.spec, reasoning: def.decider === "deepinfra" ? "off" : null, seeds: { dev: [], eval: [...new Set(rows.map((r) => r.seed as number))].sort() }, parallel, realtimeLatencyCharging: cfg.realtimeLatencyCharging, lineup: "drawLineup(league, `live:${seed}`): blue = decider, red = scripted basic_cycle" },
     rows,
     summary: {},
   });
@@ -141,6 +145,13 @@ function assemble() {
     const diffs = [...d.keys()].filter((s) => g.has(s)).map((s) => d.get(s)! - g.get(s)!);
     if (diffs.length) paired[timing] = { n: diffs.length, mean_drex_minus_giant: round(mean(diffs), 2), ci95: round(ci95(diffs), 2) };
   }
+  // paired against the scripted-vs-scripted control on the same seed (same line-up)
+  const control = new Map(group("scripted", "paused").map((r) => [r.seed, r.margin]));
+  const vsScripted: Record<string, any> = {};
+  for (const [decider, timing] of [["drex", "realtime"], ["drex", "paused"], ["deepinfra", "realtime"], ["deepinfra", "paused"]] as const) {
+    const diffs = group(decider, timing).filter((r) => control.has(r.seed)).map((r) => r.margin - control.get(r.seed)!);
+    if (diffs.length) vsScripted[`${decider}_${timing}`] = { n: diffs.length, mean_uplift_vs_scripted: round(mean(diffs), 2), ci95: round(ci95(diffs), 2) };
+  }
   // thinking-on: a CALCULATION, not a measurement
   const bs = readJson("results", "bench_scenarios.json");
   const thinkP50 = bs?.summary?.deciders?.deepinfra_think?.latency_p50_ms ?? null;
@@ -169,11 +180,11 @@ function assemble() {
       simHashesConsistent: hashes.length === 1,
     },
     rows,
-    summary: { conditions: conds, paired_drex_minus_giant: paired, giant_reasoning_on_match_estimate: thinkCalc },
+    summary: { conditions: conds, paired_drex_minus_giant: paired, paired_vs_scripted_control: vsScripted, giant_reasoning_on_match_estimate: thinkCalc },
   });
   console.log(`[bench:live] assembled ${rows.length} matches -> ${file}`);
-  console.log(JSON.stringify({ conds, paired, thinkCalc }, null, 1));
+  console.log(JSON.stringify({ conds, paired, vsScripted, thinkCalc }, null, 1));
 }
 
 if (process.argv.includes("--assemble")) assemble();
-else await playPart(arg("part", "drex"), Number(arg("n", "5")), Number(arg("parallel", "1")));
+else await playPart(arg("part", "drex"), Number(arg("n", "5")), Number(arg("parallel", "1")), Number(arg("start", "0")));
