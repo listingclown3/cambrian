@@ -20,7 +20,7 @@
       "pYes": 0.9990328381118274,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_02",
@@ -31,7 +31,7 @@
       "pYes": 0.0009892531147941465,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_03",
@@ -42,7 +42,7 @@
       "pYes": 0.9976144083186814,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_04",
@@ -53,7 +53,7 @@
       "pYes": 0.0003744615438653495,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_05",
@@ -64,7 +64,7 @@
       "pYes": 0.9963391675943982,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_06",
@@ -75,7 +75,7 @@
       "pYes": 0.0005752528276951894,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_07",
@@ -86,7 +86,7 @@
       "pYes": 0.9956166336246469,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_08",
@@ -97,7 +97,7 @@
       "pYes": 0.0020836300046752367,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_09",
@@ -108,7 +108,7 @@
       "pYes": 0.002280375078111657,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_10",
@@ -119,7 +119,7 @@
       "pYes": 0.9982207862565482,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_11",
@@ -130,7 +130,7 @@
       "pYes": 0.0008445889182168818,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_12",
@@ -141,7 +141,7 @@
       "pYes": 0.9970777109047599,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_13",
@@ -152,7 +152,7 @@
       "pYes": 0.9941279485406673,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_14",
@@ -163,7 +163,7 @@
       "pYes": 0.01075801866169765,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_15",
@@ -174,7 +174,7 @@
       "pYes": 0.9882358192959189,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_16",
@@ -185,7 +185,7 @@
       "pYes": 0.02984636118492448,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_17",
@@ -196,7 +196,7 @@
       "pYes": 0.06222383050448397,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_18",
@@ -207,7 +207,7 @@
       "pYes": 0.7210086584091187,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_19",
@@ -218,7 +218,7 @@
       "pYes": 0.009837047041179799,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_20",
@@ -229,7 +229,7 @@
       "pYes": 0.994127945763106,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_21",
@@ -240,7 +240,7 @@
       "pYes": 0.010059697122549576,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_22",
@@ -251,7 +251,7 @@
       "pYes": 0.9945108714553467,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_23",
@@ -262,7 +262,7 @@
       "pYes": 0.006719337925942088,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_24",
@@ -273,7 +273,7 @@
       "pYes": 0.9674210204629121,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_25",
@@ -284,7 +284,7 @@
       "pYes": 0.005489131323284573,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_26",
@@ -295,7 +295,7 @@
       "pYes": 0.9901629483480148,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_27",
@@ -306,7 +306,7 @@
       "pYes": 0.008600024266167797,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_28",
@@ -317,7 +317,7 @@
       "pYes": 0.09837334004600853,
       "judgedViolation": false,
       "agrees": false,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_29",
@@ -328,7 +328,7 @@
       "pYes": 0.002179789717999128,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_30",
@@ -339,7 +339,7 @@
       "pYes": 0.9931280816428529,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_31",
@@ -350,7 +350,7 @@
       "pYes": 0.9968732882793649,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_32",
@@ -361,7 +361,7 @@
       "pYes": 0.0021797885563835735,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_33",
@@ -372,7 +372,7 @@
       "pYes": 0.9871367795296173,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_34",
@@ -383,7 +383,7 @@
       "pYes": 0.001297142322808518,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_35",
@@ -394,7 +394,7 @@
       "pYes": 0.10245699301105696,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_36",
@@ -405,7 +405,7 @@
       "pYes": 0.9232047452328822,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_37",
@@ -416,7 +416,7 @@
       "pYes": 0.0015538846277970313,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_38",
@@ -427,7 +427,7 @@
       "pYes": 0.9938580319743004,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_39",
@@ -438,7 +438,7 @@
       "pYes": 0.9882358248181168,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_40",
@@ -449,7 +449,7 @@
       "pYes": 0.9839263888274785,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_41",
@@ -460,7 +460,7 @@
       "pYes": 0.00132676121723459,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_42",
@@ -471,7 +471,7 @@
       "pYes": 0.0009455632598418398,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_43",
@@ -482,7 +482,7 @@
       "pYes": 0.0020836300046752367,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_44",
@@ -493,7 +493,7 @@
       "pYes": 0.08345663547515869,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_45",
@@ -504,7 +504,7 @@
       "pYes": 0.002131167221319311,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_46",
@@ -515,7 +515,7 @@
       "pYes": 0.002552566437998008,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_47",
@@ -526,7 +526,7 @@
       "pYes": 0.002280373916613098,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_48",
@@ -537,7 +537,7 @@
       "pYes": 0.9994624467686172,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_49",
@@ -548,7 +548,7 @@
       "pYes": 0.993429868292367,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_50",
@@ -559,7 +559,7 @@
       "pYes": 0.996170499215825,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_51",
@@ -570,7 +570,7 @@
       "pYes": 0.003916713514909792,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_52",
@@ -581,7 +581,7 @@
       "pYes": 0.052469635876687425,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_53",
@@ -592,7 +592,7 @@
       "pYes": 0.9937184822316255,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_54",
@@ -603,7 +603,7 @@
       "pYes": 0.9952037817490387,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_55",
@@ -614,7 +614,7 @@
       "pYes": 0.0014197308542854275,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_56",
@@ -625,7 +625,7 @@
       "pYes": 0.0015893566691355708,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_57",
@@ -636,7 +636,7 @@
       "pYes": 0.9965783886376831,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_58",
@@ -647,7 +647,7 @@
       "pYes": 0.0015893559717537497,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_59",
@@ -658,7 +658,7 @@
       "pYes": 0.03403452500045923,
       "judgedViolation": false,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     },
     {
       "id": "inc_60",
@@ -669,7 +669,7 @@
       "pYes": 0.9963391692182462,
       "judgedViolation": true,
       "agrees": true,
-      "labelSource": "fabricated_draft"
+      "labelSource": "human_verified"
     }
   ],
   "summary": {
@@ -683,10 +683,10 @@
     "medianLatencyMsPerCall": 233,
     "questionsPerCall": 8.6,
     "model": "drex-max-v1.1",
-    "metricName": "agreement with labels reviewed against the full TU22 manual (AI-assisted review)",
-    "labels_review": "ai_assisted_full_manual",
-    "labels_human_verified": false,
-    "labelsConfirmedByHuman": false,
-    "caveat": "labels were reviewed against the full manual with AI assistance; no person is confirmed to have verified them, so this is agreement, not accuracy"
+    "metricName": "accuracy vs human-reviewed labels",
+    "labels_review": "human",
+    "labels_human_verified": true,
+    "labelsConfirmedByHuman": true,
+    "caveat": "Incidents are fabricated test cases; labels were reviewed by a person. Label status updated after the owner's confirmation; the Drex answers are from the run recorded in createdTs and were not re-asked."
   }
 }
