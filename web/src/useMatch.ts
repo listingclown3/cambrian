@@ -1,74 +1,76 @@
-/** WebSocket match stream hook (owner: P4). Keeps the latest state, a short decision ticker and robot trails. */
+/**
+ * WebSocket match stream hook (owner: P4). Incoming messages are queued and applied at most once per
+ * animation frame (about 15 per second), so a fast stream never causes more than one React render per frame.
+ */
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { MatchState } from "../../src/contracts";
-import type { DecisionNote, ServerMessage } from "../../src/server/protocol";
+import type { ServerMessage, SlimStatic } from "../../src/server/protocol";
+import { EMPTY_VIEW, reduce, type MatchView } from "./matchReducer";
 
-export type Hello = Extract<ServerMessage, { type: "hello" }>;
-export interface TickerRow extends DecisionNote {
-  n: number;
-}
-export interface MatchView {
-  status: "idle" | "connecting" | "running" | "finished" | "error";
-  hello: Hello | null;
-  state: MatchState | null;
-  ticker: TickerRow[];
-  thinking: { robotId: string; untilS: number }[];
-  stats: { decisions: number; avgLatencyMs: number; chargedS: number };
-  trails: Record<string, { x: number; y: number }[]>;
-  final: { red: number; blue: number } | null;
-  /** Server-reported reason when status is "error". */
-  error: string | null;
-}
-const EMPTY: MatchView = { status: "idle", hello: null, state: null, ticker: [], thinking: [], stats: { decisions: 0, avgLatencyMs: 0, chargedS: 0 }, trails: {}, final: null, error: null };
-const TRAIL = 36;
+export type { Hello, MatchView, TickerRow } from "./matchReducer";
+const FLUSH_MS = 66;
 
 /** Returns the view plus start(path) and stop(). `path` is like "/ws/match?seed=3". */
 export function useMatch(): MatchView & { start: (path: string) => void; stop: () => void } {
-  const [view, setView] = useState<MatchView>(EMPTY);
+  const [view, setView] = useState<MatchView>(EMPTY_VIEW);
   const sock = useRef<WebSocket | null>(null);
-  const counter = useRef(0);
+  const counter = useRef({ n: 0 });
+  const statics = useRef<{ current: SlimStatic | null }>({ current: null });
+  const queue = useRef<ServerMessage[]>([]);
+  const raf = useRef(0);
+  const lastFlush = useRef(0);
+  const live = useRef<MatchView>(EMPTY_VIEW);
+
+  const commit = useCallback((v: MatchView) => {
+    live.current = v;
+    setView(v);
+  }, []);
+
+  const flush = useCallback(() => {
+    raf.current = 0;
+    const now = performance.now();
+    if (now - lastFlush.current < FLUSH_MS) {
+      raf.current = requestAnimationFrame(flush);
+      return;
+    }
+    lastFlush.current = now;
+    const msgs = queue.current.splice(0);
+    if (msgs.length === 0) return;
+    let v = live.current;
+    for (const m of msgs) v = reduce(v, m, counter.current, statics.current);
+    commit(v);
+  }, [commit]);
 
   const stop = useCallback(() => {
     const s = sock.current;
     sock.current = null;
     s?.close();
+    queue.current = [];
+    if (raf.current) cancelAnimationFrame(raf.current);
+    raf.current = 0;
   }, []);
 
   const start = useCallback(
     (path: string) => {
       stop();
-      counter.current = 0;
-      setView({ ...EMPTY, status: "connecting" });
+      counter.current = { n: 0 };
+      statics.current = { current: null };
+      commit({ ...EMPTY_VIEW, status: "connecting" });
       const ws = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}${path}`);
       sock.current = ws;
-      ws.onerror = () => sock.current === ws && setView((v) => ({ ...v, status: "error", error: v.error ?? "server not reachable" }));
-      ws.onclose = () => sock.current === ws && setView((v) => (v.status === "running" || v.status === "connecting" ? { ...v, status: v.final ? "finished" : "error" } : v));
+      ws.onerror = () => sock.current === ws && commit({ ...live.current, status: "error", error: live.current.error ?? "server not reachable" });
+      ws.onclose = () => {
+        if (sock.current !== ws) return;
+        let v = live.current;
+        for (const m of queue.current.splice(0)) v = reduce(v, m, counter.current, statics.current);
+        commit(v.status === "running" || v.status === "connecting" ? { ...v, status: v.final ? "finished" : "error" } : v);
+      };
       ws.onmessage = (raw) => {
         if (sock.current !== ws) return;
-        const m = JSON.parse(raw.data as string) as ServerMessage;
-        setView((v) => {
-          if (m.type === "hello") return { ...EMPTY, status: "running", hello: m };
-          if (m.type === "error") return { ...v, status: "error", error: m.message };
-          if (m.type === "end") return { ...v, status: "finished", final: m.score };
-          const trails = { ...v.trails };
-          for (const r of m.state.robots) {
-            const t = (trails[r.id] ?? []).slice(-(TRAIL - 1));
-            t.push({ x: r.pose.x, y: r.pose.y });
-            trails[r.id] = t;
-          }
-          const fresh = m.decisions.map((d) => ({ ...d, n: counter.current++ }));
-          return {
-            ...v,
-            state: m.state,
-            trails,
-            ticker: fresh.length ? [...fresh.reverse(), ...v.ticker].slice(0, 80) : v.ticker,
-            thinking: m.thinking ?? [],
-            stats: m.stats ?? { decisions: v.stats.decisions + m.decisions.length, avgLatencyMs: 0, chargedS: 0 },
-          };
-        });
+        queue.current.push(JSON.parse(raw.data as string) as ServerMessage);
+        if (!raf.current) raf.current = requestAnimationFrame(flush);
       };
     },
-    [stop],
+    [stop, commit, flush],
   );
   useEffect(() => stop, [stop]);
   return { ...view, start, stop };
