@@ -5,9 +5,9 @@
  * runs/<runId>/events.jsonl so it can be replayed with P. Real calls land in the usage ledger.
  */
 import { stepLabel, type Alliance, type Config, type DecisionMeta, type DecisionRequest, type MatchState } from "../contracts";
-import { AgentController, actionQuestionId, getProvider, type ControllerDecision } from "../decide";
-import { engine } from "../engine";
-import { basicCyclePolicy, demoRobots } from "../exec";
+import { AgentController, actionQuestionId, getProvider, type ControllerDecision } from "../search/steer";
+import { engine } from "../world/worlds/rebuilt/engine";
+import { basicCyclePolicy, demoRobots } from "../world/worlds/rebuilt/exec";
 import { RunLogger, buildManifest, newRunId } from "../util/runLog";
 import type { DecisionNote, ServerMessage } from "./protocol";
 import { slimFrame, slimStatic } from "./slim";

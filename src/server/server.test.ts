@@ -1,4 +1,4 @@
-import { ENGINE_IS_STUB } from "../engine";
+import { ENGINE_IS_STUB } from "../world/worlds/rebuilt/engine";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { HEADLINE_KEYS, MatchStateSchema } from "../contracts";

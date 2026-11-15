@@ -2,7 +2,7 @@
 /**
  * node scripts/apply-field-patch.mjs [--dry]
  *
- * Applies games/rebuilt-2026/config-patch.json (official field data gathered by src/field) to
+ * Applies games/rebuilt-2026/config-patch.json (official field data gathered by src/world/worlds/rebuilt/field) to
  * config/default.json. Rules:
  *   - a scalar constant (field.lengthM, ...) is replaced by the patch's { value, status, source }
  *   - coordinates inside a grouped constant (field.blueElements.hub.x, field.blueLaneY.left_bump)

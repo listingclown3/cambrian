@@ -2,7 +2,7 @@
 /**
  * node scripts/run-live-check.mjs --seeds 9001,9002,... [--deciders drex,deepinfra,random] [--record-seed 9001]
  *
- * Plays real-time matches in "decider proposes, simulator checks" mode (pnpm match:agent
+ * Plays real-time matches in "decider proposes, simulator checks" mode (pnpm steer:match
  * --check rollouts): blue is driven by the decider, red by the scripted policy, on EVAL seeds,
  * paired across deciders, with the scripted-vs-scripted score on the same seeds as the reference.
  * `random` is the control: a random proposer with the same check, which shows how much of the
@@ -114,7 +114,7 @@ function write(done) {
         gitCommit: git("rev-parse", "--short=12", "HEAD"),
         simHash: headlineFile?.simHash ?? "see gitCommit",
         config: {
-          mode: "decider proposes, simulator checks (pnpm match:agent --check rollouts): candidates are the decider's pick, the scripted role pick and, when the decider reports probabilities, its second pick; each scored with micro-rollouts; ties keep the decider's pick",
+          mode: "decider proposes, simulator checks (pnpm steer:match --check rollouts): candidates are the decider's pick, the scripted role pick and, when the decider reports probabilities, its second pick; each scored with micro-rollouts; ties keep the decider's pick",
           timing: "realtime: provider latency AND the check's wall time are charged to the sim clock, for every decider",
           blue: "driven by the decider",
           red: "scripted archetype policy",
@@ -150,7 +150,7 @@ write(false);
 await Promise.all(
   deciders.map(async (decider) => {
     for (const seed of seeds) {
-      const args = ["-s", "match:agent", "--", "--blue", decider, "--red", "scripted", "--timing", "realtime", "--seed", String(seed), "--check", "rollouts"];
+      const args = ["-s", "steer:match", "--", "--blue", decider, "--red", "scripted", "--timing", "realtime", "--seed", String(seed), "--check", "rollouts"];
       if (seed === recordSeed && decider !== "random") args.push("--record", `recorded-showcase-${decider === "deepinfra" ? "giant" : decider}`);
       const r = await run(args);
       const parsed = parseAgent(r.out);

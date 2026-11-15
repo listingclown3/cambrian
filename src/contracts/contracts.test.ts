@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { engine } from "../engine";
-import { demoRobots } from "../exec";
+import { engine } from "../world/worlds/rebuilt/engine";
+import { demoRobots } from "../world/worlds/rebuilt/exec";
 import { loadConfig } from "../util/config";
 import {
   ACTION_NAMES,

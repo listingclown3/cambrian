@@ -1,5 +1,5 @@
 /**
- * Strategy Lab contract (owner of the implementation: P3, src/lab).
+ * Strategy Lab contract (owner of the implementation: P3, src/search/proposals).
  *
  * System 2 (a large model on DeepInfra, running inside Intern and supervised by Drex) reads the
  * research and proposes strategies; the simulator then tests each one. Proposals arrive as

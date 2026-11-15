@@ -19,5 +19,3 @@ cache/*
 lab/workspace/
 data/research/raw/
 
-# Generated from description.txt by pnpm describe.
-description.filled.txt

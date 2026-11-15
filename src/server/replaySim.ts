@@ -4,8 +4,8 @@
  * frame() does a bounded slice of simulation (one animation frame of work) and returns one slim message.
  */
 import { stepLabel, type Config, type RunEvent } from "../contracts";
-import { engine } from "../engine";
-import { demoRobots } from "../exec";
+import { engine } from "../world/worlds/rebuilt/engine";
+import { demoRobots } from "../world/worlds/rebuilt/exec";
 import type { DecisionNote, ServerMessage } from "./protocol";
 import { slimFrame, slimStatic } from "./slim";
 

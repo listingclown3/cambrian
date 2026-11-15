@@ -10,7 +10,7 @@ export const RunManifestSchema = z.object({
   runId: z.string().min(1),
   /** Git commit of the repo at run time ("uncommitted" when the tree is dirty or not a repo). */
   gitCommit: z.string(),
-  /** Hash of the engine source (src/engine, src/exec, src/contracts) plus the config. */
+  /** Hash of the engine source (src/world/worlds/rebuilt/engine, src/world/worlds/rebuilt/exec, src/contracts) plus the config. */
   simHash: z.string(),
   /** The full config the run used. */
   config: ConfigSchema,

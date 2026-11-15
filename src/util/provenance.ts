@@ -31,12 +31,12 @@ function sourceFiles(dir: string): string[] {
 
 /**
  * Hash of everything that determines simulation behaviour: the source of src/contracts,
- * src/engine and src/exec (tests excluded) plus the config. Two results are comparable only if
+ * src/world/worlds/rebuilt/engine and src/world/worlds/rebuilt/exec (tests excluded) plus the config. Two results are comparable only if
  * their sim hashes match.
  */
 export function simHash(cfg: Config): string {
   const hash = createHash("sha256");
-  for (const dir of ["src/contracts", "src/engine", "src/exec"]) {
+  for (const dir of ["src/contracts", "src/world/worlds/rebuilt/engine", "src/world/worlds/rebuilt/exec"]) {
     for (const file of sourceFiles(path.join(REPO_ROOT, dir))) {
       hash.update(path.relative(REPO_ROOT, file).replaceAll("\\", "/"));
       hash.update(readFileSync(file, "utf8").replaceAll("\r\n", "\n"));

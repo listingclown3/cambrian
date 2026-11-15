@@ -2,13 +2,13 @@
  * Writes src/server/fixtures/scenarios_fixture.json (owner: P4): a SMALL scenario fixture that follows
  * src/contracts/scenario.ts, built on the STUB engine with real (stub-engine) rollouts for the answer key.
  * Answer-key values and the Drex/giant picks are hand-authored for illustration, never measured.
- * The web client shows a FIXTURE banner for this data. `pnpm record:scenarios` regenerates it.
+ * The web client shows a FIXTURE banner for this data. `pnpm server:record-scenarios` regenerates it.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { getRobot, maskOptions, type AnswerKey, type MatchState, type Scenario, type ScenarioFamily } from "../contracts";
-import { engine } from "../engine";
-import { buildObservationView } from "../engine/observe";
-import { basicCyclePolicy, demoRobots, holdPolicy, robotsNeedingDecision } from "../exec";
+import { engine } from "../world/worlds/rebuilt/engine";
+import { buildObservationView } from "../world/worlds/rebuilt/engine/observe";
+import { basicCyclePolicy, demoRobots, holdPolicy, robotsNeedingDecision } from "../world/worlds/rebuilt/exec";
 import { loadConfig, repoPath } from "../util/config";
 
 const cfg = loadConfig();

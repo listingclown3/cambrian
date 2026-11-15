@@ -1,13 +1,13 @@
 /**
- * pnpm drex:models [-- --n 8]: list the Drex models this key can use, then time each on a REAL
+ * pnpm steer:models [-- --n 8]: list the Drex models this key can use, then time each on a REAL
  * play-call request (a mid-match robot's state text and its full masked option list), so the
  * model choice in config is made from measurements. Every call is recorded in the usage ledger.
  * Prints status and timings only; never a key or a response body.
  */
 import "dotenv/config";
-import { engine, buildObservationView } from "../engine";
-import { MatchRunner, basicCyclePolicy, demoRobots } from "../exec";
-import { buildActionRequest } from "../decide";
+import { engine, buildObservationView } from "../world/worlds/rebuilt/engine";
+import { MatchRunner, basicCyclePolicy, demoRobots } from "../world/worlds/rebuilt/exec";
+import { buildActionRequest } from "../search/steer";
 import { recordUsage } from "../ledger";
 import { loadConfig } from "./config";
 

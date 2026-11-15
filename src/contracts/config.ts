@@ -394,7 +394,7 @@ export const ConfigSchema = z.strictObject({
     /** Multiplier applied to measured latency before charging it (1 = real time). */
     latencyScale: z.number().positive(),
   }),
-  /** Keenable web research (src/research). */
+  /** Keenable web research (src/history/research). */
   research: z.strictObject({
     ...sectionMeta,
     /** Keenable API base URL. */
@@ -424,7 +424,7 @@ export const ConfigSchema = z.strictObject({
     /** File for extracted strategy notes, relative to the repo root. */
     notesFile: z.string(),
   }),
-  /** NDI document intelligence (src/ingest). Uses the same Nace console key as Drex. */
+  /** NDI document intelligence (src/history/ingest). Uses the same Nace console key as Drex. */
   ndi: z.strictObject({
     ...sectionMeta,
     /** NDI API base URL; tools are POST {baseUrl}/v1/documents/{parse|split|classify|extract|ground}. */
@@ -440,7 +440,7 @@ export const ConfigSchema = z.strictObject({
     /** Number of messy fabricated scouting sheets to generate and parse. */
     scoutingSheets: z.number().int().nonnegative(),
   }),
-  /** Strategy Lab (src/lab): Intern run as a subprocess. */
+  /** Strategy Lab (src/search/proposals): Intern run as a subprocess. */
   lab: z.strictObject({
     ...sectionMeta,
     /**

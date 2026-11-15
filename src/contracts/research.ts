@@ -1,5 +1,5 @@
 /**
- * Research and ingest contracts (owner of producers: P5, src/research and src/ingest).
+ * Research and ingest contracts (owner of producers: P5, src/history/research and src/history/ingest).
  *
  *   Keenable -> RawPage files in data/research/raw/
  *   NDI      -> Rule[] in data/rules/rules.json            (manual + Team Update, page citations)

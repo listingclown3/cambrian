@@ -41,9 +41,9 @@ pnpm dev                  # server on :8787 + web on :5173 -> open http://127.0.
 
 pnpm test                 # vitest
 pnpm typecheck
-pnpm smoke:drex           # decision path end to end against the mock (no key needed)
+pnpm steer:smoke           # decision path end to end against the mock (no key needed)
 pnpm keys                 # one minimal real call per configured key; prints status, never values
-pnpm drex:models          # list Drex models and time each on a real play-call request
+pnpm steer:models          # list Drex models and time each on a real play-call request
 pnpm lab -- --trial       # one real Intern session end to end (System 2 on DeepInfra + Drex)
 ```
 
@@ -59,19 +59,19 @@ Each step reads the previous step's output. Results land in `results/` (committe
 
 ```sh
 pnpm research             # Keenable -> data/research/raw/ (local) + data/research/sources.json
-pnpm ingest:rules         # NDI over the official manual -> data/rules/rules.json (page citations)
+pnpm history:rules         # NDI over the official manual -> data/rules/rules.json (page citations)
 pnpm ingest               # NDI -> data/research/notes.json, robot profiles (not built yet)
-pnpm league               # sample the league from archetype templates
-pnpm matches              # scripted matches on dev seeds
-pnpm mine                 # mine sticky decision points -> scenarios
-pnpm families             # group into families, generate one-flip variants
-pnpm answerkey            # rollouts per option -> answer key
-pnpm bench:scenarios      # Drex vs DeepInfra vs baselines on the answer key
-pnpm bench:live           # full matches on eval seeds, latency charged and paused
-pnpm bench:explore        # rollouts needed to find the best option, by search order
+pnpm nace:league               # sample the league from archetype templates
+pnpm nace:matches              # scripted matches on dev seeds
+pnpm nace:mine                 # mine sticky decision points -> scenarios
+pnpm nace:families             # group into families, generate one-flip variants
+pnpm nace:answerkey            # rollouts per option -> answer key
+pnpm nace:scenarios      # Drex vs DeepInfra vs baselines on the answer key
+pnpm nace:live           # full matches on eval seeds, latency charged and paused
+pnpm explore        # rollouts needed to find the best option, by search order
 pnpm lab                  # Strategy Lab: Intern proposes, the simulator tests
-pnpm bench:myrobot        # your robot (data/profiles/my_robot.json) against each archetype
-pnpm headline             # assemble results/headline.json
+pnpm nace:myrobot        # your robot (data/profiles/my_robot.json) against each archetype
+pnpm nace:headline             # assemble results/headline.json
 pnpm usage                # results/usage.json
 pnpm describe             # fill description.txt's {{placeholders}} from results/headline.json
 ```

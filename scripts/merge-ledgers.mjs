@@ -4,7 +4,7 @@
  *
  * Each worktree (../cambrian-p1, -p2, ...) records its own real calls in its own gitignored
  * runs/usage.jsonl. The headline's usage numbers come from the main worktree's ledger, so the
- * integrator runs this before `pnpm usage` / `pnpm headline`. Lines are de-duplicated exactly,
+ * integrator runs this before `pnpm usage` / `pnpm nace:headline`. Lines are de-duplicated exactly,
  * so running it repeatedly never double-counts.
  */
 import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";

@@ -21,7 +21,7 @@ const base = {
 
 /**
  * Everything the engine reports. Discriminated on `kind`.
- * Events with a `robotId` are decision triggers for that robot (see src/exec/triggers.ts).
+ * Events with a `robotId` are decision triggers for that robot (see src/world/worlds/rebuilt/exec/triggers.ts).
  */
 export const EngineEventSchema = z.discriminatedUnion("kind", [
   /** The robot's current action finished successfully. */

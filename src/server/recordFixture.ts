@@ -1,14 +1,14 @@
 /**
  * Writes src/server/fixtures/showcase_fixture/events.jsonl (owner: P4): one match on the engine in use
  * engine with the scripted basic_cycle controller, logged in the run-log format. Everything in it
- * is isMock = true. `pnpm record:fixture` regenerates it; the replay endpoint re-simulates the
+ * is isMock = true. `pnpm server:record-fixture` regenerates it; the replay endpoint re-simulates the
  * match from the seed and the logged intents.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { stepLabel, type RunEventBody, type RunEvent } from "../contracts";
-import { engine } from "../engine";
-import { buildObservationView } from "../engine/observe";
-import { robotsNeedingDecision, basicCyclePolicy, demoRobots } from "../exec";
+import { engine } from "../world/worlds/rebuilt/engine";
+import { buildObservationView } from "../world/worlds/rebuilt/engine/observe";
+import { robotsNeedingDecision, basicCyclePolicy, demoRobots } from "../world/worlds/rebuilt/exec";
 import { loadConfig, repoPath } from "../util/config";
 
 const cfg = loadConfig();

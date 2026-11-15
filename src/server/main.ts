@@ -3,7 +3,7 @@
  * and (when built) the web client.
  */
 import "dotenv/config";
-import { ENGINE_IS_STUB } from "../engine";
+import { ENGINE_IS_STUB } from "../world/worlds/rebuilt/engine";
 import { listUnverified, loadConfig } from "../util/config";
 import { buildApp } from "./app";
 

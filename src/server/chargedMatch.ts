@@ -3,12 +3,12 @@
  *
  * While a decision is "thinking" the match keeps stepping and the robot keeps its old intent;
  * the new intent is applied latencyMs of match time after the request. This is the mechanism
- * the real runner (src/exec) will also implement; until provider-driven matches exist the
+ * the real runner (src/world/worlds/rebuilt/exec) will also implement; until provider-driven matches exist the
  * latencies fed in here are SIMULATED and every stream says so in its hello message.
  */
 import { stepLabel, type Alliance, type Config, type Engine, type EngineEvent, type Intent, type MatchRobotSpec, type MatchState, type RobotId, type ScriptedPolicy } from "../contracts";
-import { buildObservationView } from "../engine/observe";
-import { robotsNeedingDecision } from "../exec";
+import { buildObservationView } from "../world/worlds/rebuilt/engine/observe";
+import { robotsNeedingDecision } from "../world/worlds/rebuilt/exec";
 import type { DecisionNote } from "./protocol";
 
 export interface ChargedOptions {

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { EMPTY_VIEW, reduce, type MatchView } from "../../web/src/matchReducer";
-import { ENGINE_IS_STUB } from "../engine";
+import { ENGINE_IS_STUB } from "../world/worlds/rebuilt/engine";
 import { repoPath } from "../util/config";
 import type { ServerMessage, SlimStatic } from "./protocol";
 import { ReplaySim } from "./replaySim";
