@@ -22,6 +22,7 @@ import {
   withThen,
   type MatchState,
   type RobotState,
+  ConfigSchema,
 } from "./index";
 
 const cfg = loadConfig();
@@ -284,7 +285,7 @@ describe("results, events, providers", () => {
   });
 
   it("has exactly the provider ids", () => {
-    expect([...PROVIDER_IDS]).toEqual(["drex", "drex_mock", "deepinfra", "openai", "gemini", "scripted", "random"]);
+    expect([...PROVIDER_IDS]).toEqual(["drex", "drex_mock", "deepinfra", "openai", "openai_compatible", "gemini", "scripted", "random"]);
     expect(cfg.providers.byId.deepinfra.modelPreference?.length).toBeGreaterThan(0);
     expect(cfg.research.maxRequests).toBe(300);
   });
@@ -299,5 +300,19 @@ describe("results, events, providers", () => {
     );
     const types = RunEventSchema.options.map((o) => o.shape.type.value);
     expect(types).toEqual(["run_start", "decision", "engine_event", "score", "foul", "scenario_result", "rollout_batch", "run_end"]);
+  });
+});
+
+describe("config schema evolution", () => {
+  it("still parses configs recorded before openai_compatible and the costs section existed", () => {
+    const old: any = structuredClone(loadConfig());
+    delete old.costs;
+    delete old.providers.byId.openai_compatible;
+    delete old.pricesPerMTokUsd.byId.openai_compatible;
+    delete old.spendCapsUsd.perProviderPerRun.openai_compatible;
+    const parsed = ConfigSchema.parse(old);
+    expect(parsed.costs.gpuUsdPerHour).toBeNull();
+    expect(parsed.providers.byId.openai_compatible.endpoint).toBeNull();
+    expect(parsed.spendCapsUsd.perProviderPerRun.openai_compatible).toBe(5);
   });
 });

@@ -39,7 +39,7 @@ describe("server", () => {
   it("serves usage totals for every tool", async () => {
     const res = await app.inject({ method: "GET", url: "/api/usage" });
     expect(res.statusCode).toBe(200);
-    expect(Object.keys(res.json().byTool).sort()).toEqual(["deepinfra", "drex", "intern", "keenable", "ndi", "openai"]);
+    expect(Object.keys(res.json().byTool).sort()).toEqual(["deepinfra", "drex", "intern", "keenable", "ndi", "openai", "openai_compatible"]);
   });
 
   it("guards admin routes with ADMIN_TOKEN", async () => {

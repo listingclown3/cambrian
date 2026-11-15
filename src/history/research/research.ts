@@ -14,13 +14,14 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { RawPageSchema, type RawPage } from "../../contracts";
-import { recordUsage } from "../../ledger";
+import { keenableProvider } from "../../providers/keenable";
+import type { SearchProvider } from "../../providers/roles";
 import { loadConfig, repoPath } from "../../util/config";
 
 const cfg = loadConfig();
 const r = cfg.research;
-const key = process.env[r.apiKeyEnv];
-if (!key) {
+const provider: SearchProvider | null = keenableProvider(cfg);
+if (!provider) {
   console.error(`[research] ${r.apiKeyEnv} is not set; nothing fetched.`);
   process.exit(1);
 }
@@ -29,7 +30,6 @@ const maxRequests = Math.min(r.maxRequests, limitArg >= 0 ? Number(process.argv[
 const rawDir = repoPath(...r.rawDir.split("/"));
 mkdirSync(rawDir, { recursive: true });
 
-const headers: Record<string, string> = { "Content-Type": "application/json", "X-Keenable-Title": r.appTitle, ...(r.authHeader ? { [r.authHeader]: key } : {}) };
 const fileFor = (url: string) => path.join(rawDir, `${createHash("sha1").update(url).digest("hex").slice(0, 16)}.json`);
 const skipped = (url: string) => {
   try {
@@ -42,60 +42,41 @@ const skipped = (url: string) => {
 
 let requests = 0;
 let stop = "";
-/** One Keenable request with the request cap, 429 back-off and ledger recording. */
-async function keenable(purpose: "search" | "fetch", url: string, init: RequestInit): Promise<any | null> {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    if (requests >= maxRequests) {
-      stop = `request cap ${maxRequests} reached`;
-      return null;
-    }
-    requests += 1;
-    const started = performance.now();
-    let res: Response;
-    try {
-      res = await fetch(url, { ...init, headers, signal: AbortSignal.timeout(45_000) });
-    } catch (e) {
-      console.log(`  ${purpose} failed: ${String(e).slice(0, 80)}`);
-      return null;
-    }
-    const latencyMs = performance.now() - started;
-    if (res.status === 429) {
-      const waitS = Math.min(30, Number(res.headers.get("retry-after")) || 2);
-      console.log(`  429; waiting ${waitS} s`);
-      await new Promise((done) => setTimeout(done, waitS * 1000));
-      continue;
-    }
-    if (res.status === 402) {
-      stop = "402 insufficient credits";
-      return null;
-    }
-    if (!res.ok) {
-      console.log(`  ${purpose} http ${res.status}`);
-      return null;
-    }
-    recordUsage(cfg, { tool: "keenable", purpose, latencyMs, counts: { requests: 1 } });
-    return res.json().catch(() => null);
+/** Count a request against the cap; false (and a stop reason) once the cap is reached. */
+const allowed = () => {
+  if (requests >= maxRequests) {
+    stop = `request cap ${maxRequests} reached`;
+    return false;
   }
-  return null;
-}
+  requests += 1;
+  return true;
+};
 
 let saved = 0;
 let reused = 0;
 for (const query of r.queries) {
-  if (stop) break;
-  const found = await keenable("search", `${r.baseUrl}${r.searchPath}`, { method: "POST", body: JSON.stringify({ query, max_results: r.maxResultsPerQuery }) });
-  const results: { title?: string; url: string }[] = found?.results ?? [];
-  console.log(`[research] "${query}" -> ${results.length} results`);
-  for (const result of results) {
+  if (stop || !allowed()) break;
+  const found = await provider.search(query, r.maxResultsPerQuery);
+  if ("stop" in found) {
+    stop = found.stop;
+    break;
+  }
+  console.log(`[research] "${query}" -> ${found.length} results`);
+  for (const result of found) {
     if (stop) break;
-    if (!result.url || skipped(result.url)) continue;
+    if (skipped(result.url)) continue;
     const file = fileFor(result.url);
     if (existsSync(file)) {
       reused += 1;
       continue;
     }
-    const page = await keenable("fetch", `${r.baseUrl}${r.fetchPath}?url=${encodeURIComponent(result.url)}`, { method: "GET" });
-    const content: string = typeof page?.content === "string" ? page.content : "";
+    if (!allowed()) break;
+    const page = await provider.fetch(result.url);
+    if (page && "stop" in page) {
+      stop = page.stop;
+      break;
+    }
+    const content = page?.content ?? "";
     if (content.trim().length < 200) continue; // empty, blocked or paywalled
     const raw: RawPage = RawPageSchema.parse({ url: result.url, fetchedTs: new Date().toISOString(), query, title: result.title ?? page?.title ?? null, content });
     writeFileSync(file, JSON.stringify(raw, null, 2) + "\n");
@@ -112,6 +93,6 @@ const sources = readdirSync(rawDir)
 const sourcesFile = repoPath("data", "research", "sources.json");
 writeFileSync(sourcesFile, JSON.stringify({ generatedTs: new Date().toISOString(), pages: sources.length, sources }, null, 2) + "\n");
 
-console.log(`[research] ${requests} Keenable requests; ${saved} new pages, ${reused} already saved; ${sources.length} pages kept in total.`);
+console.log(`[research] ${requests} ${provider.id} requests; ${saved} new pages, ${reused} already saved; ${sources.length} pages kept in total.`);
 if (stop) console.log(`[research] stopped early: ${stop}`);
 console.log(`[research] wrote ${sourcesFile}`);

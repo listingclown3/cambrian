@@ -1650,6 +1650,12 @@
     },
     "totalPerRun": 15
   },
+  "costs": {
+    "_status": "TUNABLE",
+    "_note": "Rates for the single cost unit (notes/decisions.md). cpuUsdPerVcpuHour is a reference value: AWS c7i.large on-demand list price, about $0.089/h for 2 vCPU in us-east-1 (check before citing); replace it with what you actually pay. gpuUsdPerHour stays null until GPU time is used, then comes from the invoice.",
+    "cpuUsdPerVcpuHour": 0.045,
+    "gpuUsdPerHour": null
+  },
   "realtimeLatencyCharging": {
     "_status": "TUNABLE",
     "_note": "On: the match keeps running while a provider thinks, so slow answers cost match time. Off: the match pauses.",

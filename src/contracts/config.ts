@@ -319,6 +319,26 @@ export const TriggerParamsSchema = z.object({
 });
 export type TriggerParams = z.infer<typeof TriggerParamsSchema>;
 
+/**
+ * Provider ids added after runs were recorded. Run manifests embed the whole config, so older
+ * manifests lack these keys; they are filled with defaults before validation so old runs still
+ * parse. Add an entry here whenever a provider id is added.
+ */
+const OPENAI_COMPATIBLE_DEFAULTS = {
+  endpoint: null,
+  model: null,
+  authHeader: "Authorization",
+  authScheme: "Bearer",
+  apiKeyEnv: "OPENAI_COMPATIBLE_API_KEY",
+  extraHeaders: {},
+  concurrency: 4,
+  timeoutMs: 60000,
+  retries: 1,
+};
+function withLaterIds<T extends z.ZodType>(schema: T, defaults: Record<string, unknown>) {
+  return z.preprocess((v) => (v && typeof v === "object" && !Array.isArray(v) ? { ...defaults, ...v } : v), schema);
+}
+
 export const ConfigSchema = z.strictObject({
   /** Free-text explanation at the top of the file. */
   _readme: z.string(),
@@ -368,13 +388,13 @@ export const ConfigSchema = z.strictObject({
   providers: z.strictObject({
     ...sectionMeta,
     /** Settings keyed by provider id. */
-    byId: z.record(ProviderIdSchema, ProviderConfigSchema),
+    byId: withLaterIds(z.record(ProviderIdSchema, ProviderConfigSchema), { openai_compatible: OPENAI_COMPATIBLE_DEFAULTS }),
   }),
   /** Prices per 1M tokens; humans fill these in from each provider's pricing page. */
   pricesPerMTokUsd: z.strictObject({
     ...sectionMeta,
     /** Prices keyed by provider id; the fallback when the model has no entry in byModel. */
-    byId: z.record(ProviderIdSchema, PriceSchema),
+    byId: withLaterIds(z.record(ProviderIdSchema, PriceSchema), { openai_compatible: { input: null, output: null } }),
     /** Prices keyed by the exact model id a provider reports. Takes precedence over byId. */
     byModel: z.record(z.string(), PriceSchema),
   }),
@@ -382,10 +402,21 @@ export const ConfigSchema = z.strictObject({
   spendCapsUsd: z.strictObject({
     ...sectionMeta,
     /** Cap per provider for one run. */
-    perProviderPerRun: z.record(ProviderIdSchema, z.number().nonnegative()),
+    perProviderPerRun: withLaterIds(z.record(ProviderIdSchema, z.number().nonnegative()), { openai_compatible: 5 }),
     /** Cap across all providers for one run. */
     totalPerRun: z.number().nonnegative(),
   }),
+  /** Rates for the single cost unit (src/util/cost.ts). Model API dollars come from the ledger. */
+  costs: z
+    .strictObject({
+      ...sectionMeta,
+      /** USD per vCPU-hour of simulation. */
+      cpuUsdPerVcpuHour: z.number().nonnegative(),
+      /** USD per GPU-hour, from the actual invoice; null until GPU time is used. */
+      gpuUsdPerHour: z.number().nonnegative().nullable(),
+    })
+    // added 2026-11-14: configs recorded in earlier run manifests have no costs section
+    .default({ _status: "TUNABLE", _note: "default for configs recorded before the costs section existed", cpuUsdPerVcpuHour: 0.045, gpuUsdPerHour: null }),
   /** Whether a provider's thinking time is charged against the match clock in live matches. */
   realtimeLatencyCharging: z.strictObject({
     ...sectionMeta,

@@ -1,8 +1,8 @@
 {
-  "name": "cambrian-frc",
+  "name": "cambrian",
   "private": true,
   "version": "0.0.0",
-  "description": "FRC REBUILT 2026 strategy simulator: System 1 (Drex) vs System 2 (a large LLM on DeepInfra). Nace AI Hackathon, Apex track.",
+  "description": "Cambrian: guided quirk discovery. Cheap models steer a search for unintended behaviours in a simulated world, archive them as a graph and chain them into strategies. First world: FRC REBUILT 2026.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -19,6 +19,7 @@
     "research": "tsx src/history/research/research.ts",
     "ingest": "tsx src/history/ingest/ingest.ts",
     "quirks": "tsx src/search/proposals/quirks.ts",
+    "archive": "tsx src/archive/seed.ts",
     "explore": "tsx experiments/nace-2026/bench/benchExplore.ts",
     "lab": "tsx src/search/proposals/main.ts",
     "usage": "tsx src/ledger/cli.ts",
