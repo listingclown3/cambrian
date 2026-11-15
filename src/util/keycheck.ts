@@ -5,6 +5,7 @@
  */
 import "dotenv/config";
 import { recordUsage } from "../ledger";
+import { OPENAI_COMPATIBLE_ENV, resolveOpenAICompatible } from "../providers/openaiCompatible";
 import { loadConfig } from "./config";
 
 const cfg = loadConfig();
@@ -82,7 +83,8 @@ const fail = (tool: string, detail: string) => {
       const models = await call(p.modelsEndpoint!, { headers: authHeaders(p, key) });
       const available = new Set<string>((models.json?.data ?? []).map((m: { id: string }) => m.id));
       const model = p.model ?? (p.modelPreference ?? []).find((id) => available.has(id));
-      if (!model) fail("deepinfra", `none of modelPreference is available (${available.size} models listed)`);
+      if (models.status === 401 || models.status === 403) fail("deepinfra", `key rejected (${describeError(models)}); the key is invalid, revoked or has no access`);
+      else if (!model) fail("deepinfra", `none of modelPreference is available (${available.size} models listed)`);
       else {
         const r = await call(p.endpoint!, {
           method: "POST",
@@ -121,6 +123,27 @@ const fail = (tool: string, detail: string) => {
       }
     } catch (e) {
       fail("keenable", safe(String(e)));
+    }
+  }
+}
+
+// Any OpenAI-compatible endpoint (self-hosted vLLM, OpenRouter, Together, DeepInfra, ...): one tiny completion.
+{
+  const env = process.env;
+  const p = resolveOpenAICompatible(cfg.providers.byId.openai_compatible, env);
+  const key = env[p.apiKeyEnv ?? ""];
+  if (!p.endpoint || !p.model) line("openai_compatible", null, `${OPENAI_COMPATIBLE_ENV.baseUrl} and ${OPENAI_COMPATIBLE_ENV.model} are not both set (optional; any OpenAI-compatible server)`);
+  else {
+    try {
+      const r = await call(p.endpoint, {
+        method: "POST",
+        headers: authHeaders(p, key ?? "none"),
+        body: JSON.stringify({ model: p.model, temperature: 0, max_tokens: 8, messages: [{ role: "user", content: 'Reply with exactly: {"ok":true}' }] }),
+      });
+      if (r.status !== 200) fail("openai_compatible", `model ${p.model}: ${describeError(r)}`);
+      else line("openai_compatible", true, `model ${p.model} at ${new URL(p.endpoint).host}; ${Math.round(r.ms)} ms round trip`);
+    } catch (e) {
+      fail("openai_compatible", safe(String(e)));
     }
   }
 }

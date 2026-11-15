@@ -1501,6 +1501,17 @@
         "timeoutMs": 30000,
         "retries": 2
       },
+      "openai_compatible": {
+        "endpoint": null,
+        "model": null,
+        "authHeader": "Authorization",
+        "authScheme": "Bearer",
+        "apiKeyEnv": "OPENAI_COMPATIBLE_API_KEY",
+        "extraHeaders": {},
+        "concurrency": 4,
+        "timeoutMs": 60000,
+        "retries": 1
+      },
       "gemini": {
         "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
         "model": "TODO_SET_GEMINI_MODEL",
@@ -1553,6 +1564,10 @@
         "output": 3
       },
       "openai": {
+        "input": null,
+        "output": null
+      },
+      "openai_compatible": {
         "input": null,
         "output": null
       },
@@ -1628,6 +1643,7 @@
       "drex_mock": 0,
       "deepinfra": 5,
       "openai": 5,
+      "openai_compatible": 5,
       "gemini": 5,
       "scripted": 0,
       "random": 0

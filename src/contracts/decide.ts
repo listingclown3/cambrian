@@ -28,8 +28,10 @@ import { z } from "zod";
  *   deepinfra - System 2: a large LLM on DeepInfra (OpenAI-compatible chat completions); the
  *               "giant" Drex is compared against
  *   openai, gemini - optional secondary baselines, used only when their API key is set
+ *   openai_compatible - any OpenAI-compatible server (vLLM, Ollama, OpenRouter, ...); endpoint and
+ *               model from OPENAI_COMPATIBLE_BASE_URL / OPENAI_COMPATIBLE_MODEL
  */
-export const ProviderIdSchema = z.enum(["drex", "drex_mock", "deepinfra", "openai", "gemini", "scripted", "random"]);
+export const ProviderIdSchema = z.enum(["drex", "drex_mock", "deepinfra", "openai", "openai_compatible", "gemini", "scripted", "random"]);
 export type ProviderId = z.infer<typeof ProviderIdSchema>;
 export const PROVIDER_IDS = ProviderIdSchema.options;
 

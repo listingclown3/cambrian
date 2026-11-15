@@ -151,7 +151,7 @@ const isAccessError = (e: unknown) =>
  * OpenAI-compatible chat provider. `id` is the provider id ("deepinfra" or "openai"); its config
  * entry supplies endpoint, auth, model or modelPreference, concurrency, timeout and retries.
  */
-export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai">, cfg: Config, opts: ChatProviderOptions = {}): ChatDecisionProvider {
+export function chatProvider(id: Extract<ProviderId, "deepinfra" | "openai" | "openai_compatible">, cfg: Config, opts: ChatProviderOptions = {}): ChatDecisionProvider {
   const p = cfg.providers.byId[id];
   const env = opts.env ?? process.env;
   const limit = limiterFor(id, p);

@@ -8,7 +8,7 @@
 import { z } from "zod";
 
 /** The external tools we count. */
-export const UsageToolSchema = z.enum(["drex", "ndi", "intern", "deepinfra", "keenable", "openai"]);
+export const UsageToolSchema = z.enum(["drex", "ndi", "intern", "deepinfra", "keenable", "openai", "openai_compatible"]);
 export type UsageTool = z.infer<typeof UsageToolSchema>;
 export const USAGE_TOOLS = UsageToolSchema.options;
 

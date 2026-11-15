@@ -15,6 +15,7 @@ import { chatProvider, deepinfraProvider, type ChatDecisionProvider, type ChatPr
 import { drexProvider } from "./drex";
 import { DREX_MOCK_MODEL, drexMockProvider } from "./drexMock";
 import { notImplementedProvider } from "./notImplemented";
+import { withOpenAICompatible } from "./openaiCompatible";
 import { anonymizedProvider } from "./anonymize";
 import { cachedProvider } from "./cache";
 
@@ -22,7 +23,7 @@ import { cachedProvider } from "./cache";
 export const IMPLEMENTED_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["drex_mock", "scripted", "random", "drex", "deepinfra"]);
 
 /** Ids whose provider makes real network calls. */
-export const NETWORK_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["drex", "deepinfra", "openai", "gemini"]);
+export const NETWORK_PROVIDERS: ReadonlySet<ProviderId> = new Set<ProviderId>(["drex", "deepinfra", "openai", "openai_compatible", "gemini"]);
 
 /** Options for network providers: a model override plus the test/tool seams. */
 export interface ProviderOptions extends ChatProviderOptions {
@@ -55,6 +56,15 @@ function build(id: ProviderId, cfg: Config, opts: ProviderOptions): DecisionProv
       const model = opts.model ?? p.model;
       if (env[p.apiKeyEnv ?? ""] && model && !model.startsWith("TODO_")) return chatProvider("openai", cfg, { ...opts, model });
       return notImplementedProvider(id, cfg);
+    }
+    case "openai_compatible": {
+      // Any OpenAI-compatible server; endpoint and model from env (see openaiCompatible.ts).
+      const env = opts.env ?? process.env;
+      const c = withOpenAICompatible(cfg, env);
+      const p = c.providers.byId.openai_compatible;
+      const model = opts.model ?? p.model;
+      if (!p.endpoint || !model) return notImplementedProvider(id, cfg);
+      return chatProvider(id, c, { ...opts, model, env: { ...env, [p.apiKeyEnv ?? ""]: env[p.apiKeyEnv ?? ""] || "none" } });
     }
     case "gemini":
       return notImplementedProvider(id, cfg);
